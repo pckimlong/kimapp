@@ -16,7 +16,7 @@ dependencies:
   flutter:
     sdk: flutter
   kimapp:
-    git: https://github.com/pckimlong/kimapp.git
+    path: ../kimapp
 
 dev_dependencies:
   flutter_test:
