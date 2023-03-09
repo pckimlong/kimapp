@@ -27,6 +27,5 @@ environment:
 vars:
   name:
     type: string
-    description: Your name
-    default: Dash
-    prompt: What is your name?
+    description: feature name which will be use everywhere. This should represent the object name
+    prompt: What is your feature object name?

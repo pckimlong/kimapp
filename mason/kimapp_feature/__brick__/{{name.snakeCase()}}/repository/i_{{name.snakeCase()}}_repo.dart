@@ -1,0 +1,33 @@
+
+// ignore_for_file: unused_import
+
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../model/models.dart';
+
+import '../../../core/core.dart';
+import '../../../../exports.dart';
+
+part 'i_{{name.snakeCase()}}_repo.g.dart';
+
+
+@Riverpod(keepAlive: true)
+I{{name.pascalCase()}}Repo {{name.camelCase()}}Repo({{name.pascalCase()}}RepoRef ref) => _Impl(ref);
+
+
+abstract class I{{name.pascalCase()}}Repo {
+  Future<Either<Failure, {{name.pascalCase()}}Model>> findAll({{name.pascalCase()}}ListParam param);
+
+  Future<Either<Failure, {{name.pascalCase()}}DetailModel>> findOne({{name.pascalCase()}}Id {{name.camelCase}}Id);
+
+  Future<Either<Failure, {{name.pascalCase()}}DetailModel>> create(Create{{name.pascalCase()}}Param data);
+
+  Future<Either<Failure, {{name.pascalCase()}}DetailModel>> update({{name.pascalCase()}}Id {{name.camelCase}}Id ,{required Update{{name.pascalCase()}}Param data});
+
+  Future<Either<Failure, Unit>> delete(Delete{{name.pascalCase()}}Param param);
+
+  Future<Either<Failure, {{name.pascalCase()}}ListPaginationResponse>> findPagination({
+    required int limit,
+    required int offset,
+    required {{name.pascalCase()}}ListPaginationParam param,
+  });
+}
