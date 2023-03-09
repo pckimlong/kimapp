@@ -20,3 +20,12 @@ class {{name.pascalCase()}}Id extends Identity<{{id_data_type}}> {
     return {{name.pascalCase()}}Id._(value);
   }
 }
+
+
+mixin {{name.pascalCase()}}CommonMixin {
+  {{name.pascalCase()}}Id get identity;
+}
+
+extension  {{name.pascalCase()}}CommonX on  {{name.pascalCase()}}CommonMixin{
+  {{name.pascalCase()}}Id get id => identity;
+}
