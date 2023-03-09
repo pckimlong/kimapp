@@ -27,5 +27,12 @@ environment:
 vars:
   name:
     type: string
-    description: feature name which will be use everywhere. This should represent the object name
-    prompt: What is your feature object name?
+    description: Feature name which will be use everywhere. This should represent the object name
+    prompt: What is your feature object's name in singular?
+  id_data_type:
+    type: enum
+    description: Object ID data type
+    prompt: What is the data type of object's ID?
+    values:
+      - int
+      - String
