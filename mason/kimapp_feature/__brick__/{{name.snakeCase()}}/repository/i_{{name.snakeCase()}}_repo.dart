@@ -33,7 +33,7 @@ abstract class I{{name.pascalCase()}}Repo {
 
 
 
-class _Impl implements IPatientRepo {
+class _Impl implements I{{name.pascalCase()}}Repo {
   _Impl(this._ref);
 
   final Ref _ref;
