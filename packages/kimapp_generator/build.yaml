@@ -1,0 +1,19 @@
+builders:
+  kimapp_table_generator:
+    import: "package:kimapp_generator/builder.dart"
+    builder_factories: ["kimappTableGenerator"]
+    build_extensions: {".dart": [".table.dart"]}
+    auto_apply: dependents
+    build_to: source
+    runs_before:
+      - kimapp_generator|kimapp_generator
+      - json_serializable|json_serializable
+      - freezed:freezed
+
+  kimapp_generator:
+    import: "package:kimapp_generator/builder.dart"
+    builder_factories: ["kimappGenerator"]
+    build_extensions: {".dart": ["kimapp_generator.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
