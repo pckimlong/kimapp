@@ -27,11 +27,15 @@ dependencies:
   hooks_riverpod: ^2.3.0
   json_annotation: ^4.8.0
   kimapp:
-    git: https://github.com/pckimlong/kimapp.git
+    git: 
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
   responsive_framework: ^0.2.0
   riverpod_annotation: ^2.0.0
   timeago: 
   intl:
+  supabase_flutter: ^1.4.2
 
 dev_dependencies:
   auto_route_generator: ^6.0.0-rc
@@ -44,7 +48,10 @@ dev_dependencies:
   freezed: ^2.3.2
   json_serializable: ^6.6.1
   kimapp_generator:
-    git: https://github.com/pckimlong/kimapp_generator.git
+    git: 
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
   riverpod_generator: ^2.0.0
   riverpod_lint: ^1.1.2
 
