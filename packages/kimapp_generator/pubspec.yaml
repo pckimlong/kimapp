@@ -16,7 +16,10 @@ dependencies:
   flutter:
     sdk: flutter
   kimapp:
-    path: ../kimapp
+    git: 
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
 
 dev_dependencies:
   flutter_test:
