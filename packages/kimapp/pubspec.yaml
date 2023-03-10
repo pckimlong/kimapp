@@ -3,19 +3,21 @@ description: A new Flutter package project.
 version: 0.0.1
 publish_to: none
 
-
 environment:
   sdk: '>=2.19.2 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
+  dartx: null
   flutter:
     sdk: flutter
-  freezed: 
-  dartx: 
+  freezed_annotation:
+  fpdart: 
+  riverpod: 
 
 dev_dependencies:
-  build_runner: 
+  freezed: 
+  build_runner: null
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
