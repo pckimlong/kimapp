@@ -8,6 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Kimapp.initialize(
+    debugMode: kDebugMode,
     customFailureMessage: CustomFailureMessage(),
     logger: (type, message, [title, stackTrace, errorObject]) {
       if (type == LoggerType.error) {
