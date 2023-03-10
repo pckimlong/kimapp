@@ -11,11 +11,11 @@ void _logError(String title, String message, StackTrace stackTrace, Object e) {
   final loggerCallback = Kimapp.instance.logger;
   if (loggerCallback != null) {
     loggerCallback(
-      type: LoggerType.error,
-      title: title,
-      message: message,
-      stackTrace: stackTrace,
-      errorObject: e,
+      LoggerType.error,
+      title,
+      message,
+      stackTrace,
+      e,
     );
   }
 }
