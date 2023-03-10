@@ -1,15 +1,24 @@
 name: kimapp_supabase_helper
 description: A new Flutter package project.
 version: 0.0.1
-homepage:
+publish_to: none
 
 environment:
   sdk: '>=2.19.3 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
+  supabase_flutter: 
+  riverpod: 
+  logger:
+  fpdart: 
   flutter:
     sdk: flutter
+  kimapp:
+    git: 
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
 
 dev_dependencies:
   flutter_test:

@@ -28,23 +28,38 @@ class Kimapp {
   /// you can do by create a class extend [FailureMessage] then override any message you want
   static Future<Kimapp> initialize({
     FailureMessage? customFailureMessage,
+    void Function({required LoggerType type, required String message, StackTrace? stackTrace})?
+        logger,
   }) async {
     assert(!_instance._initialized, 'Kimapp instance is already initialized');
-    _instance._initService();
+    _instance._initService(
+      failureMessage: customFailureMessage,
+      logger: logger,
+    );
     return _instance;
   }
 
   bool _initialized = false;
   void _initService({
     FailureMessage? failureMessage,
+    LoggerCallback? logger,
   }) {
     if (failureMessage != null) {
       _failureMessage = failureMessage;
     }
+    _logger = logger;
 
     _initialized = true;
   }
 
   FailureMessage get failureMessage => _failureMessage;
   FailureMessage _failureMessage = FailureMessage();
+
+  LoggerCallback? _logger;
+  LoggerCallback? get logger => _logger;
 }
+
+typedef LoggerCallback = void Function(
+    {required LoggerType type, required String message, StackTrace? stackTrace});
+
+enum LoggerType { debug, info, warning, error }
