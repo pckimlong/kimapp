@@ -2,3 +2,5 @@ library kimapp;
 
 export 'object/object.dart';
 export 'annotation.dart';
+export 'service.dart';
+export 'riverpod_helper.dart';
