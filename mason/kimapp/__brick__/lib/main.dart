@@ -1,8 +1,9 @@
-import 'exports.dart';
 import 'src/presentation/app_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Kimapp.intialize();
 
   runApp(
     ProviderScope(

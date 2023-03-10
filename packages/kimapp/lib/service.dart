@@ -58,12 +58,12 @@ class Kimapp {
   LoggerCallback? get logger => _logger;
 }
 
-typedef LoggerCallback = void Function({
-  required LoggerType type,
-  String title,
-  required String message,
+typedef LoggerCallback = void Function(
+  LoggerType type,
+  String message, [
+  String? title,
   StackTrace? stackTrace,
   Object? errorObject,
-});
+]);
 
 enum LoggerType { debug, info, warning, error }

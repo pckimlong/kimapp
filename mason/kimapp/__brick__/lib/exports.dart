@@ -9,5 +9,7 @@ export 'package:animate_do/animate_do.dart';
 export 'dart:async' hide AsyncError;
 export 'package:auto_route/auto_route.dart';
 export 'package:flutter/material.dart';
+export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
+export 'package:kimapp/kimapp.dart';
 export 'src/presentation/core/app_style.dart';
 export 'src/core/core.dart';

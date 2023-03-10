@@ -1,6 +1,7 @@
-import 'package:kimapp/kimapp';
-import 'package:kimapp_generator/kimapp_generator';
+import 'package:kimapp/kimapp.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../../../exports.dart';
 
 extension SupabaseX on Ref {
   SupabaseClient get supabaseClient => read(supabaseProvider).client;
@@ -10,14 +11,14 @@ extension SupabaseX on Ref {
   }
 
   PostgrestFilterBuilder<T> supabaseSelect<T>(TableBuilder table) {
-    return supabaseTable(table.name).select<T>(table.selectStatement);
+    return supabaseTable(table.tableName).select<T>(table.selectStatement);
   }
 
   PostgrestTransformBuilder<T> supabaseInsertSelect<T>(
     TableBuilder table, {
     required Map<String, dynamic> value,
   }) {
-    return supabaseTable(table.name).insert(value).select<T>(table.selectStatement).single();
+    return supabaseTable(table.tableName).insert(value).select<T>(table.selectStatement).single();
   }
 
   PostgrestTransformBuilder<T> supabaseUpdateSelect<T>(
@@ -25,7 +26,7 @@ extension SupabaseX on Ref {
     required Map<String, dynamic> value,
     required PostgrestFilterBuilder Function(PostgrestFilterBuilder filter) filter,
   }) {
-    final query = supabaseTable(table.name).update(value);
+    final query = supabaseTable(table.tableName).update(value);
     return filter(query).select<T>(table.selectStatement).single();
   }
 }
