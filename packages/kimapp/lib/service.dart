@@ -63,6 +63,7 @@ typedef LoggerCallback = void Function({
   String title,
   required String message,
   StackTrace? stackTrace,
+  Object? errorObject,
 });
 
 enum LoggerType { debug, info, warning, error }

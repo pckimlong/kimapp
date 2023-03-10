@@ -8,7 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final logger = Logger();
 
 
-void _logError(String title, String message, StackTrace stackTrace){
+void _logError(String title, String message, StackTrace stackTrace, Object e){
   final loggerCallback = Kimapp.instance.logger;
   if(loggerCallback != null){
     loggerCallback(
