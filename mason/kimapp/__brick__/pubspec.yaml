@@ -41,6 +41,7 @@ dependencies:
   timeago: 
   intl:
   supabase_flutter: ^1.4.2
+  logger: ^1.2.2
 
 dev_dependencies:
   kimapp_generator:

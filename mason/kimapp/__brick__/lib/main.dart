@@ -1,19 +1,30 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:kimapp_app/src/core/errors/custom_failure_message.dart';
+import 'package:logger/logger.dart';
+
 import 'src/presentation/app_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Kimapp.intialize();
+  await Kimapp.initialize(
+    customFailureMessage: CustomFailureMessage(),
+    logger: (type, message, [title, stackTrace, errorObject]) {
+      if (type == LoggerType.error) {
+        _prettyLogger.e(message, errorObject, stackTrace);
+      }
+    },
+  );
 
   runApp(
     ProviderScope(
-      observers: [Logger()],
+      observers: [RiverpodLogger()],
       child: const AppWidget(),
     ),
   );
 }
 
-class Logger extends ProviderObserver {
+class RiverpodLogger extends ProviderObserver {
   @override
   void didUpdateProvider(
     ProviderBase<Object?> provider,
@@ -21,10 +32,21 @@ class Logger extends ProviderObserver {
     Object? newValue,
     ProviderContainer container,
   ) {
-    debugPrint('''
+    if (kDebugMode) {
+      _prettyLogger.i(
+        '''
 {
   "provider": "${provider.name ?? provider.runtimeType}",
   "newValue": "$newValue"
-}''');
+}''',
+      );
+    }
   }
 }
+
+final _prettyLogger = Logger(
+    printer: PrettyPrinter(
+  colors: true,
+  printEmojis: true,
+  printTime: true,
+));

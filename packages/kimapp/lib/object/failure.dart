@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/service.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:riverpod/riverpod.dart';
 
 part 'failure.freezed.dart';
@@ -52,8 +51,9 @@ extension FailureX on Failure {
   /// will be use, but in the debug mode the debug message will be use, you can use the release mode message
   /// even in debug mode by make [debugMessageEnable] to false
   String message([bool debugMessageEnable = true]) {
-    final mgs = Kimapp.instance.failureMessage;
-    final useDebugMessage = kDebugMode && debugMessageEnable;
+    final kimapp = Kimapp.instance;
+    final mgs = kimapp.failureMessage;
+    final useDebugMessage = kimapp.debugMode && debugMessageEnable;
 
     return when(
       (info) => useDebugMessage ? info.debugMessage : info.message ?? "Something when wrong!",

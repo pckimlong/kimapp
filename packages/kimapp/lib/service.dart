@@ -26,7 +26,10 @@ class Kimapp {
   /// [CustomFailureMessage] is an object use to present failure message to user
   /// by default it will be use the default message, if you want to customize the message
   /// you can do by create a class extend [FailureMessage] then override any message you want
+  ///
+  /// [debugMode] will be use on failure message
   static Future<Kimapp> initialize({
+    required bool debugMode,
     FailureMessage? customFailureMessage,
     LoggerCallback? logger,
   }) async {
@@ -34,12 +37,14 @@ class Kimapp {
     _instance._initService(
       failureMessage: customFailureMessage,
       logger: logger,
+      debugMode: debugMode,
     );
     return _instance;
   }
 
   bool _initialized = false;
   void _initService({
+    required bool debugMode,
     FailureMessage? failureMessage,
     LoggerCallback? logger,
   }) {
@@ -47,7 +52,9 @@ class Kimapp {
       _failureMessage = failureMessage;
     }
     _logger = logger;
+    _debugMode = debugMode;
 
+    // Mark as initialized
     _initialized = true;
   }
 
@@ -56,6 +63,9 @@ class Kimapp {
 
   LoggerCallback? _logger;
   LoggerCallback? get logger => _logger;
+
+  late bool _debugMode;
+  bool get debugMode => _debugMode;
 }
 
 typedef LoggerCallback = void Function(
