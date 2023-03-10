@@ -8,20 +8,30 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final logger = Logger();
 
 
-
+void _logError(String title, String message, StackTrace stackTrace){
+  final loggerCallback = Kimapp.instance.logger;
+  if(loggerCallback != null){
+    loggerCallback(
+      type: LoggerType.error,
+      message: message,
+      stackTrace: stackTrace,
+    );
+  }
+}
 
 
 Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function() callback,
     {void Function(Object e)? onError}) async {
-  // final loggerCallback = Function();
+  final loggerCallback = Kimapp.instance.logger;
 
   try {
     return await callback();
   } on Failure catch (e) {
     return left(e);
   } on AuthException catch (e, str) {
-    logger.("PostgrestException:", error: e);
-    _reportError(e, str);
+    if(loggerCallback != null){
+
+    }
     if (onError != null) onError(e);
 
     if (e.message == "Invalid login credentials") {
