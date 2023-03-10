@@ -13,6 +13,7 @@ void _logError(String title, String message, StackTrace stackTrace){
   if(loggerCallback != null){
     loggerCallback(
       type: LoggerType.error,
+      title: title,
       message: message,
       stackTrace: stackTrace,
     );
@@ -20,38 +21,38 @@ void _logError(String title, String message, StackTrace stackTrace){
 }
 
 
-Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function() callback,
-    {void Function(Object e)? onError}) async {
-  final loggerCallback = Kimapp.instance.logger;
-
+Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function() callback) async {
   try {
     return await callback();
   } on Failure catch (e) {
+    _logError('Failure', e.message(), e.stackTrace);
     return left(e);
   } on AuthException catch (e, str) {
-    if(loggerCallback != null){
-
-    }
-    if (onError != null) onError(e);
+    _logError('Supabase.AuthException', e.message, str);
 
     if (e.message == "Invalid login credentials") {
-      return left(Failure.incorrectLoginCredential(str, e.message));
+      return left(
+        Failure.authFailure(AuthFailures.incorrectLoginCredential(FailureInfo(stackTrace: str, debugMessage: e.message)))
+      );
     }
 
     if (e.message == "A user with this email address has already been registered") {
-      return left(Failure.userAlreadyRegistered(str, e.message));
+       return left(
+        Failure.authFailure(AuthFailures.alreadyRegistered(FailureInfo(stackTrace: str, debugMessage: e.message)))
+      );
     }
 
-    return left(Failure.authException(str, e.message));
+    return left(Failure.authFailure(AuthFailures(FailureInfo(stackTrace: str, debugMessage: e.message))));
+
   } on StorageException catch (e, str) {
     logger.("PostgrestException:", error: e);
     _reportError(e, str);
-    if (onError != null) onError(e);
+    
 
     return left(Failure.databaseError(str, e.message));
   } on PostgrestException catch (e, str) {
     _reportError(e, str);
-    if (onError != null) onError(e);
+    
     logger.("PostgrestException:", error: e);
 
     if (e.code == "23505") {
@@ -77,7 +78,7 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
     return left(Failure.databaseError(str, e.message));
   } on Exception catch (e, str) {
     _reportError(e, str);
-    if (onError != null) onError(e);
+    
     logger.("Exception:", error: e);
 
     // No internet
@@ -88,7 +89,7 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
     return left(Failure.exception(str, e.toString()));
   } catch (e, str) {
     _reportError(e, str);
-    if (onError != null) onError(e);
+    
     logger.("Error:", error: e);
     return left(Failure.exception(str, e.toString()));
     // rethrow;

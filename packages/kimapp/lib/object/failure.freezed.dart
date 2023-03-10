@@ -22,6 +22,7 @@ mixin _$FailureInfo {
   /// Readable message which will be display to user, If [message] is not provided or null
   /// The default message define in [Kimapp] service will be use instead when calling it from [Failure.message()] function
   String? get message => throw _privateConstructorUsedError;
+  Object? get errorObject => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $FailureInfoCopyWith<FailureInfo> get copyWith =>
@@ -34,7 +35,11 @@ abstract class $FailureInfoCopyWith<$Res> {
           FailureInfo value, $Res Function(FailureInfo) then) =
       _$FailureInfoCopyWithImpl<$Res, FailureInfo>;
   @useResult
-  $Res call({StackTrace stackTrace, String debugMessage, String? message});
+  $Res call(
+      {StackTrace stackTrace,
+      String debugMessage,
+      String? message,
+      Object? errorObject});
 }
 
 /// @nodoc
@@ -53,6 +58,7 @@ class _$FailureInfoCopyWithImpl<$Res, $Val extends FailureInfo>
     Object? stackTrace = null,
     Object? debugMessage = null,
     Object? message = freezed,
+    Object? errorObject = freezed,
   }) {
     return _then(_value.copyWith(
       stackTrace: null == stackTrace
@@ -67,6 +73,7 @@ class _$FailureInfoCopyWithImpl<$Res, $Val extends FailureInfo>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      errorObject: freezed == errorObject ? _value.errorObject : errorObject,
     ) as $Val);
   }
 }
@@ -79,7 +86,11 @@ abstract class _$$_FailureInfoCopyWith<$Res>
       __$$_FailureInfoCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({StackTrace stackTrace, String debugMessage, String? message});
+  $Res call(
+      {StackTrace stackTrace,
+      String debugMessage,
+      String? message,
+      Object? errorObject});
 }
 
 /// @nodoc
@@ -96,6 +107,7 @@ class __$$_FailureInfoCopyWithImpl<$Res>
     Object? stackTrace = null,
     Object? debugMessage = null,
     Object? message = freezed,
+    Object? errorObject = freezed,
   }) {
     return _then(_$_FailureInfo(
       stackTrace: null == stackTrace
@@ -110,6 +122,7 @@ class __$$_FailureInfoCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      errorObject: freezed == errorObject ? _value.errorObject : errorObject,
     ));
   }
 }
@@ -118,7 +131,10 @@ class __$$_FailureInfoCopyWithImpl<$Res>
 
 class _$_FailureInfo implements _FailureInfo {
   _$_FailureInfo(
-      {required this.stackTrace, required this.debugMessage, this.message});
+      {required this.stackTrace,
+      required this.debugMessage,
+      this.message,
+      this.errorObject});
 
   @override
   final StackTrace stackTrace;
@@ -129,10 +145,12 @@ class _$_FailureInfo implements _FailureInfo {
   /// The default message define in [Kimapp] service will be use instead when calling it from [Failure.message()] function
   @override
   final String? message;
+  @override
+  final Object? errorObject;
 
   @override
   String toString() {
-    return 'FailureInfo(stackTrace: $stackTrace, debugMessage: $debugMessage, message: $message)';
+    return 'FailureInfo(stackTrace: $stackTrace, debugMessage: $debugMessage, message: $message, errorObject: $errorObject)';
   }
 
   @override
@@ -144,12 +162,14 @@ class _$_FailureInfo implements _FailureInfo {
                 other.stackTrace == stackTrace) &&
             (identical(other.debugMessage, debugMessage) ||
                 other.debugMessage == debugMessage) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality()
+                .equals(other.errorObject, errorObject));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, stackTrace, debugMessage, message);
+  int get hashCode => Object.hash(runtimeType, stackTrace, debugMessage,
+      message, const DeepCollectionEquality().hash(errorObject));
 
   @JsonKey(ignore: true)
   @override
@@ -162,7 +182,8 @@ abstract class _FailureInfo implements FailureInfo {
   factory _FailureInfo(
       {required final StackTrace stackTrace,
       required final String debugMessage,
-      final String? message}) = _$_FailureInfo;
+      final String? message,
+      final Object? errorObject}) = _$_FailureInfo;
 
   @override
   StackTrace get stackTrace;
@@ -173,6 +194,8 @@ abstract class _FailureInfo implements FailureInfo {
   /// Readable message which will be display to user, If [message] is not provided or null
   /// The default message define in [Kimapp] service will be use instead when calling it from [Failure.message()] function
   String? get message;
+  @override
+  Object? get errorObject;
   @override
   @JsonKey(ignore: true)
   _$$_FailureInfoCopyWith<_$_FailureInfo> get copyWith =>

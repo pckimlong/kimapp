@@ -110,6 +110,7 @@ class FailureInfo with _$FailureInfo {
     /// Readable message which will be display to user, If [message] is not provided or null
     /// The default message define in [Kimapp] service will be use instead when calling it from [Failure.message()] function
     String? message,
+    Object? errorObject,
   }) = _FailureInfo;
 }
 
