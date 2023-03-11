@@ -51,11 +51,10 @@ class TableStructureGenerator extends GeneratorForAnnotation<TableStructure> {
         generatedColumns.add(columnString);
 
         rawModelClass.addAll({columnName.camelCase: dataType});
-        break;
+      } else {
+        final columnString = ' static const String ${col.camelCase} = "$col";';
+        generatedColumns.add(columnString);
       }
-
-      final columnString = ' static const String ${col.camelCase} = "$col";';
-      generatedColumns.add(columnString);
     }
 
     final classBuffer = StringBuffer();
