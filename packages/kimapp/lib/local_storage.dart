@@ -27,6 +27,9 @@ abstract class LocalStorage {
   final Future<void> Function(String key, {required int? value}) saveInt;
   final Future<int?> Function(String key) readInt;
 
+  final Future<void> Function(String key, {required double? value}) saveDouble;
+  final Future<double?> Function(String key) readDouble;
+
   final Future<void> Function(String key, {required Map<String, dynamic>? value}) saveMap;
   final Future<Map<String, dynamic>?> Function(String key) readMap;
 
