@@ -24,3 +24,8 @@ environment:
 #  * an optional list of default values (array only)
 #  * an optional prompt phrase used when asking for the variable
 #  * a list of values (enums only)
+vars:
+  project_name:
+    type: string
+    description: Project name which will be use in import and pubspec.yaml
+    prompt: What is your project name in snake case?
