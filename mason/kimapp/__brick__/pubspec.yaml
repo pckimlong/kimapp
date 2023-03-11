@@ -23,7 +23,7 @@ dependencies:
       ref: master
       path: packages/kimapp_supabase_helper
   animate_do: ^3.0.2
-  auto_route: ^6.0.0-rc-3
+  auto_route: ^6.0.0-rc-4
   bot_toast: ^4.0.3
   cupertino_icons: ^1.0.2
   dartx: ^1.1.0
@@ -42,6 +42,9 @@ dependencies:
   intl:
   supabase_flutter: ^1.4.2
   logger: ^1.2.2
+  url_strategy: ^0.2.0
+  hive:
+  hive_flutter:
 
 dev_dependencies:
   kimapp_generator:
