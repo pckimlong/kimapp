@@ -36,7 +36,10 @@ abstract class LocalStorage {
   final Future<Map<String, dynamic>?> Function(String key) readMap;
 
   final Future<void> Function<T extends Enum>(String key, {required T? value}) saveEnum;
-  final Future<T?> Function<T extends Enum>(String key) readEnum;
+  final Future<T?> Function<T extends Enum>(
+    String key, {
+    required T Function(String name) parser,
+  }) readEnum;
 
   final Future<void> Function<T extends Object>(String key,
       {required T? value, required Map<String, dynamic> Function(T object) toMap}) saveObject;
