@@ -62,7 +62,7 @@ class TableStructureGenerator extends GeneratorForAnnotation<TableStructure> {
 
     /// Generate id class
     if (generateIdClass) {
-      classBuffer.writeln("import 'package:kimapp/kimapp.dart' show ;");
+      classBuffer.writeln("import 'package:kimapp/kimapp.dart';");
       classBuffer.writeln();
       classBuffer.writeln("class $idClassName extends Identity<$idDataType> {");
       classBuffer.writeln(" const $idClassName._(this.value);");
@@ -101,13 +101,13 @@ class TableStructureGenerator extends GeneratorForAnnotation<TableStructure> {
             ${props.map((e) => "required this.$e").join(',\n')}
           });
 
-          ${props.map((e) => "final ${dataType(e)} $e").join(';\n')}
+          ${props.map((e) => "final ${dataType(e)} $e;").join('\n')}
 
           @override
           bool operator ==(covariant ${className}RawModel other) {
             if (identical(this, other)) return true;
 
-            return ${props.map((e) => "other.$e = $e").join('\n\t\t&&')};
+            return ${props.map((e) => "other.$e == $e").join('\n\t\t&&')};
           }
 
           @override
