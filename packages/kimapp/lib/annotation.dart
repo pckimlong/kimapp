@@ -24,8 +24,7 @@ class TableStructure {
   ///   'first_name' => String firstName = 'first_name';
   /// ```
   ///
-  /// [DataType] is a data type of the column in dart eg String, int, double, DateTime, Nullable,
-  /// Custom class...
+  /// [DataType] is a data type of the column
   final List<String> columns;
 
   /// Table name

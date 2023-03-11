@@ -60,33 +60,22 @@ class TableStructureGenerator extends GeneratorForAnnotation<TableStructure> {
 
     final classBuffer = StringBuffer();
 
-    /// Add freezed import if able to generate raw model class
-    if (rawModelClass.isNotEmpty) {
-      classBuffer.write(
-        '''
-        // ignore_for_file: invalid_annotation_target
-
-        import 'package:freezed_annotation/freezed_annotation.dart';
-        part 'wow.g.dart';
-        part 'wow.freezed.dart';
-      ''',
-      );
-    }
-
     /// Generate id class
     if (generateIdClass) {
-      classBuffer.writeln("class $idClassName extends Identity<String> {");
-      classBuffer.writeln("const $idClassName._{};");
+      classBuffer.writeln("import 'package:kimapp/kimapp.dart' show ;");
+      classBuffer.writeln();
+      classBuffer.writeln("class $idClassName extends Identity<$idDataType> {");
+      classBuffer.writeln(" const $idClassName._(this.value);");
       classBuffer.writeln("");
-      classBuffer.writeln("@override");
-      classBuffer.writeln("final $idDataType value");
+      classBuffer.writeln(" @override");
+      classBuffer.writeln(" final $idDataType value;");
       classBuffer.writeln("");
-      classBuffer.writeln("factory $idClassName.fromJson(dynamic value) {");
-      classBuffer.writeln("return $idClassName._(value);");
-      classBuffer.writeln("}");
-      classBuffer.writeln("factory $idClassName.fromValue($idDataType value) {");
-      classBuffer.writeln("return $idClassName._(value);");
-      classBuffer.writeln("}");
+      classBuffer.writeln(" factory $idClassName.fromJson(dynamic value) {");
+      classBuffer.writeln("   return $idClassName._(value);");
+      classBuffer.writeln(" }");
+      classBuffer.writeln(" factory $idClassName.fromValue($idDataType value) {");
+      classBuffer.writeln("   return $idClassName._(value);");
+      classBuffer.writeln(" }");
       classBuffer.writeln("}");
     }
 
@@ -101,28 +90,40 @@ class TableStructureGenerator extends GeneratorForAnnotation<TableStructure> {
 
     /// Generate raw model class
     if (rawModelClass.isNotEmpty) {
-      classBuffer.write(
-        '''
-      @freezed
-      class ${className}RawModel with _\$${className}RawModel {
-        const ${className}RawModel._();
+      final props = rawModelClass.keys;
 
-        const factory ${className}RawModel({
-      ''',
-      );
-
-      // properties
-      for (final key in rawModelClass.keys) {
-        final dataType = rawModelClass[key]!;
-        classBuffer.writeln('@JsonKey($tableName.$key) required $dataType $key,');
-      }
+      String dataType(String prop) => rawModelClass[prop] as String;
 
       classBuffer.write(
         '''
-      }) = _${className}RawModel;
+        class ${className}RawModel {
+          ${className}RawModel({
+            ${props.map((e) => "required this.$e").join(',\n')}
+          });
 
-        factory ${className}RawModel.fromJson(Map<String, dynamic> json) => _\$${className}RawModelFromJson(json);
-      }
+          ${props.map((e) => "final ${dataType(e)} $e").join(';\n')}
+
+          @override
+          bool operator ==(covariant ${className}RawModel other) {
+            if (identical(this, other)) return true;
+
+            return ${props.map((e) => "other.$e = $e").join('\n\t\t&&')};
+          }
+
+          @override
+          int get hashCode => ${props.map((e) => "$e.hashCode").join('^')};
+
+          @override
+          String toString() => '${className}RawModel(${props.map((e) => "$e: \$$e").join(', ')})';
+
+          ${className}RawModel copyWith({
+            ${props.map((e) => "${dataType(e).endsWith('?') ? dataType(e) : "${dataType(e)}?"} $e").join(',\n')}
+          }) {
+            return ${className}RawModel(
+              ${props.map((e) => "$e: $e ?? this.$e").join(',\n')}
+            );
+          }
+        }
       ''',
       );
     }
