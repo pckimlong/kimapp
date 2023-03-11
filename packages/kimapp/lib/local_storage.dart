@@ -38,7 +38,7 @@ abstract class LocalStorage {
 
   final Future<T?> Function<T extends Object>(String key,
       {required T Function(Map<String, dynamic> json) fromMap,
-      void Function(Map<String, dynamic> json)? onFail}) readObject;
+      void Function(Object error, Map<String, dynamic> json)? onFail}) readObject;
 
   final Future<void> Function(String key) clear;
 }
