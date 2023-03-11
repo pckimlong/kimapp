@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -29,15 +30,27 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
       loading: () => const ProviderStatus.inProgress(),
     );
   }
+
+  static Future<ProviderStatus<T>> guard<T>(Future<T> Function() callback) async {
+    try {
+      return ProviderStatus.success(await callback());
+    } catch (err, stack) {
+      return ProviderStatus.failure(
+        err is Failure
+            ? err
+            : Failure(FailureInfo(stackTrace: stack, debugMessage: err.toString())),
+      );
+    }
+  }
 }
 
-extension ProviderStatusX on ProviderStatus {
+extension ProviderStatusX<T> on ProviderStatus<T> {
   bool get isInitial => whenOrNull(initial: () => true) == true;
   bool get isInProgress => whenOrNull(inProgress: () => true) == true;
   bool get isSuccess => whenOrNull(success: (_) => true) == true;
   bool get isFailure => whenOrNull(failure: (_) => true) == true;
 
-  AsyncValue<T> toAsyncValue<T>({T Function()? onInitial}) {
+  AsyncValue<T> toAsyncValue({T Function()? onInitial}) {
     return when(
       initial: () => onInitial == null ? const AsyncValue.loading() : AsyncValue.data(onInitial()),
       inProgress: () => const AsyncValue.loading(),
@@ -45,6 +58,9 @@ extension ProviderStatusX on ProviderStatus {
       success: (value) => AsyncValue.data(value),
     );
   }
+
+  /// Retrieve success value, return null if state is not [ProviderStatus.success]
+  T? get successOrNull => whenOrNull<T>(success: id);
 }
 
 mixin ProviderStatusClassMixin<T> {

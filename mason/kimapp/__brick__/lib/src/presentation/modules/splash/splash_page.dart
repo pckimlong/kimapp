@@ -1,6 +1,5 @@
 import '../../../../exports.dart';
 
-@RoutePage()
 class SplashPage extends HookConsumerWidget {
   const SplashPage({super.key});
 

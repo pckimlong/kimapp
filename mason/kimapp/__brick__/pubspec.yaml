@@ -1,6 +1,5 @@
-# TODO - Change app's name and description
-name: kimapp_app
-description: A new Flutter project.
+name: {{project_name.snakeCase()}}
+description: A project develop by Poch Kimlong
 
 
 publish_to: 'none' 
@@ -51,7 +50,7 @@ dev_dependencies:
     git: 
       url: https://github.com/pckimlong/kimapp.git
       ref: master
-      path: packages/kimapp
+      path: packages/kimapp_generator
   auto_route_generator: ^6.0.0-rc
   build_runner: ^2.3.3
   custom_lint: ^0.2.12

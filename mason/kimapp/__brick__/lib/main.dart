@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:kimapp_app/src/core/errors/custom_failure_message.dart';
+import 'package:{{project_name.snakeCase()}}/src/core/errors/custom_failure_message.dart';
 import 'package:logger/logger.dart';
 import 'package:url_strategy/url_strategy.dart';
-
-import 'src/presentation/app_widget.dart';
+import 'exports.dart';
+import 'src/presentation/app/app_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,4 +52,4 @@ final _prettyLogger = Logger(
   colors: true,
   printEmojis: true,
   printTime: true,
-));
+),);

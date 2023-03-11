@@ -1,7 +1,20 @@
-import '../../exports.dart';
 import 'package:responsive_framework/responsive_wrapper.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'router/app_router.dart';
+import '../../../exports.dart';
+import '../router/app_router.dart';
+
+part 'app_widget.g.dart';
+
+// Provider use to load initial provider. This allow to show splash screen
+@Riverpod(keepAlive: true)
+FutureOr<bool> _initialLoader(_InitialLoaderRef ref) async {
+  await Future.wait<bool>([
+    // List of provider
+    ref.watch(localStorageProvider.selectAsync((data) => true)),
+  ]);
+  return true;
+}
 
 class AppWidget extends HookConsumerWidget {
   const AppWidget({super.key});
