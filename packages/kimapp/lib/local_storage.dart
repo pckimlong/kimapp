@@ -14,6 +14,8 @@ abstract class LocalStorage {
     required this.readInt,
     required this.saveEnum,
     required this.readEnum,
+    required this.saveDouble,
+    required this.readDouble,
   });
 
   final Future<void> Function() initialize;
