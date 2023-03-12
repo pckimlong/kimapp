@@ -149,7 +149,7 @@ extension ProviderStatusNotifierX<T> on AutoDisposeNotifier<ProviderStatus<T>> {
   }) async {
     if (state.isInProgress || state.isSuccess) return state;
     state = const ProviderStatus.inProgress();
-    state = await ProviderStatus.guard(() => callback(state));
+    state = await ProviderStatus.guard(() async => await callback(state));
     if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
     return state;
   }
@@ -179,7 +179,7 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
     if (ignoreInSuccessState && isSuccess) return state.status as ProviderStatus<T>;
 
     state = state.updateStatus(const ProviderStatus.inProgress());
-    state = state.updateStatus(await ProviderStatus.guard(() => callback(state)));
+    state = state.updateStatus(await ProviderStatus.guard(() async => await callback(state)));
     if (isFailure && onFailure != null) {
       onFailure(state.status.whenOrNull(failure: id)!);
     }

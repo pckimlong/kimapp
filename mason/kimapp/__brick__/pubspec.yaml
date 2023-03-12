@@ -24,8 +24,10 @@ dependencies:
   animate_do: ^3.0.2
   auto_route: ^6.0.0-rc-4
   bot_toast: ^4.0.3
+  package_info_plus: ^3.0.3
   cupertino_icons: ^1.0.2
   dartx: ^1.1.0
+  flutter_login: ^4.1.1
   fast_immutable_collections: ^9.0.0
   flutter:
     sdk: flutter
@@ -44,6 +46,7 @@ dependencies:
   url_strategy: ^0.2.0
   hive:
   hive_flutter:
+  mocktail: ^0.3.0
 
 dev_dependencies:
   kimapp_generator:

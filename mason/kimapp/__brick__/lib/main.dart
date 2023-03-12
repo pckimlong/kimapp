@@ -1,14 +1,22 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:{{project_name.snakeCase()}}/src/core/errors/custom_failure_message.dart';
 import 'package:logger/logger.dart';
 import 'package:url_strategy/url_strategy.dart';
+
 import 'exports.dart';
+import 'src/core/errors/custom_failure_message.dart';
 import 'src/presentation/app/app_widget.dart';
+
+const appName = "{{project_name.sentenceCase()}}";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
 
+  FlutterError.onError = (detail) {
+    _prettyLogger.e(detail.exceptionAsString(), detail.exception, detail.stack);
+  };
+
+  await initializeSupabase();
   await Kimapp.initialize(
     debugMode: kDebugMode,
     customFailureMessage: CustomFailureMessage(),
@@ -19,11 +27,16 @@ void main() async {
     },
   );
 
-  runApp(
-    ProviderScope(
-      observers: [RiverpodLogger()],
-      child: const AppWidget(),
+  runZonedGuarded(
+    () => runApp(
+      ProviderScope(
+        observers: [RiverpodLogger()],
+        child: const AppWidget(),
+      ),
     ),
+    (error, stack) {
+      _prettyLogger.e(error.toString(), error, stack);
+    },
   );
 }
 
@@ -48,8 +61,10 @@ class RiverpodLogger extends ProviderObserver {
 }
 
 final _prettyLogger = Logger(
-    printer: PrettyPrinter(
-  colors: true,
-  printEmojis: true,
-  printTime: true,
-),);
+  printer: PrettyPrinter(
+    colors: true,
+    printEmojis: true,
+    printTime: true,
+    methodCount: 0,
+  ),
+);

@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:kimapp/service.dart';
 import 'package:riverpod/riverpod.dart';
+
+import '../service.dart';
 
 part 'failure.freezed.dart';
 
@@ -173,4 +174,42 @@ class AuthFailures with _$AuthFailures {
 
   /// Information use to register or signed up might have been use by other user
   const factory AuthFailures.alreadyRegistered(FailureInfo info) = _UserAlreadyRegistered;
+}
+
+/// Copied from flutter foundation
+String exceptionAsString(Object exception) {
+  String? longMessage;
+  if (exception is AssertionError) {
+    final Object? message = (exception).message;
+    final String fullMessage = exception.toString();
+    if (message is String && message != fullMessage) {
+      if (fullMessage.length > message.length) {
+        final int position = fullMessage.lastIndexOf(message);
+        if (position == fullMessage.length - message.length &&
+            position > 2 &&
+            fullMessage.substring(position - 2, position) == ': ') {
+          // Add a line break so that the filename at the start of the
+          // assertion message is always on its own line.
+          String body = fullMessage.substring(0, position - 2);
+          final int splitPoint = body.indexOf(' Failed assertion:');
+          if (splitPoint >= 0) {
+            body = '${body.substring(0, splitPoint)}\n${body.substring(splitPoint + 1)}';
+          }
+          longMessage = '${message.trimRight()}\n$body';
+        }
+      }
+    }
+    longMessage ??= fullMessage;
+  } else if (exception is String) {
+    longMessage = exception;
+  } else if (exception is Error || exception is Exception) {
+    longMessage = exception.toString();
+  } else {
+    longMessage = '  $exception';
+  }
+  longMessage = longMessage.trimRight();
+  if (longMessage.isEmpty) {
+    longMessage = '  <no message available>';
+  }
+  return longMessage;
 }
