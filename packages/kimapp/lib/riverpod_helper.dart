@@ -10,9 +10,9 @@ part "riverpod_helper.freezed.dart";
 
 @freezed
 class ProviderStatus<T> with _$ProviderStatus<T> {
-  const factory ProviderStatus.initial() = _Initial;
-  const factory ProviderStatus.inProgress() = _InProgress;
-  const factory ProviderStatus.failure(Failure failure) = _Failure;
+  const factory ProviderStatus.initial() = _Initial<T>;
+  const factory ProviderStatus.inProgress() = _InProgress<T>;
+  const factory ProviderStatus.failure(Failure failure) = _Failure<T>;
   const factory ProviderStatus.success(T success) = _Success<T>;
 
   factory ProviderStatus.fromAsyncValue(AsyncValue<T> asyncValue, {bool initial = false}) {
@@ -33,6 +33,8 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
     );
   }
 
+  /// Safety run callback inside provider status, handle try-cache
+  /// return appropriate state.
   static Future<ProviderStatus<T>> guard<T>(Future<T> Function() callback) async {
     try {
       return ProviderStatus.success(await callback());
@@ -150,5 +152,41 @@ extension ProviderStatusNotifierX<T> on AutoDisposeNotifier<ProviderStatus<T>> {
     state = await ProviderStatus.guard(() => callback(state));
     if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
     return state;
+  }
+}
+
+extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
+    on AutoDisposeNotifier<Base> {
+  bool get isInProgress => state.status.isInProgress;
+  bool get isFailure => state.status.isFailure;
+  bool get isInitial => state.status.isInitial;
+  bool get isSuccess => state.status.isSuccess;
+
+  /// Perform callback update the provider status class and return class state
+  Future<ProviderStatus<A>> perform(
+    /// Main callback function which handle error event
+    Future<A> Function(Base state) callback, {
+    /// Trigger whenever there a failure in callback
+    void Function(Failure failure)? onFailure,
+
+    /// Trigger whenever success
+    void Function(A success)? onSuccess,
+
+    /// Function has no effect when current status is already a success state
+    bool ignoreInSuccessState = true,
+  }) async {
+    if (isInProgress) return state.status;
+    if (ignoreInSuccessState && isSuccess) return state.status;
+
+    state = state.updateStatus(const ProviderStatus.inProgress());
+    state = state.updateStatus(await ProviderStatus.guard(() => callback(state)));
+    if (isFailure && onFailure != null) {
+      onFailure(state.status.whenOrNull(failure: id)!);
+    }
+    if (isSuccess && onSuccess != null) {
+      onSuccess(state.status.successOrNull as A);
+    }
+
+    return state.status;
   }
 }
