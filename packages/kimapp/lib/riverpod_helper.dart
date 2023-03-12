@@ -170,7 +170,7 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
     void Function(Failure failure)? onFailure,
 
     /// Trigger whenever success
-    void Function(A success)? onSuccess,
+    void Function(T success)? onSuccess,
 
     /// Function has no effect when current status is already a success state
     bool ignoreInSuccessState = true,
@@ -184,7 +184,7 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
       onFailure(state.status.whenOrNull(failure: id)!);
     }
     if (isSuccess && onSuccess != null) {
-      onSuccess(state.status.successOrNull as A);
+      onSuccess(state.status.successOrNull as T);
     }
 
     return state.status as ProviderStatus<T>;
