@@ -65,10 +65,6 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
   T? get successOrNull => whenOrNull<T>(success: id);
 }
 
-mixin ProviderStatusClassMixin<T> {
-  ProviderStatus<T> get status;
-}
-
 extension ProviderStatusProviderX<T> on NotifierProviderRef<ProviderStatus<T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
     listenSelf(
@@ -81,7 +77,39 @@ extension ProviderStatusProviderX<T> on NotifierProviderRef<ProviderStatus<T>> {
   }
 }
 
-extension ProviderStatusClassProviderX<T> on NotifierProviderRef<ProviderStatusClassMixin<T>> {
+/// Mixin for add provider status state ot given class
+/// [SubClass] is the class which extends this mixin
+/// [Result] is the provider status success value
+///
+/// ```
+/// class A with ProviderStatusClass<A, int> {
+///   final int properties;
+///   @override
+///   final ProviderStatus<int> status;
+///
+///   @override
+///   Test updateStatus(ProviderStatus<int> status) {
+///     return Test.copyWith(...);
+///   }
+/// }
+/// ```
+mixin ProviderStatusClassMixin<SubClass, Result> {
+  ProviderStatus<Result> get status;
+
+  /// Update status state of class. Must override this in order to allow provider status getting update
+  ///
+  /// copyWith method of immutable object should be use here
+  /// ```
+  /// @override
+  /// SubClass updateStatus(ProviderStatus<Result> newStatus) {
+  ///   return this.copyWith(status: newStatus);
+  /// }
+  /// ```
+  SubClass updateStatus(ProviderStatus<Result> newStatus);
+}
+
+extension ProviderStatusClassProviderX<B, T>
+    on NotifierProviderRef<ProviderStatusClassMixin<B, T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
     listenSelf(
       (previous, next) {
