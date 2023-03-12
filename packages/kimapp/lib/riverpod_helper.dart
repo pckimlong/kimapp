@@ -163,9 +163,9 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
   bool get isSuccess => state.status.isSuccess;
 
   /// Perform callback update the provider status class and return class state
-  Future<ProviderStatus<A>> perform(
+  Future<ProviderStatus<T>> perform<T extends A>(
     /// Main callback function which handle error event
-    Future<A> Function(Base state) callback, {
+    Future<T> Function(Base state) callback, {
     /// Trigger whenever there a failure in callback
     void Function(Failure failure)? onFailure,
 
@@ -175,8 +175,8 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
     /// Function has no effect when current status is already a success state
     bool ignoreInSuccessState = true,
   }) async {
-    if (isInProgress) return state.status;
-    if (ignoreInSuccessState && isSuccess) return state.status;
+    if (isInProgress) return state.status as ProviderStatus<T>;
+    if (ignoreInSuccessState && isSuccess) return state.status as ProviderStatus<T>;
 
     state = state.updateStatus(const ProviderStatus.inProgress());
     state = state.updateStatus(await ProviderStatus.guard(() => callback(state)));
@@ -187,6 +187,6 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
       onSuccess(state.status.successOrNull as A);
     }
 
-    return state.status;
+    return state.status as ProviderStatus<T>;
   }
 }
