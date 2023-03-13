@@ -1,12 +1,26 @@
+// Package imports:
+// ignore_for_file: unused_import
+
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part '{{name.snakeCase()}}_list_provider.g.dart';
+// Project imports:
+import '../../../../exports.dart';
+import '../core/core.dart';
+import '../model/models.dart';
+import '../param/params.dart';
+import '../repository/i_user_repo.dart';
+
+part 'user_list_provider.g.dart';
+part "user_list_provider.freezed.dart";
 
 @riverpod
 class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
 
   @override
   FutureOr<IList<{{name.pascalCase()}}Model>> build([{{name.pascalCase()}}ListParam param = const {{name.pascalCase()}}ListParam param()]) {
+    ref.autoInvalidateSelf(const Duration(minutes: 5));
+    
     return _fetchItems();
   }
 

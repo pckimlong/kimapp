@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../model/models.dart';
+
 part "{{name.snakeCase()}}_list_pagination_response.freezed.dart";
 
 @freezed

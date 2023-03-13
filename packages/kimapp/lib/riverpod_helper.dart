@@ -163,11 +163,17 @@ extension ProviderStatusNotifierX<T> on AutoDisposeNotifier<ProviderStatus<T>> {
   Future<ProviderStatus<T>> perform(
     Future<T> Function(ProviderStatus<T> state) callback, {
     void Function(Failure failure)? onFailure,
+
+    /// Trigger whenever success
+    void Function(T success)? onSuccess,
   }) async {
     if (state.isInProgress || state.isSuccess) return state;
     state = const ProviderStatus.inProgress();
     state = await ProviderStatus.guard(() async => await callback(state));
+
     if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
+
+    if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
     return state;
   }
 }
