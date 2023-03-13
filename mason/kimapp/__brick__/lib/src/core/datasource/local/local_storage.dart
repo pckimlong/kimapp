@@ -1,7 +1,9 @@
 import 'dart:developer';
-import '../../../../exports.dart';
+
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../../exports.dart';
 
 part 'local_storage.g.dart';
 
@@ -55,8 +57,10 @@ class HiveLocalStorage extends LocalStorage {
     await Hive.box(_keyValueBox).put(key, value);
   }
 
-  static Future<dynamic> _read(String key) {
-    return Hive.box(_keyValueBox).get(key);
+  static Future<dynamic> _read(String key) async {
+    final result = await Hive.box(_keyValueBox).get(key);
+    if (result == null) return null;
+    return result;
   }
 
   static Future<void> _saveMap(String key, {required Map<String, dynamic>? value}) =>

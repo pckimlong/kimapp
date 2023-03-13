@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:{{project_name.snakeCase()}}/exports.dart';
-import 'package:{{project_name.snakeCase()}}/src/features/auth/auth.dart';
+
+import '../../../../exports.dart';
+import '../auth.dart';
 
 part 'sign_out_provider.g.dart';
 
@@ -18,7 +19,7 @@ class SignOut extends _$SignOut {
   }
 
   Future<ProviderStatus<Unit>> call() async {
-    return perform((state) async {
+    return await perform((state) async {
       final result = await ref.read(authRepoProvider).signOut();
       return result.getOrThrow();
     });

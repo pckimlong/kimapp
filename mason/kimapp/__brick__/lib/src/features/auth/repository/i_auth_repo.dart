@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sok_chea_sihanouk_clinic/src/features/auth/auth.dart';
 
 import '../../../../exports.dart';
+import '../auth.dart';
 import '../param/sign_up_param.dart';
 
 part 'i_auth_repo.g.dart';
@@ -14,6 +14,10 @@ abstract class IAuthRepo {
   Future<Either<Failure, AuthUserId>> signIn(SignInParam param);
   Future<Either<Failure, AuthUserId>> signUp(SignUpParam param);
   Future<Either<Failure, Unit>> signOut();
+}
+
+String _baseEmailGenerator(String username) {
+  return "$username@sokcheakps.system.com";
 }
 
 class _Impl implements IAuthRepo {
@@ -29,15 +33,26 @@ class _Impl implements IAuthRepo {
       if (user == null) return right(none());
 
       final userId = AuthUserId.fromValue(user.id);
-      return right(Option.of(userId));
+      return left(Failure.fromString('errorString'));
+      // return right(Option.of(userId));
     });
   }
 
   @override
   Future<Either<Failure, AuthUserId>> signIn(SignInParam param) async {
     return await errorHandler(() async {
-      // TODO: implement signIn
-      return right(AuthUserId.fromValue(''));
+      final result = await _ref
+          .read(supabaseProvider)
+          .client
+          .auth
+          .signInWithPassword(password: param.password, email: _baseEmailGenerator(param.email));
+
+      if (result.user != null) {
+        final authUserId = AuthUserId.fromValue(result.user!.id);
+        return right(authUserId);
+      }
+
+      throw "Cannot sign in";
     });
   }
 

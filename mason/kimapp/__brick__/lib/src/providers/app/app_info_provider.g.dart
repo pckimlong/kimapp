@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_router.dart';
+part of 'app_info_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appRouterHash() => r'be27c60d9abaf16eec026204e9fb7e7d9c2a8f0e';
+String _$appInfoHash() => r'31e01faf70f8a737e853cb47c727f1d181ca995b';
 
-/// See also [appRouter].
-@ProviderFor(appRouter)
-final appRouterProvider = Provider<AppRouter>.internal(
-  appRouter,
-  name: r'appRouterProvider',
+/// See also [appInfo].
+@ProviderFor(appInfo)
+final appInfoProvider = FutureProvider<PackageInfo>.internal(
+  appInfo,
+  name: r'appInfoProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$appRouterHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appInfoHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef AppRouterRef = ProviderRef<AppRouter>;
+typedef AppInfoRef = FutureProviderRef<PackageInfo>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

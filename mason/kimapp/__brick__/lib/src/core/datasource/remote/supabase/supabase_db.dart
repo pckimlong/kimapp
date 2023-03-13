@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
-
-import 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
 
 part 'supabase_db.g.dart';
 part 'supabase_key.dart';
