@@ -1,10 +1,11 @@
-
-
-
+// Package imports:
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/core.dart';
+// Project imports:
 import '../../../../exports.dart';
+import '../model/models.dart';
+import '../param/params.dart';
+import '../response/responses.dart';
 
 part 'i_{{name.snakeCase()}}_repo.g.dart';
 

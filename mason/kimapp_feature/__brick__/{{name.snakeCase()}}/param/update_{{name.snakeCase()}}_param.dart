@@ -11,7 +11,7 @@ class Update{{name.pascalCase()}}Param with _$Update{{name.pascalCase()}}Param {
 
   const factory Update{{name.pascalCase()}}Param() = _Update{{name.pascalCase()}}Param;
 
-  factory Update{{name.pascalCase()}}Param.fromJson(Map<String, dynamic> json) {
-    _$Update{{name.pascalCase()}}ParamFromJson(json);
-  }
+  factory Update{{name.pascalCase()}}Param.fromJson(Map<String, dynamic> json) 
+ =>   _$Update{{name.pascalCase()}}ParamFromJson(json);
+  
 }

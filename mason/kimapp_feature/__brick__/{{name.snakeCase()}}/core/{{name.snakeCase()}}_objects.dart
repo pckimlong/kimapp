@@ -1,25 +1,13 @@
-import 'package:kimapp/kimapp.dart';
-
 @TableStructure(
-  '{{name.snakeCase()s}}',
+  '{{name.snakeCase()}}s',
+  idColumn: '{{name.pascalCase()}}Id:{{id_data_type}}',
   columns: [
-    'id',
+    'id:{{name.pascalCase()}}Id',
   ],
 )
-class {{name.pascalCase()}}Id extends Identity<{{id_data_type}}> {
-  const {{name.pascalCase()}}Id._(this.value);
-
-  @override
-  final {{id_data_type}} value;
-
-  factory {{name.pascalCase()}}Id.fromJson(dynamic value) {
-    return {{name.pascalCase()}}Id._(value);
-  }
-
-  factory {{name.pascalCase()}}Id.fromValue({{id_data_type}} value) {
-    return {{name.pascalCase()}}Id._(value);
-  }
-}
+import 'package:kimapp/kimapp.dart';
+import 'user_objects.table.dart';
+export 'user_objects.table.dart';
 
 
 mixin {{name.pascalCase()}}CommonMixin {
