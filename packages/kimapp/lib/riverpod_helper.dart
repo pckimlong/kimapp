@@ -1,5 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
@@ -108,6 +110,21 @@ mixin ProviderStatusClassMixin<SubClass, Result> {
   /// }
   /// ```
   SubClass updateStatus(ProviderStatus<Result> newStatus);
+}
+
+extension CatchProvider on AutoDisposeRef {
+  void catchTime(Duration duration) {
+    final cancel = keepAlive();
+    final timer = Timer(duration, cancel.close);
+    onDispose(timer.cancel);
+  }
+}
+
+extension AuthInvalidateX on Ref {
+  void autoInvalidateSelf(Duration duration) {
+    final timer = Timer(duration, invalidateSelf);
+    onDispose(timer.cancel);
+  }
 }
 
 extension ProviderStatusClassProviderX<B, T>
