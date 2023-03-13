@@ -33,7 +33,13 @@ class Kimapp {
     FailureMessage? customFailureMessage,
     LoggerCallback? logger,
   }) async {
-    assert(!_instance._initialized, 'Kimapp instance is already initialized');
+    if (_instance._initialized) {
+      if (logger != null) {
+        logger(LoggerType.info,
+            "You've trying to initialize Kimapp service which already initialize. Initialize it again will do nothing, and instance of initialized will be return");
+      }
+      return _instance;
+    }
     _instance._initService(
       failureMessage: customFailureMessage,
       logger: logger,
@@ -42,10 +48,6 @@ class Kimapp {
     return _instance;
   }
 
-  /// Use to check if service has initialized or not
-  ///
-  /// Should be use when testing, to make sure not cause error
-  bool get hasInitialized => _initialized;
   bool _initialized = false;
   void _initService({
     required bool debugMode,
