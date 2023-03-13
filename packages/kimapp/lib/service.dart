@@ -42,6 +42,10 @@ class Kimapp {
     return _instance;
   }
 
+  /// Use to check if service has initialized or not
+  ///
+  /// Should be use when testing, to make sure not cause error
+  bool get hasInitialized => _initialized;
   bool _initialized = false;
   void _initService({
     required bool debugMode,
