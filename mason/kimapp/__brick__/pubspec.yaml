@@ -21,7 +21,6 @@ dependencies:
       url: https://github.com/pckimlong/kimapp.git
       ref: master
       path: packages/kimapp_supabase_helper
-  animate_do: ^3.0.2
   auto_route: ^6.0.0-rc-4
   bot_toast: ^4.0.3
   package_info_plus: ^3.0.3

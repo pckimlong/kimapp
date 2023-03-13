@@ -5,7 +5,6 @@ export 'package:fpdart/fpdart.dart' hide State, Tuple2, Reader, Predicate;
 export 'package:hooks_riverpod/hooks_riverpod.dart';
 export 'package:bot_toast/bot_toast.dart';
 export 'package:form_builder_validators/form_builder_validators.dart';
-export 'package:animate_do/animate_do.dart';
 export 'dart:async' hide AsyncError;
 export 'package:auto_route/auto_route.dart';
 export 'package:flutter/material.dart';
