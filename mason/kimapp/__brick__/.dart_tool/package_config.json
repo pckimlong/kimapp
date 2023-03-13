@@ -20,10 +20,16 @@
       "languageVersion": "2.17"
     },
     {
-      "name": "animate_do",
-      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/animate_do-3.0.2",
+      "name": "another_flushbar",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/another_flushbar-1.12.29",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "another_transformer_page_view",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/another_transformer_page_view-2.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "app_links",
@@ -45,7 +51,7 @@
     },
     {
       "name": "auto_route",
-      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/auto_route-6.0.0-rc-4",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/auto_route-6.0.0-rc-5",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -164,6 +170,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "coverage",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/coverage-1.6.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/crypto-3.0.2",
       "packageUri": "lib/",
@@ -272,6 +284,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "flutter_login",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/flutter_login-4.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter_riverpod",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/flutter_riverpod-2.3.1",
       "packageUri": "lib/",
@@ -288,6 +306,12 @@
       "rootUri": "file:///Users/pckimlong/Developer/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "font_awesome_flutter",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/font_awesome_flutter-10.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "form_builder_validators",
@@ -423,19 +447,19 @@
     },
     {
       "name": "kimapp",
-      "rootUri": "file:///Users/pckimlong/.pub-cache/git/kimapp-ba35de65f8ba71c4f3ea1e8ce3488a909ddd417a/packages/kimapp",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/git/kimapp-ae50b4b4bebc60103eea9781484fa2ec8d5e87d6/packages/kimapp",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "kimapp_generator",
-      "rootUri": "file:///Users/pckimlong/.pub-cache/git/kimapp-ba35de65f8ba71c4f3ea1e8ce3488a909ddd417a/packages/kimapp_generator",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/git/kimapp-ae50b4b4bebc60103eea9781484fa2ec8d5e87d6/packages/kimapp_generator",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
     {
       "name": "kimapp_supabase_helper",
-      "rootUri": "file:///Users/pckimlong/.pub-cache/git/kimapp-ba35de65f8ba71c4f3ea1e8ce3488a909ddd417a/packages/kimapp_supabase_helper",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/git/kimapp-ae50b4b4bebc60103eea9781484fa2ec8d5e87d6/packages/kimapp_supabase_helper",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -447,7 +471,7 @@
     },
     {
       "name": "logger",
-      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/logger-1.2.2",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/logger-1.3.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -488,8 +512,38 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "mocktail",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/mocktail-0.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "nested",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/nested-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "node_preamble",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/node_preamble-2.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "package_config",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/package_config-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "package_info_plus",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/package_info_plus-3.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "package_info_plus_platform_interface",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-2.0.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -572,6 +626,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "provider",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/provider-6.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "pub_semver",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/pub_semver-2.1.3",
       "packageUri": "lib/",
@@ -582,6 +642,12 @@
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/pubspec_parse-1.2.2",
       "packageUri": "lib/",
       "languageVersion": "2.18"
+    },
+    {
+      "name": "quiver",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/quiver-3.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "realtime_client",
@@ -650,10 +716,28 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "shelf_packages_handler",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/shelf_packages_handler-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "shelf_static",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/shelf_static-1.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
       "name": "shelf_web_socket",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/shelf_web_socket-1.0.3",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "sign_in_button",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/sign_in_button-3.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "sky_engine",
@@ -672,6 +756,18 @@
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/source_helper-1.3.3",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "source_map_stack_trace",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/source_map_stack_trace-2.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "source_maps",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/source_maps-0.10.12",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
     },
     {
       "name": "source_span",
@@ -734,8 +830,20 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "test",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/test-1.22.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "test_api",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/test_api-0.4.16",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "test_core",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/test_core-0.4.20",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -854,6 +962,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "webkit_inspection_protocol",
+      "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/webkit_inspection_protocol-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "win32",
       "rootUri": "file:///Users/pckimlong/.pub-cache/hosted/pub.dev/win32-3.1.3",
       "packageUri": "lib/",
@@ -884,13 +998,13 @@
       "languageVersion": "2.15"
     },
     {
-      "name": "kimapp_app",
+      "name": "sok_chea_sihanouk_clinic",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-03-11T15:48:00.287192Z",
+  "generated": "2023-03-13T13:03:43.815574Z",
   "generator": "pub",
-  "generatorVersion": "2.19.3"
+  "generatorVersion": "2.19.4"
 }

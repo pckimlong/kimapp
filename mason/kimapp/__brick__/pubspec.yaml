@@ -1,58 +1,51 @@
 name: {{project_name.snakeCase()}}
 description: A project develop by Poch Kimlong
 
-
-publish_to: 'none' 
+publish_to: "none"
 
 version: 0.0.1+1
 
 environment:
-  sdk: '>=2.19.3 <3.0.0'
-
+  sdk: ">=2.19.3 <3.0.0"
 
 dependencies:
-  kimapp:
-    git: 
-      url: https://github.com/pckimlong/kimapp.git
-      ref: master
-      path: packages/kimapp
-  kimapp_supabase_helper:
-    git: 
-      url: https://github.com/pckimlong/kimapp.git
-      ref: master
-      path: packages/kimapp_supabase_helper
   auto_route: ^6.0.0-rc-4
   bot_toast: ^4.0.3
-  package_info_plus: ^3.0.3
   cupertino_icons: ^1.0.2
   dartx: ^1.1.0
-  flutter_login: ^4.1.1
   fast_immutable_collections: ^9.0.0
   flutter:
     sdk: flutter
   flutter_hooks: ^0.18.6
+  flutter_login: ^4.1.1
   form_builder_validators: ^8.5.0
   fpdart: ^0.5.0
   freezed_annotation: ^2.2.0
+  hive: null
+  hive_flutter: null
   hooks_riverpod: ^2.3.0
+  intl: null
   json_annotation: ^4.8.0
-  responsive_framework: ^0.2.0
-  riverpod_annotation: ^2.0.0
-  timeago: 
-  intl:
-  supabase_flutter: ^1.4.2
-  logger: ^1.2.2
-  url_strategy: ^0.2.0
-  hive:
-  hive_flutter:
-  mocktail: ^0.3.0
-
-dev_dependencies:
-  kimapp_generator:
-    git: 
+  kimapp:
+    git:
       url: https://github.com/pckimlong/kimapp.git
       ref: master
-      path: packages/kimapp_generator
+      path: packages/kimapp
+  kimapp_supabase_helper:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp_supabase_helper
+  logger: ^1.2.2
+  mocktail: ^0.3.0
+  package_info_plus: ^3.0.3
+  responsive_framework: ^0.2.0
+  riverpod_annotation: ^2.0.0
+  supabase_flutter: ^1.4.2
+  timeago: null
+  url_strategy: ^0.2.0
+
+dev_dependencies:
   auto_route_generator: ^6.0.0-rc
   build_runner: ^2.3.3
   custom_lint: ^0.2.12
@@ -62,35 +55,13 @@ dev_dependencies:
     sdk: flutter
   freezed: ^2.3.2
   json_serializable: ^6.6.1
+  kimapp_generator:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp_generator
   riverpod_generator: ^2.0.0
   riverpod_lint: ^1.1.2
 
 flutter:
   uses-material-design: true
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  

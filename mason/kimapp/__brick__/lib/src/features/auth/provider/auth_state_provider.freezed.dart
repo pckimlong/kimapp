@@ -107,8 +107,8 @@ class __$$_AuthenticatedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Authenticated implements _Authenticated {
-  const _$_Authenticated(this.authUserId);
+class _$_Authenticated extends _Authenticated {
+  const _$_Authenticated(this.authUserId) : super._();
 
   @override
   final AuthUserId authUserId;
@@ -199,8 +199,9 @@ class _$_Authenticated implements _Authenticated {
   }
 }
 
-abstract class _Authenticated implements AuthenticationState {
+abstract class _Authenticated extends AuthenticationState {
   const factory _Authenticated(final AuthUserId authUserId) = _$_Authenticated;
+  const _Authenticated._() : super._();
 
   AuthUserId get authUserId;
   @JsonKey(ignore: true)
@@ -226,8 +227,8 @@ class __$$_UnauthenticatedCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Unauthenticated implements _Unauthenticated {
-  const _$_Unauthenticated();
+class _$_Unauthenticated extends _Unauthenticated {
+  const _$_Unauthenticated() : super._();
 
   @override
   String toString() {
@@ -306,6 +307,7 @@ class _$_Unauthenticated implements _Unauthenticated {
   }
 }
 
-abstract class _Unauthenticated implements AuthenticationState {
+abstract class _Unauthenticated extends AuthenticationState {
   const factory _Unauthenticated() = _$_Unauthenticated;
+  const _Unauthenticated._() : super._();
 }
