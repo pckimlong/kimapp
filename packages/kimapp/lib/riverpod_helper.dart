@@ -109,7 +109,7 @@ mixin ProviderStatusClassMixin<SubClass, Result> {
   ///   return this.copyWith(status: newStatus);
   /// }
   /// ```
-  SubClass updateStatus(ProviderStatus<Result> newStatus);
+  SubClass updateStatus<T extends Result>(ProviderStatus<T> newStatus);
 }
 
 extension CatchProvider on AutoDisposeRef {
@@ -160,21 +160,22 @@ extension ProviderStatusNotifierX<T> on AutoDisposeNotifier<ProviderStatus<T>> {
   ///  });
   /// }
   /// ```
-  Future<ProviderStatus<T>> perform(
-    Future<T> Function(ProviderStatus<T> state) callback, {
-    void Function(Failure failure)? onFailure,
+  Future<ProviderStatus<R>> perform<R extends T>(
+    Future<R> Function<R>(ProviderStatus<R> state) callback, {
+    void Function<R>(Failure failure)? onFailure,
 
     /// Trigger whenever success
-    void Function(T success)? onSuccess,
+    void Function<R>(R success)? onSuccess,
   }) async {
-    if (state.isInProgress || state.isSuccess) return state;
-    state = const ProviderStatus.inProgress();
-    state = await ProviderStatus.guard(() async => await callback(state));
+    if (state.isInProgress || state.isSuccess) return state as ProviderStatus<R>;
+    state = ProviderStatus<R>.inProgress();
+    state = await ProviderStatus.guard<R>(
+      () async => await callback<R>(state as ProviderStatus<R>),
+    );
 
-    if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
-
-    if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
-    return state;
+    if (state.isFailure && onFailure != null) onFailure<R>(state.whenOrNull(failure: id)!);
+    if (state.isSuccess && onSuccess != null) onSuccess<R>(state.successOrNull as R);
+    return state as ProviderStatus<R>;
   }
 }
 
@@ -188,7 +189,7 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
   /// Perform callback update the provider status class and return class state
   Future<ProviderStatus<T>> perform<T extends A>(
     /// Main callback function which handle error event
-    Future<T> Function(Base state) callback, {
+    Future<T> Function<T>(Base state) callback, {
     /// Trigger whenever there a failure in callback
     void Function(Failure failure)? onFailure,
 
@@ -201,8 +202,8 @@ extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<
     if (isInProgress) return state.status as ProviderStatus<T>;
     if (ignoreInSuccessState && isSuccess) return state.status as ProviderStatus<T>;
 
-    state = state.updateStatus(const ProviderStatus.inProgress());
-    state = state.updateStatus(await ProviderStatus.guard(() async => await callback(state)));
+    state = state.updateStatus(ProviderStatus<T>.inProgress());
+    state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback<T>(state)));
     if (isFailure && onFailure != null) {
       onFailure(state.status.whenOrNull(failure: id)!);
     }
