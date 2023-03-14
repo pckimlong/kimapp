@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
@@ -12,6 +13,62 @@ import 'object/failure.dart';
 
 part "riverpod_helper.freezed.dart";
 
+// Helper for pagination with riverpod
+
+@freezed
+class PaginatedItem<T> with _$PaginatedItem<T> {
+  const PaginatedItem._();
+
+  const factory PaginatedItem.data(T item) = _Data;
+  const factory PaginatedItem.loading() = _Loading;
+  const factory PaginatedItem.error(Failure failure) = _Error;
+
+  /// Build pagination item
+  ///
+  /// Example usage:
+  /// ```
+  /// @riverpod
+  /// PaginatedItem<User>? paginatedUserAtIndex(PaginatedUserAtIndexRef ref, int index) {
+  ///   final itemPage = index ~/ _pageTranLimit;
+  ///
+  ///   final baseList = ref.watch(pageListProvider(page: itemPage));
+  ///   return PaginatedItem.build(
+  ///     pageItems: baseList.whenData((value) => value.items.lock),
+  ///     limit: _pageTranLimit,
+  ///     index: index,
+  ///   );
+  /// }
+  ///
+  /// ```
+  static PaginatedItem<T>? build<T>({
+    required AsyncValue<IList<T>> pageItems,
+    required int limit,
+    required int index,
+  }) {
+    final itemIndexInPage = index % limit;
+    final itemOfIndexAsync = pageItems.whenData((value) => value.getOrNull(itemIndexInPage));
+    return itemOfIndexAsync.when(
+      data: (data) {
+        if (data != null) return PaginatedItem.data(data);
+        return null;
+      },
+      error: (err, str) {
+        if (itemIndexInPage == 0) {
+          return PaginatedItem.error(
+            Failure(FailureInfo(stackTrace: str, debugMessage: err.toString(), errorObject: err)),
+          );
+        }
+        return null;
+      },
+      loading: () {
+        if (itemIndexInPage == 0) return const PaginatedItem.loading();
+        return null;
+      },
+    );
+  }
+}
+
+// Use for perform action with different status state
 @freezed
 class ProviderStatus<T> with _$ProviderStatus<T> {
   const factory ProviderStatus.initial() = _Initial<T>;
