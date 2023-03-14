@@ -5,7 +5,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../exports.dart';
 import '../model/models.dart';
 import '../param/params.dart';
-import '../response/responses.dart';
 
 part 'i_{{name.snakeCase()}}_repo.g.dart';
 
@@ -25,7 +24,7 @@ abstract class I{{name.pascalCase()}}Repo {
 
   Future<Either<Failure, Unit>> delete(Delete{{name.pascalCase()}}Param param);
 
-  Future<Either<Failure, {{name.pascalCase()}}ListPaginationResponse>> findPagination({
+  Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findPagination({
     required int limit,
     required int offset,
     required {{name.pascalCase()}}ListPaginationParam param,
@@ -68,7 +67,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   }
 
   @override
-  Future<Either<Failure, {{name.pascalCase()}}ListPaginationResponse>> findPagination({
+  Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findPagination({
     required int limit,
     required int offset,
     required {{name.pascalCase()}}ListPaginationParam param,

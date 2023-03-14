@@ -1,37 +1,73 @@
+// Package imports:
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+// Project imports:
+import '../../../../exports.dart';
+// ignore: unused_import
+import '../{{name.snakeCase()}}.dart';
+
+part 'update_{{name.snakeCase()}}_provider.freezed.dart';
 part 'update_{{name.snakeCase()}}_provider.g.dart';
 
-/// Update [{{name.pascalCase()}}Model] by call to repository then update item to [{{name.pascalcase()}}ListProvider]
-@riverpod
-class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
+@freezed
+class Update{{name.pascalCase()}}State
+    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel> {
+  const factory Update{{name.pascalCase()}}State({
+    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
+  }) = _Update{{name.pascalCase()}}State;
+
+  const Update{{name.pascalCase()}}State._();
+
   @override
-  Future<bool> build({{name.pascalCase()}}Id {{name.pascalcase()}}Id) async {
-    return false;
+  Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}DetailModel> newStatus) {
+    return copyWith(status: newStatus);
   }
 
+  Update{{name.pascalCase()}}Param toParam() {
+    // perform validation
+// ...
+    return const Update{{name.pascalCase()}}Param();
+  }
+}
 
-  Future<String?> call({
-    void Function(dynamic value)? onSuccess,
-    void Function(Failure failure)? onFailure,
-  }) async {
-    if (state == const AsyncValue.data(true) || state.isLoading) return null;
-    state = const AsyncValue.loading();
+@freezed
+class Update{{name.pascalCase()}}Event with _$Update{{name.pascalCase()}}Event {
+  const factory Update{{name.pascalCase()}}Event.submit() = _Submit;
+}
 
-    final result = await ref.read();
-
-    return result.fold(
-      (failure) {
-        state = AsyncValue.error(failure, failure.stackTrace);
-        if (onFailure != null) onFailure(failure);
-        return failure.message;
+@riverpod
+class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
+  Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
+    return await perform<{{name.pascalCase()}}DetailModel>(
+      (state) async {
+        _performValidation();
+        final param = state.toParam();
+        final result = await ref.read({{name.snakeCase()}}RepoProvider).update({{name.snakeCase()}}Id, data: param);
+        return result.getOrThrow();
       },
-      (success) {
-        state = const AsyncValue.data(true);
-        ref.read({{name.pascalcase()}}ListProvider.notifier).updateItem(success);
-        if (onSuccess != null) onSuccess(success);
-        return null;
+      onSuccess: (success) {
+        ref.read({{name.snakeCase()}}ListProvider.notifier).updateItem({{name.pascalCase()}}Model.fromDetailModel(success));
+        ref.read({{name.snakeCase()}}DetailProvider({{name.snakeCase()}}Id).notifier).updateState((_) => success);
+        ref.invalidate({{name.snakeCase()}}ListPaginationProvider);
       },
     );
   }
+
+  void updateState(Update{{name.pascalCase()}}State Function(Update{{name.pascalCase()}}State oldState) newState) {
+    state = newState(state).copyWith(status: state.status);
+  }
+
+  Future performEvent(Create{{name.pascalCase()}}Event event) async {
+    return event.when(
+      submit: call,
+    );
+  }
+
+  void _performValidation() {
+    // ...
+  }
+
+  @override
+  Update{{name.pascalCase()}}State build({{name.pascalCase()}}Id {{name.snakeCase()}}Id) => const Update{{name.pascalCase()}}State();
 }

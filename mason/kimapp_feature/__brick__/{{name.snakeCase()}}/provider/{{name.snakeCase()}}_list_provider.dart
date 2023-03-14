@@ -9,31 +9,30 @@ import '../../../../exports.dart';
 import '../core/core.dart';
 import '../model/models.dart';
 import '../param/params.dart';
-import '../repository/i_user_repo.dart';
+import '../repository/i_{{name.snakeCase()}}_repo.dart';
 
-part 'user_list_provider.g.dart';
-part "user_list_provider.freezed.dart";
+part "{{name.snakeCase()}}_list_provider.freezed.dart";
+part '{{name.snakeCase()}}_list_provider.g.dart';
 
 @riverpod
 class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
-
   @override
-  FutureOr<IList<{{name.pascalCase()}}Model>> build([{{name.pascalCase()}}ListParam param = const {{name.pascalCase()}}ListParam param()]) {
+  FutureOr<IList<{{name.pascalCase()}}Model>> build() {
     ref.autoInvalidateSelf(const Duration(minutes: 5));
-    
     return _fetchItems();
   }
 
   Future<IList<{{name.pascalCase()}}Model>> _fetchItems() {
-    return ref.watch({{name.camelCase()}}RepoProvider).findAll(param).then((value) => value.getOrThrow());
+    const param = {{name.pascalCase()}}ListParam(); // use static filter for now
+    return ref.watch({{name.snakeCase()}}RepoProvider).findAll(param).then((value) => value.getOrThrow());
   }
 
   void updateItem({{name.pascalCase()}}Model item) {
-    update((preState) => preState.updateById([item], (e) => e.id == item.id));
+    state = state.whenData((value) => value.updateById([item], (e) => e.id == item.id));
   }
 
   void insertItem({{name.pascalCase()}}Model item, {int index = 0}) {
-    update((preState) => preState.insert(index, item));
+    state = state.whenData((value) => value.insert(index, item));
   }
 
   Future<void> refreshItems() async {
@@ -41,48 +40,37 @@ class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
   }
 }
 
-
-
-/// Retrieve side effect version of [{{name.pascalCase()}}Model] from [{{name.pascalcase()}}ListProvider]
-/// by given [{{name.pascalcase()}}Id]. If [{{name.pascalcase()}}Id] is null or no item found
+/// Retrieve side effect version of [{{name.pascalCase()}}Model] from [ListProvider]
+/// by given [Id]. If [Id] is null or no item found
 /// null will be returned
 @riverpod
-FutureOr<{{name.pascalCase()}}Model?> {{name.camelCase()}}OfId({{name.pascalCase()}}OfIdRef ref, {{name.pascalCase()}}Id? {{name.camelCase()}}Id) {
+FutureOr<{{name.pascalCase()}}Model?> {{name.snakeCase()}}OfId({{name.pascalCase()}}OfIdRef ref, {{name.pascalCase()}}Id? {{name.snakeCase()}}Id) {
   return ref.watch(
-    {{name.camelCase()}}ListProvider().selectAsync(
+    {{name.snakeCase()}}ListProvider.selectAsync(
       (baseList) => baseList.firstOrNullWhere(
-        (object) => object.id == {{name.camelCase()}}Id,
+        (object) => object.id == {{name.snakeCase()}}Id,
       ),
     ),
   );
 }
-
-
 
 // Side-effect filter version
 @freezed
 class {{name.pascalCase()}}ListFilterParam with _${{name.pascalCase()}}ListFilterParam {
   const factory {{name.pascalCase()}}ListFilterParam() = _{{name.pascalCase()}}ListFilterParam;
 }
+
 @riverpod
-AsyncValue<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}FilteredList(
+AsyncValue<IList<{{name.pascalCase()}}Model>> {{name.snakeCase()}}FilteredList(
   {{name.pascalCase()}}FilteredListRef ref, {
   {{name.pascalCase()}}ListFilterParam filter = const {{name.pascalCase()}}ListFilterParam(),
 }) {
-    return ref.watch({{name.camelCase()}}ListProvider()).whenData((baseList) {
-    var filtered = baseList.toIterable();
-    // TODO - Implement filter
+  return ref.watch({{name.snakeCase()}}ListProvider).whenData(
+    (baseList) {
+      var filtered = baseList.toIterable();
+      // TODO - Implement filter
 
-    
-        return filtered.toIList();
-    },);
+      return filtered.toIList();
+    },
+  );
 }
-
-
-
-
-
-
-
-
-
