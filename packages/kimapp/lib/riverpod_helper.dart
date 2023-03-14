@@ -1,10 +1,12 @@
-// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_internal_member
 
 import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
+// ignore: implementation_imports
+import 'package:riverpod/src/notifier.dart';
 
 import 'object/failure.dart';
 
@@ -109,6 +111,7 @@ mixin ProviderStatusClassMixin<SubClass, Result> {
   ///   return this.copyWith(status: newStatus);
   /// }
   /// ```
+  @visibleForOverriding
   SubClass updateStatus(ProviderStatus<Result> newStatus);
 }
 
@@ -177,8 +180,64 @@ extension ProviderStatusNotifierX<T> on AutoDisposeNotifier<ProviderStatus<T>> {
   }
 }
 
+/// Make family provider(provider with params in builds) work
+extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<ProviderStatus<T>> {
+  Future<ProviderStatus<T>> perform(
+    Future<T> Function(ProviderStatus<T> state) callback, {
+    void Function<T>(Failure failure)? onFailure,
+
+    /// Trigger whenever success
+    void Function<T>(T success)? onSuccess,
+  }) async {
+    if (state.isInProgress || state.isSuccess) return state;
+    state = ProviderStatus<T>.inProgress();
+    state = await ProviderStatus.guard<T>(() async => await callback(state));
+
+    if (state.isFailure && onFailure != null) onFailure<T>(state.whenOrNull(failure: id)!);
+    if (state.isSuccess && onSuccess != null) onSuccess<T>(state.successOrNull as T);
+    return state;
+  }
+}
+
 extension ProviderStatusClassNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
     on AutoDisposeNotifier<Base> {
+  bool get isInProgress => state.status.isInProgress;
+  bool get isFailure => state.status.isFailure;
+  bool get isInitial => state.status.isInitial;
+  bool get isSuccess => state.status.isSuccess;
+
+  /// Perform callback update the provider status class and return class state
+  Future<ProviderStatus<T>> perform<T extends A>(
+    /// Main callback function which handle error event
+    Future<T> Function(Base state) callback, {
+    /// Trigger whenever there a failure in callback
+    void Function(Failure failure)? onFailure,
+
+    /// Trigger whenever success
+    void Function(T success)? onSuccess,
+
+    /// Function has no effect when current status is already a success state
+    bool ignoreInSuccessState = true,
+  }) async {
+    if (isInProgress) return state.status as ProviderStatus<T>;
+    if (ignoreInSuccessState && isSuccess) return state.status as ProviderStatus<T>;
+
+    state = state.updateStatus(ProviderStatus<T>.inProgress());
+    state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
+    if (isFailure && onFailure != null) {
+      onFailure(state.status.whenOrNull(failure: id)!);
+    }
+    if (isSuccess && onSuccess != null) {
+      onSuccess(state.status.successOrNull as T);
+    }
+
+    return state.status as ProviderStatus<T>;
+  }
+}
+
+/// Make family provider(provider with params in builds) work
+extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
+    on BuildlessAutoDisposeNotifier<Base> {
   bool get isInProgress => state.status.isInProgress;
   bool get isFailure => state.status.isFailure;
   bool get isInitial => state.status.isInitial;

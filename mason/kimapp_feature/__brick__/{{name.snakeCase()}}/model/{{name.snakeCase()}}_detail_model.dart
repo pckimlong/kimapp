@@ -1,6 +1,7 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/kimapp.dart';
-import './../core/core.dart';
 
 part '{{name.snakeCase()}}_detail_model.g.dart';
 part '{{name.snakeCase()}}_detail_model.freezed.dart';
@@ -15,9 +16,9 @@ class {{name.pascalCase()}}DetailModel with _${{name.pascalCase()}}DetailModel, 
     @JsonKey(name: {{name.pascalCase()}}sTable.id) required {{name.pascalCase()}}Id id,
   }) = _{{name.pascalCase()}}DetailModel;
 
-  factory {{name.pascalCase()}}DetailModel.fromJson(Map<String, dynamic> json) {
-    _${{name.pascalCase()}}DetailModelFromJson(json);
-  }
+  factory {{name.pascalCase()}}DetailModel.fromJson(Map<String, dynamic> json) 
+  =>   _${{name.pascalCase()}}DetailModelFromJson(json);
+  
   
   static const TableBuilder table = _table{{name.pascalCase()}}DetailModel;
 
