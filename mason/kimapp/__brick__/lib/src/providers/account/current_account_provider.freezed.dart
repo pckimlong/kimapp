@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$CurrentAccount {
+mixin _$CurrentAccountState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(AuthUserId authUserId) $default, {
@@ -37,19 +37,19 @@ mixin _$CurrentAccount {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(CurrentAccountData value) $default, {
+    TResult Function(CurrentAccountStateData value) $default, {
     required TResult Function(_None value) none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(CurrentAccountData value)? $default, {
+    TResult? Function(CurrentAccountStateData value)? $default, {
     TResult? Function(_None value)? none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(CurrentAccountData value)? $default, {
+    TResult Function(CurrentAccountStateData value)? $default, {
     TResult Function(_None value)? none,
     required TResult orElse(),
   }) =>
@@ -57,16 +57,16 @@ mixin _$CurrentAccount {
 }
 
 /// @nodoc
-abstract class $CurrentAccountCopyWith<$Res> {
-  factory $CurrentAccountCopyWith(
-          CurrentAccount value, $Res Function(CurrentAccount) then) =
-      _$CurrentAccountCopyWithImpl<$Res, CurrentAccount>;
+abstract class $CurrentAccountStateCopyWith<$Res> {
+  factory $CurrentAccountStateCopyWith(
+          CurrentAccountState value, $Res Function(CurrentAccountState) then) =
+      _$CurrentAccountStateCopyWithImpl<$Res, CurrentAccountState>;
 }
 
 /// @nodoc
-class _$CurrentAccountCopyWithImpl<$Res, $Val extends CurrentAccount>
-    implements $CurrentAccountCopyWith<$Res> {
-  _$CurrentAccountCopyWithImpl(this._value, this._then);
+class _$CurrentAccountStateCopyWithImpl<$Res, $Val extends CurrentAccountState>
+    implements $CurrentAccountStateCopyWith<$Res> {
+  _$CurrentAccountStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -82,7 +82,7 @@ abstract class _$$_NoneCopyWith<$Res> {
 
 /// @nodoc
 class __$$_NoneCopyWithImpl<$Res>
-    extends _$CurrentAccountCopyWithImpl<$Res, _$_None>
+    extends _$CurrentAccountStateCopyWithImpl<$Res, _$_None>
     implements _$$_NoneCopyWith<$Res> {
   __$$_NoneCopyWithImpl(_$_None _value, $Res Function(_$_None) _then)
       : super(_value, _then);
@@ -95,7 +95,7 @@ class _$_None extends _None {
 
   @override
   String toString() {
-    return 'CurrentAccount.none()';
+    return 'CurrentAccountState.none()';
   }
 
   @override
@@ -141,7 +141,7 @@ class _$_None extends _None {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(CurrentAccountData value) $default, {
+    TResult Function(CurrentAccountStateData value) $default, {
     required TResult Function(_None value) none,
   }) {
     return none(this);
@@ -150,7 +150,7 @@ class _$_None extends _None {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(CurrentAccountData value)? $default, {
+    TResult? Function(CurrentAccountStateData value)? $default, {
     TResult? Function(_None value)? none,
   }) {
     return none?.call(this);
@@ -159,7 +159,7 @@ class _$_None extends _None {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(CurrentAccountData value)? $default, {
+    TResult Function(CurrentAccountStateData value)? $default, {
     TResult Function(_None value)? none,
     required TResult orElse(),
   }) {
@@ -170,26 +170,26 @@ class _$_None extends _None {
   }
 }
 
-abstract class _None extends CurrentAccount {
+abstract class _None extends CurrentAccountState {
   const factory _None() = _$_None;
   const _None._() : super._();
 }
 
 /// @nodoc
-abstract class _$$CurrentAccountDataCopyWith<$Res> {
-  factory _$$CurrentAccountDataCopyWith(_$CurrentAccountData value,
-          $Res Function(_$CurrentAccountData) then) =
-      __$$CurrentAccountDataCopyWithImpl<$Res>;
+abstract class _$$CurrentAccountStateDataCopyWith<$Res> {
+  factory _$$CurrentAccountStateDataCopyWith(_$CurrentAccountStateData value,
+          $Res Function(_$CurrentAccountStateData) then) =
+      __$$CurrentAccountStateDataCopyWithImpl<$Res>;
   @useResult
   $Res call({AuthUserId authUserId});
 }
 
 /// @nodoc
-class __$$CurrentAccountDataCopyWithImpl<$Res>
-    extends _$CurrentAccountCopyWithImpl<$Res, _$CurrentAccountData>
-    implements _$$CurrentAccountDataCopyWith<$Res> {
-  __$$CurrentAccountDataCopyWithImpl(
-      _$CurrentAccountData _value, $Res Function(_$CurrentAccountData) _then)
+class __$$CurrentAccountStateDataCopyWithImpl<$Res>
+    extends _$CurrentAccountStateCopyWithImpl<$Res, _$CurrentAccountStateData>
+    implements _$$CurrentAccountStateDataCopyWith<$Res> {
+  __$$CurrentAccountStateDataCopyWithImpl(_$CurrentAccountStateData _value,
+      $Res Function(_$CurrentAccountStateData) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -197,7 +197,7 @@ class __$$CurrentAccountDataCopyWithImpl<$Res>
   $Res call({
     Object? authUserId = null,
   }) {
-    return _then(_$CurrentAccountData(
+    return _then(_$CurrentAccountStateData(
       authUserId: null == authUserId
           ? _value.authUserId
           : authUserId // ignore: cast_nullable_to_non_nullable
@@ -208,8 +208,8 @@ class __$$CurrentAccountDataCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CurrentAccountData extends CurrentAccountData {
-  const _$CurrentAccountData({required this.authUserId}) : super._();
+class _$CurrentAccountStateData extends CurrentAccountStateData {
+  const _$CurrentAccountStateData({required this.authUserId}) : super._();
 
 // Implement more information as need.
 //
@@ -220,14 +220,14 @@ class _$CurrentAccountData extends CurrentAccountData {
 
   @override
   String toString() {
-    return 'CurrentAccount(authUserId: $authUserId)';
+    return 'CurrentAccountState(authUserId: $authUserId)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CurrentAccountData &&
+            other is _$CurrentAccountStateData &&
             (identical(other.authUserId, authUserId) ||
                 other.authUserId == authUserId));
   }
@@ -238,8 +238,8 @@ class _$CurrentAccountData extends CurrentAccountData {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CurrentAccountDataCopyWith<_$CurrentAccountData> get copyWith =>
-      __$$CurrentAccountDataCopyWithImpl<_$CurrentAccountData>(
+  _$$CurrentAccountStateDataCopyWith<_$CurrentAccountStateData> get copyWith =>
+      __$$CurrentAccountStateDataCopyWithImpl<_$CurrentAccountStateData>(
           this, _$identity);
 
   @override
@@ -276,7 +276,7 @@ class _$CurrentAccountData extends CurrentAccountData {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(CurrentAccountData value) $default, {
+    TResult Function(CurrentAccountStateData value) $default, {
     required TResult Function(_None value) none,
   }) {
     return $default(this);
@@ -285,7 +285,7 @@ class _$CurrentAccountData extends CurrentAccountData {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(CurrentAccountData value)? $default, {
+    TResult? Function(CurrentAccountStateData value)? $default, {
     TResult? Function(_None value)? none,
   }) {
     return $default?.call(this);
@@ -294,7 +294,7 @@ class _$CurrentAccountData extends CurrentAccountData {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(CurrentAccountData value)? $default, {
+    TResult Function(CurrentAccountStateData value)? $default, {
     TResult Function(_None value)? none,
     required TResult orElse(),
   }) {
@@ -305,10 +305,10 @@ class _$CurrentAccountData extends CurrentAccountData {
   }
 }
 
-abstract class CurrentAccountData extends CurrentAccount {
-  const factory CurrentAccountData({required final AuthUserId authUserId}) =
-      _$CurrentAccountData;
-  const CurrentAccountData._() : super._();
+abstract class CurrentAccountStateData extends CurrentAccountState {
+  const factory CurrentAccountStateData(
+      {required final AuthUserId authUserId}) = _$CurrentAccountStateData;
+  const CurrentAccountStateData._() : super._();
 
 // Implement more information as need.
 //
@@ -316,6 +316,6 @@ abstract class CurrentAccountData extends CurrentAccount {
 //
   AuthUserId get authUserId;
   @JsonKey(ignore: true)
-  _$$CurrentAccountDataCopyWith<_$CurrentAccountData> get copyWith =>
+  _$$CurrentAccountStateDataCopyWith<_$CurrentAccountStateData> get copyWith =>
       throw _privateConstructorUsedError;
 }

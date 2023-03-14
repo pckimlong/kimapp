@@ -11,7 +11,7 @@ class Create{{name.pascalCase()}}Param with _$Create{{name.pascalCase()}}Param {
 
   const factory Create{{name.pascalCase()}}Param() = _Create{{name.pascalCase()}}Param;
 
-  factory Create{{name.pascalCase()}}Param.fromJson(Map<String, dynamic> json) {
-    _$Create{{name.pascalCase()}}ParamFromJson(json);
-  }
+  factory Create{{name.pascalCase()}}Param.fromJson(Map<String, dynamic> json) 
+   => _$Create{{name.pascalCase()}}ParamFromJson(json);
+  
 }
