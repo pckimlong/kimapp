@@ -222,17 +222,17 @@ extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<Provi
   /// ```
   Future<ProviderStatus<T>> perform(
     Future<T> Function(ProviderStatus<T> state) callback, {
-    void Function<T>(Failure failure)? onFailure,
+    void Function(Failure failure)? onFailure,
 
     /// Trigger whenever success
-    void Function<T>(T success)? onSuccess,
+    void Function(T success)? onSuccess,
   }) async {
     if (state.isInProgress || state.isSuccess) return state;
     state = ProviderStatus<T>.inProgress();
     state = await ProviderStatus.guard<T>(() async => await callback(state));
 
-    if (state.isFailure && onFailure != null) onFailure<T>(state.whenOrNull(failure: id)!);
-    if (state.isSuccess && onSuccess != null) onSuccess<T>(state.successOrNull as T);
+    if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
+    if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
     return state;
   }
 }
