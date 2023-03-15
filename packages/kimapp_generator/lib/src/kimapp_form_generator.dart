@@ -52,8 +52,15 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       familyParams[name] = type.toString();
     }
 
+    final classConstructor = classElement.constructors.firstOrNull;
+
+    if (classConstructor == null) {
+      print('[FORM GENERATOR FAILED] $classElement has no constructor');
+      return;
+    }
+
     // Generate form field
-    for (final param in classElement.constructors) {
+    for (final param in classConstructor.parameters) {
       // Don't generate status field because it from provider status mixin
       if (param.name != "status") {
         final name = param.name;
