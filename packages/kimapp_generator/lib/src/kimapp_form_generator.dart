@@ -15,7 +15,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement || !providerStatusClassType.isSuperOf(element)) {
+    if (element is! ClassElement || !providerStatusClassType.isAssignableFrom(element)) {
       /// Only support stateful provider which implement ProviderStatusClassMixin
       print(element);
       throw 'Not class';
