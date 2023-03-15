@@ -134,8 +134,6 @@ String _generateMixin({
   required String providerClassName,
   required Map<String, String> fields,
 }) {
-  if (fields.isEmpty) return "";
-
   final names = fields.keys;
 
   final result = """
