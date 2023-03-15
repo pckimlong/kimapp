@@ -173,7 +173,7 @@ String _generateFieldWidget({
 
       @override
       Widget build(BuildContext context, WidgetRef ref) {
-        final family = ref.watch(${_familyProviderName(providerClassName)});
+        ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
         final controller = ref.watch($providerNameFamily.notifier);
         final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
         final showValidation = ref.watch($providerNameFamily.select((value) => value.status.isFailure));
