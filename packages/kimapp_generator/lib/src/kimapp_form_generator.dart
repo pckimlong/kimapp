@@ -17,7 +17,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
   ) {
     if (element is! ClassElement || !providerStatusClassType.isSuperOf(element)) {
       /// Only support stateful provider which implement ProviderStatusClassMixin
-      return;
+      print(element);
+      throw 'Not class';
     }
 
     // Get class name
