@@ -34,7 +34,6 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
 
     final classElement = returnType.element! as ClassElement;
     if (!providerStatusClassType.isAssignableFrom(classElement)) {
-      print('[FORM GENERATOR FAILED] $classElement is not extends of ProviderStatusClassMixin');
       // Support only class with ProviderStatusClassMixin
       return;
     }
@@ -103,7 +102,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return "/* $buffer */";
+    return buffer;
   }
 }
 
@@ -112,14 +111,14 @@ String _dataType(String name, Map<String, String> source) {
 }
 
 String _providerFamilyParamBuilder(String providerClassName, List<ParameterElement> params) {
-  final providerName = "_${providerClassName.camelCase}Provider";
+  final providerName = "${providerClassName.camelCase}Provider";
 
   if (params.isEmpty) return providerName;
 
   return '''$providerName(
      ${params.mapIndexed((i, param) {
     final name = param.name;
-    final isNameVar = param.isPositional;
+    final isNameVar = !param.isPositional;
 
     if (isNameVar) {
       return "$name: family.$name";
@@ -224,7 +223,7 @@ String _defineLocalFamily(String providerName, Map<String, String> param) {
   final props = param.keys;
   return '''
     final family = ${_familyParamClassName(providerName)}(
-          ${props.map((e) => '$e:$e').join(',\n')}
+          ${props.map((e) => '$e:$e').join(',\n\t\t\t')}
         );
   ''';
 }
@@ -241,11 +240,11 @@ String _generateFamilyFormWidget(String providerName, Map<String, String> params
     class ${providerName}FormWidget extends HookConsumerWidget {
       const ${providerName}FormWidget({
         super.key,
-        ${props.map((e) => "required this.$e,").join('\n')}
+        ${props.map((e) => "required this.$e,").join('\n\t\t\t\t')}
         required this.child,
       });
 
-      ${props.map((e) => "final ${_dataType(e, params)} $e;").join('\n')}
+      ${props.map((e) => "final ${_dataType(e, params)} $e;").join('\n\t\t\t')}
       final Widget child;
 
       @override
