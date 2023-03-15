@@ -42,7 +42,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     // All valid start generate code...
     final providerClassName = element.thisType.toString();
     final familyParams = <String, String>{};
-    final providerNameWithFamily = _providerFamilyParamBuilder(buildMethod.parameters);
+    final providerNameWithFamily =
+        _providerFamilyParamBuilder(providerClassName, buildMethod.parameters);
     final fields = <String, String>{};
 
     // Generate family params
@@ -110,15 +111,20 @@ String _dataType(String name, Map<String, String> source) {
   return source[name] as String;
 }
 
-String _providerFamilyParamBuilder(List<ParameterElement> params) {
-  if (params.isEmpty) return "";
+String _providerFamilyParamBuilder(String providerClassName, List<ParameterElement> params) {
+  final providerName = "_${providerClassName.camelCase}Provider";
 
-  return '''(
-    ${params.map((e) {
-    if (e.isPositional) {
-      return "family.$e";
+  if (params.isEmpty) return providerName;
+
+  return '''$providerName(
+     ${params.mapIndexed((i, param) {
+    final name = param.name;
+    final isNameVar = param.isPositional;
+
+    if (isNameVar) {
+      return "$name: family.$name";
     } else {
-      return "$e: family.$e";
+      return "family.$name";
     }
   }).join(',\n')}
   )''';
@@ -168,11 +174,11 @@ String _generateFieldWidget({
 
       @override
       Widget build(BuildContext context, WidgetRef ref) {
-        ${_defineLocalFamily(providerClassName, familyParams)}
+        final family = ref.watch(${_familyProviderName(providerClassName)});
         final controller = ref.watch($providerNameFamily.notifier);
         final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
         final showValidation = ref.watch($providerNameFamily.select((value) => value.status.isFailure));
-        return builder(ref, state, controller.on${fieldName.pascalCase}Changed, showValidation);
+        return builder(ref, state, controller.on${fieldName.pascalCase}Changed, showValidation,);
       }
     }
   """;
@@ -207,7 +213,7 @@ String _generateFamilyParamsClass(String providerName, Map<String, String> param
         }
       
         @override
-        int get hashCode => a.hashCode ^ b.hashCode ^ user.hashCode;
+        int get hashCode => ${props.map((e) => "$e.hashCode").join('^')};
       }
       ''';
 
@@ -235,7 +241,7 @@ String _generateFamilyFormWidget(String providerName, Map<String, String> params
     class ${providerName}FormWidget extends HookConsumerWidget {
       const ${providerName}FormWidget({
         super.key,
-        ${props.map((e) => "required this.$e").join(',\n')}
+        ${props.map((e) => "required this.$e,").join('\n')}
         required this.child,
       });
 
