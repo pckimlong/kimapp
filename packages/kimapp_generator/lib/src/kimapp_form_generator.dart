@@ -102,7 +102,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return buffer;
+    return buffer.toString();
   }
 }
 
