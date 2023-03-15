@@ -65,6 +65,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     buffer.writeln(
       '/// Mixin use for update properties. You will need to add this mixin to provider in order to make it work',
     );
+    buffer.write(_generateMixin(providerClassName: providerClassName, fields: fields));
 
     buffer.writeln('');
 
@@ -113,7 +114,28 @@ String _providerFamilyParamBuilder(List<ParameterElement> params) {
   )''';
 }
 
-/// Child widget ----------------------
+// Mixin -------
+String _generateMixin({
+  required String providerClassName,
+  required Map<String, String> fields,
+}) {
+  if (fields.isEmpty) return "";
+
+  final names = fields.keys;
+
+  final result = """
+    mixin _\$${providerClassName}Form on _\$$providerClassName {
+      ${names.map((name) {
+    final type = fields[name]!;
+    return "void on${name.pascalCase}Changed($type new${name.pascalCase}) => state = state.copyWith($name: new${name.pascalCase})";
+  }).join(';\n')}
+    }
+  """;
+
+  return result;
+}
+
+// Child widget ----------------------
 
 String _generateFieldWidget({
   required String providerClassName,
