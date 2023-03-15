@@ -44,12 +44,12 @@ class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} {
     return await perform<{{name.pascalCase()}}DetailModel>(
       (state) async {
         _performValidation();
-        final result = await ref.read({{name.snakeCase()}}RepoProvider).create(state.toParam());
+        final result = await ref.read({{name.camelCase()}}RepoProvider).create(state.toParam());
         return result.getOrThrow();
       },
       onSuccess: (success) async {
-        ref.read({{name.snakeCase()}}ListProvider.notifier).insertItem({{name.pascalCase()}}Model.fromDetailModel(success));
-        ref.invalidate({{name.snakeCase()}}ListPaginationProvider);
+        ref.read({{name.camelCase()}}ListProvider.notifier).insertItem({{name.pascalCase()}}Model.fromDetailModel(success));
+        ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
   }

@@ -13,7 +13,7 @@ part 'delete_{{name.snakeCase()}}_provider.g.dart';
 @freezed
 class Delete{{name.pascalCase()}}Data with _$Delete{{name.pascalCase()}}Data, ProviderStatusClassMixin<Delete{{name.pascalCase()}}Data, Unit> {
   const factory Delete{{name.pascalCase()}}Data({
-    required {{name.pascalCase()}}Id {{name.snakeCase()}}Id,
+    required {{name.pascalCase()}}Id {{name.camelCase()}}Id,
 
     /// provider status
     @Default(ProviderStatus.initial()) ProviderStatus<Unit> status,
@@ -29,7 +29,7 @@ class Delete{{name.pascalCase()}}Data with _$Delete{{name.pascalCase()}}Data, Pr
   Delete{{name.pascalCase()}}Param toParam() {
     // Perform validation
 
-    return Delete{{name.pascalCase()}}Param({{name.snakeCase()}}Id: {{name.snakeCase()}}Id);
+    return Delete{{name.pascalCase()}}Param({{name.camelCase()}}Id: {{name.camelCase()}}Id);
   }
 }
 
@@ -40,13 +40,13 @@ class Delete{{name.pascalCase()}} extends _$Delete{{name.pascalCase()}} {
       (state) async {
         _performValidation();
 
-        final result = await ref.read({{name.snakeCase()}}RepoProvider).delete(state.toParam());
+        final result = await ref.read({{name.camelCase()}}RepoProvider).delete(state.toParam());
         return result.getOrThrow();
       },
       onSuccess: (_) {
-        ref.invalidate({{name.snakeCase()}}ListProvider);
-        ref.invalidate({{name.snakeCase()}}DetailProvider({{name.snakeCase()}}Id));
-        ref.invalidate({{name.snakeCase()}}ListPaginationProvider);
+        ref.invalidate({{name.camelCase()}}ListProvider);
+        ref.invalidate({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id));
+        ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
   }
@@ -54,5 +54,5 @@ class Delete{{name.pascalCase()}} extends _$Delete{{name.pascalCase()}} {
   void _performValidation() {}
 
   @override
-  Delete{{name.pascalCase()}}Data build({{name.pascalCase()}}Id {{name.snakeCase()}}Id) => Delete{{name.pascalCase()}}Data({{name.snakeCase()}}Id: {{name.snakeCase()}}Id);
+  Delete{{name.pascalCase()}}Data build({{name.pascalCase()}}Id {{name.camelCase()}}Id) => Delete{{name.pascalCase()}}Data({{name.camelCase()}}Id: {{name.camelCase()}}Id);
 }

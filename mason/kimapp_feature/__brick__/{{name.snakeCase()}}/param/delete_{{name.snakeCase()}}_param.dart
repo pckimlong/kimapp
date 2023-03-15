@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/kimapp.dart';
-
+// ignore: unused_import
+import '../core/core.dart';
 part 'delete_{{name.snakeCase()}}_param.g.dart';
 part 'delete_{{name.snakeCase()}}_param.freezed.dart';
 
