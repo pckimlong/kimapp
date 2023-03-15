@@ -31,13 +31,9 @@ class Update{{name.pascalCase()}}State
   }
 }
 
-@freezed
-class Update{{name.pascalCase()}}Event with _$Update{{name.pascalCase()}}Event {
-  const factory Update{{name.pascalCase()}}Event.submit() = _Submit;
-}
 
 @riverpod
-class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
+class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$Update{{name.pascalCase()}}Form {
   Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
     return await perform<{{name.pascalCase()}}DetailModel>(
       (state) async {
@@ -58,11 +54,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
     state = newState(state).copyWith(status: state.status);
   }
 
-  Future performEvent(Update{{name.pascalCase()}}Event event) async {
-    return event.when(
-      submit: call,
-    );
-  }
+
 
   void _performValidation() {
     // ...

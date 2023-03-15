@@ -34,7 +34,7 @@ class Delete{{name.pascalCase()}}Data with _$Delete{{name.pascalCase()}}Data, Pr
 }
 
 @riverpod
-class Delete{{name.pascalCase()}} extends _$Delete{{name.pascalCase()}} {
+class Delete{{name.pascalCase()}} extends _$Delete{{name.pascalCase()}} with _$Delete{{name.pascalCase()}}Form {
   Future<ProviderStatus<Unit>> call() async {
     return await perform<Unit>(
       (state) async {

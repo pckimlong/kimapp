@@ -33,13 +33,9 @@ class Create{{name.pascalCase()}}State
   }
 }
 
-@freezed
-class Create{{name.pascalCase()}}Event with _$Create{{name.pascalCase()}}Event {
-  const factory Create{{name.pascalCase()}}Event.submit() = _Submit;
-}
 
 @riverpod
-class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} {
+class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$Create{{name.pascalCase()}}Form  {
   Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
     return await perform<{{name.pascalCase()}}DetailModel>(
       (state) async {
@@ -58,11 +54,6 @@ class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} {
     state = newState(state).copyWith(status: state.status);
   }
 
-  Future performEvent(Create{{name.pascalCase()}}Event event) async {
-    return event.when(
-      submit: call,
-    );
-  }
 
   void _performValidation() {
     // ...
