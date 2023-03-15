@@ -2,6 +2,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/kimapp.dart';
+// ignore: unused_import
+import '../core/core.dart';
 
 part '{{name.snakeCase()}}_detail_model.g.dart';
 part '{{name.snakeCase()}}_detail_model.freezed.dart';

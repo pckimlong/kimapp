@@ -11,7 +11,7 @@ part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 const _page{{name.pascalCase()}}Limit = 25;
 
 @riverpod
-FutureOr<IList<{{name.pascalCase()}}Model>> {{name.snakeCase()}}ListPagination(
+FutureOr<IList<{{name.pascalCase()}}Model>> {{name.pascalCase()}}ListPagination(
   {{name.pascalCase()}}ListPaginationRef ref, {
   required int page,
   required {{name.pascalCase()}}ListPaginationParam param,
@@ -23,20 +23,20 @@ FutureOr<IList<{{name.pascalCase()}}Model>> {{name.snakeCase()}}ListPagination(
 
   await Future.delayed(const Duration(milliseconds: 250));
   return ref
-      .watch({{name.snakeCase()}}RepoProvider)
+      .watch({{name.camelCase()}}RepoProvider)
       .findPagination(limit: limit, offset: offset, param: param)
       .then((value) => value.getOrThrow());
 }
 
 @riverpod
-PaginatedItem<{{name.pascalCase()}}Model>? {{name.snakeCase()}}PaginatedAtIndex(
+PaginatedItem<{{name.pascalCase()}}Model>? {{name.pascalCase()}}PaginatedAtIndex(
   {{name.pascalCase()}}PaginatedAtIndexRef ref,
   int index, {
   required {{name.pascalCase()}}ListPaginationParam param,
 }) {
   const limit = _page{{name.pascalCase()}}Limit;
   final page = index ~/ limit;
-  final pageItems = ref.watch({{name.snakeCase()}}ListPaginationProvider(page: page, param: param));
+  final pageItems = ref.watch({{name.pascalCase()}}ListPaginationProvider(page: page, param: param));
   return PaginatedItem.build(pageItems: pageItems, limit: limit, index: index);
 }
 
@@ -53,7 +53,7 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.snakeCase()}}PaginatedAtIndex(
 //   Widget build(BuildContext context, WidgetRef ref) {
 //     final param = ref.watch(_paramProvider);
 //     final firstPageAsync = ref.watch(
-//       {{name.snakeCase()}}ListPaginationProvider(page: 0, param: param).select(
+//       {{name.pascalCase()}}ListPaginationProvider(page: 0, param: param).select(
 //         (value) => value.whenData((value) => value.length),
 //       ),
 //     );
@@ -89,13 +89,13 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.snakeCase()}}PaginatedAtIndex(
 //     final param = ref.watch(_paramProvider);
 //     return ListView.builder(
 //       itemBuilder: (context, index) {
-//         final paginated = ref.watch({{name.snakeCase()}}PaginatedAtIndexProvider(index, param: param));
+//         final paginated = ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param));
 //         if (paginated != null) {
 //           return paginated.whenOrNull(
 //             loading: () => const Text('Loading...'),
-//             data: ({{name.snakeCase()}}) {
-//               // TODO - Implement {{name.snakeCase()}} item widget
-//               return Text({{name.snakeCase()}}.id.value);
+//             data: ({{name.pascalCase()}}) {
+//               // TODO - Implement {{name.pascalCase()}} item widget
+//               return Text({{name.pascalCase()}}.id.value);
 //             },
 //           );
 //         }

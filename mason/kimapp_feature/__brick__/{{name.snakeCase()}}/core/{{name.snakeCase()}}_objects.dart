@@ -6,8 +6,8 @@
   ],
 )
 import 'package:kimapp/kimapp.dart';
-import 'user_objects.table.dart';
-export 'user_objects.table.dart';
+import '{{name.snakeCase()}}_objects.table.dart';
+export '{{name.snakeCase()}}_objects.table.dart';
 
 
 mixin {{name.pascalCase()}}CommonMixin {

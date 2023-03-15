@@ -67,3 +67,10 @@ class JoinedColumn {
   final String? candidateKey;
   final String? foreignKey;
 }
+
+/// Generate form widget and handle state with ease
+class KimappForm {
+  const KimappForm();
+}
+
+const kimappForm = KimappForm();

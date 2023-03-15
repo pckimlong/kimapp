@@ -43,13 +43,13 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
       (state) async {
         _performValidation();
         final param = state.toParam();
-        final result = await ref.read({{name.snakeCase()}}RepoProvider).update({{name.snakeCase()}}Id, data: param);
+        final result = await ref.read({{name.camelCase()}}RepoProvider).update({{name.camelCase()}}Id, data: param);
         return result.getOrThrow();
       },
       onSuccess: (success) {
-        ref.read({{name.snakeCase()}}ListProvider.notifier).updateItem({{name.pascalCase()}}Model.fromDetailModel(success));
-        ref.read({{name.snakeCase()}}DetailProvider({{name.snakeCase()}}Id).notifier).updateState((_) => success);
-        ref.invalidate({{name.snakeCase()}}ListPaginationProvider);
+        ref.read({{name.camelCase()}}ListProvider.notifier).updateItem({{name.pascalCase()}}Model.fromDetailModel(success));
+        ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).notifier).updateState((_) => success);
+        ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
   }
@@ -58,7 +58,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
     state = newState(state).copyWith(status: state.status);
   }
 
-  Future performEvent(Create{{name.pascalCase()}}Event event) async {
+  Future performEvent(Update{{name.pascalCase()}}Event event) async {
     return event.when(
       submit: call,
     );
@@ -69,5 +69,5 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} {
   }
 
   @override
-  Update{{name.pascalCase()}}State build({{name.pascalCase()}}Id {{name.snakeCase()}}Id) => const Update{{name.pascalCase()}}State();
+  Update{{name.pascalCase()}}State build({{name.pascalCase()}}Id {{name.camelCase()}}Id) => const Update{{name.pascalCase()}}State();
 }

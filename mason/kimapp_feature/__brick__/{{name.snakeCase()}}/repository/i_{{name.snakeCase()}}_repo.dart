@@ -3,6 +3,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // Project imports:
 import '../../../../exports.dart';
+// ignore: unnecessary_import
+import '../core/core.dart';
 import '../model/models.dart';
 import '../param/params.dart';
 

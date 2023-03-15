@@ -24,7 +24,7 @@ class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
 
   Future<IList<{{name.pascalCase()}}Model>> _fetchItems() {
     const param = {{name.pascalCase()}}ListParam(); // use static filter for now
-    return ref.watch({{name.snakeCase()}}RepoProvider).findAll(param).then((value) => value.getOrThrow());
+    return ref.watch({{name.camelCase()}}RepoProvider).findAll(param).then((value) => value.getOrThrow());
   }
 
   void updateItem({{name.pascalCase()}}Model item) {
@@ -44,11 +44,11 @@ class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
 /// by given [Id]. If [Id] is null or no item found
 /// null will be returned
 @riverpod
-FutureOr<{{name.pascalCase()}}Model?> {{name.snakeCase()}}OfId({{name.pascalCase()}}OfIdRef ref, {{name.pascalCase()}}Id? {{name.snakeCase()}}Id) {
+FutureOr<{{name.pascalCase()}}Model?> {{name.camelCase()}}OfId({{name.pascalCase()}}OfIdRef ref, {{name.pascalCase()}}Id? {{name.camelCase()}}Id) {
   return ref.watch(
-    {{name.snakeCase()}}ListProvider.selectAsync(
+    {{name.camelCase()}}ListProvider.selectAsync(
       (baseList) => baseList.firstOrNullWhere(
-        (object) => object.id == {{name.snakeCase()}}Id,
+        (object) => object.id == {{name.camelCase()}}Id,
       ),
     ),
   );
@@ -61,11 +61,11 @@ class {{name.pascalCase()}}ListFilterParam with _${{name.pascalCase()}}ListFilte
 }
 
 @riverpod
-AsyncValue<IList<{{name.pascalCase()}}Model>> {{name.snakeCase()}}FilteredList(
+AsyncValue<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}FilteredList(
   {{name.pascalCase()}}FilteredListRef ref, {
   {{name.pascalCase()}}ListFilterParam filter = const {{name.pascalCase()}}ListFilterParam(),
 }) {
-  return ref.watch({{name.snakeCase()}}ListProvider).whenData(
+  return ref.watch({{name.camelCase()}}ListProvider).whenData(
     (baseList) {
       var filtered = baseList.toIterable();
       // TODO - Implement filter

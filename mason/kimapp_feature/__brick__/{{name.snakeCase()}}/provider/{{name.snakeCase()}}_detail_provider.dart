@@ -12,7 +12,7 @@ class {{name.pascalCase()}}Detail extends _${{name.pascalCase()}}Detail {
   @override
   FutureOr<{{name.pascalCase()}}DetailModel> build({{name.pascalCase()}}Id {{name.snakeCase()}}Id) {
     ref.autoInvalidateSelf(const Duration(minutes: 3));
-    return ref.watch({{name.snakeCase()}}RepoProvider).findOne({{name.snakeCase()}}Id).then((value) => value.getOrThrow());
+    return ref.watch({{name.camelCase()}}RepoProvider).findOne({{name.snakeCase()}}Id).then((value) => value.getOrThrow());
   }
 
   /// Perform side-effect update detail provider
