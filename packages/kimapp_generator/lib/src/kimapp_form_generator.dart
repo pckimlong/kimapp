@@ -102,7 +102,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return buffer.toString();
+    return "/* $buffer */";
   }
 }
 
@@ -137,8 +137,8 @@ String _generateMixin({
     mixin _\$${providerClassName}Form on _\$$providerClassName {
       ${names.map((name) {
     final type = fields[name]!;
-    return "void on${name.pascalCase}Changed($type new${name.pascalCase}) => state = state.copyWith($name: new${name.pascalCase})";
-  }).join(';\n')}
+    return "void on${name.pascalCase}Changed($type new${name.pascalCase}) => state = state.copyWith($name: new${name.pascalCase});";
+  }).join('\n')}
     }
   """;
 
