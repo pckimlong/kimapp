@@ -4,34 +4,48 @@ import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 // ignore: depend_on_referenced_packages
-import 'package:collection/collection.dart';
 
 const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
 
 class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
   @override
-  generateForAnnotatedElement(
+  String generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement || !providerStatusClassType.isAssignableFrom(element)) {
-      /// Only support stateful provider which implement ProviderStatusClassMixin
-      print(element);
-      throw 'Not class';
+    print('If element is a class: ${element is ClassElement}');
+    print('Element runtime type: ${element.runtimeType}');
+    if (element is ClassElement) {
+      print(
+        'Element all super type: ${element.allSupertypes.map((e) => e.getDisplayString(withNullability: false))}',
+      );
+      print(
+          'Element is extends providerStatusClassMixin ${providerStatusClassType.isAssignableFrom(element)}');
+
+      print('Class element detail $element');
+      print('Class element method ${element.methods.map((e) => e.name)}');
+      print('Class element method return type ${element.methods.map((e) => e.returnType)}');
     }
 
-    // Get class name
-    final className = element.thisType.toString();
+    // if (element is! ClassElement || !providerStatusClassType.isAssignableFrom(element)) {
+    //   /// Only support stateful provider which implement ProviderStatusClassMixin
+    //   print(element);
+    //   throw 'Not class';
+    // }
 
-    // Get build method
-    final buildMethod = element.methods.firstWhereOrNull((method) => method.name == "build");
-    if (buildMethod == null) {
-      // If stateful provider has no build method, It mean it invalid
-      return;
-    }
+    // // Get class name
+    // final className = element.thisType.toString();
 
-    //
-    return "$className $buildMethod";
+    // // Get build method
+    // final buildMethod = element.methods.firstWhereOrNull((method) => method.name == "build");
+    // if (buildMethod == null) {
+    //   // If stateful provider has no build method, It mean it invalid
+    //   return;
+    // }
+
+    // //
+    // return "$className $buildMethod";
+    return "";
   }
 }
