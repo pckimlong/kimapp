@@ -20,15 +20,14 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
 
     final buildMethod = element.methods.firstWhereOrNull((method) => method.name == "build");
     if (buildMethod == null) {
-      print('[FORM GENERATOR FAILED] $element provider has no build method');
       // Only stateful provider contain build method can generate form
       return;
     }
 
     final returnType = buildMethod.returnType;
     if (returnType.element is! ClassElement || returnType.element == null) {
-      print(
-          '[FORM GENERATOR FAILED] $element build method return type [$returnType] is not valid for form generator');
+      // print(
+      //     '[FORM GENERATOR FAILED] $element build method return type [$returnType] is not valid for form generator');
       // Return type of build method must be a class
       return;
     }
