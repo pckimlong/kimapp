@@ -11,7 +11,7 @@ part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 const _page{{name.pascalCase()}}Limit = 25;
 
 @riverpod
-FutureOr<IList<{{name.pascalCase()}}Model>> {{name.pascalCase()}}ListPagination(
+FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}ListPagination(
   {{name.pascalCase()}}ListPaginationRef ref, {
   required int page,
   required {{name.pascalCase()}}ListPaginationParam param,
@@ -29,14 +29,14 @@ FutureOr<IList<{{name.pascalCase()}}Model>> {{name.pascalCase()}}ListPagination(
 }
 
 @riverpod
-PaginatedItem<{{name.pascalCase()}}Model>? {{name.pascalCase()}}PaginatedAtIndex(
+PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
   {{name.pascalCase()}}PaginatedAtIndexRef ref,
   int index, {
   required {{name.pascalCase()}}ListPaginationParam param,
 }) {
   const limit = _page{{name.pascalCase()}}Limit;
   final page = index ~/ limit;
-  final pageItems = ref.watch({{name.pascalCase()}}ListPaginationProvider(page: page, param: param));
+  final pageItems = ref.watch({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
   return PaginatedItem.build(pageItems: pageItems, limit: limit, index: index);
 }
 
