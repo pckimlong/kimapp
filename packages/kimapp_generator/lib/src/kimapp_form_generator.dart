@@ -4,6 +4,7 @@ import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 // ignore: depend_on_referenced_packages
+import 'package:collection/collection.dart';
 
 const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
 
@@ -14,6 +15,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
+    print('------------------------------------------');
     print('If element is a class: ${element is ClassElement}');
     print('Element runtime type: ${element.runtimeType}');
     if (element is ClassElement) {
@@ -26,6 +28,23 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       print('Class element detail $element');
       print('Class element method ${element.methods.map((e) => e.name)}');
       print('Class element method return type ${element.methods.map((e) => e.returnType)}');
+
+      final buildMethod = element.methods.firstWhereOrNull((element) => element.name == "build");
+      print('build method $buildMethod');
+
+      final buildReturnType = buildMethod?.returnType;
+      print('build method return type $buildReturnType');
+      print('build method returned type is a class ${buildReturnType is ClassElement}');
+      print('build method return type ${buildReturnType?.element}');
+      print('build method returned type is a class ${buildReturnType?.element is ClassElement}');
+      if (buildReturnType?.element is ClassElement) {
+        final c = buildReturnType?.element as ClassElement;
+        print(
+          'Super class of it is provider status ${providerStatusClassType.isAssignableFrom(c)}',
+        );
+        print(
+            'Constructor: ${c.constructors.map((e) => e.getDisplayString(withNullability: true))}');
+      }
     }
 
     // if (element is! ClassElement || !providerStatusClassType.isAssignableFrom(element)) {
