@@ -174,6 +174,13 @@ mixin ProviderStatusClassMixin<SubClass, Result> {
   SubClass updateStatus(ProviderStatus<Result> newStatus);
 }
 
+/// Mixin for add functional to provider status class which allow to perform fetching initial load
+/// for updating data by generate helpful widget to support
+mixin UpdateFormMixin {
+  /// Wether initial data for updating form has loaded or not. This allow it to bind fresh data to provider field
+  bool get initialLoaded;
+}
+
 extension CatchProvider on AutoDisposeRef {
   void catchTime(Duration duration) {
     final cancel = keepAlive();

@@ -26,15 +26,19 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
 
     final returnType = buildMethod.returnType;
     if (returnType.element is! ClassElement || returnType.element == null) {
-      // print(
-      //     '[FORM GENERATOR FAILED] $element build method return type [$returnType] is not valid for form generator');
-      // Return type of build method must be a class
       return;
     }
 
     final classElement = returnType.element! as ClassElement;
     if (!providerStatusClassType.isAssignableFrom(classElement)) {
       // Support only class with ProviderStatusClassMixin
+      return;
+    }
+
+    // Call function
+    final callMethod = element.methods.firstWhereOrNull((method) => method.name == "call");
+    if (callMethod == null) {
+      print('[FORM GENERATOR FAILED] $classElement has no [call] method.');
       return;
     }
 
@@ -91,7 +95,13 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     if (familyParams.isNotEmpty) {
       buffer.write(_generateFamilyParamsClass(providerClassName, familyParams));
       buffer.writeln('');
-      buffer.write(_generateFamilyFormWidget(providerClassName, familyParams));
+      buffer.write(
+        _generateFormWidget(
+          providerClassName: providerClassName,
+          providerNameFamily: providerNameWithFamily,
+          familyParams: familyParams,
+        ),
+      );
     }
 
     buffer.writeln('');
@@ -146,6 +156,18 @@ String _generateMixin({
 
   final result = """
     mixin _\$${providerClassName}Form on _\$$providerClassName {
+      /// Initialize state for update form either by [local] or perform any fetch
+      ///
+      /// When finished it will update the [initialLoaded] flag to true. This mean any any call will ignore
+      // Future<TestingState> initState([TestingState? local]);
+
+      // Future<void> _initializeFormData([TestingState? local]) async {
+      //   if (state.initialLoaded) return;
+      //   final result = await initState(local);
+      //   state = result.copyWith(initialLoaded: true);
+      // }
+
+
       ${names.map((name) {
     final type = fields[name]!;
     return "void on${name.pascalCase}Changed($type new${name.pascalCase}) => state = state.copyWith($name: new${name.pascalCase});";
@@ -179,6 +201,7 @@ String _generateFieldWidget({
 
       @override
       Widget build(BuildContext context, WidgetRef ref) {
+        ${_checkHasFormWidgetAssert(providerClassName)}
         ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
         final controller = ref.watch($providerNameFamily.notifier);
         final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
@@ -225,8 +248,9 @@ String _generateFamilyParamsClass(String providerName, Map<String, String> param
   return result;
 }
 
-String _defineLocalFamily(String providerName, Map<String, String> param) {
+String _defineLocalFamilyOrEmpty(String providerName, Map<String, String> param) {
   final props = param.keys;
+  if (props.isEmpty) return "";
   return '''
     final family = ${_familyParamClassName(providerName)}(
           ${props.map((e) => '$e:$e').join(',\n\t\t\t')}
@@ -238,36 +262,89 @@ String _familyProviderName(String providerName) {
   return '_${providerName.camelCase}FamilyParamProvider';
 }
 
-String _generateFamilyFormWidget(String providerName, Map<String, String> params) {
-  if (params.isEmpty) return '';
+String _checkHasFormWidgetAssert(String providerClassName) {
+  return "assert(_debugCheckHas${providerClassName}FormWidget(context));";
+}
 
-  final props = params.keys;
+String _generateFormWidget({
+  required String providerClassName,
+  required String providerNameFamily,
+  required Map<String, String> familyParams,
+}) {
+  final props = familyParams.keys;
   final result = """
-    class ${providerName}FormWidget extends HookConsumerWidget {
-      const ${providerName}FormWidget({
+    bool _debugCheckHas${providerClassName}FormWidget(BuildContext context) {
+      assert(() {
+        if (context.widget is! ${providerClassName}FormWidget && context.findAncestorWidgetOfExactType<${providerClassName}FormWidget>() == null) {
+          throw FlutterError.fromParts(<DiagnosticsNode>[
+            ErrorSummary('No ${providerClassName}FormWidget found'),
+            ErrorDescription('\${context.widget.runtimeType} widgets require a ${providerClassName}FormWidget widget ancestor.'),
+          ]);
+        }
+        return true;
+      }());
+      return true;
+    }
+
+
+    typedef ${providerClassName}FormChildBuilder = Widget Function(
+      WidgetRef ref,
+      ProviderStatus<int> status,
+      bool isProgressing,
+      Failure? failure,
+      Future<ProviderStatus<int>> Function() submit,
+    );
+
+    /// Base form widget for [$providerClassName] provider
+    /// 
+    /// It required to add this as parent widget of fields widget if [$providerClassName] is a family provider 
+    /// , otherwise it's optional
+    class ${providerClassName}FormWidget extends HookConsumerWidget {
+      const ${providerClassName}FormWidget({
         super.key,
         ${props.map((e) => "required this.$e,").join('\n\t\t\t\t')}
-        required this.child,
+        required this.builder,
       });
 
-      ${props.map((e) => "final ${_dataType(e, params)} $e;").join('\n\t\t\t')}
-      final Widget child;
+      ${props.map((e) => "final ${_dataType(e, familyParams)} $e;").join('\n\t\t\t')}
+      final ${providerClassName}FormChildBuilder builder;
 
       @override
       Widget build(BuildContext context, WidgetRef ref) {
-        ${_defineLocalFamily(providerName, params)}
+        ${_defineLocalFamilyOrEmpty(providerClassName, familyParams)}
+        final status = ref.watch($providerNameFamily.select((value) => value.status));
+        final isProgressing = status.isInProgress;
+        final failure = status.failure;
+        final controller = ref.watch($providerNameFamily.notifier);
 
-        return ProviderScope(
-          overrides: [${_familyProviderName(providerName)}.overrideWithValue(family)],
-          child: child,
+
+        ${props.isNotEmpty ? """
+          return ProviderScope(
+          overrides: [${_familyProviderName(providerClassName)}.overrideWithValue(family)],
+          child: builder(
+            ref,
+            isProgressing,
+            failure,
+            controller.call,
+            ),
         );
+        """ : """
+          return: builder(
+            ref,
+            isProgressing,
+            failure,
+            controller.call,
+            );
+        """}
       }
     }
-
-    // Family provider override --------------------------------------------------
-    final ${_familyProviderName(providerName)} = Provider<${_familyParamClassName(providerName)}>((ref) {
-      throw 'You need to add [${providerName}FormWidget] as your parent. This allow to internal override family provider param';
-    });
+    
+    ${props.isNotEmpty ? """
+      // Family provider override --------------------------------------------------
+      final ${_familyProviderName(providerClassName)} = Provider<${_familyParamClassName(providerClassName)}>((ref) {
+        throw 'You need to add [${providerClassName}FormWidget] as your parent. This allow to internal override family provider param';
+      });
+    """ : ""}
   """;
 
   return result;
