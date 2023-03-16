@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_internal_member
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:fpdart/fpdart.dart';
@@ -274,6 +275,11 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     if (state is UpdateFormMixin) {
       final updateForm = state as UpdateFormMixin;
       if (!updateForm.initialLoaded) {
+        log('${state.runtimeType}.initialLoaded is false. So this call back will be ignore');
+
+        /// TODO - Should I expose failure status instead of keep it silence like this?
+        /// Actually error message should be handle in form widget.
+        /// Keep it silent for now
         return state.status as ProviderStatus<T>;
       }
     }
