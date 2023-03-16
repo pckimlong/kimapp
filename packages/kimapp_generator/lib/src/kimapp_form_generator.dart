@@ -403,6 +403,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
     ${isUpdateForm ? """
 
     return FutureBuilder(
+      future: controller._initializeFormData(initialState),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if(snapshot.hasError){
@@ -425,7 +426,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
           }
         }
         return initializingIndicator();
-      }
+      },
     );
 
   """ : returnWidget}
