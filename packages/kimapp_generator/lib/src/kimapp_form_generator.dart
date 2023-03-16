@@ -76,7 +76,6 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       return;
     }
 
-    final callMethodApparent = callMethod.getDisplayString(withNullability: true);
     late final String providerStatusType;
 
     // Generate form field
@@ -118,7 +117,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
           providerClassName: providerClassName,
           providerNameFamily: providerNameWithFamily,
           familyParams: familyParams,
-          callMethod: callMethodApparent,
+          callMethod: callMethod,
           isUpdateForm: isFormUpdateType,
           providerStatusType: providerStatusType,
           buildMethodReturnType: buildMethodReturnType,
@@ -297,7 +296,7 @@ String _generateFormWidget({
   required String providerNameFamily,
   required Map<String, String> familyParams,
   required String providerStatusType,
-  required String callMethod,
+  required MethodElement callMethod,
   required bool isUpdateForm,
   required String buildMethodReturnType,
 }) {
@@ -346,7 +345,9 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
   $providerStatusType status,
   bool isProgressing,
   Failure? failure,
-  $callMethod,
+  ${callMethod.returnType} Function(${callMethod.parameters.map((e) {
+    return "$e, ${e.declaration}, ${e.name}";
+  })}) submit,
 );
 
 /// Base form widget for [$providerClassName] provider
@@ -356,6 +357,11 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
 class ${providerClassName}FormWidget extends HookConsumerWidget {
   const ${providerClassName}FormWidget({
     super.key,
+    ${isUpdateForm ? """
+    required this.initializingIndicator,
+    this.onInitError,
+    this.initialState,
+    """ : ""}
     ${props.map((e) => "required this.$e,").join('\n\t\t\t\t')}
     required this.builder,
   });
@@ -391,7 +397,10 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if(snapshot.hasError){
-            return onInitError(snapshot.error) ?? Center(
+            if(onInitError != null){
+              return onInitError!(snapshot.error);
+            }
+            return Center(
               child: Text(
                 error == null
                 ? "Something went wrong!"
@@ -403,7 +412,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
           }
 
           if(snapshot.hasData){
-            $returnWidget;
+            $returnWidget
           }
         }
         return initializingIndicator();
