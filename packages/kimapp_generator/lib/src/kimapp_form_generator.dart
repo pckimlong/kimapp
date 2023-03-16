@@ -313,7 +313,7 @@ String _generateFormWidget({
 
   final String returnWidget = props.isNotEmpty
       ? """
-      return ProviderScope(
+      ProviderScope(
       overrides: [${_familyProviderName(providerClassName)}.overrideWithValue(family)],
       child: builder(
         ref,
@@ -322,16 +322,16 @@ String _generateFormWidget({
         failure,
         controller.call,
         ),
-    );
+    )
     """
       : """
-      return builder(
+      builder(
         ref,
         status,
         isProgressing,
         failure,
         controller.call,
-        );
+        )
     """;
 
   final result = """
@@ -400,6 +400,15 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
 
     ${isUpdateForm ? """
 
+    final initialLoaded = ref.watch(
+        updateUserRolePermissionProvider(family.userId).select((value) => value.initialLoaded));
+    
+    final child = $returnWidget;
+
+    if (initialLoaded) {
+      return child;
+    }
+
     return FutureBuilder(
       future: controller._initializeFormData(initialState),
       builder: (context, snapshot) {
@@ -419,13 +428,13 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
             );
           }
 
-          $returnWidget
+          return child;
         }
         return initializingIndicator();
       },
     );
 
-  """ : returnWidget}
+  """ : "return $returnWidget;"}
   }
 }
 
