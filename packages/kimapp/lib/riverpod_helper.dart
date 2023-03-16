@@ -126,6 +126,8 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
 
   /// Retrieve success value, return null if state is not [ProviderStatus.success]
   T? get successOrNull => whenOrNull<T>(success: id);
+
+  Failure? get failure => whenOrNull(failure: id);
 }
 
 extension ProviderStatusProviderX<T> on NotifierProviderRef<ProviderStatus<T>> {
