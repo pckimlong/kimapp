@@ -150,7 +150,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return "/*$buffer*/";
+    return buffer.toString();
   }
 }
 
@@ -325,7 +325,7 @@ String _generateFormWidget({
     );
     """
       : """
-      return: builder(
+      return builder(
         ref,
         status,
         isProgressing,
