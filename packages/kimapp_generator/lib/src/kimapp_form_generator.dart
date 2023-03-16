@@ -56,6 +56,14 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
 
     if (classConstructor == null) {
       print('[FORM GENERATOR FAILED] $classElement has no constructor');
+      print(
+        '[FORM GENERATOR FAILED] $classElement has following constructors: ${classElement.constructors.map((e) => e.getDisplayString(withNullability: true))}',
+      );
+      return;
+    }
+
+    if (classConstructor.parameters.isEmpty) {
+      print('[FORM GENERATOR FAILED] $classConstructor has no parameters');
       return;
     }
 
