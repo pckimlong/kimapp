@@ -8,6 +8,7 @@ import 'package:source_gen/source_gen.dart';
 import 'package:collection/collection.dart';
 
 const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
+const formUpdateMixin = TypeChecker.fromRuntime(UpdateFormMixin);
 
 class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
   @override
@@ -35,19 +36,20 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       return;
     }
 
-    // Call function
-    final callMethod = element.methods.firstWhereOrNull((method) => method.name == "call");
-    if (callMethod == null) {
-      print('[FORM GENERATOR FAILED] $classElement has no [call] method.');
-      return;
-    }
-
     // All valid start generate code...
+    final isFormUpdateType = formUpdateMixin.isAssignableFrom(classElement);
     final providerClassName = element.thisType.toString();
     final familyParams = <String, String>{};
     final providerNameWithFamily =
         _providerFamilyParamBuilder(providerClassName, buildMethod.parameters);
     final fields = <String, String>{};
+
+    // Generate call method detail
+    final callMethod = element.methods.firstWhereOrNull((method) => method.name == "call");
+    if (callMethod == null) {
+      print('[FORM GENERATOR FAILED] $classElement required [call] method');
+      return;
+    }
 
     // Generate family params
     for (final param in buildMethod.parameters) {
@@ -71,13 +73,20 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       return;
     }
 
+    final callMethodApparent = callMethod.getDisplayString(withNullability: true);
+    late final String providerStatusType;
+
     // Generate form field
     for (final param in classConstructor.parameters) {
       // Don't generate status field because it from provider status mixin
       if (param.name != "status") {
-        final name = param.name;
-        final type = param.type.toString();
-        fields[name] = type;
+        if (!isFormUpdateType || (isFormUpdateType && param.name != "initialLoaded")) {
+          final name = param.name;
+          final type = param.type.toString();
+          fields[name] = type;
+        }
+      } else {
+        providerStatusType = param.type.toString();
       }
     }
 
@@ -87,7 +96,14 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     buffer.writeln(
       '/// Mixin use for update properties. You will need to add this mixin to provider in order to make it work',
     );
-    buffer.write(_generateMixin(providerClassName: providerClassName, fields: fields));
+    buffer.write(_generateMixin(
+      providerClassName: providerClassName,
+      fields: fields,
+      isFormUpdateType: isFormUpdateType,
+      buildMethodReturnType: classElement.name,
+      providerStatusType: providerStatusType,
+      callMethod: callMethodApparent,
+    ));
 
     buffer.writeln('');
 
@@ -120,7 +136,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return buffer.toString();
+    return "/*\n$buffer\n*/";
   }
 }
 
@@ -151,22 +167,29 @@ String _providerFamilyParamBuilder(String providerClassName, List<ParameterEleme
 String _generateMixin({
   required String providerClassName,
   required Map<String, String> fields,
+  required bool isFormUpdateType,
+  required String buildMethodReturnType,
+  required String providerStatusType,
+  required String callMethod,
 }) {
   final names = fields.keys;
 
   final result = """
     mixin _\$${providerClassName}Form on _\$$providerClassName {
+      ${isFormUpdateType ? """
       /// Initialize state for update form either by [local] or perform any fetch
       ///
       /// When finished it will update the [initialLoaded] flag to true. This mean any any call will ignore
-      // Future<TestingState> initState([TestingState? local]);
+      Future<$buildMethodReturnType> initState([$buildMethodReturnType? local]);
 
-      // Future<void> _initializeFormData([TestingState? local]) async {
-      //   if (state.initialLoaded) return;
-      //   final result = await initState(local);
-      //   state = result.copyWith(initialLoaded: true);
-      // }
+      Future<void> _initializeFormData([$buildMethodReturnType? local]) async {
+        if (state.initialLoaded) return;
+        final result = await initState(local);
+        state = result.copyWith(initialLoaded: true);
+      }
+      """ : ""}
 
+      $callMethod;
 
       ${names.map((name) {
     final type = fields[name]!;
