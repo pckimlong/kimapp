@@ -120,21 +120,19 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
     buffer.writeln('');
 
     // Generate family provider relations
-    if (familyParams.isNotEmpty) {
-      buffer.write(_generateFamilyParamsClass(providerClassName, familyParams));
-      buffer.writeln('');
-      buffer.write(
-        _generateFormWidget(
-          providerClassName: providerClassName,
-          providerNameFamily: providerNameWithFamily,
-          familyParams: familyParams,
-          callMethod: callMethod,
-          isUpdateForm: isFormUpdateType,
-          providerStatusType: providerStatusType,
-          buildMethodReturnType: buildMethodReturnType,
-        ),
-      );
-    }
+    buffer.write(_generateFamilyParamsClass(providerClassName, familyParams));
+    buffer.writeln('');
+    buffer.write(
+      _generateFormWidget(
+        providerClassName: providerClassName,
+        providerNameFamily: providerNameWithFamily,
+        familyParams: familyParams,
+        callMethod: callMethod,
+        isUpdateForm: isFormUpdateType,
+        providerStatusType: providerStatusType,
+        buildMethodReturnType: buildMethodReturnType,
+      ),
+    );
 
     buffer.writeln('');
 
