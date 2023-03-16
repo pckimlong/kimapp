@@ -401,7 +401,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
     ${isUpdateForm ? """
 
     final initialLoaded = ref.watch(
-        updateUserRolePermissionProvider(family.userId).select((value) => value.initialLoaded));
+        $providerNameFamily.select((value) => value.initialLoaded));
     
     final child = $returnWidget;
 
