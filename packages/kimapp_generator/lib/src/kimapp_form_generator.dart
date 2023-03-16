@@ -419,9 +419,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
             );
           }
 
-          if(snapshot.hasData){
-            $returnWidget
-          }
+          $returnWidget
         }
         return initializingIndicator();
       },
