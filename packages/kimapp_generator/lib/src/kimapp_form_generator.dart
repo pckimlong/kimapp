@@ -54,6 +54,17 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       return;
     }
 
+    // Validate call method for my style
+    for (final param in callMethod.parameters) {
+      if (param.hasDefaultValue) {
+        throw '$callMethod must not contain parameters with default value, but you have include ${param.name} with a default value which is invalid';
+      }
+
+      if (!param.isRequired) {
+        throw 'All parameters in $callMethod must mark as required. This ensure modified source code won\'t lead to forgetting it. but found ${param.name} is option which is invalid';
+      }
+    }
+
     // Generate family params
     for (final param in buildMethod.parameters) {
       final name = param.name;
@@ -141,7 +152,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return "/*\n$buffer\n*/";
+    return buffer.toString();
   }
 }
 
@@ -400,12 +411,12 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
             }
             return Center(
               child: Text(
-                error == null
+                snapshot.error == null
                 ? "Something went wrong!"
-                : error is Failure
-                    ? (error as Failure).message()
-                    : error.toString(),
-              );
+                : snapshot.error is Failure
+                    ? (snapshot.error as Failure).message()
+                    : snapshot.error.toString(),
+              ),
             );
           }
 
