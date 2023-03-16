@@ -345,9 +345,7 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
   $providerStatusType status,
   bool isProgressing,
   Failure? failure,
-  ${callMethod.returnType} Function(${callMethod.parameters.map((e) {
-    return "$e, ${e.declaration}, ${e.name}";
-  })}) submit,
+  ${callMethod.getDisplayString(withNullability: true).replaceAll(callMethod.name, 'Function')} submit,
 );
 
 /// Base form widget for [$providerClassName] provider
