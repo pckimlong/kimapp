@@ -232,10 +232,10 @@ extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<Provi
     if (state.isInProgress || state.isSuccess) return state;
     state = ProviderStatus<T>.inProgress();
     state = await ProviderStatus.guard<T>(() async => await callback(state));
-
+    final updatedState = state; // prevent if onsuccess or failure update current state
     if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
     if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
-    return state;
+    return updatedState;
   }
 }
 
@@ -265,13 +265,13 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
 
     state = state.updateStatus(ProviderStatus<T>.inProgress());
     state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
+    final updatedStatus = state.status as ProviderStatus<T>;
     if (isFailure && onFailure != null) {
       onFailure(state.status.whenOrNull(failure: id)!);
     }
     if (isSuccess && onSuccess != null) {
       onSuccess(state.status.successOrNull as T);
     }
-
-    return state.status as ProviderStatus<T>;
+    return updatedStatus;
   }
 }
