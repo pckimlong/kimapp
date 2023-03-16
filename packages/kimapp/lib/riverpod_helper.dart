@@ -273,7 +273,7 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
     if (state is UpdateFormMixin) {
       final updateForm = state as UpdateFormMixin;
-      if (updateForm.initialLoaded) {
+      if (!updateForm.initialLoaded) {
         return state.status as ProviderStatus<T>;
       }
     }
