@@ -91,8 +91,9 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
 
     // Generate form field
     for (final param in classConstructor.parameters) {
-      // Don't generate status field because it from provider status mixin
+      // Don't generate status field because it from provider status mixin class
       if (param.name != "status") {
+        // Also initialLoaded field
         if (!isFormUpdateType || (isFormUpdateType && param.name != "initialLoaded")) {
           final name = param.name;
           final type = param.type.toString();
@@ -102,6 +103,10 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
         providerStatusType = param.type.toString();
       }
     }
+
+    // Generate form if there any string field
+    final useFormWidget =
+        fields.values.where((type) => type == "String" || type == "String?").isNotEmpty;
 
     final buffer = StringBuffer();
 
@@ -131,6 +136,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
         isUpdateForm: isFormUpdateType,
         providerStatusType: providerStatusType,
         buildMethodReturnType: buildMethodReturnType,
+        useFormWidget: useFormWidget,
       ),
     );
 
@@ -146,6 +152,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
         fieldType: fieldType,
         providerNameFamily: providerNameWithFamily,
         familyParams: familyParams,
+        useTextField: useFormWidget && fieldType == "String" || fieldType == "String?",
       );
       buffer.write(fieldWidget);
     }
@@ -220,10 +227,14 @@ String _generateFieldWidget({
   required String fieldType,
   required String providerNameFamily,
   required Map<String, String> familyParams,
+  required bool useTextField,
 }) {
+  final callEvent = "controller.on${fieldName.pascalCase}Changed";
+
   final result = """
 typedef $providerClassName${fieldName.pascalCase}ChildBuilder = Widget Function(
   WidgetRef ref,
+  ${useTextField ? "TextEditingController textController," : ""}
   $fieldType $fieldName,
   void Function($fieldType new${fieldName.pascalCase}) change${fieldName.pascalCase},
   bool showValidation,
@@ -239,8 +250,26 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
     ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
     final controller = ref.watch($providerNameFamily.notifier);
     final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
+    ${useTextField ? """
+      final textController = useTextEditingController(text: state);
+      useMemoized(() {
+      textController.addListener(() {
+        Future.microtask(() => $callEvent(textController.text));
+      });
+      return null;
+      });
+
+      ref.listen($providerNameFamily.select((value) => value.$fieldName), (previous, current) {
+        if (previous != current) {
+          if (current != textController.text) {
+            Future.microtask(() => textController.text = current);
+          }
+        }
+      });
+
+    """ : ""}
     final showValidation = ref.watch($providerNameFamily.select((value) => value.status.isFailure));
-    return builder(ref, state, controller.on${fieldName.pascalCase}Changed, showValidation,);
+    return builder(ref, ${useTextField ? "textController," : ""} state, $callEvent, showValidation,);
   }
 }
   """;
@@ -308,31 +337,38 @@ String _generateFormWidget({
   required MethodElement callMethod,
   required bool isUpdateForm,
   required String buildMethodReturnType,
+  required bool useFormWidget,
 }) {
   final props = familyParams.keys;
 
-  final String returnWidget = props.isNotEmpty
-      ? """
-      ProviderScope(
-      overrides: [${_familyProviderName(providerClassName)}.overrideWithValue(family)],
-      child: builder(
+  var builder = """
+        builder(
         ref,
-        status,
-        isProgressing,
-        failure,
-        controller.call,
-        ),
-    )
-    """
-      : """
-      builder(
-        ref,
+        ${useFormWidget ? "formKey," : ""}
         status,
         isProgressing,
         failure,
         controller.call,
         )
+  """;
+
+  if (useFormWidget) {
+    builder = """
+    Form(
+      key: formKey,
+      child: $builder,
+    )
     """;
+  }
+
+  final returnWidget = props.isNotEmpty
+      ? """
+      ProviderScope(
+      overrides: [${_familyProviderName(providerClassName)}.overrideWithValue(family)],
+      child: $builder,
+      )
+    """
+      : builder;
 
   final result = """
 bool _debugCheckHas${providerClassName}FormWidget(BuildContext context) {
@@ -351,6 +387,7 @@ bool _debugCheckHas${providerClassName}FormWidget(BuildContext context) {
 
 typedef ${providerClassName}FormChildBuilder = Widget Function(
   WidgetRef ref,
+  ${useFormWidget ? "formKey," : ""}
   $providerStatusType status,
   bool isProgressing,
   Failure? failure,
@@ -392,6 +429,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ${useFormWidget ? "final formKey = useMemoized(() => GlobalKey<FormState>());" : ""}
     ${_defineLocalFamilyOrEmpty(providerClassName, familyParams)}
     final status = ref.watch($providerNameFamily.select((value) => value.status));
     final isProgressing = status.isInProgress;
