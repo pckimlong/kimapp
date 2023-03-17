@@ -229,7 +229,7 @@ String _generateFieldWidget({
   required Map<String, String> familyParams,
   required bool useTextField,
 }) {
-  final callEvent = "controller.on${fieldName.pascalCase}Changed";
+  final callEvent = "notifier.on${fieldName.pascalCase}Changed";
 
   final result = """
 typedef $providerClassName${fieldName.pascalCase}ChildBuilder = Widget Function(
@@ -241,14 +241,19 @@ typedef $providerClassName${fieldName.pascalCase}ChildBuilder = Widget Function(
 );
 
 class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerWidget {
-  const $providerClassName${fieldName.pascalCase}FieldWidget({super.key, required this.builder});
+  const $providerClassName${fieldName.pascalCase}FieldWidget({super.key, ${useTextField ? "this.controller," : ""} required this.builder,});
   final $providerClassName${fieldName.pascalCase}ChildBuilder builder;
+
+  ${useTextField ? """
+    /// TextEditingController of text field widget. If null it will create by widget
+    final TextEditingController? controller;
+  """ : ""}
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ${_checkHasFormWidgetAssert(providerClassName)}
     ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
-    final controller = ref.watch($providerNameFamily.notifier);
+    final notifier = ref.watch($providerNameFamily.notifier);
     final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
     ${useTextField ? """
       final textController = useTextEditingController(text: state);
