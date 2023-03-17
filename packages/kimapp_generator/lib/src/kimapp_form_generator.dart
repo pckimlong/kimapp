@@ -254,7 +254,7 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
       final textController = useTextEditingController(text: state);
       useMemoized(() {
       textController.addListener(() {
-        Future.microtask(() => $callEvent(textController.text));
+        Future.microtask(() => $callEvent(${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"}));
       });
       return null;
       });
@@ -262,7 +262,7 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
       ref.listen($providerNameFamily.select((value) => value.$fieldName), (previous, current) {
         if (previous != current) {
           if (current != textController.text) {
-            Future.microtask(() => textController.text = current);
+            Future.microtask(() => textController.text = ${fieldType == "String?" ? "current ?? ''" : "current"});
           }
         }
       });
@@ -387,7 +387,7 @@ bool _debugCheckHas${providerClassName}FormWidget(BuildContext context) {
 
 typedef ${providerClassName}FormChildBuilder = Widget Function(
   WidgetRef ref,
-  ${useFormWidget ? "formKey," : ""}
+  ${useFormWidget ? "GlobalKey<FormState>," : ""}
   $providerStatusType status,
   bool isProgressing,
   Failure? failure,
