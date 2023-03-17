@@ -344,7 +344,7 @@ String _generateFormWidget({
   var builder = """
         builder(
         ref,
-        ${useFormWidget ? "formKey," : ""}
+        ${useFormWidget ? "cachedFormKey," : ""}
         status,
         isProgressing,
         failure,
@@ -355,7 +355,7 @@ String _generateFormWidget({
   if (useFormWidget) {
     builder = """
     Form(
-      key: formKey,
+      key: cachedFormKey,
       child: $builder,
     )
     """;
@@ -401,6 +401,7 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
 class ${providerClassName}FormWidget extends HookConsumerWidget {
   const ${providerClassName}FormWidget({
     super.key,
+    ${useFormWidget ? "this.formKey," : ""}
     ${isUpdateForm ? """
     required this.initializingIndicator,
     this.onInitError,
@@ -410,6 +411,10 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
     required this.builder,
   });
 
+  ${useFormWidget ? """
+    /// Form key. If null it will be created by widget
+    final GlobalKey<FormState>? formKey;
+  """ : ""}
   ${props.map((e) => "final ${_dataType(e, familyParams)} $e;").join('\n\t\t\t')}
   final ${providerClassName}FormChildBuilder builder;
 
@@ -429,7 +434,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ${useFormWidget ? "final formKey = useMemoized(() => GlobalKey<FormState>());" : ""}
+    ${useFormWidget ? "final cachedFormKey = useMemoized(() => formKey ?? GlobalKey<FormState>());" : ""}
     ${_defineLocalFamilyOrEmpty(providerClassName, familyParams)}
     final status = ref.watch($providerNameFamily.select((value) => value.status));
     final isProgressing = status.isInProgress;
