@@ -240,6 +240,8 @@ typedef $providerClassName${fieldName.pascalCase}ChildBuilder = Widget Function(
   bool showValidation,
 );
 
+/// Widget form field for property [$fieldName]. To use this widget. You will need to add [${providerClassName}FormWidget] widget as ancestor
+/// otherwise assert error will be thrown 
 class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerWidget {
   const $providerClassName${fieldName.pascalCase}FieldWidget({super.key, ${useTextField ? "this.controller," : ""} required this.builder,});
   final $providerClassName${fieldName.pascalCase}ChildBuilder builder;
