@@ -256,7 +256,7 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
     final notifier = ref.watch($providerNameFamily.notifier);
     final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
     ${useTextField ? """
-      final textController = useTextEditingController(text: state);
+      final textController = controller ?? useTextEditingController(text: state);
       useMemoized(() {
       textController.addListener(() {
         Future.microtask(() => $callEvent(${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"}));
