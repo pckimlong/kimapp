@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart' show kDebugMode, kReleaseMode;
+
 import 'package:logger/logger.dart';
 import 'package:url_strategy/url_strategy.dart';
 
@@ -12,10 +13,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
 
-  FlutterError.onError = (detail) {
-    _prettyLogger.e(detail.exceptionAsString(), detail.exception, detail.stack);
-  };
+  // handle with error
+  FlutterError.onError = _handleFlutterError;
+  if (kReleaseMode) {
+    ErrorWidget.builder = (details) => const SizedBox();
+  }
 
+  // initial
   await initializeSupabase();
   await Kimapp.initialize(
     debugMode: kDebugMode,
@@ -34,9 +38,7 @@ void main() async {
         child: const AppWidget(),
       ),
     ),
-    (error, stack) {
-      _prettyLogger.e(error.toString(), error, stack);
-    },
+    (error, stack) => _prettyLogger.e(error.toString(), error, stack),
   );
 }
 
@@ -61,10 +63,16 @@ class RiverpodLogger extends ProviderObserver {
 }
 
 final _prettyLogger = Logger(
-  printer: PrettyPrinter(
-    colors: true,
-    printEmojis: true,
-    printTime: true,
-    methodCount: 0,
-  ),
+  printer: PrettyPrinter(colors: true, printEmojis: true, printTime: true, methodCount: 0),
 );
+
+Future<void> _handleFlutterError(FlutterErrorDetails details) async {
+  _prettyLogger.d('caught flutter error');
+  _prettyLogger.e(details.exceptionAsString(), details.exception, details.stack);
+
+  if (kReleaseMode) {
+    Zone.current.handleUncaughtError(details.exception, details.stack!);
+  } else {
+    FlutterError.dumpErrorToConsole(details);
+  }
+}
