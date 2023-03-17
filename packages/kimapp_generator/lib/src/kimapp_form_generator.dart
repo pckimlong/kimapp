@@ -355,7 +355,20 @@ String _generateFormWidget({
         status,
         isProgressing,
         failure,
-        controller.call,
+        ${useFormWidget ? """
+          ${callMethod.getDisplayString(withNullability: true).replaceAll(callMethod.name, '')} {
+            formKey.currentState!.save();
+            if (!formKey.currentState!.validate()) return;
+
+            return controller.call(${callMethod.parameters.map((e) {
+          if (e.isNamed) {
+            return "${e.name}: ${e.name}";
+          } else {
+            return e.name;
+          }
+        }).join(',')});
+          },
+        """ : "controller.call,"}
         )
   """;
 
@@ -423,6 +436,19 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
     final GlobalKey<FormState>? formKey;
   """ : ""}
   ${props.map((e) => "final ${_dataType(e, familyParams)} $e;").join('\n\t\t\t')}
+
+   /// Child widget builder
+  /// 
+  /// * [submit] callback will submit the form and trigger call() function of provider.
+  /// This callback will also save form state and check validation of form if it a form type
+  ${useFormWidget ? """/// ``` 
+  /// ${callMethod.getDisplayString(withNullability: true)} {
+  ///   formKey.currentState!.save();
+  ///   if (!formKey.currentState!.validate()) return;
+  /// 
+  ///   // trigger call function in provider....
+  /// }
+  /// ```""" : ""} 
   final ${providerClassName}FormChildBuilder builder;
 
   ${isUpdateForm ? """
