@@ -1,3 +1,16 @@
+targets:
+  $default:
+    builders:
+      freezed:freezed:
+        generate_for:
+          - lib/**/*.dart
+      kimapp_generator:
+        generate_for:
+          - lib/**/*.dart
+      source_gen|combining_builder:
+        options:
+          ignore_for_file:
+            - "type=lint"
 builders:
   kimapp_table_generator:
     import: "package:kimapp_generator/builder.dart"
