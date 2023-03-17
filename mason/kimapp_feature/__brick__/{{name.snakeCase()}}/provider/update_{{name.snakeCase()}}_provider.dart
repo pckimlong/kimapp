@@ -12,18 +12,15 @@ part 'update_{{name.snakeCase()}}_provider.g.dart';
 
 @freezed
 class Update{{name.pascalCase()}}State
-    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel> {
+    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel>, UpdateFormMixin {
   const factory Update{{name.pascalCase()}}State({
     @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
     /// Flag if update data has been initialize or not. If initialized call init won't effect
     /// Do not update manually update this
-    @Default(false) bool initializedData,
+    @Default(false) bool initialLoaded,
   }) = _Update{{name.pascalCase()}}State;
 
   const Update{{name.pascalCase()}}State._();
-
-  /// Mark state as loading when performing or initialize update data
-  bool get isLoading => status == const ProviderStatus.inProgress() || !initializedData;
 
   @override
   Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}DetailModel> newStatus) {
@@ -43,11 +40,6 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
   Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
     return await perform<{{name.pascalCase()}}DetailModel>(
       (state) async {
-        if(state.initializedData){
-          throw 'Initializing data...';
-        }
-
-        _performValidation();
         final param = state.toParam();
         final result = await ref.read({{name.camelCase()}}RepoProvider).update({{name.camelCase()}}Id, data: param);
         return result.getOrThrow();
@@ -64,24 +56,17 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
     state = newState(state).copyWith(status: state.status);
   }
 
+  @override
+  Future<  Update{{name.pascalCase()}}State> initState([  Update{{name.pascalCase()}}State? local]) async {
+    if (local != null) return local;
 
-
-  void _performValidation() {
-    // ...
+    final detail = await ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).future);
+    return const   Update{{name.pascalCase()}}State();
   }
+
 
   @override
-  Update{{name.pascalCase()}}State build({{name.pascalCase()}}Id {{name.camelCase()}}Id) {
-    _initializeData();
-    return const Update{{name.pascalCase()}}State();
-  };
-
-   Future<void> _initializeData() async {
-    if (state.initializedData) return;
-
-    final result = await ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).future);
-    state = state.copyWith(
-      //TODO set init state
-    );
-  }
+  Update{{name.pascalCase()}}State build({{name.pascalCase()}}Id {{name.camelCase()}}Id) =>
+     const Update{{name.pascalCase()}}State();
+  
 }

@@ -41,7 +41,7 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
 }
 
 
-//TODO - Move UI code to appropriate place
+// //TODO - Move UI code to appropriate place
 // final _paramProvider = StateProvider<{{name.pascalCase()}}ListPaginationParam>((ref) {
 //   return const {{name.pascalCase()}}ListPaginationParam();
 // });
@@ -93,9 +93,9 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
 //         if (paginated != null) {
 //           return paginated.whenOrNull(
 //             loading: () => const Text('Loading...'),
-//             data: ({{name.pascalCase()}}) {
-//               // TODO - Implement {{name.pascalCase()}} item widget
-//               return Text({{name.pascalCase()}}.id.value);
+//             data: ({{name.camelCase()}}) {
+//               // TODO - Implement {{name.camelCase()}} item widget
+//               return Text({{name.camelCase()}}.id.value.toString());
 //             },
 //           );
 //         }

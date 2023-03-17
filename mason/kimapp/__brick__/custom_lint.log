@@ -340,3 +340,117 @@ package:custom_lint/src/plugin.dart 20:31                           getPackageLi
 package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
 package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
 
+The request analysis.setContextRoots failed with the following error:
+RequestErrorCode.PLUGIN_ERROR
+ParsedYamlException: line 1, column 7 of Users/pckimlong/Developer/projects/flutter/kimapp/mason/kimapp/__brick__/pubspec.yaml: Unsupported value for "name". type 'YamlMap' is not a subtype of type 'String' in type cast
+  ╷
+1 │ name: {{project_name.snakeCase()}}
+  │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+at:
+package:riverpod/src/framework/provider_base.dart 177:29            _ExternalProviderSubscription.read
+package:custom_lint/src/plugin.dart 26:10                           getPackageListForContextRoots
+package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 264:9   CustomLintServer._handleAnalysisSetContextRoots.<fn>
+package:custom_lint/src/async_operation.dart 14:14                  PendingOperation.run
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 124:22  CustomLintServer._handleRequest
+===== asynchronous gap ===========================
+package:riverpod/src/framework/element.dart 742:20                  ProviderElementBase.watch
+package:custom_lint/src/plugin.dart 91:17                           allPluginLinkKeysProvider.<fn>.<fn>
+dart:_internal/iterable.dart 483:31                                 ExpandIterator.moveNext
+dart:_internal/iterable.dart 392:19                                 MappedIterator.moveNext
+dart:collection/set.dart 57:23                                      SetMixin.addAll
+dart:collection-patch/compact_hash.dart 984:11                      _Set.addAll
+dart:collection/linked_hash_set.dart 192:27                         new LinkedHashSet.of
+dart:core/iterable.dart 486:21                                      Iterable.toSet
+package:custom_lint/src/plugin.dart 94:8                            allPluginLinkKeysProvider.<fn>
+package:riverpod/src/framework/container.dart 274:21                ProviderContainer.listen
+package:custom_lint/src/plugin.dart 20:31                           getPackageListForContextRoots
+package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 264:9   CustomLintServer._handleAnalysisSetContextRoots.<fn>
+package:custom_lint/src/async_operation.dart 14:14                  PendingOperation.run
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 124:22  CustomLintServer._handleRequest
+===== asynchronous gap ===========================
+package:checked_yaml/checked_yaml.dart 48:5                         checkedYamlDecode
+package:pubspec_parse/src/pubspec.dart 167:7                        new Pubspec.parse
+package:custom_lint/src/plugin.dart 161:18                          _loadPubspecAt
+package:custom_lint/src/plugin.dart 110:21                          pluginMetasForContextRootProvider.<fn>._getPluginsForContext
+dart:async-patch/async_patch.dart 528:14                            _SyncStarIterator.moveNext
+dart:core-patch/growable_array.dart 202:26                          new _GrowableList._ofOther
+dart:core-patch/growable_array.dart 152:26                          new _GrowableList.of
+dart:core-patch/array_patch.dart 52:28                              new List.of
+dart:core/iterable.dart 470:12                                      Iterable.toList
+package:custom_lint/src/plugin.dart 152:45                          pluginMetasForContextRootProvider.<fn>
+package:riverpod/src/framework/element.dart 716:32                  ProviderElementBase.watch
+package:custom_lint/src/plugin.dart 91:17                           allPluginLinkKeysProvider.<fn>.<fn>
+dart:_internal/iterable.dart 483:31                                 ExpandIterator.moveNext
+dart:_internal/iterable.dart 392:19                                 MappedIterator.moveNext
+dart:collection/set.dart 57:23                                      SetMixin.addAll
+dart:collection-patch/compact_hash.dart 984:11                      _Set.addAll
+dart:collection/linked_hash_set.dart 192:27                         new LinkedHashSet.of
+dart:core/iterable.dart 486:21                                      Iterable.toSet
+package:custom_lint/src/plugin.dart 94:8                            allPluginLinkKeysProvider.<fn>
+package:riverpod/src/framework/container.dart 274:21                ProviderContainer.listen
+package:custom_lint/src/plugin.dart 20:31                           getPackageListForContextRoots
+package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
+
+The request analysis.setContextRoots failed with the following error:
+RequestErrorCode.PLUGIN_ERROR
+ParsedYamlException: line 1, column 7 of Users/pckimlong/Developer/projects/flutter/kimapp/mason/kimapp/__brick__/pubspec.yaml: Unsupported value for "name". type 'YamlMap' is not a subtype of type 'String' in type cast
+  ╷
+1 │ name: {{project_name.snakeCase()}}
+  │       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+at:
+package:riverpod/src/framework/provider_base.dart 177:29            _ExternalProviderSubscription.read
+package:custom_lint/src/plugin.dart 26:10                           getPackageListForContextRoots
+package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 264:9   CustomLintServer._handleAnalysisSetContextRoots.<fn>
+package:custom_lint/src/async_operation.dart 14:14                  PendingOperation.run
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 124:22  CustomLintServer._handleRequest
+===== asynchronous gap ===========================
+package:riverpod/src/framework/element.dart 742:20                  ProviderElementBase.watch
+package:custom_lint/src/plugin.dart 91:17                           allPluginLinkKeysProvider.<fn>.<fn>
+dart:_internal/iterable.dart 483:31                                 ExpandIterator.moveNext
+dart:_internal/iterable.dart 392:19                                 MappedIterator.moveNext
+dart:collection/set.dart 57:23                                      SetMixin.addAll
+dart:collection-patch/compact_hash.dart 984:11                      _Set.addAll
+dart:collection/linked_hash_set.dart 192:27                         new LinkedHashSet.of
+dart:core/iterable.dart 486:21                                      Iterable.toSet
+package:custom_lint/src/plugin.dart 94:8                            allPluginLinkKeysProvider.<fn>
+package:riverpod/src/framework/container.dart 274:21                ProviderContainer.listen
+package:custom_lint/src/plugin.dart 20:31                           getPackageListForContextRoots
+package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 264:9   CustomLintServer._handleAnalysisSetContextRoots.<fn>
+package:custom_lint/src/async_operation.dart 14:14                  PendingOperation.run
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 124:22  CustomLintServer._handleRequest
+===== asynchronous gap ===========================
+package:checked_yaml/checked_yaml.dart 48:5                         checkedYamlDecode
+package:pubspec_parse/src/pubspec.dart 167:7                        new Pubspec.parse
+package:custom_lint/src/plugin.dart 161:18                          _loadPubspecAt
+package:custom_lint/src/plugin.dart 110:21                          pluginMetasForContextRootProvider.<fn>._getPluginsForContext
+dart:async-patch/async_patch.dart 528:14                            _SyncStarIterator.moveNext
+dart:core-patch/growable_array.dart 202:26                          new _GrowableList._ofOther
+dart:core-patch/growable_array.dart 152:26                          new _GrowableList.of
+dart:core-patch/array_patch.dart 52:28                              new List.of
+dart:core/iterable.dart 470:12                                      Iterable.toList
+package:custom_lint/src/plugin.dart 152:45                          pluginMetasForContextRootProvider.<fn>
+package:riverpod/src/framework/element.dart 716:32                  ProviderElementBase.watch
+package:custom_lint/src/plugin.dart 91:17                           allPluginLinkKeysProvider.<fn>.<fn>
+dart:_internal/iterable.dart 483:31                                 ExpandIterator.moveNext
+dart:_internal/iterable.dart 392:19                                 MappedIterator.moveNext
+dart:collection/set.dart 57:23                                      SetMixin.addAll
+dart:collection-patch/compact_hash.dart 984:11                      _Set.addAll
+dart:collection/linked_hash_set.dart 192:27                         new LinkedHashSet.of
+dart:core/iterable.dart 486:21                                      Iterable.toSet
+package:custom_lint/src/plugin.dart 94:8                            allPluginLinkKeysProvider.<fn>
+package:riverpod/src/framework/container.dart 274:21                ProviderContainer.listen
+package:custom_lint/src/plugin.dart 20:31                           getPackageListForContextRoots
+package:custom_lint/src/v2/server_to_client_channel.dart 299:21     new _SocketCustomLintServerToClientChannel
+package:custom_lint/src/v2/custom_lint_analyzer_plugin.dart 280:53  CustomLintServer._maybeSpawnCustomLintPlugin
+

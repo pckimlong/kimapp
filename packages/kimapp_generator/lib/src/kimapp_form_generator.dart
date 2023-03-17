@@ -394,7 +394,7 @@ bool _debugCheckHas${providerClassName}FormWidget(BuildContext context) {
 
 typedef ${providerClassName}FormChildBuilder = Widget Function(
   WidgetRef ref,
-  ${useFormWidget ? "GlobalKey<FormState>," : ""}
+  ${useFormWidget ? "GlobalKey<FormState> formKey," : ""}
   $providerStatusType status,
   bool isProgressing,
   Failure? failure,
