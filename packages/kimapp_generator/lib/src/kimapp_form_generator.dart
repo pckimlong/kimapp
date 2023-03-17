@@ -157,7 +157,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
       buffer.write(fieldWidget);
     }
 
-    return buffer.toString();
+    return "/*$buffer */";
   }
 }
 
@@ -356,7 +356,7 @@ String _generateFormWidget({
         isProgressing,
         failure,
         ${useFormWidget ? """
-          ${callMethod.getDisplayString(withNullability: true).replaceAll(callMethod.name, '')} {
+          ${callMethod.parameters} {
             formKey.currentState!.save();
             if (!formKey.currentState!.validate()) return;
 
