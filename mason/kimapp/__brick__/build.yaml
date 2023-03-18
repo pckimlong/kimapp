@@ -1,0 +1,73 @@
+targets:
+  $default:
+    builders:
+      kimapp_generator|kimapp_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/**_model.dart
+            - lib/src/**_provider.dart
+          exclude:
+            - lib/**_widget.dart
+            - lib/**.g.dart
+            - lib/**.freezed.dart
+            - lib/**.table.dart
+            - lib/**.gr.dart
+      kimapp_generator|kimapp_table_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/features/**_objects.dart
+          exclude:
+            - lib/**_widget.dart
+            - lib/**.g.dart
+            - lib/**.freezed.dart
+            - lib/**.table.dart
+            - lib/**.gr.dart
+      json_serializable:
+        enabled: true
+        generate_for:
+          include:
+            - lib/**_model.dart
+            - lib/**_param.dart
+          exclude:
+            - lib/**.g.dart
+            - lib/**.freezed.dart
+            - lib/**.table.dart
+            - lib/**.gr.dart
+      freezed|freezed:
+        enabled: true
+        generate_for:
+          include:
+            - lib/**.dart
+          exclude:
+            - lib/**.g.dart
+            - lib/**.freezed.dart
+            - lib/**.table.dart
+            - lib/**.gr.dart
+      auto_route_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/presentation/modules/**.dart
+          exclude:
+            - lib/**.g.dart
+            - lib/**.freezed.dart
+            - lib/**.table.dart
+            - lib/**.gr.dart
+      riverpod_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/**.dart
+          exclude:
+            - lib/**.g.dart
+            - lib/**.freezed.dart
+            - lib/**.table.dart
+            - lib/**.gr.dart
+      source_gen|combining_builder:
+        options:
+          ignore_for_file:
+            - non_constant_identifier_names
+            - require_trailing_commas
+            - type=lint

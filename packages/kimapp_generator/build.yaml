@@ -21,7 +21,7 @@ builders:
     runs_before:
       - kimapp_generator|kimapp_generator
       - json_serializable|json_serializable
-      - freezed:freezed
+      - freezed|freezed
 
   kimapp_generator:
     import: "package:kimapp_generator/builder.dart"
