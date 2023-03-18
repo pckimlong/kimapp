@@ -44,7 +44,6 @@ dependencies:
   riverpod_annotation: ^2.0.2
   supabase_flutter: ^1.5.0
   timeago: null
-  url_strategy: ^0.2.0
   device_info_plus: ^8.1.0
 
 dev_dependencies:
