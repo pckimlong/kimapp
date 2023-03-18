@@ -13,4 +13,4 @@ export 'package:kimapp/kimapp.dart';
 export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 
 export 'src/core/core.dart';
-export 'src/presentation/core/app_style.dart';
+export 'src/presentation/app/app_style.dart';

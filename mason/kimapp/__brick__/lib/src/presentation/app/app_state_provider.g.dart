@@ -1,24 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sign_out_provider.dart';
+part of 'app_state_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$signOutHash() => r'88e04b3a10dffcb06abeac4398650456a3534ab3';
+String _$appStateHash() => r'df19e6271647c31cf8e106244ff4d875b39d0903';
 
-/// See also [SignOut].
-@ProviderFor(SignOut)
-final signOutProvider =
-    AutoDisposeNotifierProvider<SignOut, ProviderStatus<Unit>>.internal(
-  SignOut.new,
-  name: r'signOutProvider',
+/// See also [AppState].
+@ProviderFor(AppState)
+final appStateProvider = NotifierProvider<AppState, ApplicationState>.internal(
+  AppState.new,
+  name: r'appStateProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$signOutHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$SignOut = AutoDisposeNotifier<ProviderStatus<Unit>>;
+typedef _$AppState = Notifier<ApplicationState>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

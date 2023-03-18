@@ -1,4 +1,7 @@
+// Flutter imports:
 import 'package:flutter/foundation.dart' show kDebugMode;
+
+// Package imports:
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
 

@@ -6,8 +6,7 @@ import 'package:url_strategy/url_strategy.dart';
 import 'exports.dart';
 import 'src/core/errors/custom_failure_message.dart';
 import 'src/presentation/app/app_widget.dart';
-
-const appName = "{{project_name.sentenceCase()}}";
+import 'src/core/helpers/logger_observers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,30 +41,6 @@ void main() async {
   );
 }
 
-class RiverpodLogger extends ProviderObserver {
-  @override
-  void didUpdateProvider(
-    ProviderBase<Object?> provider,
-    Object? previousValue,
-    Object? newValue,
-    ProviderContainer container,
-  ) {
-    if (kDebugMode) {
-      _prettyLogger.i(
-        '''
-{
-  "provider": "${provider.name ?? provider.runtimeType}",
-  "newValue": "$newValue"
-}''',
-      );
-    }
-  }
-}
-
-final _prettyLogger = Logger(
-  printer: PrettyPrinter(colors: true, printEmojis: true, printTime: true, methodCount: 0),
-);
-
 Future<void> _handleFlutterError(FlutterErrorDetails details) async {
   _prettyLogger.d('caught flutter error');
   _prettyLogger.e(details.exceptionAsString(), details.exception, details.stack);
@@ -76,3 +51,7 @@ Future<void> _handleFlutterError(FlutterErrorDetails details) async {
     FlutterError.dumpErrorToConsole(details);
   }
 }
+
+final _prettyLogger = Logger(
+  printer: PrettyPrinter(colors: true, printEmojis: true, printTime: true, methodCount: 0),
+);

@@ -1,3 +1,4 @@
+// Package imports:
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -11,28 +12,32 @@ part "auth_state_provider.g.dart";
 class AuthenticationState with _$AuthenticationState {
   const AuthenticationState._();
 
-  const factory AuthenticationState.authenticated(AuthUserId authUserId) = _Authenticated;
+  const factory AuthenticationState.authenticated(AuthUserId userId) = _Authenticated;
+
   const factory AuthenticationState.unauthenticated() = _Unauthenticated;
 
-  bool get isAuthenticated => whenOrNull(authenticated: id) != null;
+  bool get isAuthenticated => whenOrNull(authenticated: (id) => id) != null;
+
   bool get isUnauthenticated => whenOrNull(unauthenticated: () => true) == true;
 }
 
 @Riverpod(keepAlive: true)
 class AuthState extends _$AuthState {
-  @override
-  Future<AuthenticationState> build() async {
-    final authUserIdOption = (await ref.watch(authRepoProvider).currentId()).getOrThrow();
+  void updateAuthState(AuthenticationState newState) => state = newState;
 
-    return authUserIdOption.match(
+  Future<void> initialize() async {
+    final authAuthUserIdOption = (await ref.watch(authRepoProvider).currentId()).getOrThrow();
+    state = authAuthUserIdOption.match(
       () => const AuthenticationState.unauthenticated(),
       (userId) => AuthenticationState.authenticated(userId),
     );
   }
 
-  /// Manually update auth state›
-  /// real auth event, There won't be any update in testing, since it not getting real signed in
-  void updateAuthState(AuthenticationState newState) {
-    state = state.whenData((_) => newState);
+  @override
+  AuthenticationState build() {
+    // TODO - Listen to auth state change and navigate to appropriate route?
+
+    /// Return unauthenticated by default and let splash page initial actual state
+    return const AuthenticationState.unauthenticated();
   }
 }

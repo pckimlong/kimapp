@@ -1,24 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_widget.dart';
+part of 'app_router.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$initialLoaderHash() => r'157224748c12ba669918c8cd6eeb057b20cf399a';
+String _$appRouterHash() => r'b97c310775152eecb81013525be62b461873435b';
 
-/// See also [initialLoader].
-@ProviderFor(initialLoader)
-final initialLoaderProvider = FutureProvider<bool>.internal(
-  initialLoader,
-  name: r'initialLoaderProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$initialLoaderHash,
+/// See also [appRouter].
+@ProviderFor(appRouter)
+final appRouterProvider = Provider<AppRouter>.internal(
+  appRouter,
+  name: r'appRouterProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appRouterHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef InitialLoaderRef = FutureProviderRef<bool>;
+typedef AppRouterRef = ProviderRef<AppRouter>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
