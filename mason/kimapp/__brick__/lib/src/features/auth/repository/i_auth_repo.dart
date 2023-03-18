@@ -1,8 +1,9 @@
+// Package imports:
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+// Project imports:
 import '../../../../exports.dart';
 import '../auth.dart';
-import '../param/sign_up_param.dart';
 
 part 'i_auth_repo.g.dart';
 
@@ -10,14 +11,10 @@ part 'i_auth_repo.g.dart';
 IAuthRepo authRepo(AuthRepoRef ref) => _Impl(ref);
 
 abstract class IAuthRepo {
-  Future<Either<Failure, Option<AuthUserId>>> currentId();
-  Future<Either<Failure, AuthUserId>> signIn(SignInParam param);
-  Future<Either<Failure, AuthUserId>> signUp(SignUpParam param);
+  Future<Either<Failure, Option<UserId>>> currentId();
+  Future<Either<Failure, UserId>> signIn(SignInParam param);
   Future<Either<Failure, Unit>> signOut();
-}
 
-String _baseEmailGenerator(String username) {
-  return "$username@sokcheakps.system.com";
 }
 
 class _Impl implements IAuthRepo {
@@ -26,49 +23,29 @@ class _Impl implements IAuthRepo {
   final Ref _ref;
 
   @override
-  Future<Either<Failure, Option<AuthUserId>>> currentId() async {
+  Future<Either<Failure, Option<UserId>>> currentId() async {
     return await errorHandler(() async {
       final user = _ref.read(supabaseProvider).client.auth.currentSession?.user;
 
       if (user == null) return right(none());
 
-      final userId = AuthUserId.fromValue(user.id);
-      return left(Failure.fromString('errorString'));
-      // return right(Option.of(userId));
+      final userId = UserId.fromValue(user.id);
+
+      return right(Option.of(userId));
     });
   }
 
   @override
-  Future<Either<Failure, AuthUserId>> signIn(SignInParam param) async {
+  Future<Either<Failure, UserId>> signIn(SignInParam param) async {
     return await errorHandler(() async {
-      final result = await _ref
-          .read(supabaseProvider)
-          .client
-          .auth
-          .signInWithPassword(password: param.password, email: _baseEmailGenerator(param.email));
-
-      if (result.user != null) {
-        final authUserId = AuthUserId.fromValue(result.user!.id);
-        return right(authUserId);
-      }
-
-      throw "Cannot sign in";
+      throw UnimplementedError();
     });
   }
 
   @override
   Future<Either<Failure, Unit>> signOut() async {
     return await errorHandler(() async {
-      await _ref.read(supabaseProvider).client.auth.signOut();
-      return right(unit);
-    });
-  }
-
-  @override
-  Future<Either<Failure, AuthUserId>> signUp(SignUpParam param) async {
-    return await errorHandler(() async {
-      // TODO: implement signUp
-      return right(AuthUserId.fromValue(''));
+      throw UnimplementedError();
     });
   }
 }

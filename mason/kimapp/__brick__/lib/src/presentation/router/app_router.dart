@@ -1,5 +1,8 @@
+// Package imports:
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'app_router_guard.dart';
+import 'package:hr_ad_app/src/presentation/router/app_router_guard.dart';
+
+// Project imports:
 import '../../../exports.dart';
 
 part "app_router.g.dart";

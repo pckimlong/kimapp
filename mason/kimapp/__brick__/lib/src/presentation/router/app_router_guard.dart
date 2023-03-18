@@ -1,8 +1,6 @@
-import '../../core/helpers/logger_observers.dart';
-import '../app/app_state_provider.dart';
-
 import '../../../exports.dart';
 import '../../features/auth/auth.dart';
+import '../app/app_state_provider.dart';
 
 class AuthGuard extends _AppStateRouteGuard {
   AuthGuard(this._ref);

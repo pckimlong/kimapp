@@ -4,9 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'exports.dart';
-import 'src/core/errors/custom_failure_message.dart';
 import 'src/presentation/app/app_widget.dart';
-import 'src/core/helpers/logger_observers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

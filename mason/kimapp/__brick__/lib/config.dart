@@ -1,5 +1,5 @@
 class Config {
   const Config._();
 
-  static const appName = "{{project_name.sentenceCase()}}";
+  static const appName = "{{name.sentenceCase()}}";
 }
