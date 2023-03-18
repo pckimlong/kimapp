@@ -12,7 +12,7 @@ part "auth_state_provider.g.dart";
 class AuthenticationState with _$AuthenticationState {
   const AuthenticationState._();
 
-  const factory AuthenticationState.authenticated(AuthUserId userId) = _Authenticated;
+  const factory AuthenticationState.authenticated(UserId userId) = _Authenticated;
 
   const factory AuthenticationState.unauthenticated() = _Unauthenticated;
 
@@ -26,8 +26,8 @@ class AuthState extends _$AuthState {
   void updateAuthState(AuthenticationState newState) => state = newState;
 
   Future<void> initialize() async {
-    final authAuthUserIdOption = (await ref.watch(authRepoProvider).currentId()).getOrThrow();
-    state = authAuthUserIdOption.match(
+    final authUserIdOption = (await ref.watch(authRepoProvider).currentId()).getOrThrow();
+    state = authUserIdOption.match(
       () => const AuthenticationState.unauthenticated(),
       (userId) => AuthenticationState.authenticated(userId),
     );
@@ -35,8 +35,6 @@ class AuthState extends _$AuthState {
 
   @override
   AuthenticationState build() {
-    // TODO - Listen to auth state change and navigate to appropriate route?
-
     /// Return unauthenticated by default and let splash page initial actual state
     return const AuthenticationState.unauthenticated();
   }

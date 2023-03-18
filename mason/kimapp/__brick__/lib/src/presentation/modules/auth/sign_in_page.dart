@@ -2,7 +2,6 @@ import 'package:flutter_login/flutter_login.dart';
 
 import '../../../../exports.dart';
 import '../../../features/auth/auth.dart';
-import '../../../providers/app/app_info_provider.dart';
 
 @RoutePage()
 class SignInPage extends ConsumerStatefulWidget {

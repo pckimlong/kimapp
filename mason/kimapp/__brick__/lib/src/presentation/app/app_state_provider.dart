@@ -1,10 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:{{{project_name.snakeCase()}}}/src/presentation/router/app_router.dart';
 import '../../../exports.dart';
 import '../../features/auth/auth.dart';
-import 'app_theme.dart';
-import '../../providers/device/device_info_provider.dart';
 
-import '../../core/helpers/logger_observers.dart';
+import 'app_theme.dart';
 
 part 'app_state_provider.g.dart';
 
@@ -12,9 +11,6 @@ enum ApplicationState { uninitialized, initialized }
 
 @Riverpod(keepAlive: true)
 class AppState extends _$AppState with LoggerMixin {
-  @override
-  ApplicationState build() => ApplicationState.uninitialized;
-
   Future<ApplicationState> initialize() async {
     log.i('Initializing app...');
 
@@ -34,7 +30,7 @@ class AppState extends _$AppState with LoggerMixin {
     await authState.when(
       authenticated: (uuid) async {
         log.i('Authenticated');
-        // await ref.read(signOutProvider.notifier).call();
+        // TODO - Initial user data
       },
       unauthenticated: () {
         log.i('Unauthenticated. Redirecting to sign page...');
@@ -44,5 +40,22 @@ class AppState extends _$AppState with LoggerMixin {
     state = ApplicationState.initialized;
     log.i('Application initialized');
     return state;
+  }
+
+  void _watchAuthState() {
+    ref.listen(
+      authStateProvider,
+      (previous, next) {
+        if (previous?.isAuthenticated == true && next.isUnauthenticated) {
+          ref.read(appRouterProvider).replace(SignInRoute());
+        }
+      },
+    );
+  }
+
+  @override
+  ApplicationState build() {
+    _watchAuthState();
+    return ApplicationState.uninitialized;
   }
 }
