@@ -18,19 +18,19 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AuthenticationState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthUserId authUserId) authenticated,
+    required TResult Function(UserId userId) authenticated,
     required TResult Function() unauthenticated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(AuthUserId authUserId)? authenticated,
+    TResult? Function(UserId userId)? authenticated,
     TResult? Function()? unauthenticated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthUserId authUserId)? authenticated,
+    TResult Function(UserId userId)? authenticated,
     TResult Function()? unauthenticated,
     required TResult orElse(),
   }) =>
@@ -80,7 +80,7 @@ abstract class _$$_AuthenticatedCopyWith<$Res> {
           _$_Authenticated value, $Res Function(_$_Authenticated) then) =
       __$$_AuthenticatedCopyWithImpl<$Res>;
   @useResult
-  $Res call({AuthUserId authUserId});
+  $Res call({UserId userId});
 }
 
 /// @nodoc
@@ -94,13 +94,13 @@ class __$$_AuthenticatedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? authUserId = null,
+    Object? userId = null,
   }) {
     return _then(_$_Authenticated(
-      null == authUserId
-          ? _value.authUserId
-          : authUserId // ignore: cast_nullable_to_non_nullable
-              as AuthUserId,
+      null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as UserId,
     ));
   }
 }
@@ -108,14 +108,14 @@ class __$$_AuthenticatedCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Authenticated extends _Authenticated {
-  const _$_Authenticated(this.authUserId) : super._();
+  const _$_Authenticated(this.userId) : super._();
 
   @override
-  final AuthUserId authUserId;
+  final UserId userId;
 
   @override
   String toString() {
-    return 'AuthenticationState.authenticated(authUserId: $authUserId)';
+    return 'AuthenticationState.authenticated(userId: $userId)';
   }
 
   @override
@@ -123,12 +123,11 @@ class _$_Authenticated extends _Authenticated {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Authenticated &&
-            (identical(other.authUserId, authUserId) ||
-                other.authUserId == authUserId));
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, authUserId);
+  int get hashCode => Object.hash(runtimeType, userId);
 
   @JsonKey(ignore: true)
   @override
@@ -139,30 +138,30 @@ class _$_Authenticated extends _Authenticated {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthUserId authUserId) authenticated,
+    required TResult Function(UserId userId) authenticated,
     required TResult Function() unauthenticated,
   }) {
-    return authenticated(authUserId);
+    return authenticated(userId);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(AuthUserId authUserId)? authenticated,
+    TResult? Function(UserId userId)? authenticated,
     TResult? Function()? unauthenticated,
   }) {
-    return authenticated?.call(authUserId);
+    return authenticated?.call(userId);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthUserId authUserId)? authenticated,
+    TResult Function(UserId userId)? authenticated,
     TResult Function()? unauthenticated,
     required TResult orElse(),
   }) {
     if (authenticated != null) {
-      return authenticated(authUserId);
+      return authenticated(userId);
     }
     return orElse();
   }
@@ -200,10 +199,10 @@ class _$_Authenticated extends _Authenticated {
 }
 
 abstract class _Authenticated extends AuthenticationState {
-  const factory _Authenticated(final AuthUserId authUserId) = _$_Authenticated;
+  const factory _Authenticated(final UserId userId) = _$_Authenticated;
   const _Authenticated._() : super._();
 
-  AuthUserId get authUserId;
+  UserId get userId;
   @JsonKey(ignore: true)
   _$$_AuthenticatedCopyWith<_$_Authenticated> get copyWith =>
       throw _privateConstructorUsedError;
@@ -247,7 +246,7 @@ class _$_Unauthenticated extends _Unauthenticated {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(AuthUserId authUserId) authenticated,
+    required TResult Function(UserId userId) authenticated,
     required TResult Function() unauthenticated,
   }) {
     return unauthenticated();
@@ -256,7 +255,7 @@ class _$_Unauthenticated extends _Unauthenticated {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(AuthUserId authUserId)? authenticated,
+    TResult? Function(UserId userId)? authenticated,
     TResult? Function()? unauthenticated,
   }) {
     return unauthenticated?.call();
@@ -265,7 +264,7 @@ class _$_Unauthenticated extends _Unauthenticated {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(AuthUserId authUserId)? authenticated,
+    TResult Function(UserId userId)? authenticated,
     TResult Function()? unauthenticated,
     required TResult orElse(),
   }) {

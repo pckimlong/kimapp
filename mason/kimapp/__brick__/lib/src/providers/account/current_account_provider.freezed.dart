@@ -18,19 +18,19 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$CurrentAccountState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(AuthUserId authUserId) $default, {
+    TResult Function(UserDetailModel user) $default, {
     required TResult Function() none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(AuthUserId authUserId)? $default, {
+    TResult? Function(UserDetailModel user)? $default, {
     TResult? Function()? none,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(AuthUserId authUserId)? $default, {
+    TResult Function(UserDetailModel user)? $default, {
     TResult Function()? none,
     required TResult orElse(),
   }) =>
@@ -110,7 +110,7 @@ class _$_None extends _None {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(AuthUserId authUserId) $default, {
+    TResult Function(UserDetailModel user) $default, {
     required TResult Function() none,
   }) {
     return none();
@@ -119,7 +119,7 @@ class _$_None extends _None {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(AuthUserId authUserId)? $default, {
+    TResult? Function(UserDetailModel user)? $default, {
     TResult? Function()? none,
   }) {
     return none?.call();
@@ -128,7 +128,7 @@ class _$_None extends _None {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(AuthUserId authUserId)? $default, {
+    TResult Function(UserDetailModel user)? $default, {
     TResult Function()? none,
     required TResult orElse(),
   }) {
@@ -181,7 +181,9 @@ abstract class _$$CurrentAccountStateDataCopyWith<$Res> {
           $Res Function(_$CurrentAccountStateData) then) =
       __$$CurrentAccountStateDataCopyWithImpl<$Res>;
   @useResult
-  $Res call({AuthUserId authUserId});
+  $Res call({UserDetailModel user});
+
+  $UserDetailModelCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -195,32 +197,36 @@ class __$$CurrentAccountStateDataCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? authUserId = null,
+    Object? user = null,
   }) {
     return _then(_$CurrentAccountStateData(
-      authUserId: null == authUserId
-          ? _value.authUserId
-          : authUserId // ignore: cast_nullable_to_non_nullable
-              as AuthUserId,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserDetailModel,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserDetailModelCopyWith<$Res> get user {
+    return $UserDetailModelCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value));
+    });
   }
 }
 
 /// @nodoc
 
 class _$CurrentAccountStateData extends CurrentAccountStateData {
-  const _$CurrentAccountStateData({required this.authUserId}) : super._();
+  const _$CurrentAccountStateData({required this.user}) : super._();
 
-// Implement more information as need.
-//
-// Eg UserInfo, Role, Permission...
-//
   @override
-  final AuthUserId authUserId;
+  final UserDetailModel user;
 
   @override
   String toString() {
-    return 'CurrentAccountState(authUserId: $authUserId)';
+    return 'CurrentAccountState(user: $user)';
   }
 
   @override
@@ -228,12 +234,11 @@ class _$CurrentAccountStateData extends CurrentAccountStateData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CurrentAccountStateData &&
-            (identical(other.authUserId, authUserId) ||
-                other.authUserId == authUserId));
+            (identical(other.user, user) || other.user == user));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, authUserId);
+  int get hashCode => Object.hash(runtimeType, user);
 
   @JsonKey(ignore: true)
   @override
@@ -245,30 +250,30 @@ class _$CurrentAccountStateData extends CurrentAccountStateData {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(AuthUserId authUserId) $default, {
+    TResult Function(UserDetailModel user) $default, {
     required TResult Function() none,
   }) {
-    return $default(authUserId);
+    return $default(user);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(AuthUserId authUserId)? $default, {
+    TResult? Function(UserDetailModel user)? $default, {
     TResult? Function()? none,
   }) {
-    return $default?.call(authUserId);
+    return $default?.call(user);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(AuthUserId authUserId)? $default, {
+    TResult Function(UserDetailModel user)? $default, {
     TResult Function()? none,
     required TResult orElse(),
   }) {
     if ($default != null) {
-      return $default(authUserId);
+      return $default(user);
     }
     return orElse();
   }
@@ -306,15 +311,11 @@ class _$CurrentAccountStateData extends CurrentAccountStateData {
 }
 
 abstract class CurrentAccountStateData extends CurrentAccountState {
-  const factory CurrentAccountStateData(
-      {required final AuthUserId authUserId}) = _$CurrentAccountStateData;
+  const factory CurrentAccountStateData({required final UserDetailModel user}) =
+      _$CurrentAccountStateData;
   const CurrentAccountStateData._() : super._();
 
-// Implement more information as need.
-//
-// Eg UserInfo, Role, Permission...
-//
-  AuthUserId get authUserId;
+  UserDetailModel get user;
   @JsonKey(ignore: true)
   _$$CurrentAccountStateDataCopyWith<_$CurrentAccountStateData> get copyWith =>
       throw _privateConstructorUsedError;

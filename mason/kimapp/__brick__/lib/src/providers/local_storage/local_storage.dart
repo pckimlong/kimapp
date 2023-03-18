@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../exports.dart';
+import '../../../exports.dart';
 
-part 'local_storage.g.dart';
+part "local_storage.g.dart";
 
 @Riverpod(keepAlive: true)
 FutureOr<LocalStorage> localStorage(LocalStorageRef ref) async {
