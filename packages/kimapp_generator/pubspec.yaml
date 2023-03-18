@@ -8,12 +8,12 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  source_gen: null
-  recase:
-  build:
-  analyzer:
-  json_annotation: 
-  riverpod_annotation: 
+  source_gen: ^1.2.7
+  recase: ^4.1.0
+  build: ^2.3.1
+  analyzer: ^5.8.0
+  json_annotation: ^4.8.0
+  riverpod_annotation: ^2.0.2
   flutter:
     sdk: flutter
   kimapp:
