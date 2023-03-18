@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart' show kDebugMode, kReleaseMode;
 
 import 'package:logger/logger.dart';
-import 'package:url_strategy/url_strategy.dart';
 
 import 'exports.dart';
 import 'src/presentation/app/app_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setPathUrlStrategy();
 
   // handle with error
   FlutterError.onError = _handleFlutterError;
