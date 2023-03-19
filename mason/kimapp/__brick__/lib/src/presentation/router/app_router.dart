@@ -1,10 +1,5 @@
-// Package imports:
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:hr_ad_app/src/presentation/router/app_router_guard.dart';
-
-// Project imports:
-import '../../../exports.dart';
-
+import 'app_router_guard.dart';
 part "app_router.g.dart";
 
 @Riverpod(keepAlive: true)
