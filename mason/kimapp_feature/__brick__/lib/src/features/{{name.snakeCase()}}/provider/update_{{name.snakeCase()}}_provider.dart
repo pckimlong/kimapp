@@ -46,7 +46,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
       },
       onSuccess: (success) {
         ref.read({{name.camelCase()}}ListProvider.notifier).updateItem({{name.pascalCase()}}Model.fromDetailModel(success));
-        ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).notifier).updateState((_) => success);
+        ref.read({{name.camelCase()}}DetailProvider(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id)).notifier).updateState((_) => success);
         ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
@@ -60,7 +60,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
   Future<  Update{{name.pascalCase()}}State> initState([  Update{{name.pascalCase()}}State? local]) async {
     if (local != null) return local;
 
-    final detail = await ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).future);
+    final detail = await ref.read({{name.camelCase()}}DetailProvider(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id)).future);
     return const   Update{{name.pascalCase()}}State();
   }
 

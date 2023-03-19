@@ -10,9 +10,9 @@ part '{{name.snakeCase()}}_detail_provider.g.dart';
 @riverpod
 class {{name.pascalCase()}}Detail extends _${{name.pascalCase()}}Detail {
   @override
-  FutureOr<{{name.pascalCase()}}DetailModel> build({{name.pascalCase()}}Id {{name.snakeCase()}}Id) {
+  FutureOr<{{name.pascalCase()}}DetailModel> build(FindOne{{name.pascalCase()}}Param param) {
     ref.autoInvalidateSelf(const Duration(minutes: 3));
-    return ref.watch({{name.camelCase()}}RepoProvider).findOne({{name.snakeCase()}}Id).then((value) => value.getOrThrow());
+    return ref.watch({{name.camelCase()}}RepoProvider).findOne(param).then((value) => value.getOrThrow());
   }
 
   /// Perform side-effect update detail provider

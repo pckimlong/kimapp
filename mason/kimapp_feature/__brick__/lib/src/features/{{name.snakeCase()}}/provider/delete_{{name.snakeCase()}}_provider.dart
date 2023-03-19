@@ -45,7 +45,7 @@ class Delete{{name.pascalCase()}} extends _$Delete{{name.pascalCase()}} with _$D
       },
       onSuccess: (_) {
         ref.invalidate({{name.camelCase()}}ListProvider);
-        ref.invalidate({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id));
+        ref.invalidate({{name.camelCase()}}DetailProvider(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id)));
         ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
