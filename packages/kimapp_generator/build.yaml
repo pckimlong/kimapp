@@ -6,6 +6,7 @@ builders:
     auto_apply: dependents
     build_to: source
     runs_before:
+      - freezed|freezed
       - kimapp_generator|kimapp_generator
       - json_serializable|json_serializable
 
