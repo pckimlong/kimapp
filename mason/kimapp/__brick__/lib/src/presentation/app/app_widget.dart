@@ -20,8 +20,15 @@ class AppWidget extends HookConsumerWidget {
       debugShowCheckedModeBanner: false,
       routeInformationParser: router.defaultRouteParser(),
       routerDelegate: router.delegate(),
-      localizationsDelegates: const [OverrideFormBuilderLocalizationsEn.delegate],
-      supportedLocales: const [...FormBuilderLocalizations.supportedLocales],
+       localizationsDelegates: [
+        ...context.localizationDelegates,
+        OverrideFormBuilderLocalizationsEn.delegate
+      ],
+      supportedLocales: [
+        ...context.supportedLocales,
+        ...FormBuilderLocalizations.supportedLocales,
+      ],
+      locale: context.locale,
       builder: (context, child) {
         child = BotToastInit()(context, child);
         child = _Unfocus(child: child);
