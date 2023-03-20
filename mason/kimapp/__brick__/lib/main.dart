@@ -16,6 +16,7 @@ void main() async {
 
   // initial
   await initializeSupabase();
+  await EasyLocalization.ensureInitialized();
   await Kimapp.initialize(
     debugMode: kDebugMode,
     customFailureMessage: CustomFailureMessage(),
@@ -28,9 +29,14 @@ void main() async {
 
   runZonedGuarded(
     () => runApp(
-      ProviderScope(
-        observers: [RiverpodLogger()],
-        child: const AppWidget(),
+      EasyLocalization(
+        path: 'assets/translations',
+        supportedLocales: const [Locale("en"), Locale("km")],
+        fallbackLocale: const Locale('km'),
+        child: ProviderScope(
+          observers: [RiverpodLogger()],
+          child: const AppWidget(),
+        ),
       ),
     ),
     (error, stack) => _prettyLogger.e(error.toString(), error, stack),

@@ -1,0 +1,11 @@
+{
+    "commons": {
+        "username": "ឈ្មោះគណនី",
+        "password": "ពាក្យសម្ងាត់"
+    },
+
+    "error" : {
+        "required_input": "សូមបញ្ជូល",
+        "required_input_with_param" : "@:error.required_input{}"
+    }
+}

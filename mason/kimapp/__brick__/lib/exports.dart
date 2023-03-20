@@ -13,7 +13,9 @@ export 'package:fpdart/fpdart.dart' hide State, Tuple2, Reader, Predicate, id;
 export 'package:hooks_riverpod/hooks_riverpod.dart';
 export 'package:kimapp/kimapp.dart';
 export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
+export 'package:easy_localization/easy_localization.dart' hide TextDirection;
 
 export 'src/commons/commons.dart';
 export 'src/presentation/app/app_style.dart';
 export 'src/presentation/router/app_router.gr.dart';
+export 'gen/locale_keys.g.dart';

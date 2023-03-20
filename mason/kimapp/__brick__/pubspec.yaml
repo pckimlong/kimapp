@@ -9,6 +9,7 @@ environment:
   sdk: ">=2.19.3 <3.0.0"
 
 dependencies:
+  easy_localization: ^3.0.1
   animate_do: null
   auto_route: ^6.0.0-rc-7
   bot_toast: ^4.0.3
@@ -66,3 +67,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/translations/
