@@ -7,13 +7,22 @@ builders:
     build_to: source
     runs_before:
       - freezed|freezed
-      - kimapp_generator|kimapp_generator
+      - kimapp_generator|kimapp_model_generator
+      - kimapp_generator|kimapp_form_generator
       - json_serializable|json_serializable
 
-  kimapp_generator:
+  kimapp_model_generator:
     import: "package:kimapp_generator/builder.dart"
-    builder_factories: ["kimappGenerator"]
-    build_extensions: {".dart": ["kimapp_generator.g.part"]}
+    builder_factories: ["kimappModelGenerator"]
+    build_extensions: {".dart": ["kimapp_model_generator.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
+
+  kimapp_form_generator:
+    import: "package:kimapp_generator/builder.dart"
+    builder_factories: ["kimappFormGenerator"]
+    build_extensions: {".dart": ["kimapp_form_generator.g.part"]}
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]

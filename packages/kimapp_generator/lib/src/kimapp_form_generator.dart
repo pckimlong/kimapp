@@ -2,7 +2,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:recase/recase.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
@@ -10,7 +9,7 @@ import 'package:collection/collection.dart';
 const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
 const formUpdateMixin = TypeChecker.fromRuntime(UpdateFormMixin);
 
-class KimappFormGenerator extends GeneratorForAnnotation<Riverpod> {
+class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
   @override
   generateForAnnotatedElement(
     Element element,
