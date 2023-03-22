@@ -285,7 +285,14 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     }
 
     state = state.updateStatus(ProviderStatus<T>.inProgress());
-    state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
+
+    //! This approach cause problem, because state is outdate, when we use await on callback() we might update
+    //! the provider, but use an outdate state
+    // state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
+
+    //* New approach is to await for the progress first before update the state.
+    final result = await ProviderStatus.guard(() async => await callback(state));
+    state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
     if (isFailure && onFailure != null) {
       onFailure(state.status.whenOrNull(failure: id)!);
