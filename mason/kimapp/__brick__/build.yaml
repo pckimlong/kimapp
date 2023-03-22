@@ -1,12 +1,16 @@
 targets:
   $default:
     builders:
-      kimapp_generator|kimapp_generator:
+      kimapp_generator|kimapp_model_generator:
         enabled: true
         generate_for:
           include:
-            - lib/src/**_model.dart
-            - lib/src/**_provider.dart
+            - lib/src/features/**_model.dart
+      kimapp_generator|kimapp_form_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/features/**_provider.dart
       kimapp_generator|kimapp_table_generator:
         enabled: true
         generate_for:
@@ -32,7 +36,8 @@ targets:
         enabled: true
         generate_for:
           include:
-            - lib/**.dart
+            - lib/**_provider.dart
+            - lib/**_repo.dart
       source_gen|combining_builder:
         options:
           ignore_for_file:
