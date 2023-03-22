@@ -9,5 +9,8 @@ import 'package:source_gen/source_gen.dart';
 Builder kimappTableGenerator(BuilderOptions options) =>
     LibraryBuilder(TableStructureGenerator(), generatedExtension: '.table.dart');
 
-Builder kimappGenerator(BuilderOptions options) =>
-    SharedPartBuilder([TableModelGenerator(), KimappFormGenerator()], 'kimapp_generator');
+Builder kimappModelGenerator(BuilderOptions options) =>
+    SharedPartBuilder([TableModelGenerator()], 'kimapp_generator');
+
+Builder kimappFormGenerator(BuilderOptions options) =>
+    SharedPartBuilder([KimappFormGenerator()], 'kimapp_form_generator');
