@@ -1,8 +1,7 @@
 // Package imports:
 import 'package:responsive_framework/responsive_wrapper.dart';
 import '../../../config.dart';
-import 'app_theme.dart';
-import '../router/app_router.dart';
+import '../router/app_router_provider.dart';
 import '../../../exports.dart';
 
 class AppWidget extends HookConsumerWidget {
