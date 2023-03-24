@@ -1,1 +1,1 @@
-export 'supabase_db.dart';
+export 'supabase_provider.dart';

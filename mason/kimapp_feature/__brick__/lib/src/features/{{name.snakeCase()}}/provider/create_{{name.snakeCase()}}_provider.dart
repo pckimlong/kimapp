@@ -33,7 +33,7 @@ class Create{{name.pascalCase()}}State
   }
 }
 
-
+@kimappForm
 @riverpod
 class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$Create{{name.pascalCase()}}Form  {
   Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {

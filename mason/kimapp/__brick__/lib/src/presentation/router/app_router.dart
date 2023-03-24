@@ -1,10 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'app_router_guard.dart';
-part "app_router.g.dart";
-
-@Riverpod(keepAlive: true)
-// ignore: unsupported_provider_value
-AppRouter appRouter(AppRouterRef ref) => AppRouter(ref);
 
 @AutoRouterConfig(
   replaceInRouteName: 'Page|Screen,Route',

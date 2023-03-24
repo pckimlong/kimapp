@@ -34,7 +34,7 @@ class Update{{name.pascalCase()}}State
   }
 }
 
-
+@kimappForm
 @riverpod
 class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$Update{{name.pascalCase()}}Form {
   Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {

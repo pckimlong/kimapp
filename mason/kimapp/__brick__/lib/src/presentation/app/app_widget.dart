@@ -1,6 +1,7 @@
 // Package imports:
 import 'package:responsive_framework/responsive_wrapper.dart';
 import '../../../config.dart';
+import 'app_theme_provider.dart';
 import '../router/app_router_provider.dart';
 import '../../../exports.dart';
 

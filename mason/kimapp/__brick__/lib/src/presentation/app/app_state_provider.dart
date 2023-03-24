@@ -3,7 +3,7 @@ import 'package:{{{project_name.snakeCase()}}}/src/presentation/router/app_route
 import '../../../exports.dart';
 import '../../features/auth/auth.dart';
 
-import 'app_theme.dart';
+import 'app_theme_provider.dart';
 
 part 'app_state_provider.g.dart';
 
