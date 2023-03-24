@@ -1,4 +1,4 @@
-part of 'supabase_db.dart';
+part of 'supabase_provider.dart';
 
 const _url = kDebugMode
     ? ""

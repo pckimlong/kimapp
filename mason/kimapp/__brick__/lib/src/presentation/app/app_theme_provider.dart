@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 // Project imports:
 import '../../../exports.dart';
 
-part 'app_theme.g.dart';
+part 'app_theme_provider.g.dart';
 
 const _themeModeCacheKey = "theme-mode";
 
