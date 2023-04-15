@@ -1,5 +1,6 @@
 @TableStructure(
   '{{name.snakeCase()}}s',
+  classPrefixName: '{{name.pascalCase()}}',
   idColumn: '{{name.pascalCase()}}Id:{{id_data_type}}',
   columns: [
     'id:{{name.pascalCase()}}Id',
