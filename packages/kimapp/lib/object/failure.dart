@@ -41,6 +41,30 @@ extension FailureX on Failure {
     );
   }
 
+  bool get isNotFoundFailure {
+    return maybeWhen(
+      (_) => false,
+      orElse: () => false,
+      databaseFailure: (info) => info.maybeWhen(
+        (_) => false,
+        orElse: () => false,
+        notFound: (info) => true,
+      ),
+    );
+  }
+
+  bool get isUniqueConstraintFailure {
+    return maybeWhen(
+      (_) => false,
+      orElse: () => false,
+      databaseFailure: (info) => info.maybeWhen(
+        (_) => false,
+        orElse: () => false,
+        uniqueConstraint: (_) => true,
+      ),
+    );
+  }
+
   /// Message from failure object This function required to initialize [Kimapp] instance before use. should initialized in main like
   /// ```dart
   /// void main(){
