@@ -13,9 +13,9 @@ part '{{name.snakeCase()}}_id_name_model.freezed.dart';
 class {{name.pascalCase()}}IdNameModel with _${{name.pascalCase()}}IdNameModel, {{name.pascalCase()}}CommonMixin {
   const {{name.pascalCase()}}IdNameModel._();
 
-  @TableModel({{name.pascalCase()}}sTable.table)
+  @TableModel({{name.pascalCase()}}Table.table)
   const factory {{name.pascalCase()}}IdNameModel({
-    @JsonKey(name: {{name.pascalCase()}}sTable.id) required {{name.pascalCase()}}Id id,
+    @JsonKey(name: {{name.pascalCase()}}Table.id) required {{name.pascalCase()}}Id id,
   }) = _{{name.pascalCase()}}IdNameModel;
 
   factory {{name.pascalCase()}}IdNameModel.fromJson(Map<String, dynamic> json) 

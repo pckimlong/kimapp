@@ -13,9 +13,9 @@ part '{{name.snakeCase()}}_detail_model.freezed.dart';
 class {{name.pascalCase()}}DetailModel with _${{name.pascalCase()}}DetailModel, {{name.pascalCase()}}CommonMixin {
   const {{name.pascalCase()}}DetailModel._();
 
-  @TableModel({{name.pascalCase()}}sTable.table)
+  @TableModel({{name.pascalCase()}}Table.table)
   const factory {{name.pascalCase()}}DetailModel({
-    @JsonKey(name: {{name.pascalCase()}}sTable.id) required {{name.pascalCase()}}Id id,
+    @JsonKey(name: {{name.pascalCase()}}Table.id) required {{name.pascalCase()}}Id id,
   }) = _{{name.pascalCase()}}DetailModel;
 
   factory {{name.pascalCase()}}DetailModel.fromJson(Map<String, dynamic> json) 

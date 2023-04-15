@@ -5,3 +5,4 @@ export 'errors/error.dart';
 export 'helpers/helpers.dart';
 export 'local_storage/local_storage.dart';
 export 'supabase/supabase.dart';
+export 'file/file.dart';
