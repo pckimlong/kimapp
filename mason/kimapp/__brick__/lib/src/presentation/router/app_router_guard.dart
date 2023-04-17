@@ -50,7 +50,6 @@ abstract class _AppStateRouteGuard extends AutoRouteGuard with LoggerMixin {
       log.v('uninitialized push to splash page');
       router.push(SplashRoute(onInitialized: () {
         log.v('Call onAppStateInitialized after initialize from splash page');
-        router.removeLast();
         onAppStateInitialized(resolver, router);
       }));
     }

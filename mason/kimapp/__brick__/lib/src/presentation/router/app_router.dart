@@ -15,11 +15,13 @@ class AppRouter extends $AppRouter {
       AutoRoute(
         page: SplashRoute.page,
         path: '/loading',
+        keepHistory: false,
       ),
       AutoRoute(
         page: SignInRoute.page,
         guards: [LoginGuard(_ref)],
         path: '/login',
+        keepHistory: false,
       ),
       AutoRoute(
         page: RootRoute.page,
