@@ -47,6 +47,8 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
 
       key = reader.peek('name')?.stringValue;
 
+      print('fieldElement: $fieldElement');
+
       if (_fieldHasAnnotation(JoinedColumn, fieldElement)) {
         const checker = TypeChecker.fromRuntime(JoinedColumn);
         final annotation = checker.firstAnnotationOf(fieldElement) ??
@@ -54,6 +56,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
         final reader = ConstantReader(annotation);
         candidateKey = reader.peek('candidateKey')?.stringValue;
         foreignKey = reader.peek('foreignKey')?.stringValue;
+        throw '${fieldElement.type} - ${fieldElement.type.isDartCoreList}';
         if (fieldElement.type.isDartCoreList) {
           var elementType = fieldElement.type as ParameterizedType;
           var listType = elementType.typeArguments[0].getDisplayString(withNullability: true);
