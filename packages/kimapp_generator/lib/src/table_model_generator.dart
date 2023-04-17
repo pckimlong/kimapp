@@ -26,19 +26,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       throw 'Default constructor for ${element.name} is missing';
     }
 
-    print('Constructor: $constructor');
-    print('Constructor fields ${constructor.parameters}');
-    print('Constructor fields ${constructor.parameters.map((e) => e.type)}');
-    for (final c in constructor.parameters) {
-      print('Constructor field ${c.type}');
-      print('Constructor field name ${c.name}');
-      print('Constructor field name ${c.metadata}');
-    }
-
-    final allField = _getAllField(element);
-
-    print(allField);
-
+    final allField = constructor.parameters.map((e) => e as FieldElement);
     final fields = <TableFieldInfo>[];
 
     for (final fieldElement in allField) {
@@ -46,8 +34,6 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       String? candidateKey;
       String? foreignKey;
       String? joinedModel;
-
-      print(fieldElement.name);
 
       // Ignore this and continue to next if the fieldElement is private
       if (fieldElement.isPrivate) {
@@ -66,9 +52,6 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       }
 
       key = reader.peek('name')?.stringValue;
-
-      print('Is ${fieldElement.name} a list? ${fieldElement.type.isDartCoreList}');
-      print('Metadata: ${fieldElement.metadata}');
 
       // If the field is a list, we add more algorithm to check if it is a joined column
       if (fieldElement.type.isDartCoreList) {
@@ -95,13 +78,8 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
           final privateField =
               allField.firstWhereOrNull((e) => e.name == "_${fieldElement.name}" && e.isPrivate);
 
-          print('It is a list of freezed model which is private field: ${privateField?.name}');
-          print('Metadata: ${privateField?.metadata}');
-          print('Type: ${privateField?.type}');
-          print('Has JoinedColumn: ${_fieldHasAnnotation(JoinedColumn, privateField!)}');
-
           // If founded then check if it has JoinedColumn
-          if (_fieldHasAnnotation(JoinedColumn, privateField)) {
+          if (privateField != null && _fieldHasAnnotation(JoinedColumn, privateField)) {
             const checker = TypeChecker.fromRuntime(JoinedColumn);
             final annotation = checker.firstAnnotationOf(privateField) ??
                 (privateField.getter == null
