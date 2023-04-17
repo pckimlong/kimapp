@@ -59,7 +59,7 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
           FailureInfo(stackTrace: str, debugMessage: e.message, errorObject: e))));
     }
 
-    if (e.code == "42P01") {
+    if (e.code == "42P01" || (e.code ?? '').contains('Results contain 0 rows')) {
       return left(Failure.databaseFailure(DatabaseFailures.notFound(
           FailureInfo(stackTrace: str, debugMessage: e.message, errorObject: e))));
     }
