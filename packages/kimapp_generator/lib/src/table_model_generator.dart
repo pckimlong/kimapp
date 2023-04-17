@@ -184,6 +184,14 @@ class TableFieldInfo {
 List<FieldElement> _getAllField(ClassElement element) {
   List<FieldElement> fieldElements = [];
 
+  for (final v in element.fields) {
+    print('Field: ${v.name}');
+    print('Is private: ${v.isPrivate}');
+    print('Is static: ${v.isStatic}');
+    print('Is list: ${v.type.isDartCoreList}');
+    print('Metadata: ${v.metadata}');
+  }
+
   /// Since how freezed treat with list field, I need to allow private field if it is a list
   fieldElements
       .addAll(element.fields.where((e) => !e.isStatic && (!e.isPrivate || e.type.isDartCoreList)));
