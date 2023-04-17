@@ -53,6 +53,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
         final reader = ConstantReader(annotation);
         candidateKey = reader.peek('candidateKey')?.stringValue;
         foreignKey = reader.peek('foreignKey')?.stringValue;
+        throw fieldElement.type.toString();
         joinedModel = fieldElement.type.toString();
       }
 
