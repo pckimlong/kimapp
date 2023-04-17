@@ -58,6 +58,9 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
 
       key = reader.peek('name')?.stringValue;
 
+      print('Is ${fieldElement.name} a list? ${fieldElement.type.isDartCoreList}');
+      print('Metadata: ${fieldElement.metadata}');
+
       // If the field is a list, we add more algorithm to check if it is a joined column
       if (fieldElement.type.isDartCoreList) {
         // Check if it has metadata
@@ -83,22 +86,24 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
           final privateField =
               allField.firstWhereOrNull((e) => e.name == "_${fieldElement.name}" && e.isPrivate);
 
+          print('It is a list of freezed model which is private field: ${privateField?.name}');
+          print('Metadata: ${privateField?.metadata}');
+          print('Type: ${privateField?.type}');
+          print('Has JoinedColumn: ${_fieldHasAnnotation(JoinedColumn, privateField!)}');
+
           // If founded then check if it has JoinedColumn
-          if (privateField != null) {
-            // Check if it has JoinedColumn
-            if (_fieldHasAnnotation(JoinedColumn, privateField)) {
-              const checker = TypeChecker.fromRuntime(JoinedColumn);
-              final annotation = checker.firstAnnotationOf(privateField) ??
-                  (privateField.getter == null
-                      ? null
-                      : checker.firstAnnotationOf(privateField.getter!));
-              final reader = ConstantReader(annotation);
-              candidateKey = reader.peek('candidateKey')?.stringValue;
-              foreignKey = reader.peek('foreignKey')?.stringValue;
-              var elementType = privateField.type as ParameterizedType;
-              var listType = elementType.typeArguments[0].getDisplayString(withNullability: true);
-              joinedModel = listType;
-            }
+          if (_fieldHasAnnotation(JoinedColumn, privateField)) {
+            const checker = TypeChecker.fromRuntime(JoinedColumn);
+            final annotation = checker.firstAnnotationOf(privateField) ??
+                (privateField.getter == null
+                    ? null
+                    : checker.firstAnnotationOf(privateField.getter!));
+            final reader = ConstantReader(annotation);
+            candidateKey = reader.peek('candidateKey')?.stringValue;
+            foreignKey = reader.peek('foreignKey')?.stringValue;
+            var elementType = privateField.type as ParameterizedType;
+            var listType = elementType.typeArguments[0].getDisplayString(withNullability: true);
+            joinedModel = listType;
           }
         }
       } else {
