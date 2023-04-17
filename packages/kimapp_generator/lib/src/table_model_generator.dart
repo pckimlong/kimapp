@@ -27,6 +27,9 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     }
 
     final allField = _getAllField(element);
+
+    print(allField);
+
     final fields = <TableFieldInfo>[];
 
     for (final fieldElement in allField) {
@@ -34,6 +37,8 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       String? candidateKey;
       String? foreignKey;
       String? joinedModel;
+
+      print(fieldElement.name);
 
       // Ignore this and continue to next if the fieldElement is private
       if (fieldElement.isPrivate) {
