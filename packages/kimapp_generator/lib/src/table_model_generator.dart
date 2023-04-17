@@ -26,6 +26,15 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       throw 'Default constructor for ${element.name} is missing';
     }
 
+    print('Constructor: $constructor');
+    print('Constructor fields ${constructor.parameters}');
+    print('Constructor fields ${constructor.parameters.map((e) => e.type)}');
+    for (final c in constructor.parameters) {
+      print('Constructor field ${c.type}');
+      print('Constructor field name ${c.name}');
+      print('Constructor field name ${c.metadata}');
+    }
+
     final allField = _getAllField(element);
 
     print(allField);
@@ -183,21 +192,6 @@ class TableFieldInfo {
 
 List<FieldElement> _getAllField(ClassElement element) {
   List<FieldElement> fieldElements = [];
-
-  for (final v in element.constructors) {
-    print('Constructor: ${v.name}');
-    print('Is private: ${v.isPrivate}');
-    print('Is static: ${v.isStatic}');
-    print('Metadata: ${v.metadata}');
-  }
-
-  for (final v in element.fields) {
-    print('Field: ${v.name}');
-    print('Is private: ${v.isPrivate}');
-    print('Is static: ${v.isStatic}');
-    print('Is list: ${v.type.isDartCoreList}');
-    print('Metadata: ${v.metadata}');
-  }
 
   /// Since how freezed treat with list field, I need to allow private field if it is a list
   fieldElements
