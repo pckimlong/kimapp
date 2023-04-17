@@ -56,7 +56,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
         final reader = ConstantReader(annotation);
         candidateKey = reader.peek('candidateKey')?.stringValue;
         foreignKey = reader.peek('foreignKey')?.stringValue;
-        throw '${fieldElement.type} - ${fieldElement.type.isDartCoreList}';
+        print('${fieldElement.type} - ${fieldElement.type.isDartCoreList}');
         if (fieldElement.type.isDartCoreList) {
           var elementType = fieldElement.type as ParameterizedType;
           var listType = elementType.typeArguments[0].getDisplayString(withNullability: true);
