@@ -48,6 +48,9 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       key = reader.peek('name')?.stringValue;
 
       print('fieldElement: $fieldElement');
+      print('has joined column annotation: ${_fieldHasAnnotation(JoinedColumn, fieldElement)}');
+      // print all annotations of fieldElement
+      print('all annotations of fieldElement: ${fieldElement.metadata}');
 
       if (_fieldHasAnnotation(JoinedColumn, fieldElement)) {
         const checker = TypeChecker.fromRuntime(JoinedColumn);
@@ -56,7 +59,6 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
         final reader = ConstantReader(annotation);
         candidateKey = reader.peek('candidateKey')?.stringValue;
         foreignKey = reader.peek('foreignKey')?.stringValue;
-        print('${fieldElement.type} - ${fieldElement.type.isDartCoreList}');
         if (fieldElement.type.isDartCoreList) {
           var elementType = fieldElement.type as ParameterizedType;
           var listType = elementType.typeArguments[0].getDisplayString(withNullability: true);
