@@ -30,7 +30,10 @@ class ColumnBuilder with _$ColumnBuilder {
     return map(
       (value) => value.column,
       join: (value) {
-        return '${value.key ?? value.table.tableName}${value.candidateKey.isNullOrBlank ? ":${value.foreignKey}" : ""}${value.candidateKey.isNotNullOrEmpty ? ":${value.table.tableName}!${value.candidateKey}" : ""}(${value.table.selectStatement})';
+        final selectStatement = '(${value.table.selectStatement})';
+        final tableName = value.table.tableName;
+
+        return '${value.key ?? tableName}${value.candidateKey.isNullOrBlank ? ":${value.foreignKey ?? tableName}" : ""}${value.candidateKey.isNotNullOrEmpty ? ":${value.table.tableName}!${value.candidateKey}" : ""}$selectStatement';
       },
     );
   }
