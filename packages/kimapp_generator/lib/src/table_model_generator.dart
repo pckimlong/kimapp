@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:kimapp/kimapp.dart';
@@ -53,8 +54,13 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
         final reader = ConstantReader(annotation);
         candidateKey = reader.peek('candidateKey')?.stringValue;
         foreignKey = reader.peek('foreignKey')?.stringValue;
-        throw fieldElement.type.toString();
-        joinedModel = fieldElement.type.toString();
+        if (fieldElement.type.isDartCoreList) {
+          var elementType = fieldElement.type as ParameterizedType;
+          var listType = elementType.typeArguments[0].getDisplayString(withNullability: true);
+          joinedModel = listType;
+        } else {
+          joinedModel = fieldElement.type.toString();
+        }
       }
 
       key ??= fieldElement.name;

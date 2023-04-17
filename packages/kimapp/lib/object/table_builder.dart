@@ -30,11 +30,6 @@ class ColumnBuilder with _$ColumnBuilder {
     return map(
       (value) => value.column,
       join: (value) {
-        if (value.candidateKey == null && value.foreignKey == null) {
-          // one to many relationship
-          return '${value.key == null ? "" : "${value.key}:"}${value.key ?? value.table.tableName}(${value.table.selectStatement})';
-        }
-
         return '${value.key ?? value.table.tableName}${value.candidateKey.isNullOrBlank ? ":${value.foreignKey}" : ""}${value.candidateKey.isNotNullOrEmpty ? ":${value.table.tableName}!${value.candidateKey}" : ""}(${value.table.selectStatement})';
       },
     );
