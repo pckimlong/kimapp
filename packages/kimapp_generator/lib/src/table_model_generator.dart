@@ -184,6 +184,13 @@ class TableFieldInfo {
 List<FieldElement> _getAllField(ClassElement element) {
   List<FieldElement> fieldElements = [];
 
+  for (final v in element.constructors) {
+    print('Constructor: ${v.name}');
+    print('Is private: ${v.isPrivate}');
+    print('Is static: ${v.isStatic}');
+    print('Metadata: ${v.metadata}');
+  }
+
   for (final v in element.fields) {
     print('Field: ${v.name}');
     print('Is private: ${v.isPrivate}');
