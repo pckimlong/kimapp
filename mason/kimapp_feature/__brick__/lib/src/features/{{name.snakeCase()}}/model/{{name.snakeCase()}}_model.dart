@@ -20,8 +20,6 @@ class {{name.pascalCase()}}Model with _${{name.pascalCase()}}Model, {{name.pasca
   factory {{name.pascalCase()}}Model.fromJson(Map<String, dynamic> json) 
   =>  _${{name.pascalCase()}}ModelFromJson(json);
 
-  factory {{name.pascalCase()}}Model.fromDetailModel({{name.pascalCase()}}DetailModel base) => {{name.pascalCase()}}Model(id: base.id);
-  
   static const TableBuilder table = _table{{name.pascalCase()}}Model;
 
   @override

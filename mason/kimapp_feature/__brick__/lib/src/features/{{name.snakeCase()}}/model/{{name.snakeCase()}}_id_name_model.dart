@@ -23,7 +23,7 @@ class {{name.pascalCase()}}IdNameModel with _${{name.pascalCase()}}IdNameModel, 
 
   factory {{name.pascalCase()}}IdNameModel.fromModel({{name.pascalCase()}}Model base) => {{name.pascalCase()}}IdNameModel(id: base.id);
 
-  factory {{name.pascalCase()}}IdNameModel.fromDetailModel({{name.pascalCase()}}DetailModel base) => {{name.pascalCase()}}IdNameModel(id: base.id);
+  factory {{name.pascalCase()}}IdNameModel.fromDetailModel({{name.pascalCase()}}Model base) => {{name.pascalCase()}}IdNameModel(id: base.id);
   
   
   static const TableBuilder table = _table{{name.pascalCase()}}IdNameModel;
