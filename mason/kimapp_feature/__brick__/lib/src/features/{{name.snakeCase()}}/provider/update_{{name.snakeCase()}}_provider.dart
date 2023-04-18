@@ -12,9 +12,9 @@ part 'update_{{name.snakeCase()}}_provider.g.dart';
 
 @freezed
 class Update{{name.pascalCase()}}State
-    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel>, UpdateFormMixin {
+    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}Model>, UpdateFormMixin {
   const factory Update{{name.pascalCase()}}State({
-    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
+    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
     /// Flag if update data has been initialize or not. If initialized call init won't effect
     /// Do not update manually update this
     @Default(false) bool initialLoaded,
@@ -23,7 +23,7 @@ class Update{{name.pascalCase()}}State
   const Update{{name.pascalCase()}}State._();
 
   @override
-  Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}DetailModel> newStatus) {
+  Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
     return copyWith(status: newStatus);
   }
 
@@ -37,8 +37,8 @@ class Update{{name.pascalCase()}}State
 @kimappForm
 @riverpod
 class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$Update{{name.pascalCase()}}Form {
-  Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
-    return await perform<{{name.pascalCase()}}DetailModel>(
+  Future<ProviderStatus<{{name.pascalCase()}}Model>> call() async {
+    return await perform<{{name.pascalCase()}}Model>(
       (state) async {
         final param = state.toParam();
         final result = await ref.read({{name.camelCase()}}RepoProvider).update({{name.camelCase()}}Id, data: param);
