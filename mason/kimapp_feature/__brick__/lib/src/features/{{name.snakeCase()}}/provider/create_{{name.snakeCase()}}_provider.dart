@@ -44,7 +44,7 @@ class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$C
         return result.getOrThrow();
       },
       onSuccess: (success) async {
-        ref.read({{name.camelCase()}}ListProvider.notifier).insertItem({{name.pascalCase()}}Model.fromDetailModel(success));
+        ref.read({{name.camelCase()}}ListProvider.notifier).insertItem(success);
         ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
