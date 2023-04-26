@@ -45,7 +45,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
         return result.getOrThrow();
       },
       onSuccess: (success) {
-        ref.read({{name.camelCase()}}ListProvider.notifier).updateItem(success);
+        ref.read({{name.camelCase()}}ListProvider.notifier).updateItem({{name.pascalCase()}}Model.fromDetailModel(success));
         ref.read({{name.camelCase()}}DetailProvider(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id)).notifier).updateState((_) => success);
         ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
