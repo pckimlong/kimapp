@@ -91,6 +91,10 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
   } catch (e, str) {
     _logError('Error Catch', e.toString(), str, e);
 
+    if (e is DatabaseFailure) {
+      return Failure(e);
+    }
+
     return left(
       Failure.exception(FailureInfo(stackTrace: str, debugMessage: e.toString(), errorObject: e)),
     );
