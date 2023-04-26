@@ -13,16 +13,16 @@ part 'create_{{name.snakeCase()}}_provider.g.dart';
 
 @freezed
 class Create{{name.pascalCase()}}State
-    with _$Create{{name.pascalCase()}}State, ProviderStatusClassMixin<Create{{name.pascalCase()}}State, {{name.pascalCase()}}Model> {
+    with _$Create{{name.pascalCase()}}State, ProviderStatusClassMixin<Create{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel> {
   const factory Create{{name.pascalCase()}}State({
     /// provider status
-    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
+    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
   }) = _Create{{name.pascalCase()}}State;
 
   const Create{{name.pascalCase()}}State._();
 
   @override
-  Create{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
+  Create{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}DetailModel> newStatus) {
     return copyWith(status: newStatus);
   }
 
@@ -36,8 +36,8 @@ class Create{{name.pascalCase()}}State
 @kimappForm
 @riverpod
 class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$Create{{name.pascalCase()}}Form  {
-  Future<ProviderStatus<{{name.pascalCase()}}Model>> call() async {
-    return await perform<{{name.pascalCase()}}Model>(
+  Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
+    return await perform<{{name.pascalCase()}}DetailModel>(
       (state) async {
         _performValidation();
         final result = await ref.read({{name.camelCase()}}RepoProvider).create(state.toParam());
