@@ -1,5 +1,3 @@
-// Package imports:
-import 'package:responsive_framework/responsive_wrapper.dart';
 import '../../../config.dart';
 import 'app_theme_provider.dart';
 import '../router/app_router_provider.dart';
@@ -32,13 +30,13 @@ class AppWidget extends HookConsumerWidget {
       builder: (context, child) {
         child = BotToastInit()(context, child);
         child = _Unfocus(child: child);
-        child = ResponsiveWrapper.builder(
-          child,
+        child = ResponsiveBreakpoints.builder(
+          child: child,
           breakpoints: [
-            const ResponsiveBreakpoint.resize(AS.mobileBreakpoint, name: MOBILE),
-            const ResponsiveBreakpoint.autoScale(AS.tabletBreakpoint, name: TABLET),
-            const ResponsiveBreakpoint.resize(AS.desktopBreakpoint, name: DESKTOP),
-            const ResponsiveBreakpoint.autoScale(2460, name: '4K'),
+            const Breakpoint(start: 0, end: AS.mobileBreakpoint, name: MOBILE),
+            const Breakpoint(start: AS.mobileBreakpoint, end: AS.tabletBreakpoint, name: TABLET),
+            const Breakpoint(start: AS.desktopBreakpoint, end: 1920, name: DESKTOP),
+            const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
           ],
         );
         return child;

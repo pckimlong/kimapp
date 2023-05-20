@@ -39,7 +39,6 @@ class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$C
   Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
     return await perform<{{name.pascalCase()}}DetailModel>(
       (state) async {
-        _performValidation();
         final result = await ref.read({{name.camelCase()}}RepoProvider).create(state.toParam());
         return result.getOrThrow();
       },
@@ -54,10 +53,6 @@ class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$C
     state = newState(state).copyWith(status: state.status);
   }
 
-
-  void _performValidation() {
-    // ...
-  }
 
   @override
   Create{{name.pascalCase()}}State build() => const Create{{name.pascalCase()}}State();

@@ -140,7 +140,7 @@ class FailureInfo with _$FailureInfo {
 }
 
 @freezed
-class Failure with _$Failure, Exception {
+class Failure with _$Failure {
   const Failure._();
 
   /// Create custom failure, both message and debug message will be the same

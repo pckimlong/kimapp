@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:{{project_name.snakeCase()}}/exports.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
