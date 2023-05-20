@@ -14,6 +14,7 @@ export 'package:hooks_riverpod/hooks_riverpod.dart';
 export 'package:kimapp/kimapp.dart';
 export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 export 'package:easy_localization/easy_localization.dart' hide TextDirection;
+export 'package:responsive_framework/responsive_framework.dart';
 
 export 'src/commons/commons.dart';
 export 'src/presentation/app/app_style.dart';
