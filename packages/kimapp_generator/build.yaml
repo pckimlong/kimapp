@@ -18,8 +18,7 @@ builders:
     build_extensions: {".dart": ["kimapp_model_generator.g.part"]}
     auto_apply: dependents
     build_to: cache
-    required_inputs:
-      - freezed|freezed
+    required_inputs: [".freezed.dart"]
     applies_builders: ["source_gen|combining_builder"]
 
   kimapp_form_generator:
