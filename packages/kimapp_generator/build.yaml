@@ -10,6 +10,7 @@ builders:
       - kimapp_generator|kimapp_model_generator
       - kimapp_generator|kimapp_form_generator
       - json_serializable|json_serializable
+      - riverpod_generator|riverpod_generator
 
   kimapp_model_generator:
     import: "package:kimapp_generator/builder.dart"
