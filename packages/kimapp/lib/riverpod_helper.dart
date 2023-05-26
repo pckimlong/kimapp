@@ -8,7 +8,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
 // ignore: implementation_imports
-import 'package:riverpod/src/notifier.dart';
 
 import 'object/failure.dart';
 
@@ -249,7 +248,7 @@ extension ProviderStatusFamilyNotifierX<T> on Notifier<ProviderStatus<T>> {
 
 /// Make family provider(provider with params in builds) work
 extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
-    on BuildlessAutoDisposeNotifier<Base> {
+    on Notifier<Base> {
   bool get isInProgress => state.status.isInProgress;
   bool get isFailure => state.status.isFailure;
   bool get isInitial => state.status.isInitial;
