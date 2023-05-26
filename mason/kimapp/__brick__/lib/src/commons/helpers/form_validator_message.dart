@@ -10,6 +10,7 @@ class OverrideFormBuilderLocalizationsEn extends FormBuilderLocalizationsImplEn 
 
   static const List<Locale> supportedLocales = [
     Locale('en'),
+    Locale('km'),
   ];
 
   @override

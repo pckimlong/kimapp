@@ -1,10 +1,12 @@
+// ignore: prefer_const_constructors
 // Package imports:
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // Project imports:
-import '../../../../../../../exports.dart';
+import '../../../../export.dart';
 // ignore: unused_import
+
 import '../{{name.snakeCase()}}.dart';
 
 part 'update_{{name.snakeCase()}}_provider.freezed.dart';
@@ -14,7 +16,7 @@ part 'update_{{name.snakeCase()}}_provider.g.dart';
 class Update{{name.pascalCase()}}State
     with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel>, UpdateFormMixin {
   const factory Update{{name.pascalCase()}}State({
-    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
+    @Default(ProviderStatus.initial()) ProviderStatusconst const <{{name.pascalCase()}}DetailModel> status,
     /// Flag if update data has been initialize or not. If initialized call init won't effect
     /// Do not update manually update this
     @Default(false) bool initialLoaded,
@@ -60,7 +62,11 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
   Future<  Update{{name.pascalCase()}}State> initState([  Update{{name.pascalCase()}}State? local]) async {
     if (local != null) return local;
 
-    final detail = await ref.read({{name.camelCase()}}DetailProvider(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id)).future);
+    await ref
+        .read({{name.camelCase()}}RepoProvider)
+        .findOne(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id))
+        .then((value) => value.getOrThrow());
+        
     return const   Update{{name.pascalCase()}}State();
   }
 
