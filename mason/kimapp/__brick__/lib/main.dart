@@ -27,8 +27,7 @@ void main() async {
     },
   );
 
-  runZonedGuarded(
-    () => runApp(
+  runApp(
       EasyLocalization(
         path: 'assets/translations',
         supportedLocales: const [Locale("en"), Locale("km")],
@@ -38,9 +37,7 @@ void main() async {
           child: const AppWidget(),
         ),
       ),
-    ),
-    (error, stack) => _prettyLogger.e(error.toString(), error, stack),
-  );
+    );
 }
 
 Future<void> _handleFlutterError(FlutterErrorDetails details) async {
