@@ -210,7 +210,7 @@ extension ProviderStatusClassProviderX<B, T>
   }
 }
 
-extension ProviderStatusFamilyNotifierX<T> on NotifierBase<ProviderStatus<T>> {
+extension ProviderStatusFamilyNotifierX<T> on Notifier<ProviderStatus<T>> {
   /// Perform call function of provider with continuously update the status and catch error
   ///
   /// If status is currently in progress or already success, no action will be perform and return current status
