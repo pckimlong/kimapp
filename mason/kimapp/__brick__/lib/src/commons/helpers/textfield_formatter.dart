@@ -123,3 +123,8 @@ class NumericInputFormatter extends TextInputFormatter {
     );
   }
 }
+
+List<TextInputFormatter> inputFormatterMoney() => [
+      NumericInputFormatter(),
+      ThousandsFormatter(),
+    ];
