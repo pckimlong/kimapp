@@ -1,4 +1,4 @@
-// Package imports:
+
 import 'package:intl/intl.dart';
 
 extension DoubleX on double {

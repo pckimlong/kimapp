@@ -1,11 +1,11 @@
-// Package imports:
+
 // ignore_for_file: unused_import
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-// Project imports:
-import '../../../../../../../exports.dart';
+
+import '../../../../export.dart';
 import '../{{name.snakeCase()}}.dart';
 
 part 'create_{{name.snakeCase()}}_provider.freezed.dart';

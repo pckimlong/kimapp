@@ -1,9 +1,9 @@
 // ignore: prefer_const_constructors
-// Package imports:
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-// Project imports:
+
 import '../../../../export.dart';
 // ignore: unused_import
 
@@ -62,7 +62,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
   Future<  Update{{name.pascalCase()}}State> initState([  Update{{name.pascalCase()}}State? local]) async {
     if (local != null) return local;
 
-    await ref
+    final result =  await ref
         .read({{name.camelCase()}}RepoProvider)
         .findOne(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id))
         .then((value) => value.getOrThrow());

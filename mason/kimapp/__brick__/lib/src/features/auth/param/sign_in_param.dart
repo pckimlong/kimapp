@@ -1,4 +1,4 @@
-// Package imports:
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'sign_in_param.freezed.dart';

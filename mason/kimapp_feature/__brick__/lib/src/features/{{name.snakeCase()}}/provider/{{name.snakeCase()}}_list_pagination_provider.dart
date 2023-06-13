@@ -1,8 +1,8 @@
-// Package imports:
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-// Project imports:
-import '../../../../../../../exports.dart';
+
+import '../../../../export.dart';
 // ignore: unused_import
 import '../{{name.snakeCase()}}.dart';
 
