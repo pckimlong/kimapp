@@ -15,7 +15,6 @@ part 'create_{{name.snakeCase()}}_provider.g.dart';
 class Create{{name.pascalCase()}}State
     with _$Create{{name.pascalCase()}}State, ProviderStatusClassMixin<Create{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel> {
   const factory Create{{name.pascalCase()}}State({
-    /// provider status
     @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
   }) = _Create{{name.pascalCase()}}State;
 
