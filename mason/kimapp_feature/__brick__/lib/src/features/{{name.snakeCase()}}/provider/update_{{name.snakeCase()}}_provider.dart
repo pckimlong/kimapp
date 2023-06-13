@@ -17,8 +17,6 @@ class Update{{name.pascalCase()}}State
     with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel>, UpdateFormMixin {
   const factory Update{{name.pascalCase()}}State({
     @Default(ProviderStatus.initial()) ProviderStatusconst const <{{name.pascalCase()}}DetailModel> status,
-    /// Flag if update data has been initialize or not. If initialized call init won't effect
-    /// Do not update manually update this
     @Default(false) bool initialLoaded,
   }) = _Update{{name.pascalCase()}}State;
 
@@ -30,8 +28,6 @@ class Update{{name.pascalCase()}}State
   }
 
   Update{{name.pascalCase()}}Param toParam() {
-    // perform validation
-// ...
     return const Update{{name.pascalCase()}}Param();
   }
 }
