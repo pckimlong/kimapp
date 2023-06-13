@@ -11,7 +11,6 @@ part '{{name.snakeCase()}}_detail_provider.g.dart';
 class {{name.pascalCase()}}Detail extends _${{name.pascalCase()}}Detail {
   @override
   FutureOr<{{name.pascalCase()}}DetailModel> build(FindOne{{name.pascalCase()}}Param param) {
-    ref.autoInvalidateSelf(const Duration(minutes: 3));
     return ref.watch({{name.camelCase()}}RepoProvider).findOne(param).then((value) => value.getOrThrow());
   }
 
