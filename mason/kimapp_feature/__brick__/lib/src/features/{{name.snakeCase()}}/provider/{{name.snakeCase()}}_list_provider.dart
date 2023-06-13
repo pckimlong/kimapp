@@ -18,7 +18,6 @@ part '{{name.snakeCase()}}_list_provider.g.dart';
 class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
   @override
   FutureOr<IList<{{name.pascalCase()}}Model>> build() {
-    ref.autoInvalidateSelf(const Duration(minutes: 5));
     return _fetchItems();
   }
 
