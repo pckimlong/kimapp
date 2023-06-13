@@ -1,4 +1,4 @@
-// Package imports:
+
 // ignore: unused_import
 import '../../../exports.dart';
 import 'package:intl/intl.dart';

@@ -14,7 +14,7 @@ abstract class Identity<T> {
   T toJson() => value;
 
   @override
-  String toString() => '$runtimeType($value)';
+  String toString() => '$value';
 
   T call() => value;
 }

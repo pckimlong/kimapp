@@ -1,8 +1,8 @@
-// Package imports:
+
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-// Project imports:
+
 import '../{{name.snakeCase()}}.dart';
 
 part '{{name.snakeCase()}}_detail_provider.g.dart';

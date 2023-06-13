@@ -43,7 +43,8 @@ abstract class _AppStateRouteGuard extends AutoRouteGuard with LoggerMixin {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final appState = _ref.read(appStateProvider);
-    if (appState == ApplicationState.initialized) {
+    final accountState = _ref.read(currentAccountProvider);
+    if (appState == ApplicationState.initialized && accountState.hasValue) {
       log.v('Call onAppStateInitialized');
       onAppStateInitialized(resolver, router);
     } else {
