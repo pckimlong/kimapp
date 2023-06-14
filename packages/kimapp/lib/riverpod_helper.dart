@@ -104,7 +104,9 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
       return ProviderStatus.failure(
         err is Failure
             ? err
-            : Failure(FailureInfo(stackTrace: stack, debugMessage: err.toString())),
+            : err is String
+                ? Failure.fromString(err)
+                : Failure(FailureInfo(stackTrace: stack, debugMessage: err.toString())),
       );
     }
   }
