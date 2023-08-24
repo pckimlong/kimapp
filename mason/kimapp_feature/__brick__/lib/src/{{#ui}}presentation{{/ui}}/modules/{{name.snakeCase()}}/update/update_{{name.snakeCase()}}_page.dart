@@ -1,8 +1,8 @@
-import '../../../../../exports.dart';
+import '../../../../../../exports.dart';
 
 @RoutePage()
-class Create{{name.pascalCase()}}Page extends HookConsumerWidget {
-  const Create{{name.pascalCase()}}Page({super.key});
+class Update{{name.pascalCase()}}Page extends HookConsumerWidget {
+  const Update{{name.pascalCase()}}Page({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return _Body();
