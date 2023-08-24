@@ -36,3 +36,8 @@ vars:
     values:
       - int
       - String
+  ui:
+    type: boolean
+    prompt: Generate UI?
+    default: false
+    description: Include UI files in presentation layer
