@@ -22,7 +22,7 @@ void main() async {
     customFailureMessage: CustomFailureMessage(),
     logger: (type, message, [title, stackTrace, errorObject]) {
       if (type == LoggerType.error) {
-        _prettyLogger.e(message, errorObject, stackTrace);
+        _prettyLogger.e(message, error: errorObject, stackTrace: stackTrace);
       }
     },
   );
@@ -42,7 +42,7 @@ void main() async {
 
 Future<void> _handleFlutterError(FlutterErrorDetails details) async {
   _prettyLogger.d('caught flutter error');
-  _prettyLogger.e(details.exceptionAsString(), details.exception, details.stack);
+  _prettyLogger.e(details.exceptionAsString(), error: details.exception, stackTrace: details.stack);
 
   if (kReleaseMode) {
     Zone.current.handleUncaughtError(details.exception, details.stack!);

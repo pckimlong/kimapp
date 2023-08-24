@@ -1,4 +1,4 @@
-import '../../../../../exports.dart';
+import '../../../../../../exports.dart';
 // ignore: unused_import
 import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}.dart';
 
