@@ -29,7 +29,7 @@ class AppState extends _$AppState with LoggerMixin {
       }
 
       onError?.call(message);
-      log.e('Error while initializing app', e, stack);
+      log.e('Error while initializing app', error: e, stackTrace: stack);
       return ApplicationState.uninitialized;
     }
   }

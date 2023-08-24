@@ -1,10 +1,9 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_internal_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
 
 import 'dart:async';
 import 'dart:developer';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
 // ignore: implementation_imports
@@ -128,9 +127,9 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
   }
 
   /// Retrieve success value, return null if state is not [ProviderStatus.success]
-  T? get successOrNull => whenOrNull<T>(success: id);
+  T? get successOrNull => whenOrNull<T>(success: (value) => value);
 
-  Failure? get failure => whenOrNull(failure: id);
+  Failure? get failure => whenOrNull(failure: (value) => value);
 }
 
 extension ProviderStatusProviderX<T> on NotifierProviderRef<ProviderStatus<T>> {
@@ -243,7 +242,9 @@ extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<Provi
     state = ProviderStatus<T>.inProgress();
     state = await ProviderStatus.guard<T>(() async => await callback(state));
     final updatedState = state; // prevent if onsuccess or failure update current state
-    if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
+    if (state.isFailure && onFailure != null) {
+      onFailure(state.whenOrNull(failure: (failure) => failure)!);
+    }
     if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
     return updatedState;
   }
@@ -297,7 +298,7 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
     if (isFailure && onFailure != null) {
-      onFailure(state.status.whenOrNull(failure: id)!);
+      onFailure(state.status.whenOrNull(failure: (failure) => failure)!);
     }
     if (isSuccess && onSuccess != null) {
       onSuccess(state.status.successOrNull as T);
@@ -337,7 +338,9 @@ extension ProviderStatusFamilyNotifierXX<T> on Notifier<ProviderStatus<T>> {
     state = ProviderStatus<T>.inProgress();
     state = await ProviderStatus.guard<T>(() async => await callback(state));
     final updatedState = state; // prevent if onsuccess or failure update current state
-    if (state.isFailure && onFailure != null) onFailure(state.whenOrNull(failure: id)!);
+    if (state.isFailure && onFailure != null) {
+      onFailure(state.whenOrNull(failure: (failure) => failure)!);
+    }
     if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
     return updatedState;
   }
@@ -391,7 +394,7 @@ extension ProviderStatusClassFamilyNotifierXX<A, Base extends ProviderStatusClas
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
     if (isFailure && onFailure != null) {
-      onFailure(state.status.whenOrNull(failure: id)!);
+      onFailure(state.status.whenOrNull(failure: (failure) => failure)!);
     }
     if (isSuccess && onSuccess != null) {
       onSuccess(state.status.successOrNull as T);

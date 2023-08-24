@@ -26,7 +26,7 @@ class RiverpodLogger extends ProviderObserver {
 mixin LoggerMixin {
   Logger get log => _prettyLogger;
   void logErrorHandler(Object error, [StackTrace? stackTrace]) {
-    _prettyLogger.i('silently ignoring error', error, stackTrace);
+    _prettyLogger.i('silently ignoring error', error: error, stackTrace: stackTrace);
   }
 }
 
