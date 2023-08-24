@@ -11,7 +11,7 @@ dependencies:
   source_gen: ^1.4.0
   recase: ^4.1.0
   build: ^2.4.1
-  analyzer: ^6.0.0
+  analyzer: ^5.12.0
   json_annotation: 
   flutter:
     sdk: flutter
