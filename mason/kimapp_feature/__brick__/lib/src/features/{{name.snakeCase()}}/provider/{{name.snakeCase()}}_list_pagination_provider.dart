@@ -37,7 +37,9 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
   const limit = _page{{name.pascalCase()}}Limit;
   final page = index ~/ limit;
   final pageItems = ref.watch({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
-  return PaginatedItem.build(pageItems: pageItems, limit: limit, index: index);
+  // Likely scroll backward
+  final hasNextPage = ref.exists({{name.camelCase()}}ListPaginationProvider(page: page + 1, param: param));
+  return PaginatedItem.build(pageItems: pageItems, limit: limit, index: index, showLoadingInAllItem: hasNextPage,);
 }
 
 
@@ -92,7 +94,12 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
 //         final paginated = ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param));
 //         if (paginated != null) {
 //           return paginated.whenOrNull(
-//             loading: () => const Text('Loading...'),
+//            loading: (isFirstItem) {
+//              if (isFirstItem) {
+//                return const Text('Loading...');
+//              }
+//              return const Text('Loading Item...');
+//            },
 //             data: ({{name.camelCase()}}) {
 //               // TODO - Implement {{name.camelCase()}} item widget
 //               return Text({{name.camelCase()}}.id.value.toString());
