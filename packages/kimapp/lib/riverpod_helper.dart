@@ -20,7 +20,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
   const PaginatedItem._();
 
   const factory PaginatedItem.data(T item) = _Data;
-  const factory PaginatedItem.loading() = _Loading;
+  const factory PaginatedItem.loading({@Default(true) bool isFirstItem}) = _Loading;
   const factory PaginatedItem.error(Failure failure) = _Error;
 
   /// Build pagination item
@@ -44,6 +44,10 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
     required AsyncValue<IList<T>> pageItems,
     required int limit,
     required int index,
+
+    /// If false, only first item in the page will show loading state, otherwise just return null
+    /// If true meaning that wether the item in any position will show loading state when it is loading
+    bool showLoadingInAllItem = false,
   }) {
     final itemIndexInPage = index % limit;
     final itemOfIndexAsync = pageItems.whenData((value) => value.getOrNull(itemIndexInPage));
@@ -61,7 +65,12 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
         return null;
       },
       loading: () {
-        if (itemIndexInPage == 0) return const PaginatedItem.loading();
+        if (itemIndexInPage == 0) {
+          return const PaginatedItem.loading(isFirstItem: true);
+        }
+
+        if (showLoadingInAllItem) return const PaginatedItem.loading(isFirstItem: false);
+
         return null;
       },
     );
