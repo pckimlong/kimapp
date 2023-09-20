@@ -19,21 +19,21 @@ mixin _$PaginatedItem<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T item) data,
-    required TResult Function() loading,
+    required TResult Function(bool isFirstItem) loading,
     required TResult Function(Failure failure) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T item)? data,
-    TResult? Function()? loading,
+    TResult? Function(bool isFirstItem)? loading,
     TResult? Function(Failure failure)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T item)? data,
-    TResult Function()? loading,
+    TResult Function(bool isFirstItem)? loading,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) =>
@@ -144,7 +144,7 @@ class _$_Data<T> extends _Data<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T item) data,
-    required TResult Function() loading,
+    required TResult Function(bool isFirstItem) loading,
     required TResult Function(Failure failure) error,
   }) {
     return data(item);
@@ -154,7 +154,7 @@ class _$_Data<T> extends _Data<T> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T item)? data,
-    TResult? Function()? loading,
+    TResult? Function(bool isFirstItem)? loading,
     TResult? Function(Failure failure)? error,
   }) {
     return data?.call(item);
@@ -164,7 +164,7 @@ class _$_Data<T> extends _Data<T> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T item)? data,
-    TResult Function()? loading,
+    TResult Function(bool isFirstItem)? loading,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
@@ -224,6 +224,8 @@ abstract class _$$_LoadingCopyWith<T, $Res> {
   factory _$$_LoadingCopyWith(
           _$_Loading<T> value, $Res Function(_$_Loading<T>) then) =
       __$$_LoadingCopyWithImpl<T, $Res>;
+  @useResult
+  $Res call({bool isFirstItem});
 }
 
 /// @nodoc
@@ -233,57 +235,83 @@ class __$$_LoadingCopyWithImpl<T, $Res>
   __$$_LoadingCopyWithImpl(
       _$_Loading<T> _value, $Res Function(_$_Loading<T>) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? isFirstItem = null,
+  }) {
+    return _then(_$_Loading<T>(
+      isFirstItem: null == isFirstItem
+          ? _value.isFirstItem
+          : isFirstItem // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$_Loading<T> extends _Loading<T> {
-  const _$_Loading() : super._();
+  const _$_Loading({this.isFirstItem = true}) : super._();
+
+  @override
+  @JsonKey()
+  final bool isFirstItem;
 
   @override
   String toString() {
-    return 'PaginatedItem<$T>.loading()';
+    return 'PaginatedItem<$T>.loading(isFirstItem: $isFirstItem)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Loading<T>);
+        (other.runtimeType == runtimeType &&
+            other is _$_Loading<T> &&
+            (identical(other.isFirstItem, isFirstItem) ||
+                other.isFirstItem == isFirstItem));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, isFirstItem);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_LoadingCopyWith<T, _$_Loading<T>> get copyWith =>
+      __$$_LoadingCopyWithImpl<T, _$_Loading<T>>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T item) data,
-    required TResult Function() loading,
+    required TResult Function(bool isFirstItem) loading,
     required TResult Function(Failure failure) error,
   }) {
-    return loading();
+    return loading(isFirstItem);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T item)? data,
-    TResult? Function()? loading,
+    TResult? Function(bool isFirstItem)? loading,
     TResult? Function(Failure failure)? error,
   }) {
-    return loading?.call();
+    return loading?.call(isFirstItem);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T item)? data,
-    TResult Function()? loading,
+    TResult Function(bool isFirstItem)? loading,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
-      return loading();
+      return loading(isFirstItem);
     }
     return orElse();
   }
@@ -324,8 +352,13 @@ class _$_Loading<T> extends _Loading<T> {
 }
 
 abstract class _Loading<T> extends PaginatedItem<T> {
-  const factory _Loading() = _$_Loading<T>;
+  const factory _Loading({final bool isFirstItem}) = _$_Loading<T>;
   const _Loading._() : super._();
+
+  bool get isFirstItem;
+  @JsonKey(ignore: true)
+  _$$_LoadingCopyWith<T, _$_Loading<T>> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -402,7 +435,7 @@ class _$_Error<T> extends _Error<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T item) data,
-    required TResult Function() loading,
+    required TResult Function(bool isFirstItem) loading,
     required TResult Function(Failure failure) error,
   }) {
     return error(failure);
@@ -412,7 +445,7 @@ class _$_Error<T> extends _Error<T> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T item)? data,
-    TResult? Function()? loading,
+    TResult? Function(bool isFirstItem)? loading,
     TResult? Function(Failure failure)? error,
   }) {
     return error?.call(failure);
@@ -422,7 +455,7 @@ class _$_Error<T> extends _Error<T> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T item)? data,
-    TResult Function()? loading,
+    TResult Function(bool isFirstItem)? loading,
     TResult Function(Failure failure)? error,
     required TResult orElse(),
   }) {
