@@ -54,6 +54,11 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
   } on PostgrestException catch (e, str) {
     _logError('Supabase.StorageException', e.message, str, e);
 
+    if (e.code == "PGRST116") {
+      return left(Failure.databaseFailure(DatabaseFailures.notFound(
+          FailureInfo(stackTrace: str, debugMessage: e.message, errorObject: e))));
+    }
+
     if (e.code == "23505") {
       return left(Failure.databaseFailure(DatabaseFailures.uniqueConstraint(
           FailureInfo(stackTrace: str, debugMessage: e.message, errorObject: e))));

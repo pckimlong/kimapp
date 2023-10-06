@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-// ignore: unused_import
+
 import '../{{name.snakeCase()}}.dart';
 
 part 'delete_{{name.snakeCase()}}_provider.g.dart';

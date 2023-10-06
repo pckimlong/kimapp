@@ -1,5 +1,5 @@
 import '../../../../../../exports.dart';
-// ignore: unused_import
+
 import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}.dart';
 
 final _initialParamProvider = Provider<{{name.pascalCase()}}ListPaginationParam?>((ref) {
