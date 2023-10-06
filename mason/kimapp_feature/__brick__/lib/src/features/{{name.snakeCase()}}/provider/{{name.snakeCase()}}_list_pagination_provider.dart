@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
 import '../../../../export.dart';
-// ignore: unused_import
+
 import '../{{name.snakeCase()}}.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';

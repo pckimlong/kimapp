@@ -2,7 +2,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/kimapp.dart';
-// ignore: unused_import
 import '../core/core.dart';
 
 part '{{name.snakeCase()}}_detail_model.g.dart';
@@ -15,7 +14,7 @@ class {{name.pascalCase()}}DetailModel with _${{name.pascalCase()}}DetailModel, 
 
   @TableModel({{name.pascalCase()}}Table.table)
   const factory {{name.pascalCase()}}DetailModel({
-    @JsonKey(name: {{name.pascalCase()}}Table.id) required {{name.pascalCase()}}Id id,
+    @JsonKey(name: {{name.pascalCase()}}Table.id) required const {{name.pascalCase()}}Id id,
   }) = _{{name.pascalCase()}}DetailModel;
 
   factory {{name.pascalCase()}}DetailModel.fromJson(Map<String, dynamic> json) 
@@ -23,7 +22,4 @@ class {{name.pascalCase()}}DetailModel with _${{name.pascalCase()}}DetailModel, 
   
   
   static const TableBuilder table = _table{{name.pascalCase()}}DetailModel;
-
-  @override
-  {{name.pascalCase()}}Id get identity => this.id;
 }

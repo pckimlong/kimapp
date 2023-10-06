@@ -15,7 +15,7 @@ class {{name.pascalCase()}}IdNameModel with _${{name.pascalCase()}}IdNameModel, 
 
   @TableModel({{name.pascalCase()}}Table.table)
   const factory {{name.pascalCase()}}IdNameModel({
-    @JsonKey(name: {{name.pascalCase()}}Table.id) required {{name.pascalCase()}}Id id,
+    @JsonKey(name: {{name.pascalCase()}}Table.id) required const {{name.pascalCase()}}Id id,
   }) = _{{name.pascalCase()}}IdNameModel;
 
   factory {{name.pascalCase()}}IdNameModel.fromJson(Map<String, dynamic> json) 
@@ -27,7 +27,4 @@ class {{name.pascalCase()}}IdNameModel with _${{name.pascalCase()}}IdNameModel, 
   
   
   static const TableBuilder table = _table{{name.pascalCase()}}IdNameModel;
-
-  @override
-  {{name.pascalCase()}}Id get identity => this.id;
 }

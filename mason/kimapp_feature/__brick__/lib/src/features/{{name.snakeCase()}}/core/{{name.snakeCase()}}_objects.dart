@@ -12,9 +12,6 @@ export '{{name.snakeCase()}}_objects.table.dart';
 
 
 mixin {{name.pascalCase()}}CommonMixin {
-  {{name.pascalCase()}}Id get identity;
+  {{name.pascalCase()}}Id get id;
 }
 
-extension  {{name.pascalCase()}}CommonX on  {{name.pascalCase()}}CommonMixin{
-  {{name.pascalCase()}}Id get id => identity;
-}

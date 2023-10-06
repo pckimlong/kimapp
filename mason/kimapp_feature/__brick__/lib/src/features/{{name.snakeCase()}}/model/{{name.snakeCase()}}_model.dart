@@ -14,7 +14,7 @@ class {{name.pascalCase()}}Model with _${{name.pascalCase()}}Model, {{name.pasca
 
   @TableModel({{name.pascalCase()}}Table.table)
   const factory {{name.pascalCase()}}Model({
-    @JsonKey(name: {{name.pascalCase()}}Table.id) required {{name.pascalCase()}}Id id,
+    @JsonKey(name: {{name.pascalCase()}}Table.id) required const {{name.pascalCase()}}Id id,
   }) = _{{name.pascalCase()}}Model;
 
   factory {{name.pascalCase()}}Model.fromJson(Map<String, dynamic> json) 
@@ -23,7 +23,4 @@ class {{name.pascalCase()}}Model with _${{name.pascalCase()}}Model, {{name.pasca
   factory {{name.pascalCase()}}Model.fromDetailModel({{name.pascalCase()}}DetailModel base) => {{name.pascalCase()}}Model(id: base.id);
   
   static const TableBuilder table = _table{{name.pascalCase()}}Model;
-
-  @override
-  {{name.pascalCase()}}Id get identity => this.id;
 }
