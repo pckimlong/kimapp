@@ -10,6 +10,7 @@ class TableBuilder with _$TableBuilder {
     required String tableName,
     required List<ColumnBuilder> columns,
   }) = _TableBuilder;
+
   String get selectStatement => columns.map((e) => e.value).join(', ');
 }
 
@@ -33,7 +34,9 @@ class ColumnBuilder with _$ColumnBuilder {
         final selectStatement = '(${value.table.selectStatement})';
         final tableName = value.table.tableName;
 
-        return '${value.key ?? tableName}${value.candidateKey.isNullOrBlank ? ":${value.foreignKey ?? tableName}" : ""}${value.candidateKey.isNotNullOrEmpty ? ":${value.table.tableName}!${value.candidateKey}" : ""}$selectStatement';
+        final key = value.key ?? tableName;
+
+        return '$key${value.candidateKey.isNullOrBlank ? ":${value.foreignKey ?? tableName}" : ""}${value.candidateKey.isNotNullOrEmpty ? ":${value.table.tableName}!${value.candidateKey}" : ""}$selectStatement';
       },
     );
   }
