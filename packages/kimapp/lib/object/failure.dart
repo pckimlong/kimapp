@@ -83,6 +83,10 @@ extension FailureX on Failure {
     return when(
       (info) => useDebugMessage ? info.debugMessage : info.message ?? "Something when wrong!",
       exception: (info) {
+        if (info.errorObject is String) {
+          return info.errorObject as String;
+        }
+
         return useDebugMessage ? info.debugMessage : info.message ?? mgs.exception;
       },
       networkFailure: (info) {
