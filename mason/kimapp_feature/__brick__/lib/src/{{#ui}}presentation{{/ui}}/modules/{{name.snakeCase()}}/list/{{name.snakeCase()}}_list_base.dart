@@ -2,11 +2,19 @@ import '../../../../../../exports.dart';
 
 import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}.dart';
 
-final _initialParamProvider = Provider<{{name.pascalCase()}}ListPaginationParam?>((ref) {
+class  {{name.pascalCase()}}ListBaseConfig{
+  const  {{name.pascalCase()}}ListBaseConfig();
+}
+
+final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListPaginationParam?>((ref) {
   return;
 });
 
-final _paramProvider = StateProvider<{{name.pascalCase()}}ListPaginationParam>(
+final _configProvider = Provider.autoDispose<{{name.pascalCase()}}ListBaseConfig>((ref) {
+  throw UnimplementedError();
+});
+
+final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListPaginationParam>(
   (ref) {
     final initialParam = ref.watch(_initialParamProvider);
     return initialParam ?? const {{name.pascalCase()}}ListPaginationParam();
@@ -15,14 +23,22 @@ final _paramProvider = StateProvider<{{name.pascalCase()}}ListPaginationParam>(
 );
 
 class {{name.pascalCase()}}ListBase extends ConsumerWidget {
-  const {{name.pascalCase()}}ListBase({super.key, this.initialParam});
+  const {{name.pascalCase()}}ListBase({
+    super.key, 
+    this.initialParam,
+    this.config = const {{name.pascalCase()}}ListBaseConfig(),
+  });
 
   final {{name.pascalCase()}}ListPaginationParam? initialParam;
+  final {{name.pascalCase()}}ListBaseConfig config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ProviderScope(
-      overrides: [_initialParamProvider.overrideWithValue(initialParam)],
+      overrides: [
+          _initialParamProvider.overrideWithValue(initialParam),
+          _configProvider.overrideWithValue(const {{name.pascalCase()}}ListBaseConfig()),
+        ],
       child: const _Content(),
     );
   }
@@ -33,6 +49,7 @@ class _Content extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final config = ref.watch(_configProvider);
     final param = ref.watch(_paramProvider);
     final firstPageAsync = ref.watch(
       {{name.pascalCase()}}ListPaginationProvider(page: 0, param: param).select(
@@ -74,7 +91,7 @@ class _ItemList extends ConsumerWidget {
         final paginated = ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param));
         if (paginated != null) {
           return paginated.whenOrNull(
-            loading: () => const Text('Loading...'),
+            loading: (isFirstItem) => const Text('Loading...', textAlign: TextAlign.center),
             data: (financial) {
               // TODO - Implement financial item widget
               return Text(financial.id.value.toString());
