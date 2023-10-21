@@ -12,7 +12,12 @@ enum ApplicationState { uninitialized, initialized }
 @Riverpod(keepAlive: true)
 class AppState extends _$AppState with LoggerMixin {
   Future<ApplicationState> initialize({void Function(String error)? onError}) async {
-    log.i('Initializing app...');
+    if (state == ApplicationState.initialized) {
+      log.i('Reinitialize app...');
+    } else {
+      log.i('Initializing app...');
+    }
+
     try {
       await _initialize();
       return ApplicationState.initialized;
@@ -66,6 +71,12 @@ class AppState extends _$AppState with LoggerMixin {
     ref.listen(
       authStateProvider,
       (previous, next) {
+        if (previous != next && state == ApplicationState.initialized) {
+          log.i('Auth state changed from $previous to $next');
+          // Reinitialize app to refresh data which depend on auth state
+          await initialize();
+        }
+
         if (previous?.isAuthenticated == true && next.isUnauthenticated) {
           ref.read(appRouterProvider).replace(SignInRoute());
         }

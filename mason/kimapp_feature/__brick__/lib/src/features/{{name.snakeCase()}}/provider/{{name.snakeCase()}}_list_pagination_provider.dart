@@ -96,7 +96,7 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
 //           return paginated.whenOrNull(
 //            loading: (isFirstItem) {
 //              if (isFirstItem) {
-//                return const Text('Loading...');
+//                return const Text('Loading...', textAlign: TextAlign.center,);
 //              }
 //              return const Text('Loading Item...');
 //            },

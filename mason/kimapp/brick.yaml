@@ -29,3 +29,7 @@ vars:
     type: string
     description: Project name which will be use in import and pubspec.yaml
     prompt: What is your project name in snake case?
+  sentry_dsn:
+    type: string
+    description: Sentry DSN
+    prompt: What is your Sentry DSN? (optional)
