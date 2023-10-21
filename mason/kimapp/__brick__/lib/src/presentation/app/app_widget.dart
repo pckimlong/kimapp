@@ -45,6 +45,7 @@ class AppWidget extends HookConsumerWidget {
         builder: (context, child) {
           child = BotToastInit()(context, child);
           child = _Unfocus(child: child);
+          child = _LifecycleWatcher(child: child);
           child = ResponsiveBreakpoints.builder(
             child: child,
             breakpoints: [
@@ -72,5 +73,35 @@ class _Unfocus extends StatelessWidget {
       onTap: FocusManager.instance.primaryFocus?.unfocus,
       child: child,
     );
+  }
+}
+
+
+class __LifecycleWatcherState extends ConsumerState<_LifecycleWatcher> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // App is resumed from background
+    if (state == AppLifecycleState.resumed) {
+      // Refresh some provider which not worked when app is in background
+      ref.invalidate(unreadNotificationCountProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }

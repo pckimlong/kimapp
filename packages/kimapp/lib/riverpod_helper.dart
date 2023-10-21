@@ -65,7 +65,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
         return null;
       },
       loading: () {
-        if (itemIndexInPage == 0) {
+        if (itemIndexInPage == 0 && !showLoadingInAllItem) {
           return const PaginatedItem.loading(isFirstItem: true);
         }
 

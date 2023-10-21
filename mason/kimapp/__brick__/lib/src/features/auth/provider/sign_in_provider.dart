@@ -12,9 +12,11 @@ class SignIn extends _$SignIn {
 
   Future<ProviderStatus<UserId>> call(SignInParam signInParam) async {
     return await perform(
-      onSuccess: (authUserId) => ref
+      onSuccess: (authUserId) {
+        ref
           .read(authStateProvider.notifier)
-          .updateAuthState(AuthenticationState.authenticated(authUserId)),
+          .updateAuthState(AuthenticationState.authenticated(authUserId));
+      },
       (state) async {
         final result = await ref.read(authRepoProvider).signIn(signInParam);
         return result.getOrThrow();
