@@ -77,6 +77,15 @@ class _Unfocus extends StatelessWidget {
 }
 
 
+class _LifecycleWatcher extends ConsumerStatefulWidget {
+  const _LifecycleWatcher({required this.child});
+
+  final Widget child;
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => __LifecycleWatcherState();
+}
+
 class __LifecycleWatcherState extends ConsumerState<_LifecycleWatcher> with WidgetsBindingObserver {
   @override
   void initState() {
@@ -95,8 +104,7 @@ class __LifecycleWatcherState extends ConsumerState<_LifecycleWatcher> with Widg
     super.didChangeAppLifecycleState(state);
     // App is resumed from background
     if (state == AppLifecycleState.resumed) {
-      // Refresh some provider which not worked when app is in background
-      ref.invalidate(unreadNotificationCountProvider);
+      // TODO: Handle app resume
     }
   }
 

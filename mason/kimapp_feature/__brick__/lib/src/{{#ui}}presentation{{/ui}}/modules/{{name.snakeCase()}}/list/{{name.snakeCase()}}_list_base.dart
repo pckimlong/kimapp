@@ -89,16 +89,18 @@ class _ItemList extends ConsumerWidget {
     return ListView.builder(
       itemBuilder: (context, index) {
         final paginated = ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param));
-        if (paginated != null) {
-          return paginated.whenOrNull(
-            loading: (isFirstItem) => const Text('Loading...', textAlign: TextAlign.center),
+        return paginated?.whenOrNull(
+            loading: (isFirstItem) {
+              if(isFirstItem){
+                return const Text('Loading...', textAlign: TextAlign.center);
+              }
+              return const Text('Loading old item...', textAlign: TextAlign.center);
+            },
             data: (financial) {
               // TODO - Implement financial item widget
               return Text(financial.id.value.toString());
             },
           );
-        }
-        return null;
       },
     );
   }

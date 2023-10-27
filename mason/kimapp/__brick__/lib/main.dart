@@ -8,7 +8,7 @@ import 'src/presentation/app/app_widget.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // handle with error
+    // handle with error
   FlutterError.onError = _handleFlutterError;
   if (kReleaseMode) {
     ErrorWidget.builder = (details) => const SizedBox();
@@ -20,24 +20,20 @@ void main() async {
   await Kimapp.initialize(
     debugMode: kDebugMode,
     customFailureMessage: CustomFailureMessage(),
-    logger: (type, message, [title, stackTrace, errorObject]) {
-      if (type == LoggerType.error) {
-        _prettyLogger.e(message, error: errorObject, stackTrace: stackTrace);
-      }
-    },
+    logger: _logger,
   );
 
   runApp(
-      EasyLocalization(
-        path: 'assets/translations',
-        supportedLocales: const [Locale("en"), Locale("km")],
-        fallbackLocale: const Locale('km'),
-        child: ProviderScope(
-          observers: [RiverpodLogger()],
-          child: const AppWidget(),
-        ),
+    EasyLocalization(
+      path: 'assets/translations',
+      supportedLocales: const [Locale("en"), Locale("km")],
+      fallbackLocale: const Locale('km'),
+      child: ProviderScope(
+        observers: [RiverpodLogger()],
+        child: const AppWidget(),
       ),
-    );
+    ),
+  );
 }
 
 Future<void> _handleFlutterError(FlutterErrorDetails details) async {
@@ -46,8 +42,25 @@ Future<void> _handleFlutterError(FlutterErrorDetails details) async {
 
   if (kReleaseMode) {
     Zone.current.handleUncaughtError(details.exception, details.stack!);
+    await Sentry.captureException(
+      details.exception,
+      stackTrace: details.stack,
+    );
   } else {
     FlutterError.dumpErrorToConsole(details);
+  }
+}
+
+void _logger(LoggerType type, String message,
+    [String? title, StackTrace? stackTrace, Object? errorObject]) async {
+  if (type == LoggerType.error) {
+    _prettyLogger.e(message, error: errorObject, stackTrace: stackTrace);
+    if (!kDebugMode) {
+      await Sentry.captureException(
+        errorObject,
+        stackTrace: stackTrace,
+      );
+    }
   }
 }
 
