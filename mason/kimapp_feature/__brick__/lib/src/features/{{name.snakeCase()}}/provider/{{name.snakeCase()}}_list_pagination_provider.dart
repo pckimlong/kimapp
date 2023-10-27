@@ -92,21 +92,18 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
 //     return ListView.builder(
 //       itemBuilder: (context, index) {
 //         final paginated = ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param));
-//         if (paginated != null) {
-//           return paginated.whenOrNull(
+//         return paginated?.whenOrNull(
 //            loading: (isFirstItem) {
 //              if (isFirstItem) {
 //                return const Text('Loading...', textAlign: TextAlign.center,);
 //              }
-//              return const Text('Loading Item...');
+//              return const Text('Loading old Item...');
 //            },
 //             data: ({{name.camelCase()}}) {
 //               // TODO - Implement {{name.camelCase()}} item widget
 //               return Text({{name.camelCase()}}.id.value.toString());
 //             },
 //           );
-//         }
-//         return null;
 //       },
 //     );
 //   }
