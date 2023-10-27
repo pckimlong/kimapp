@@ -27,11 +27,16 @@ targets:
         generate_for:
           include:
             - lib/**.dart
-      auto_route_generator:
-        enabled: true
+      auto_route_generator:auto_route_generator:
+        options:
+          enable_cached_builds: true
         generate_for:
-          include:
-            - lib/src/presentation/modules/**.dart
+          - lib/src/presentation/modules/**_page.dart
+      auto_route_generator:auto_router_generator:
+        options:
+          enable_cached_builds: true
+        generate_for:
+          - lib/src/presentation/router/app_router.dart
       riverpod_generator:
         enabled: true
         generate_for:
