@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart' show kDebugMode, kReleaseMode;
-
 import 'package:logger/logger.dart';
 
 import 'exports.dart';
@@ -29,7 +28,7 @@ void main() async {
       supportedLocales: const [Locale("en"), Locale("km")],
       fallbackLocale: const Locale('km'),
       child: ProviderScope(
-        observers: [RiverpodLogger()],
+        observers: [ProviderLogger(), ProviderCrashlytics()],
         child: const AppWidget(),
       ),
     ),
@@ -52,7 +51,7 @@ Future<void> _handleFlutterError(FlutterErrorDetails details) async {
 }
 
 void _logger(LoggerType type, String message,
-    [String? title, StackTrace? stackTrace, Object? errorObject]) async {
+    [String? title, StackTrace? stackTrace, Object? errorObject,]) async {
   if (type == LoggerType.error) {
     _prettyLogger.e(message, error: errorObject, stackTrace: stackTrace);
     if (!kDebugMode) {
