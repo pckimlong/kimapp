@@ -183,8 +183,8 @@ class Failure with _$Failure {
       exception: (info) => "ExceptionFailure: ${info.debugMessage}",
       networkFailure: (info) => "NetworkFailure: ${info.debugMessage}",
       serverError: (info) => "ServerError: ${info.debugMessage}",
-      databaseFailure: (failure) => "DatabaseFailure: ${failure.logMessage()}",
-      authFailure: (failure) => "AuthFailure: ${failure.logMessage()}",
+      databaseFailure: (failure) => "DatabaseFailure -> ${failure.logMessage()}",
+      authFailure: (failure) => "AuthFailure -> ${failure.logMessage()}",
     );
   }
 }
