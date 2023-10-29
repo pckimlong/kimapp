@@ -8,7 +8,6 @@ part 'supabase_provider.g.dart';
 
 /// Must call in main() function
 Future<void> initializeSupabase() async {
-  HiveLocalStorage.encryptionKey = 'encryptionKey';
   await Supabase.initialize(
     url: _url,
     anonKey: _anonKey,
