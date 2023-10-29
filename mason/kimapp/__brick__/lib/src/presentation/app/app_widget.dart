@@ -24,15 +24,17 @@ class AppWidget extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
 
+    // Convert auth state to listenable, and use it to reevaluate router
+    final authListenable = useValueNotifier<Option<AuthenticationState>>(none());
+    ref.listen(authStateProvider, (_, next) => authListenable.value = some(next));
+
     return _EagerInitialization(
         child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: router.config(reevaluateListenable: authListenable),
         title: Config.appName,
-        color: Colors.blue,
         theme: ref.watch(themeProvider),
         themeMode: ref.watch(themeModeProvider).valueOrNull,
-        debugShowCheckedModeBanner: false,
-        routeInformationParser: router.defaultRouteParser(),
-        routerDelegate: router.delegate(),
         localizationsDelegates: [
           ...context.localizationDelegates,
           OverrideFormBuilderLocalizationsEn.delegate

@@ -1,6 +1,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-// ignore: unused_import
+
 import '../core/{{name.snakeCase()}}_objects.dart';
 part 'find_one_{{name.snakeCase()}}_param.freezed.dart';
 
