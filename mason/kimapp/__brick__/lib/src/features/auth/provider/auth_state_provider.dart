@@ -23,8 +23,6 @@ class AuthenticationState with _$AuthenticationState {
 
 @Riverpod(keepAlive: true)
 class AuthState extends _$AuthState {
-  void updateAuthState(AuthenticationState newState) => state = newState;
-
   Future<void> initialize() async {
     final authUserIdOption = (await ref.watch(authRepoProvider).currentId()).getOrThrow();
     state = authUserIdOption.match(
@@ -35,6 +33,13 @@ class AuthState extends _$AuthState {
 
   @override
   AuthenticationState build() {
+    final supabaseAuth = ref.watch(supabaseProvider).client.auth;
+    final subscription = supabaseAuth.onAuthStateChange.listen(
+      (_) => initialize(),
+    );
+
+    ref.onDispose(subscription.cancel);
+
     /// Return unauthenticated by default and let splash page initial actual state
     return const AuthenticationState.unauthenticated();
   }

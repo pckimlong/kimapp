@@ -1,7 +1,24 @@
 include: package:flutter_lints/flutter.yaml
 
-{{#riverpod}}
 analyzer:
+{{#riverpod}}
   plugins:
     - custom_lint
 {{/riverpod}}
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+    - "**/*.table.dart"
+  errors:
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    - require_trailing_commas
+    - prefer_final_fields
+    - prefer_final_in_for_each
+    - prefer_final_locals
+
+
+

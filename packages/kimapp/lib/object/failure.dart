@@ -175,6 +175,19 @@ class Failure with _$Failure {
 
   /// Error relate to authentication or security staffs
   const factory Failure.authFailure(AuthFailures failures) = AuthFailure;
+
+  // Override toString to make it easier to read when used in error logs.
+  @override
+  String toString() {
+    return when(
+      (info) => "Failure: ${info.debugMessage}",
+      exception: (info) => "ExceptionFailure: ${info.debugMessage}",
+      networkFailure: (info) => "NetworkFailure: ${info.debugMessage}",
+      serverError: (info) => "ServerError: ${info.debugMessage}",
+      databaseFailure: (failure) => "DatabaseFailure: $failure",
+      authFailure: (failure) => "AuthFailure: $failure",
+    );
+  }
 }
 
 @freezed
@@ -187,6 +200,16 @@ class DatabaseFailures with _$DatabaseFailures {
 
   /// Cannot find any data in database with given argument
   const factory DatabaseFailures.notFound(FailureInfo info) = _NotFound;
+
+  // Override toString to make it easier to read when used in error logs.
+  @override
+  String toString() {
+    return when(
+      (info) => "DatabaseFailures: ${info.debugMessage}",
+      uniqueConstraint: (info) => "UniqueConstraint: ${info.debugMessage}",
+      notFound: (info) => "NotFound: ${info.debugMessage}",
+    );
+  }
 }
 
 @freezed
@@ -202,42 +225,15 @@ class AuthFailures with _$AuthFailures {
 
   /// Information use to register or signed up might have been use by other user
   const factory AuthFailures.alreadyRegistered(FailureInfo info) = _UserAlreadyRegistered;
-}
 
-// /// Copied from flutter foundation
-// String exceptionAsString(Object exception) {
-//   String? longMessage;
-//   if (exception is AssertionError) {
-//     final Object? message = (exception).message;
-//     final String fullMessage = exception.toString();
-//     if (message is String && message != fullMessage) {
-//       if (fullMessage.length > message.length) {
-//         final int position = fullMessage.lastIndexOf(message);
-//         if (position == fullMessage.length - message.length &&
-//             position > 2 &&
-//             fullMessage.substring(position - 2, position) == ': ') {
-//           // Add a line break so that the filename at the start of the
-//           // assertion message is always on its own line.
-//           String body = fullMessage.substring(0, position - 2);
-//           final int splitPoint = body.indexOf(' Failed assertion:');
-//           if (splitPoint >= 0) {
-//             body = '${body.substring(0, splitPoint)}\n${body.substring(splitPoint + 1)}';
-//           }
-//           longMessage = '${message.trimRight()}\n$body';
-//         }
-//       }
-//     }
-//     longMessage ??= fullMessage;
-//   } else if (exception is String) {
-//     longMessage = exception;
-//   } else if (exception is Error || exception is Exception) {
-//     longMessage = exception.toString();
-//   } else {
-//     longMessage = '  $exception';
-//   }
-//   longMessage = longMessage.trimRight();
-//   if (longMessage.isEmpty) {
-//     longMessage = '  <no message available>';
-//   }
-//   return longMessage;
-// }
+  // Override toString to make it easier to read when used in error logs.
+  @override
+  String toString() {
+    return when(
+      (info) => "AuthFailures: ${info.debugMessage}",
+      incorrectLoginCredential: (info) => "IncorrectLoginCredential: ${info.debugMessage}",
+      forbidden: (info) => "Forbidden: ${info.debugMessage}",
+      alreadyRegistered: (info) => "UserAlreadyRegistered: ${info.debugMessage}",
+    );
+  }
+}
