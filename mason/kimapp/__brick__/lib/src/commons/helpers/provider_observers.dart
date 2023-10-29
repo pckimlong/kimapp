@@ -1,31 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
-import 'package:logger/logger.dart';
 
-final _traceLogger = Logger(
-  level: Level.trace,
-  filter: DevelopmentFilter(),
-  printer: PrettyPrinter(
-    colors: true,
-    printEmojis: true,
-    printTime: true,
-    methodCount: 0,
-  ),
-);
+import 'logger.dart';
 
-final _errorLogger = Logger(
-  level: Level.error,
-  filter: DevelopmentFilter(),
-  printer: PrettyPrinter(
-    colors: true,
-    printEmojis: true,
-    printTime: true,
-    methodCount: 0,
-    errorMethodCount: 0,
-  ),
-);
-
-class ProviderLogger extends ProviderObserver {
+class ProviderLogger extends ProviderObserver with LoggerMixin {
   ProviderLogger();
 
   @override
@@ -37,7 +15,7 @@ class ProviderLogger extends ProviderObserver {
     if (value is AsyncError) return;
     if (value is ProviderStatus && value.isFailure) return;
 
-    _traceLogger.t(
+    log.t(
       '🟩 DidAddProvider: ${provider.providerName}\n'
       '=> value: $value',
     );
@@ -53,7 +31,7 @@ class ProviderLogger extends ProviderObserver {
     if (newValue is AsyncError) return;
     if (newValue is ProviderStatus && newValue.isFailure) return;
 
-    _traceLogger.t(
+    log.t(
       '🔄 DidUpdateProvider: ${provider.providerName}\n'
       '=> oldValue: $previousValue\n'
       '=> newValue: $newValue',
@@ -62,11 +40,11 @@ class ProviderLogger extends ProviderObserver {
 
   @override
   void didDisposeProvider(ProviderBase<dynamic> provider, ProviderContainer container) {
-    _traceLogger.t('🗑️ DidDisposeProvider: ${provider.providerName}');
+    log.t('🗑️ DidDisposeProvider: ${provider.providerName}');
   }
 }
 
-class ProviderCrashlytics extends ProviderObserver {
+class ProviderCrashlytics extends ProviderObserver with LoggerMixin {
   ProviderCrashlytics();
 
   @override
@@ -93,7 +71,7 @@ class ProviderCrashlytics extends ProviderObserver {
       stackTrace = value.failure?.stackTrace;
     }
 
-    _errorLogger.e(
+    log.e(
       'DidAddProvider: ${provider.providerName}\n'
       '=> error: $error\n'
       '=> stackTrace: $stackTrace',
@@ -127,7 +105,7 @@ class ProviderCrashlytics extends ProviderObserver {
       stackTrace = newValue.failure?.stackTrace;
     }
 
-    _errorLogger.e(
+    log.e(
       'ProviderDidFail: ${provider.providerName}\n'
       '=> oldValue: $previousValue\n'
       '=> error: $error\n'
@@ -157,7 +135,7 @@ class ProviderCrashlytics extends ProviderObserver {
       stackTraceObject = error.failure?.stackTrace;
     }
 
-    _errorLogger.e(
+    log.e(
       '⛔️ ProviderDidFail: ${provider.providerName}\n'
       '=> error: $errorObject\n'
       '=> stackTrace: $stackTraceObject',
