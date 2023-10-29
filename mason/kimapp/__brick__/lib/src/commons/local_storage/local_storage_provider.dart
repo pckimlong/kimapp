@@ -7,6 +7,7 @@ import '../../../exports.dart';
 
 part "local_storage_provider.g.dart";
 
+
 @Riverpod(keepAlive: true)
 FutureOr<LocalStorage> localStorage(LocalStorageRef ref) async {
   final storage = HiveLocalStorage();
@@ -63,14 +64,16 @@ class HiveLocalStorage extends LocalStorage {
     return result;
   }
 
-  static Future<void> _saveMap(String key, {required Map<String, dynamic>? value}) =>
-      _save(key, value);
+  static Future<void> _saveMap(String key, {required Map<String, dynamic>? value}) {
+    return _save(key, value);
+  }
 
   static Future<Map<String, dynamic>?> _readMap(String key) async {
     final data = await _read(key);
-    if (data is Map<String, dynamic>) return data;
-    log('Local storage with key [$key] is not of type map');
-    return null;
+    if (data == null) return null;
+    final Map<dynamic, dynamic> currentValue = data;
+    final Map<String, dynamic> tmp = currentValue.map((key, v) => MapEntry(key.toString(), v));
+    return tmp;
   }
 
   static Future<void> _saveObject<T extends Object>(
@@ -94,7 +97,7 @@ class HiveLocalStorage extends LocalStorage {
     try {
       return fromMap(data);
     } catch (e) {
-      log('Error reading object from local storage with key [$key], Null will be return');
+      LoggerMixin.logger.e('Error reading object from local storage with key [$key], Null will be return');
       if (onFail != null) {
         onFail(e, data);
       }

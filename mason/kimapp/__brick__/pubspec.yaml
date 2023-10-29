@@ -57,6 +57,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   freezed: ^2.4.5
+  flutter_secure_storage: ^9.0.0
   json_serializable: ^6.7.1
   kimapp_generator:
     git:

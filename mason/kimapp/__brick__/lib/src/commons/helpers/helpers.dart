@@ -3,6 +3,7 @@ export 'date_time_helper.dart';
 export 'double_helper.dart';
 export 'form_validator_message.dart';
 export 'int_helpers.dart';
+export 'logger.dart';
 export 'provider_observers.dart';
 export 'string_helpers.dart';
 export 'textfield_formatter.dart';
