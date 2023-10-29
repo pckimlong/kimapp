@@ -1429,8 +1429,8 @@ class __$$_DatabaseFailuresCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_DatabaseFailures implements _DatabaseFailures {
-  const _$_DatabaseFailures(this.info);
+class _$_DatabaseFailures extends _DatabaseFailures {
+  const _$_DatabaseFailures(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -1526,8 +1526,9 @@ class _$_DatabaseFailures implements _DatabaseFailures {
   }
 }
 
-abstract class _DatabaseFailures implements DatabaseFailures {
+abstract class _DatabaseFailures extends DatabaseFailures {
   const factory _DatabaseFailures(final FailureInfo info) = _$_DatabaseFailures;
+  const _DatabaseFailures._() : super._();
 
   @override
   FailureInfo get info;
@@ -1575,8 +1576,8 @@ class __$$_UniqueConstraintCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_UniqueConstraint implements _UniqueConstraint {
-  const _$_UniqueConstraint(this.info);
+class _$_UniqueConstraint extends _UniqueConstraint {
+  const _$_UniqueConstraint(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -1672,8 +1673,9 @@ class _$_UniqueConstraint implements _UniqueConstraint {
   }
 }
 
-abstract class _UniqueConstraint implements DatabaseFailures {
+abstract class _UniqueConstraint extends DatabaseFailures {
   const factory _UniqueConstraint(final FailureInfo info) = _$_UniqueConstraint;
+  const _UniqueConstraint._() : super._();
 
   @override
   FailureInfo get info;
@@ -1721,8 +1723,8 @@ class __$$_NotFoundCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_NotFound implements _NotFound {
-  const _$_NotFound(this.info);
+class _$_NotFound extends _NotFound {
+  const _$_NotFound(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -1818,8 +1820,9 @@ class _$_NotFound implements _NotFound {
   }
 }
 
-abstract class _NotFound implements DatabaseFailures {
+abstract class _NotFound extends DatabaseFailures {
   const factory _NotFound(final FailureInfo info) = _$_NotFound;
+  const _NotFound._() : super._();
 
   @override
   FailureInfo get info;
@@ -1971,8 +1974,8 @@ class __$$_AuthFailuresCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AuthFailures implements _AuthFailures {
-  const _$_AuthFailures(this.info);
+class _$_AuthFailures extends _AuthFailures {
+  const _$_AuthFailures(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -2076,8 +2079,9 @@ class _$_AuthFailures implements _AuthFailures {
   }
 }
 
-abstract class _AuthFailures implements AuthFailures {
+abstract class _AuthFailures extends AuthFailures {
   const factory _AuthFailures(final FailureInfo info) = _$_AuthFailures;
+  const _AuthFailures._() : super._();
 
   @override
   FailureInfo get info;
@@ -2126,8 +2130,8 @@ class __$$_IncorrectLoginCredentialCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_IncorrectLoginCredential implements _IncorrectLoginCredential {
-  const _$_IncorrectLoginCredential(this.info);
+class _$_IncorrectLoginCredential extends _IncorrectLoginCredential {
+  const _$_IncorrectLoginCredential(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -2232,9 +2236,10 @@ class _$_IncorrectLoginCredential implements _IncorrectLoginCredential {
   }
 }
 
-abstract class _IncorrectLoginCredential implements AuthFailures {
+abstract class _IncorrectLoginCredential extends AuthFailures {
   const factory _IncorrectLoginCredential(final FailureInfo info) =
       _$_IncorrectLoginCredential;
+  const _IncorrectLoginCredential._() : super._();
 
   @override
   FailureInfo get info;
@@ -2282,8 +2287,8 @@ class __$$_ForbiddenCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_Forbidden implements _Forbidden {
-  const _$_Forbidden(this.info);
+class _$_Forbidden extends _Forbidden {
+  const _$_Forbidden(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -2387,8 +2392,9 @@ class _$_Forbidden implements _Forbidden {
   }
 }
 
-abstract class _Forbidden implements AuthFailures {
+abstract class _Forbidden extends AuthFailures {
   const factory _Forbidden(final FailureInfo info) = _$_Forbidden;
+  const _Forbidden._() : super._();
 
   @override
   FailureInfo get info;
@@ -2436,8 +2442,8 @@ class __$$_UserAlreadyRegisteredCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_UserAlreadyRegistered implements _UserAlreadyRegistered {
-  const _$_UserAlreadyRegistered(this.info);
+class _$_UserAlreadyRegistered extends _UserAlreadyRegistered {
+  const _$_UserAlreadyRegistered(this.info) : super._();
 
   @override
   final FailureInfo info;
@@ -2542,9 +2548,10 @@ class _$_UserAlreadyRegistered implements _UserAlreadyRegistered {
   }
 }
 
-abstract class _UserAlreadyRegistered implements AuthFailures {
+abstract class _UserAlreadyRegistered extends AuthFailures {
   const factory _UserAlreadyRegistered(final FailureInfo info) =
       _$_UserAlreadyRegistered;
+  const _UserAlreadyRegistered._() : super._();
 
   @override
   FailureInfo get info;

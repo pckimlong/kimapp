@@ -177,21 +177,22 @@ class Failure with _$Failure {
   const factory Failure.authFailure(AuthFailures failures) = AuthFailure;
 
   // Override toString to make it easier to read when used in error logs.
-  @override
-  String toString() {
+  String logMessage() {
     return when(
       (info) => "Failure: ${info.debugMessage}",
       exception: (info) => "ExceptionFailure: ${info.debugMessage}",
       networkFailure: (info) => "NetworkFailure: ${info.debugMessage}",
       serverError: (info) => "ServerError: ${info.debugMessage}",
-      databaseFailure: (failure) => "DatabaseFailure: $failure",
-      authFailure: (failure) => "AuthFailure: $failure",
+      databaseFailure: (failure) => "DatabaseFailure: ${failure.logMessage()}",
+      authFailure: (failure) => "AuthFailure: ${failure.logMessage()}",
     );
   }
 }
 
 @freezed
 class DatabaseFailures with _$DatabaseFailures {
+  const DatabaseFailures._();
+
   /// Not specific, just a failure from database
   const factory DatabaseFailures(FailureInfo info) = _DatabaseFailures;
 
@@ -201,9 +202,7 @@ class DatabaseFailures with _$DatabaseFailures {
   /// Cannot find any data in database with given argument
   const factory DatabaseFailures.notFound(FailureInfo info) = _NotFound;
 
-  // Override toString to make it easier to read when used in error logs.
-  @override
-  String toString() {
+  String logMessage() {
     return when(
       (info) => "DatabaseFailures: ${info.debugMessage}",
       uniqueConstraint: (info) => "UniqueConstraint: ${info.debugMessage}",
@@ -214,6 +213,8 @@ class DatabaseFailures with _$DatabaseFailures {
 
 @freezed
 class AuthFailures with _$AuthFailures {
+  const AuthFailures._();
+
   /// Not specific, just a failure from auth
   const factory AuthFailures(FailureInfo info) = _AuthFailures;
 
@@ -226,9 +227,7 @@ class AuthFailures with _$AuthFailures {
   /// Information use to register or signed up might have been use by other user
   const factory AuthFailures.alreadyRegistered(FailureInfo info) = _UserAlreadyRegistered;
 
-  // Override toString to make it easier to read when used in error logs.
-  @override
-  String toString() {
+  String logMessage() {
     return when(
       (info) => "AuthFailures: ${info.debugMessage}",
       incorrectLoginCredential: (info) => "IncorrectLoginCredential: ${info.debugMessage}",
