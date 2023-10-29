@@ -1,5 +1,6 @@
 import '../../../../exports.dart';
 import '../../app/app_state_provider.dart';
+import 'splash_widget.dart';
 
 @RoutePage()
 class SplashPage extends ConsumerStatefulWidget {
@@ -31,10 +32,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'កំពុងដំណើរការ...',
-      ),
+    final appVersion = ref.watch(appInfoProvider).valueOrNull?.version;
+
+    return SplashWidget(
+      loadedInMain: false,
+      appVersion: appVersion,
+      error: error,
     );
   }
 }

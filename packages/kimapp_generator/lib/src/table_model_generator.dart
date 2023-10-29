@@ -16,6 +16,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       throw 'Only classes can be annotated with @TableModel. $element is not a ClassElement.';
     }
 
+    /// Freezed generated has been update, in order to get the class name, we need to get nested class supertype
     final className = element.supertype!.element.supertype.toString();
     final tableName = annotation.peek('tableName')?.stringValue;
 
