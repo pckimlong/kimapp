@@ -8,11 +8,11 @@ part 'supabase_provider.g.dart';
 
 /// Must call in main() function
 Future<void> initializeSupabase() async {
+  HiveLocalStorage.encryptionKey = 'encryptionKey';
   await Supabase.initialize(
     url: _url,
     anonKey: _anonKey,
     debug: kDebugMode,
-    localStorage: _SecureLocalStorage(),
   );
 }
 
@@ -24,27 +24,4 @@ Supabase supabase(SupabaseRef ref) {
 @riverpod
 SupabaseClient supabaseAdmin(SupabaseAdminRef ref) {
   return SupabaseClient(_url, _adminKey);
-}
-
-class _SecureLocalStorage extends LocalStorage {
-  _SecureLocalStorage()
-      : super(
-          initialize: () async {},
-          hasAccessToken: () {
-            const storage = FlutterSecureStorage();
-            return storage.containsKey(key: supabasePersistSessionKey);
-          },
-          accessToken: () {
-            const storage = FlutterSecureStorage();
-            return storage.read(key: supabasePersistSessionKey);
-          },
-          removePersistedSession: () {
-            const storage = FlutterSecureStorage();
-            return storage.delete(key: supabasePersistSessionKey);
-          },
-          persistSession: (String value) {
-            const storage = FlutterSecureStorage();
-            return storage.write(key: supabasePersistSessionKey, value: value);
-          },
-        );
 }
