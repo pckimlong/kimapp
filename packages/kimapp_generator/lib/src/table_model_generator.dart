@@ -16,7 +16,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       throw 'Only classes can be annotated with @TableModel. $element is not a ClassElement.';
     }
 
-    final className = element.thisType.toString();
+    final className = element.supertype!.element.supertype.toString();
     final tableName = annotation.peek('tableName')?.stringValue;
 
     final constructor = element.unnamedConstructor;
