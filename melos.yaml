@@ -1,0 +1,14 @@
+name: kimapp_packages
+
+packages:
+  - packages/*
+
+repository: https://github.com/pckimlong/kimapp
+
+ide:
+  intellij:
+    enabled: false
+
+scripts:
+  analyze:
+    exec: dart analyze .
