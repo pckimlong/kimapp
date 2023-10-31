@@ -1,0 +1,19 @@
+version: 2
+enable-beta-ecosystems: true
+updates:
+  - package-ecosystem: pub
+    directory: "/"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pub
+    directory: "/packages/kimapp"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pub
+    directory: "/packages/kimapp_generator"
+    schedule:
+      interval: weekly
+  - package-ecosystem: pub
+    directory: "/packages/kimapp_supabase_helper"
+    schedule:
+      interval: weekly
