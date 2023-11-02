@@ -4,14 +4,23 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
 
 part 'supabase_key.dart';
+part 'supabase_key.dart';
+part 'supabase_provider.g.dart';
 part 'supabase_provider.g.dart';
 
-/// Must call in main() function
-Future<void> initializeSupabase() async {
+Future<void> initializeSupabase({
+  required String url,
+  required String anonKey,
+  String? schema,
+  LocalStorage? localStorage,
+  bool? debug,
+}) async {
   await Supabase.initialize(
-    url: _url,
-    anonKey: _anonKey,
-    debug: kDebugMode,
+    url: url,
+    anonKey: anonKey,
+    localStorage: localStorage,
+    debug: debug,
+    schema: schema,
   );
 }
 

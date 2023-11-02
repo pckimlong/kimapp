@@ -1,5 +1,5 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dartx/dartx.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part "table_builder.freezed.dart";
 
