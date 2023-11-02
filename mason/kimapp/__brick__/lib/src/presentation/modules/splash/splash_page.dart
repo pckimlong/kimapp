@@ -37,7 +37,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     return SplashWidget(
       loadedInMain: false,
       appVersion: appVersion,
-      error: error,
+      error: null,
     );
   }
 }
