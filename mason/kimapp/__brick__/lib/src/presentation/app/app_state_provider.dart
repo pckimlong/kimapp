@@ -63,7 +63,7 @@ class AppState extends _$AppState with LoggerMixin {
   void _watchAuthState() {
     ref.listen(
       authStateProvider,
-      (previous, next) {
+      (previous, next) async{
         if (previous != next && state == ApplicationState.initialized) {
           log.i('Auth state changed from $previous to $next');
           // Reinitialize app to refresh data which depend on auth state
