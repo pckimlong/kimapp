@@ -34,7 +34,6 @@ class SplashWidget extends StatelessWidget {
                 width: 200,
                 child: LinearProgressIndicator(
                   color: Colors.black,
-                  backgroundColor: AS.lightCardGrey,
                 ),
               ),
               AS.hGap8,
