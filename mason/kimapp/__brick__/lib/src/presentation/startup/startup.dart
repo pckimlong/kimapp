@@ -50,8 +50,8 @@ class KimappRunner {
     await Future.wait(tasks.map((task) => task._initialize(context)));
 
     runApp(
-      ProviderScope(
-        parent: container,
+      UncontrolledProviderScope(
+        container: container,
         child: EasyLocalization(
           path: 'assets/translations',
           supportedLocales: const [Locale("en"), Locale("km")],
@@ -106,15 +106,23 @@ enum IntegrationMode {
 }
 
 IntegrationMode get integrationMode {
-  if (Platform.environment.containsKey('FLUTTER_TEST')) {
-    return IntegrationMode.unitTest;
-  }
+  if (kIsWeb) {
+    if (kDebugMode) {
+      return IntegrationMode.develop;
+    }
 
-  if (kReleaseMode) {
     return IntegrationMode.release;
-  }
+  } else {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      return IntegrationMode.unitTest;
+    }
 
-  return IntegrationMode.develop;
+    if (kReleaseMode) {
+      return IntegrationMode.release;
+    }
+
+    return IntegrationMode.develop;
+  }
 }
 
 enum PlatformType {
@@ -136,26 +144,26 @@ enum PlatformType {
 PlatformType get platformType {
   if (kIsWeb) {
     return PlatformType.web;
-  }
+  } else {
+    if (Platform.isAndroid) {
+      return PlatformType.android;
+    }
 
-  if (Platform.isAndroid) {
-    return PlatformType.android;
-  }
+    if (Platform.isIOS) {
+      return PlatformType.ios;
+    }
 
-  if (Platform.isIOS) {
-    return PlatformType.ios;
-  }
+    if (Platform.isMacOS) {
+      return PlatformType.macos;
+    }
 
-  if (Platform.isMacOS) {
-    return PlatformType.macos;
-  }
+    if (Platform.isWindows) {
+      return PlatformType.windows;
+    }
 
-  if (Platform.isWindows) {
-    return PlatformType.windows;
-  }
-
-  if (Platform.isLinux) {
-    return PlatformType.linux;
+    if (Platform.isLinux) {
+      return PlatformType.linux;
+    }
   }
 
   throw UnsupportedError('Unsupported platform');
