@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../../../../exports.dart';
-import '../model/models.dart';
-import '../param/params.dart';
+import '../models/models.dart';
+import '../params/params.dart';
 
 part 'i_{{name.snakeCase()}}_repo.g.dart';
 
