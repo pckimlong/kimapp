@@ -7,9 +7,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../export.dart';
 import '../core/core.dart';
-import '../model/models.dart';
-import '../param/params.dart';
-import '../repository/i_{{name.snakeCase()}}_repo.dart';
+import '../models/models.dart';
+import '../params/params.dart';
+import '../repositories/i_{{name.snakeCase()}}_repo.dart';
 
 part "{{name.snakeCase()}}_list_provider.freezed.dart";
 part '{{name.snakeCase()}}_list_provider.g.dart';
