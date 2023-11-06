@@ -3,7 +3,7 @@
   classPrefixName: '{{name.pascalCase()}}',
   idColumn: '{{name.pascalCase()}}Id:{{id_data_type}}',
   columns: [
-    'id:{{name.pascalCase()}}Id',
+    'id',
   ],
 )
 import 'package:kimapp/kimapp.dart';
