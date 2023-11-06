@@ -26,5 +26,5 @@ class {{name.pascalCase()}}LiteModel with _${{name.pascalCase()}}LiteModel, {{na
   factory {{name.pascalCase()}}LiteModel.fromDetailModel({{name.pascalCase()}}DetailModel base) => {{name.pascalCase()}}LiteModel(id: base.id);
   
   
-  static const TableBuilder table = _table{{name.pascalCase()}}LiteModelImpl;
+  static const TableBuilder table = _table{{name.pascalCase()}}LiteModel;
 }

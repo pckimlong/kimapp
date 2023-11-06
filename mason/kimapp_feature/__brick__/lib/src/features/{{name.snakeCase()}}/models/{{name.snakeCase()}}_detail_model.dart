@@ -21,5 +21,5 @@ class {{name.pascalCase()}}DetailModel with _${{name.pascalCase()}}DetailModel, 
   =>   _${{name.pascalCase()}}DetailModelFromJson(json);
   
   
-  static const TableBuilder table = _table{{name.pascalCase()}}DetailModelImpl;
+  static const TableBuilder table = _table{{name.pascalCase()}}DetailModel;
 }

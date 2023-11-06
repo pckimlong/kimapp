@@ -5,8 +5,8 @@ import 'package:kimapp/kimapp.dart';
 
 import '../{{name}}.dart';
 
-part '{{name.snakeCase()}}_lite_model.g.dart';
-part '{{name.snakeCase()}}_lite_model.freezed.dart';
+part '{{name.snakeCase()}}_raw_model.g.dart';
+part '{{name.snakeCase()}}_raw_model.freezed.dart';
 
 
 @freezed
@@ -24,5 +24,5 @@ class {{name.pascalCase()}}RawModel with _${{name.pascalCase()}}RawModel, {{name
   factory {{name.pascalCase()}}RawModel.fromDetailModel({{name.pascalCase()}}DetailModel base) => {{name.pascalCase()}}RawModel(id: base.id);
   
   
-  static const TableBuilder table = _table{{name.pascalCase()}}RawModelImpl;
+  static const TableBuilder table = _table{{name.pascalCase()}}RawModel;
 }
