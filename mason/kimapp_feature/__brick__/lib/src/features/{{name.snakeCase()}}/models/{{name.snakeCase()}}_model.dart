@@ -22,5 +22,5 @@ class {{name.pascalCase()}}Model with _${{name.pascalCase()}}Model, {{name.pasca
 
   factory {{name.pascalCase()}}Model.fromDetailModel({{name.pascalCase()}}DetailModel base) => {{name.pascalCase()}}Model(id: base.id);
   
-  static const TableBuilder table = _table{{name.pascalCase()}}ModelImpl;
+  static const TableBuilder table = _table{{name.pascalCase()}}Model;
 }
