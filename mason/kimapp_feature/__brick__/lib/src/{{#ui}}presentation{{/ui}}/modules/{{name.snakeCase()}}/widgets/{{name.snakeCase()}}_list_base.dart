@@ -6,8 +6,8 @@ class  {{name.pascalCase()}}ListBaseConfig{
   const  {{name.pascalCase()}}ListBaseConfig();
 }
 
-final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListPaginationParam?>((ref) {
-  return;
+final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListPaginationParam>((ref) {
+  throw UnimplementedError();
 });
 
 final _configProvider = Provider.autoDispose<{{name.pascalCase()}}ListBaseConfig>((ref) {
@@ -25,11 +25,11 @@ final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListPagina
 class {{name.pascalCase()}}ListBase extends ConsumerWidget {
   const {{name.pascalCase()}}ListBase({
     super.key, 
-    this.initialParam,
+    required this.initialParam,
     this.config = const {{name.pascalCase()}}ListBaseConfig(),
   });
 
-  final {{name.pascalCase()}}ListPaginationParam? initialParam;
+  final {{name.pascalCase()}}ListPaginationParam initialParam;
   final {{name.pascalCase()}}ListBaseConfig config;
 
   @override
@@ -37,7 +37,7 @@ class {{name.pascalCase()}}ListBase extends ConsumerWidget {
     return ProviderScope(
       overrides: [
           _initialParamProvider.overrideWithValue(initialParam),
-          _configProvider.overrideWithValue(const {{name.pascalCase()}}ListBaseConfig()),
+          _configProvider.overrideWithValue(config),
         ],
       child: const _Content(),
     );
