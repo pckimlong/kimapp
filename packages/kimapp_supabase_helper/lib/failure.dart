@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
@@ -104,7 +105,14 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
     _logError('Exception', e.toString(), str, e);
 
     // No internet
-    if (e.toString().contains('Failed host lookup')) {
+    final message = e.toString().toLowerCase();
+    final internetError = [
+      'failed host lookup',
+      'socketexception',
+      'connection failed',
+      'network is unreachable',
+    ];
+    if (e is SocketException || internetError.any((element) => message.contains(element))) {
       return left(Failure.networkFailure(
           FailureInfo(stackTrace: str, debugMessage: e.toString(), errorObject: e)));
     }
