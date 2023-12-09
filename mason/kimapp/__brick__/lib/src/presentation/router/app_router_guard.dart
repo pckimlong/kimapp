@@ -15,7 +15,7 @@ class AuthGuard extends _AppStateRouteGuard {
     authState.when(
       authenticated: (_) => resolver.next(true),
       unauthenticated: () {
-        router.push(SignInRoute(onSuccess: () => resolver.next(true)));
+        resolver.redirect(SignInRoute(onSuccess: () => resolver.next(true)));
       },
     );
   }
@@ -49,10 +49,14 @@ abstract class _AppStateRouteGuard extends AutoRouteGuard with LoggerMixin {
       onAppStateInitialized(resolver, router);
     } else {
       log.v('uninitialized push to splash page');
-      router.push(SplashRoute(onInitialized: () {
-        log.v('Call onAppStateInitialized after initialize from splash page');
-        onAppStateInitialized(resolver, router);
-      }));
+      resolver.redirect(
+        SplashRoute(
+          onInitialized: () {
+            log.v('Call onAppStateInitialized after initialize from splash page');
+            onAppStateInitialized(resolver, router);
+          },
+        ),
+      );
     }
   }
 
