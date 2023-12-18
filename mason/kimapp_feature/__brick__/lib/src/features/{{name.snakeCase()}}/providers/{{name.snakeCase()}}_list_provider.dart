@@ -5,7 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
-import '../../../../export.dart';
+import '../../../../exports.dart';
 import '../core/core.dart';
 import '../models/models.dart';
 import '../params/params.dart';
