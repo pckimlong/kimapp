@@ -1,7 +1,7 @@
 import '../../app/app_theme_provider.dart';
 import '../startup.dart';
 
-class InitAppSettingTask extends LaunchTask {
+class InitAppSettingTask extends StartUpTask {
   const InitAppSettingTask();
 
   @override

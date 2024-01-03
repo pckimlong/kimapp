@@ -2,7 +2,7 @@ import '../../../../exports.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 
-class InitFlutterErrorCatcherTask extends LaunchTask with LoggerMixin {
+class InitFlutterErrorCatcherTask extends StartUpTask with LoggerMixin {
   const InitFlutterErrorCatcherTask();
 
   @override

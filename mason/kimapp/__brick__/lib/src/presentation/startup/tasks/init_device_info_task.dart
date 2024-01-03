@@ -1,7 +1,7 @@
 import '../../../../exports.dart';
 import '../startup.dart';
 
-class InitDeviceInfoTask extends LaunchTask {
+class InitDeviceInfoTask extends StartUpTask {
   const InitDeviceInfoTask();
 
   @override
