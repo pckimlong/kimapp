@@ -4,7 +4,7 @@ import '../startup.dart';
 /// This task is used to initialize the location storage.
 /// This should be called first before any other task
 /// because other tasks may need to use this
-class InitLocalStorageTask extends LaunchTask {
+class InitLocalStorageTask extends StartUpTask {
   const InitLocalStorageTask();
 
   @override

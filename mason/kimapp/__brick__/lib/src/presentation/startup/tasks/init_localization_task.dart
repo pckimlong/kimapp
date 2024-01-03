@@ -2,7 +2,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../startup.dart';
 
-class InitLocalizationTask extends LaunchTask {
+class InitLocalizationTask extends StartUpTask {
   const InitLocalizationTask();
 
   @override
