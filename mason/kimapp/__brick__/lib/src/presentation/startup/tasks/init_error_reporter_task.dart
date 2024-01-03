@@ -4,7 +4,7 @@ import '../startup.dart';
 
 const _kSentryDns = '';
 
-class InitErrorReporterTask extends LaunchTask {
+class InitErrorReporterTask extends StartUpTask {
   const InitErrorReporterTask();
 
   @override
