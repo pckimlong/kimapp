@@ -5,15 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../../../exports.dart';
 import '../app/app_widget.dart';
 import '../modules/splash/splash_widget.dart';
-import 'tasks/init_app_setting_task.dart';
-import 'tasks/init_device_info_task.dart';
-import 'tasks/init_error_reporter_task.dart';
-import 'tasks/init_flutter_error_catcher_task.dart';
-import 'tasks/init_kimapp_task.dart';
-import 'tasks/init_local_storage_task.dart';
-import 'tasks/init_localization_task.dart';
-import 'tasks/init_platform_error_catcher_task.dart';
-import 'tasks/init_supabase_task.dart';
+import 'tasks/tasks.dart';
 
 Future<void> runKimappApp({IntegrationMode? env, LaunchConfiguration? config}) async {
   await KimappRunner.run(
@@ -67,8 +59,8 @@ class LaunchConfiguration {
   const LaunchConfiguration();
 }
 
-abstract class LaunchTask with LoggerMixin {
-  const LaunchTask();
+abstract class StartUpTask with LoggerMixin {
+  const StartUpTask();
 
   Future<void> initialize(LaunchContext context);
 

@@ -2,7 +2,7 @@ import '../../../../exports.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 
-class InitKimappTask extends LaunchTask with LoggerMixin {
+class InitKimappTask extends StartUpTask with LoggerMixin {
   const InitKimappTask();
 
   @override
