@@ -37,30 +37,62 @@ class _Impl implements I{{name.pascalCase()}}Repo {
 
   @override
   Future<Either<Failure,  {{name.pascalCase()}}DetailModel>> create(Create{{name.pascalCase()}}Param data) async{
-    return errorHandler(() async {
-      throw UnimplementedError();
-    });
+   return await errorHandler(() async {
+   return await _ref
+    .read(supabaseProvider)
+    .client
+    .from({{name.pascalCase()}}DetailModel.table.tableName)
+    .insert(data.toJson())
+    .select({{name.pascalCase()}}DetailModel.table.selectStatement)
+    .single()
+    .withConverter((data) => right({{name.pascalCase()}}DetailModel.fromJson(data)));
+   });
   }
 
   @override
   Future<Either<Failure, Unit>> delete(Delete{{name.pascalCase()}}Param param) async{
-    return errorHandler(() async {
-      throw UnimplementedError();
+    return await errorHandler(() async {
+    await _ref
+    .read(supabaseProvider)
+    .client
+    .from({{name.pascalCase()}}Table.table)
+    .delete()
+    .eq({{name.pascalCase()}}Table.id, id.value);
+    
+    return right(unit);
     });
   }
 
   @override
   Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findAll({{name.pascalCase()}}ListParam param) async{
-    return errorHandler(() async {
-      throw UnimplementedError();
+    return await errorHandler(() async {
+    var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    
+    if (true) {}
+    
+    return await query.withConverter((data) {
+    final items = (data as List<dynamic>).map((e) => {{name.pascalCase()}}Model.fromJson(e)).toIList();
+    return right(items);
+    });
     });
   }
 
   @override
   Future<Either<Failure,  {{name.pascalCase()}}DetailModel>> findOne(FindOne{{name.pascalCase()}}Param param) async{
-    return errorHandler(() async {
-      throw UnimplementedError();
-    });
+   return await errorHandler(() async {
+   var query = _ref
+   .read(supabaseProvider)
+   .client
+   .from({{name.pascalCase()}}DetailModel.table.tableName)
+   .select({{name.pascalCase()}}DetailModel.table.selectStatement);
+   
+   query = param.when(
+    byId: (id) => query.eq({{name.pascalCase()}}DetailModelTable.id, id.value),
+   );
+   
+   final result = await query.single();
+   return right({{name.pascalCase()}}DetailModel.fromJson(result));
+   });
   }
 
   @override
@@ -69,15 +101,31 @@ class _Impl implements I{{name.pascalCase()}}Repo {
     required int offset,
     required {{name.pascalCase()}}ListPaginationParam param,
   }) async{
-    return errorHandler(() async {
-      throw UnimplementedError();
+    var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    
+    if (true) {}
+    
+    return await query
+    .limit(limit)
+    .range(offset, offset + limit)
+    .withConverter((data) {
+    final items = (data as List<dynamic>).map((e) => {{name.pascalCase()}}Model.fromJson(e)).toIList();
+    return right(items);
     });
   }
 
   @override
   Future<Either<Failure,  {{name.pascalCase()}}DetailModel>> update({{name.pascalCase()}}Id {{name.camelCase()}}Id ,{required Update{{name.pascalCase()}}Param data}) async{
-    return errorHandler(() async {
-      throw UnimplementedError();
+    return await errorHandler(() async {
+    return await _ref
+    .read(supabaseProvider)
+    .client
+    .from({{name.pascalCase()}}DetailModel.table.tableName)
+    .update(data.toJson())
+    .eq({{name.pascalCase()}}Table.id, id.value)
+    .select({{name.pascalCase()}}DetailModel.table.selectStatement)
+    .single()
+    .withConverter((data) => right({{name.pascalCase()}}DetailModel.fromJson(data)));
     });
   }
 }

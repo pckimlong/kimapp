@@ -1,4 +1,3 @@
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../exports.dart';
@@ -13,7 +12,6 @@ abstract class IAuthRepo {
   Future<Either<Failure, Option<UserId>>> currentId();
   Future<Either<Failure, UserId>> signIn(SignInParam param);
   Future<Either<Failure, Unit>> signOut();
-
 }
 
 class _Impl implements IAuthRepo {
@@ -25,26 +23,28 @@ class _Impl implements IAuthRepo {
   Future<Either<Failure, Option<UserId>>> currentId() async {
     return await errorHandler(() async {
       final user = _ref.read(supabaseProvider).client.auth.currentSession?.user;
-
-      if (user == null) return right(none());
-
-      final userId = UserId.fromValue(user.id);
-
-      return right(Option.of(userId));
+      return right(Option.fromNullable(user));
     });
   }
 
   @override
   Future<Either<Failure, UserId>> signIn(SignInParam param) async {
     return await errorHandler(() async {
-      throw UnimplementedError();
+      final result = await _ref
+          .read(supabaseProvider)
+          .client
+          .auth
+          .signInWithPassword(email: param.email, password: param.password.trim());
+
+      return right(result.user!.userId);
     });
   }
 
   @override
   Future<Either<Failure, Unit>> signOut() async {
     return await errorHandler(() async {
-      throw UnimplementedError();
+      await _ref.read(supabaseProvider).client.auth.signOut();
+      return right(unit);
     });
   }
 }
