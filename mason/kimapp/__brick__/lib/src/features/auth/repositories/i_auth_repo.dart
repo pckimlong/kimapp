@@ -23,7 +23,7 @@ class _Impl implements IAuthRepo {
   Future<Either<Failure, Option<UserId>>> currentId() async {
     return await errorHandler(() async {
       final user = _ref.read(supabaseProvider).client.auth.currentSession?.user;
-      return right(Option.fromNullable(user));
+      return right(Option.fromNullable(user?.userId));
     });
   }
 

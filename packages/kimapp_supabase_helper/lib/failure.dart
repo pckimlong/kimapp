@@ -82,7 +82,7 @@ Future<Either<Failure, T>> errorHandler<T>(FutureOr<Either<Failure, T>> Function
     }
 
     if (e.code == "42P01" ||
-        (e.details ?? '').contains('Results contain 0 rows') ||
+        e.details.toString().contains('Results contain 0 rows') ||
         e.code == "PGRST116" ||
         e.message.contains('PGRST116')) {
       return left(Failure.databaseFailure(DatabaseFailures.notFound(
