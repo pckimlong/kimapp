@@ -1,11 +1,8 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'supabase_key.dart';
-part 'supabase_key.dart';
-part 'supabase_provider.g.dart';
 part 'supabase_provider.g.dart';
 
 Future<void> initializeSupabase({
@@ -18,9 +15,8 @@ Future<void> initializeSupabase({
   await Supabase.initialize(
     url: url,
     anonKey: anonKey,
-    localStorage: localStorage,
     debug: debug,
-    schema: schema,
+    postgrestOptions: PostgrestClientOptions(schema: schema ?? 'public'),
   );
 }
 
