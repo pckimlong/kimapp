@@ -65,6 +65,14 @@ extension FailureX on Failure {
     );
   }
 
+  bool get isNetworkFailure {
+    return maybeWhen(
+      (_) => false,
+      orElse: () => false,
+      networkFailure: (info) => true,
+    );
+  }
+
   /// Message from failure object This function required to initialize [Kimapp] instance before use. should initialized in main like
   /// ```dart
   /// void main(){
