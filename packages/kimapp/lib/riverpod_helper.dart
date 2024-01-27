@@ -200,7 +200,7 @@ extension CacheProvider on AutoDisposeRef {
   }
 }
 
-extension AuthInvalidateX on Ref {
+extension AutoInvalidateX on Ref {
   void autoInvalidateSelf(Duration duration) {
     final timer = Timer(duration, invalidateSelf);
     onDispose(timer.cancel);
