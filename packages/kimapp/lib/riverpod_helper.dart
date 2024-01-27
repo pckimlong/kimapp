@@ -192,8 +192,8 @@ mixin UpdateFormMixin {
   bool get initialLoaded;
 }
 
-extension CatchProvider on AutoDisposeRef {
-  void catchTime(Duration duration) {
+extension CacheProvider on AutoDisposeRef {
+  void cacheTime(Duration duration) {
     final cancel = keepAlive();
     final timer = Timer(duration, cancel.close);
     onDispose(timer.cancel);
