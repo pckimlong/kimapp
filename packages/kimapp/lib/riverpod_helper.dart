@@ -423,9 +423,10 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
   /// [persistData] is a callback function to persist state whenever fresh data is fetched.
   ///
   /// [shouldFetchFreshData] is a callback function that determines whether fresh data should be fetched instead of persisted data.
+  /// Note that this function will be called after [persistData] called in order to provide that data to check
   ///
   /// [shouldPersistFreshData] is callback function that determines whether the result of fresh data should be persist or not
-  /// if it null, then it will be persist without any doubt
+  /// if it null, then it will be persist without any doubt.
   ///
   /// [enableCache] is an additional condition to determine whether to get data from cache or not.
   ///
