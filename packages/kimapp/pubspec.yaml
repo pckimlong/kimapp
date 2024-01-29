@@ -14,7 +14,7 @@ dependencies:
   freezed_annotation:
   fpdart: 
   riverpod:  
-  fast_immutable_collections: ^9.1.1
+  fast_immutable_collections: 
 
 dev_dependencies:
   freezed: 
