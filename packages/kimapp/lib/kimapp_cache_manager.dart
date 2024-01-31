@@ -1,5 +1,5 @@
-abstract class LocalStorage {
-  LocalStorage({
+abstract class KimappCacheManager {
+  KimappCacheManager({
     required this.initialize,
     required this.clear,
     required this.save,
@@ -16,6 +16,10 @@ abstract class LocalStorage {
     required this.readEnum,
     required this.saveDouble,
     required this.readDouble,
+    required this.saveDateTime,
+    required this.readDateTime,
+    required this.saveList,
+    required this.readList,
   });
 
   final Future<void> Function() initialize;
@@ -25,6 +29,9 @@ abstract class LocalStorage {
 
   final Future<void> Function(String key, {required String? value}) saveString;
   final Future<String?> Function(String key) readString;
+
+  final Future<void> Function(String key, {required DateTime? dateTime}) saveDateTime;
+  final Future<DateTime?> Function(String key) readDateTime;
 
   final Future<void> Function(String key, {required int? value}) saveInt;
   final Future<int?> Function(String key) readInt;
@@ -47,6 +54,13 @@ abstract class LocalStorage {
   final Future<T?> Function<T extends Object>(String key,
       {required T Function(Map<String, dynamic> json) fromMap,
       void Function(Object error, Map<String, dynamic> json)? onFail}) readObject;
+
+  final Future<void> Function<T extends Object>(String key,
+      {required List<T>? value, required Map<String, dynamic> Function(T object) toMap}) saveList;
+
+  final Future<List<T>?> Function<T extends Object>(String key,
+      {required T Function(Map<String, dynamic> json) fromMap,
+      void Function(Object error, Map<String, dynamic> json)? onFail}) readList;
 
   final Future<void> Function(String key) clear;
 }
