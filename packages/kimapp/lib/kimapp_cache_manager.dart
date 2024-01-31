@@ -33,11 +33,11 @@ abstract class KimappCacheManager {
 
   Future<void> saveList<T extends Object>(
     String key, {
-    required List<T?> value,
+    required List<T> value,
     required Map<String, dynamic> Function(T object) toMap,
   });
 
-  Future<List<T?>?> readList<T extends Object>(
+  Future<List<T>?> readList<T extends Object>(
     String key, {
     required T Function(Map<String, dynamic> json) fromMap,
     void Function(Object error, Map<String, dynamic> json)? onFail,
