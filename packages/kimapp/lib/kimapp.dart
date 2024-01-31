@@ -1,8 +1,8 @@
 library kimapp;
 
-export 'object/object.dart';
 export 'annotation.dart';
-export 'service.dart';
-export 'riverpod_helper.dart';
-export 'local_storage.dart';
 export 'extensions.dart';
+export 'kimapp_cache_manager.dart';
+export 'object/object.dart';
+export 'riverpod_helper.dart';
+export 'service.dart';
