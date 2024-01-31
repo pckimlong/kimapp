@@ -1,66 +1,50 @@
 abstract class KimappCacheManager {
-  KimappCacheManager({
-    required this.initialize,
-    required this.clear,
-    required this.save,
-    required this.read,
-    required this.saveMap,
-    required this.readMap,
-    required this.saveObject,
-    required this.readObject,
-    required this.saveString,
-    required this.readString,
-    required this.saveInt,
-    required this.readInt,
-    required this.saveEnum,
-    required this.readEnum,
-    required this.saveDouble,
-    required this.readDouble,
-    required this.saveDateTime,
-    required this.readDateTime,
-    required this.saveList,
-    required this.readList,
+  Future<void> initialize();
+
+  Future<void> save(String key, dynamic value);
+  Future<dynamic> read(String key);
+
+  Future<void> saveString(String key, String value);
+  Future<String?> readString(String key);
+
+  Future<void> saveInt(String key, int value);
+  Future<int?> readInt(String key);
+
+  Future<void> saveDouble(String key, double value);
+  Future<double?> readDouble(String key);
+
+  Future<void> saveMap(String key, Map<String, dynamic> value);
+  Future<Map<String, dynamic>?> readMap(String key);
+
+  Future<void> saveEnum<T extends Enum>(String key, T value);
+  Future<T?> readEnum<T extends Enum>(String key, T Function(String name) parser);
+
+  Future<void> saveObject<T extends Object>(
+    String key, {
+    required T value,
+    required Map<String, dynamic> Function(T object) toMap,
   });
 
-  final Future<void> Function() initialize;
-
-  final Future<void> Function(String key, dynamic value) save;
-  final Future<dynamic> Function(String key) read;
-
-  final Future<void> Function(String key, {required String? value}) saveString;
-  final Future<String?> Function(String key) readString;
-
-  final Future<void> Function(String key, {required DateTime? dateTime}) saveDateTime;
-  final Future<DateTime?> Function(String key) readDateTime;
-
-  final Future<void> Function(String key, {required int? value}) saveInt;
-  final Future<int?> Function(String key) readInt;
-
-  final Future<void> Function(String key, {required double? value}) saveDouble;
-  final Future<double?> Function(String key) readDouble;
-
-  final Future<void> Function(String key, {required Map<String, dynamic>? value}) saveMap;
-  final Future<Map<String, dynamic>?> Function(String key) readMap;
-
-  final Future<void> Function<T extends Enum>(String key, {required T? value}) saveEnum;
-  final Future<T?> Function<T extends Enum>(
+  Future<T?> readObject<T extends Object>(
     String key, {
-    required T Function(String name) parser,
-  }) readEnum;
+    required T Function(Map<String, dynamic> json) fromMap,
+    void Function(Object error, Map<String, dynamic> json)? onFail,
+  });
 
-  final Future<void> Function<T extends Object>(String key,
-      {required T? value, required Map<String, dynamic> Function(T object) toMap}) saveObject;
+  Future<void> saveList<T extends Object>(
+    String key, {
+    required List<T> value,
+    required Map<String, dynamic> Function(T object) toMap,
+  });
 
-  final Future<T?> Function<T extends Object>(String key,
-      {required T Function(Map<String, dynamic> json) fromMap,
-      void Function(Object error, Map<String, dynamic> json)? onFail}) readObject;
+  Future<List<T>?> readList<T extends Object>(
+    String key, {
+    required T Function(Map<String, dynamic> json) fromMap,
+    void Function(Object error, Map<String, dynamic> json)? onFail,
+  });
 
-  final Future<void> Function<T extends Object>(String key,
-      {required List<T>? value, required Map<String, dynamic> Function(T object) toMap}) saveList;
+  Future<void> saveDateTime(String key, DateTime dateTime);
+  Future<DateTime?> readDateTime(String key);
 
-  final Future<List<T>?> Function<T extends Object>(String key,
-      {required T Function(Map<String, dynamic> json) fromMap,
-      void Function(Object error, Map<String, dynamic> json)? onFail}) readList;
-
-  final Future<void> Function(String key) clear;
+  Future<void> clear(String key);
 }
