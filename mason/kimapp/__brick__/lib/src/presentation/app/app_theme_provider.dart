@@ -1,6 +1,4 @@
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 
 import '../../../exports.dart';
 
@@ -10,7 +8,7 @@ const _themeModeCacheKey = "theme-mode";
 
 @Riverpod(keepAlive: true)
 FutureOr<ThemeMode> themeMode(ThemeModeRef ref) async {
-  final cache = await ref.watch(localStorageProvider.future);
+  final cache = await ref.watch(cacheManagerProvider.future);
 
   // Store to local storage whenever theme mode change
   ref.listenSelf((previous, next) {
