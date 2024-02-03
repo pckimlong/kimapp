@@ -28,7 +28,7 @@ class KimappRunner {
     final context = LaunchContext(container, env, platformType, config);
 
     const tasks = [
-      InitLocalStorageTask(),
+      InitCacheManagerTask(),
       InitErrorReporterTask(),
       InitPlatformErrorCatcherTask(),
       InitFlutterErrorCatcherTask(),
