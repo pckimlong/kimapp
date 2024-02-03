@@ -13,14 +13,14 @@ FutureOr<ThemeMode> themeMode(ThemeModeRef ref) async {
   // Store to local storage whenever theme mode change
   ref.listenSelf((previous, next) {
     if (previous != next && next.hasValue) {
-      cache.saveEnum(_themeModeCacheKey, value: next.valueOrNull);
+      cache.saveEnum(_themeModeCacheKey, next.valueOrNull);
     }
   });
 
   // Read stored theme mode in the local storage
   final themeMode = await cache.readEnum(
     _themeModeCacheKey,
-    parser: ThemeMode.values.byName,
+    ThemeMode.values.byName,
   );
 
   // If no theme mode store, return ThemeMode.light() as default theme

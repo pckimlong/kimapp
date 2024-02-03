@@ -192,18 +192,43 @@ mixin UpdateFormMixin {
   bool get initialLoaded;
 }
 
-extension CacheProvider on AutoDisposeRef {
+extension RiverpodHelperExtension on AutoDisposeRef {
+  /// Prevent provider from being disposed in a given duration
   void cacheTime(Duration duration) {
     final cancel = keepAlive();
     final timer = Timer(duration, cancel.close);
     onDispose(timer.cancel);
   }
-}
 
-extension AutoInvalidateX on Ref {
+  /// Auto invalidate self after given duration
   void autoInvalidateSelf(Duration duration) {
     final timer = Timer(duration, invalidateSelf);
     onDispose(timer.cancel);
+  }
+
+  /// Debounce object to prevent multiple call in a given duration
+  Future<T> debounceObject<T>(
+    FutureOr<T> object, {
+    /// Duration to debounce
+    Duration duration = const Duration(milliseconds: 300),
+
+    /// Function to call when object need to be dispose, e.g. cancel http request
+    /// This tell the riverpod how to dispose given object
+    required FutureOr<void> Function(T value) disposeObject,
+  }) async {
+    var didDispose = false;
+    onDispose(() => didDispose = true);
+
+    await Future<void>.delayed(duration);
+
+    if (didDispose) {
+      throw Exception('Cancelled');
+    }
+
+    final result = await object;
+    onDispose(() => disposeObject(result));
+
+    return result;
   }
 }
 
