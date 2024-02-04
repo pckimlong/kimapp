@@ -192,14 +192,7 @@ mixin UpdateFormMixin {
   bool get initialLoaded;
 }
 
-extension RiverpodHelperExtension on AutoDisposeRef {
-  /// Prevent provider from being disposed in a given duration
-  void cacheTime(Duration duration) {
-    final cancel = keepAlive();
-    final timer = Timer(duration, cancel.close);
-    onDispose(timer.cancel);
-  }
-
+extension RiverpodRefExtension on Ref {
   /// Auto invalidate self after given duration
   void autoInvalidateSelf(Duration duration) {
     final timer = Timer(duration, invalidateSelf);
@@ -229,6 +222,15 @@ extension RiverpodHelperExtension on AutoDisposeRef {
     onDispose(() => disposeObject(result));
 
     return result;
+  }
+}
+
+extension RiverpodCacheExtension on AutoDisposeRef {
+  /// Prevent provider from being disposed in a given duration
+  void cacheTime(Duration duration) {
+    final cancel = keepAlive();
+    final timer = Timer(duration, cancel.close);
+    onDispose(timer.cancel);
   }
 }
 
