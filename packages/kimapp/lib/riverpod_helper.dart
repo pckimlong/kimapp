@@ -207,7 +207,7 @@ extension RiverpodRefExtension on Ref {
 
     /// Function to call when object need to be dispose, e.g. cancel http request
     /// This tell the riverpod how to dispose given object
-    required FutureOr<void> Function(T value) disposeObject,
+    FutureOr<void> Function(T value)? disposeObject,
   }) async {
     var didDispose = false;
     onDispose(() => didDispose = true);
@@ -219,7 +219,7 @@ extension RiverpodRefExtension on Ref {
     }
 
     final result = await object;
-    onDispose(() => disposeObject(result));
+    onDispose(() => disposeObject?.call(result));
 
     return result;
   }
@@ -459,7 +459,7 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
   ///
   /// [refetchOnRefresh] is a boolean value that determines whether to call the `fetchFreshData` callback whenever the provider is refreshed.
   ///
-  /// [refreshAfterPersistedDataLoaded] is a boolean value that determines whether to refresh the state after the first load of cached data.
+  /// [silentlyRefreshAfterPersistedDataLoaded] is a boolean value that determines whether to refresh the state after the first load of cached data.
   ///
   /// [onError] is a callback function that is called whenever there is an error in fetching persisted data or saving it.
   FutureOr<T> persistState({
@@ -470,7 +470,7 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
     bool Function(T freshData)? shouldPersistFreshData,
     bool enableCache = true,
     bool refetchOnRefresh = true,
-    bool refreshAfterPersistedDataLoaded = false,
+    bool silentlyRefreshAfterPersistedDataLoaded = false,
     void Function(Object error)? onError,
   }) async {
     // Only get persisted data when [enableCache] is true and state is not refreshing
@@ -481,10 +481,15 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
         // Check if should get fresh data instead
         // if not, use the persistedData
         if (persistedData != null && await shouldFetchFreshData(persistedData) == false) {
-          if (refreshAfterPersistedDataLoaded) {
-            // Get fresh data and update state
-            final freshData = await fetchFreshData();
-            unawaited(persistData(freshData).then((_) => state = state.whenData((_) => freshData)));
+          if (silentlyRefreshAfterPersistedDataLoaded) {
+            // Get fresh data and update state silently
+            unawaited(
+              () async {
+                var value = await fetchFreshData();
+                await persistData(value);
+                state = state.whenData((_) => value);
+              }(),
+            );
           }
           return persistedData;
         }

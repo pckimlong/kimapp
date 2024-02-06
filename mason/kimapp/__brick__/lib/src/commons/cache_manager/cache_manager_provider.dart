@@ -79,7 +79,10 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
     required List<T> value,
     required Map<String, dynamic> Function(T object) toMap,
   }) async {
-    await saveMap(key, Map.fromIterable(value.map((e) => toMap(e))));
+    final map = {
+      for (var i = 0; i < value.length; i++) i.toString(): toMap(value[i]),
+    };
+    await saveMap(key, map);
   }
 
   @override
