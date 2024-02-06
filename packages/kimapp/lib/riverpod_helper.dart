@@ -462,6 +462,13 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
   /// [silentlyRefreshAfterPersistedDataLoaded] is a boolean value that determines whether to refresh the state after the first load of cached data.
   ///
   /// [onError] is a callback function that is called whenever there is an error in fetching persisted data or saving it.
+  ///
+  /// [silentFetch] is a boolean value that determines whether to refresh the state silently or not. if true, it will not show loading
+  /// if there is persisted data, but it will still fetch fresh data and update the state silently. This is useful when you want to
+  /// get smooth data loaded, but still want to fetch fresh data in the background. Use with caution, the data might be inconsistent
+  ///
+  /// [updateStateAfterSilentFetch] is a boolean value that determines whether to update the state after silent fetch or not. If true, it will
+  /// update the state after silent fetch, otherwise it will not update the state after silent fetch, you might get updated state next time
   FutureOr<T> persistState({
     required Future<T> Function() fetchFreshData,
     required Future<T?> Function() fetchPersistedData,
@@ -487,7 +494,11 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
               () async {
                 var value = await fetchFreshData();
                 await persistData(value);
-                state = state.whenData((_) => value);
+                state.whenData((old) {
+                  if (old != value) {
+                    state = AsyncValue.data(value);
+                  }
+                });
               }(),
             );
           }
