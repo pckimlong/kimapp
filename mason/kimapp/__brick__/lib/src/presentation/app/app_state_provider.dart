@@ -19,7 +19,20 @@ class AppState extends _$AppState with LoggerMixin {
     }
 
     try {
+      final startedAt = DateTime.now();
       await _initialize();
+      final finishedAt = DateTime.now();
+
+      // Delay a bit if it too fast, this allow to show splash page
+      // Calculate the actual duration of the initialization process
+      final duration = finishedAt.difference(startedAt).inMilliseconds;
+
+      // Calculate the delay needed to meet the minimum splash duration
+      final delay = duration < 1150 ? 1150 - duration : 0;
+
+      // Delay if needed
+      await Future.delayed(Duration(milliseconds: delay));
+
       return ApplicationState.initialized;
     } catch (e, stack) {
       String message = e.toString();
@@ -63,7 +76,7 @@ class AppState extends _$AppState with LoggerMixin {
   void _watchAuthState() {
     ref.listen(
       authStateProvider,
-      (previous, next) async{
+      (previous, next) async {
         if (previous != next && state == ApplicationState.initialized) {
           log.i('Auth state changed from $previous to $next');
           // Reinitialize app to refresh data which depend on auth state
