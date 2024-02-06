@@ -20,17 +20,32 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
   @override
   Future<T?> readEnum<T extends Enum>(String key, T Function(String name) parser) async {
-    final result = await read(key);
-    if (result is String) {
-      return parser(result);
+    try {
+      final result = await read(key);
+      if (result is String) {
+        return parser(result);
+      }
+      return null;
+    } catch (e, str) {
+      logger.e(
+        'Error reading enum from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
     }
     return null;
   }
 
   @override
   Future<void> saveEnum<T extends Enum>(String key, T? value) async {
-    final name = value?.name;
-    await save(key, name);
+    try {
+      final name = value?.name;
+      await save(key, name);
+    } catch (e, str) {
+      logger.e(
+        'Error saving enum to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
@@ -44,8 +59,11 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
     try {
       return [for (final m in data.values) m].map((e) => fromMap(_mapParser(e)!)).toList();
-    } catch (e) {
-      logger.e('Error reading object from local storage with key [$key], Null will be return');
+    } catch (e, str) {
+      logger.e(
+        'Error reading object from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
       if (onFail != null) {
         onFail(e, data);
       }
@@ -64,8 +82,12 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
     try {
       return fromMap(data);
-    } catch (e) {
-      logger.e('Error reading object from local storage with key [$key], Null will be return');
+    } catch (e, str) {
+      logger.e(
+        'Error reading object from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
+
       if (onFail != null) {
         onFail(e, data);
       }
@@ -79,10 +101,17 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
     required List<T> value,
     required Map<String, dynamic> Function(T object) toMap,
   }) async {
-    final map = {
-      for (var i = 0; i < value.length; i++) i.toString(): toMap(value[i]),
-    };
-    await saveMap(key, map);
+    try {
+      final map = {
+        for (var i = 0; i < value.length; i++) i.toString(): toMap(value[i]),
+      };
+      await saveMap(key, map);
+    } catch (e, str) {
+      logger.e(
+        'Error saving list to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
@@ -91,9 +120,16 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
     required T? value,
     required Map<String, dynamic> Function(T object) toMap,
   }) async {
-    if (value == null) clear(key);
-    final map = toMap(value as T);
-    await saveMap(key, map);
+    try {
+      if (value == null) clear(key);
+      final map = toMap(value as T);
+      await saveMap(key, map);
+    } catch (e, str) {
+      logger.e(
+        'Error saving object to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
@@ -116,36 +152,76 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
   @override
   Future<DateTime?> readDateTime(String key) async {
-    final result = await readInt(key);
-    if (result != null) return DateTime.fromMillisecondsSinceEpoch(result);
+    try {
+      final result = await readInt(key);
+      if (result != null) return DateTime.fromMillisecondsSinceEpoch(result);
+      return null;
+    } catch (e, str) {
+      logger.e(
+        'Error reading DateTime from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
+    }
     return null;
   }
 
   @override
   Future<double?> readDouble(String key) async {
-    final result = await read(key);
-    if (result is double?) return result;
+    try {
+      final result = await read(key);
+      if (result is double?) return result;
+      return null;
+    } catch (e, str) {
+      logger.e(
+        'Error reading double from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
+    }
     return null;
   }
 
   @override
   Future<int?> readInt(String key) async {
-    final result = await read(key);
-    if (result is int?) return result;
+    try {
+      final result = await read(key);
+      if (result is int?) return result;
+      return null;
+    } catch (e, str) {
+      logger.e(
+        'Error reading int from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
+    }
     return null;
   }
 
   @override
   Future<Map<String, dynamic>?> readMap(String key) async {
-    final data = await read(key);
-    if (data == null) return null;
-    return _mapParser(data);
+    try {
+      final data = await read(key);
+      if (data == null) return null;
+      return _mapParser(data);
+    } catch (e, str) {
+      logger.e(
+        'Error reading map from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
+    }
+    return null;
   }
 
   @override
   Future<String?> readString(String key) async {
-    final result = await read(key);
-    if (result is String?) return result;
+    try {
+      final result = await read(key);
+      if (result is String?) return result;
+      return null;
+    } catch (e, str) {
+      logger.e(
+        'Error reading string from local storage with key [$key], Null will be return',
+        stackTrace: str,
+      );
+    }
     return null;
   }
 
@@ -159,27 +235,62 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
   @override
   Future<void> saveDateTime(String key, DateTime? dateTime) async {
-    await saveInt(key, dateTime?.millisecondsSinceEpoch);
+    try {
+      await saveInt(key, dateTime?.millisecondsSinceEpoch);
+    } catch (e, str) {
+      logger.e(
+        'Error saving DateTime to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
   Future<void> saveDouble(String key, double? value) async {
-    await save(key, value);
+    try {
+      await save(key, value);
+    } catch (e, str) {
+      logger.e(
+        'Error saving double to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
   Future<void> saveInt(String key, int? value) async {
-    await save(key, value);
+    try {
+      await save(key, value);
+    } catch (e, str) {
+      logger.e(
+        'Error saving int to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
   Future<void> saveMap(String key, Map<String, dynamic>? value) async {
-    await save(key, value);
+    try {
+      await save(key, value);
+    } catch (e, str) {
+      logger.e(
+        'Error saving map to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   @override
   Future<void> saveString(String key, String? value) async {
-    await save(key, value);
+    try {
+      await save(key, value);
+    } catch (e, str) {
+      logger.e(
+        'Error saving string to local storage with key [$key]',
+        stackTrace: str,
+      );
+    }
   }
 
   Map<String, dynamic>? _mapParser(Map<dynamic, dynamic> data) {
