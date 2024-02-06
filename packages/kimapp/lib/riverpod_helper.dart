@@ -459,16 +459,9 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
   ///
   /// [refetchOnRefresh] is a boolean value that determines whether to call the `fetchFreshData` callback whenever the provider is refreshed.
   ///
-  /// [silentlyRefreshAfterPersistedDataLoaded] is a boolean value that determines whether to refresh the state after the first load of cached data.
+  /// [silentlyFetchFreshForLaterUse] is a boolean value that determines whether to refresh the state after the first load of cached data.
   ///
   /// [onError] is a callback function that is called whenever there is an error in fetching persisted data or saving it.
-  ///
-  /// [silentFetch] is a boolean value that determines whether to refresh the state silently or not. if true, it will not show loading
-  /// if there is persisted data, but it will still fetch fresh data and update the state silently. This is useful when you want to
-  /// get smooth data loaded, but still want to fetch fresh data in the background. Use with caution, the data might be inconsistent
-  ///
-  /// [updateStateAfterSilentFetch] is a boolean value that determines whether to update the state after silent fetch or not. If true, it will
-  /// update the state after silent fetch, otherwise it will not update the state after silent fetch, you might get updated state next time
   FutureOr<T> persistState({
     required Future<T> Function() fetchFreshData,
     required Future<T?> Function() fetchPersistedData,
@@ -477,7 +470,7 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
     bool Function(T freshData)? shouldPersistFreshData,
     bool enableCache = true,
     bool refetchOnRefresh = true,
-    bool silentlyRefreshAfterPersistedDataLoaded = false,
+    bool silentlyFetchFreshForLaterUse = false,
     void Function(Object error)? onError,
   }) async {
     // Only get persisted data when [enableCache] is true and state is not refreshing
@@ -488,17 +481,12 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
         // Check if should get fresh data instead
         // if not, use the persistedData
         if (persistedData != null && await shouldFetchFreshData(persistedData) == false) {
-          if (silentlyRefreshAfterPersistedDataLoaded) {
-            // Get fresh data and update state silently
+          if (silentlyFetchFreshForLaterUse) {
+            // Get fresh data and persist it silently
             unawaited(
               () async {
                 var value = await fetchFreshData();
                 await persistData(value);
-                state.whenData((old) {
-                  if (old != value) {
-                    state = AsyncValue.data(value);
-                  }
-                });
               }(),
             );
           }
