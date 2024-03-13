@@ -521,11 +521,15 @@ extension RefPersist on Ref {
     required Future<T> Function() fetchFreshData,
     required Future<T?> Function() fetchPersistedData,
     required Future<void> Function(T freshData) persistData,
+
+    /// Callback to determine whether persisted data is valid or not, if null, then it will be valid
+    /// if it return false, it will ignore the persisted data and fetch fresh data instead
+    bool Function(T persistedData)? validPersistedData,
     Duration refreshIn = const Duration(seconds: 3),
   }) async {
     if (!state.isRefreshing) {
       final cached = await fetchPersistedData();
-      if (cached != null) {
+      if (cached != null && (validPersistedData?.call(cached) ?? true)) {
         Future.delayed(refreshIn).then((_) => invalidateSelf());
         return cached;
       }
