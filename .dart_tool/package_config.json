@@ -75,9 +75,9 @@
     },
     {
       "name": "http",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/http-1.1.2",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/http-1.2.1",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "http_parser",
@@ -111,7 +111,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/meta-1.11.0",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/meta-1.12.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -225,9 +225,9 @@
     },
     {
       "name": "web",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/web-0.4.0",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/web-0.5.1",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "yaml",
@@ -237,7 +237,7 @@
     },
     {
       "name": "yaml_edit",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/yaml_edit-2.1.1",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/yaml_edit-2.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -248,7 +248,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2024-01-09T05:32:59.119533Z",
+  "generated": "2024-03-12T23:41:08.873637Z",
   "generator": "pub",
-  "generatorVersion": "3.2.2"
+  "generatorVersion": "3.3.1"
 }
