@@ -57,7 +57,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
     .client
     .from({{name.pascalCase()}}Table.table)
     .delete()
-    .eq({{name.pascalCase()}}Table.id, id.value);
+    .eq({{name.pascalCase()}}Table.id, param.{{name.camelCase()}}Id.value);
     
     return right(unit);
     });
@@ -87,7 +87,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
    .select({{name.pascalCase()}}DetailModel.table.selectStatement);
    
    query = param.when(
-    byId: (id) => query.eq({{name.pascalCase()}}DetailModelTable.id, id.value),
+    byId: (id) => query.eq({{name.pascalCase()}}Table.id, id.value),
    );
    
    final result = await query.single();
@@ -122,7 +122,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
     .client
     .from({{name.pascalCase()}}DetailModel.table.tableName)
     .update(data.toJson())
-    .eq({{name.pascalCase()}}Table.id, id.value)
+    .eq({{name.pascalCase()}}Table.id, {{name.camelCase()}}Id.value)
     .select({{name.pascalCase()}}DetailModel.table.selectStatement)
     .single()
     .withConverter((data) => right({{name.pascalCase()}}DetailModel.fromJson(data)));

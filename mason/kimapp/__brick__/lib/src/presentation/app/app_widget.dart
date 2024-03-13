@@ -1,7 +1,9 @@
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../../../config.dart';
-import 'app_theme_provider.dart';
-import '../router/app_router_provider.dart';
 import '../../../exports.dart';
+import '../router/app_router_provider.dart';
+import 'app_theme_provider.dart';
 
 // Response for initialize app, and other global state
 class _EagerInitialization extends ConsumerWidget {
@@ -29,19 +31,22 @@ class AppWidget extends HookConsumerWidget {
     ref.listen(authStateProvider, (_, next) => authListenable.value = some(next));
 
     return _EagerInitialization(
-        child: MaterialApp.router(
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        routerConfig: router.config(reevaluateListenable: authListenable),
+        routerConfig: router.config(
+          reevaluateListenable: authListenable,
+          navigatorObservers: () => [
+            SentryNavigatorObserver(),
+          ],
+        ),
         title: Config.appName,
         theme: ref.watch(themeProvider),
         themeMode: ref.watch(themeModeProvider).valueOrNull,
         localizationsDelegates: [
           ...context.localizationDelegates,
-          OverrideFormBuilderLocalizationsEn.delegate
         ],
         supportedLocales: [
           ...context.supportedLocales,
-          ...FormBuilderLocalizations.supportedLocales,
         ],
         locale: context.locale,
         builder: (context, child) {
@@ -77,7 +82,6 @@ class _Unfocus extends StatelessWidget {
     );
   }
 }
-
 
 class _LifecycleWatcher extends ConsumerStatefulWidget {
   const _LifecycleWatcher({required this.child});

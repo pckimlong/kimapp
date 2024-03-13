@@ -1,6 +1,8 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../exports.dart';
 import '../app/app_widget.dart';
@@ -21,6 +23,7 @@ class KimappRunner {
     required IntegrationMode env,
     LaunchConfiguration config = const LaunchConfiguration(),
   }) async {
+    _setIntegrationMode(env);
     WidgetsFlutterBinding.ensureInitialized();
     runApp(const MaterialApp(home: SplashWidget(loadedInMain: true)));
 
@@ -48,7 +51,10 @@ class KimappRunner {
           path: 'assets/translations',
           supportedLocales: const [Locale("en"), Locale("km")],
           fallbackLocale: const Locale('km'),
-          child: app,
+          child: DefaultAssetBundle(
+            bundle: SentryAssetBundle(),
+            child: app,
+          ),
         ),
       ),
     );
@@ -97,8 +103,18 @@ enum IntegrationMode {
   bool get isDevelop => this == IntegrationMode.develop;
 }
 
+void _setIntegrationMode(IntegrationMode mode) {
+  _integrationMode = mode;
+}
+
+// User defined integration mode, if not set, it will be determined by the platform
+IntegrationMode? _integrationMode;
 IntegrationMode get integrationMode {
-  if (kIsWeb) {
+  if (_integrationMode != null) {
+    return _integrationMode!;
+  }
+
+  if (platformType.isWeb) {
     if (kDebugMode) {
       return IntegrationMode.develop;
     }
