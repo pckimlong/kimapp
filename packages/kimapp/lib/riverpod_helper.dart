@@ -460,6 +460,7 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
   /// [refetchOnRefresh] is a boolean value that determines whether to call the `fetchFreshData` callback whenever the provider is refreshed.
   ///
   /// [silentlyFetchFreshForLaterUse] is a boolean value that determines whether to refresh the state after the first load of cached data.
+  /// keep in mind that this will not update the state immediately, but it will update the state next time the state is read.
   ///
   /// [onError] is a callback function that is called whenever there is an error in fetching persisted data or saving it.
   FutureOr<T> persistState({
@@ -511,5 +512,27 @@ extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T
       onError?.call(e);
     }
     return freshData;
+  }
+}
+
+extension RefPersist on Ref {
+  Future<T> persist<T>(
+    AsyncValue state, {
+    required Future<T> Function() fetchFreshData,
+    required Future<T?> Function() fetchPersistedData,
+    required Future<void> Function(T freshData) persistData,
+    Duration refreshIn = const Duration(seconds: 3),
+  }) async {
+    if (!state.isRefreshing) {
+      final cached = await fetchPersistedData();
+      if (cached != null) {
+        Future.delayed(refreshIn).then((_) => invalidateSelf());
+        return cached;
+      }
+    }
+
+    final freshed = await fetchFreshData();
+    await persistData(freshed);
+    return freshed;
   }
 }
