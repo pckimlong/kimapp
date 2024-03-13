@@ -16,7 +16,7 @@ FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}ListPagination(
   required int page,
   required {{name.pascalCase()}}ListPaginationParam param,
 }) async {
-  ref.catchTime(const Duration(minutes: 5));
+  ref.cacheTime(const Duration(minutes: 5));
 
   const limit = _page{{name.pascalCase()}}Limit;
   final offset = page * limit;
