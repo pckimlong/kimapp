@@ -8,11 +8,11 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  source_gen: ^1.4.0
+  source_gen: ^1.5.0
   recase: ^4.1.0
   build: ^2.4.1
   analyzer: 
-  json_annotation: 4.8.1
+  json_annotation: ^4.9.0
   flutter:
     sdk: flutter
   kimapp:
