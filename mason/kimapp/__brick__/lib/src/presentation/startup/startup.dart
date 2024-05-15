@@ -25,9 +25,13 @@ class KimappRunner {
   }) async {
     _setIntegrationMode(env);
     WidgetsFlutterBinding.ensureInitialized();
-    runApp(const MaterialApp(home: SplashWidget(loadedInMain: true)));
 
-    final container = ProviderContainer(observers: [ProviderLogger(), ProviderCrashlytics()]);
+    final container = ProviderContainer(
+      observers: [
+        if (Config.logRiverpod) ProviderLogger(),
+        if (Config.logRiverpodError) ProviderCrashlytics(),
+      ],
+    );
     final context = LaunchContext(container, env, platformType, config);
 
     const tasks = [
@@ -71,8 +75,13 @@ abstract class StartUpTask with LoggerMixin {
   Future<void> initialize(LaunchContext context);
 
   Future<void> _initialize(LaunchContext context) async {
-    await initialize(context);
-    log.i('Initialized ${runtimeType.toString()}');
+    try {
+      await initialize(context);
+      log.i('Initialized ${runtimeType.toString()}');
+    } catch (e, s) {
+      log.e("Error initial startup task: ${runtimeType.toString()}", stackTrace: s);
+      rethrow;
+    }
   }
 }
 
