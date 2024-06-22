@@ -1,7 +1,7 @@
 import '../../../exports.dart';
 
 extension BuildContextHelper on BuildContext {
-    ResponsiveBreakpointsData get responsive => ResponsiveBreakpoints.of(this);
+  ResponsiveBreakpointsData get responsive => ResponsiveBreakpoints.of(this);
 
   bool get isMobile => responsive.isMobile || responsive.smallerThan(MOBILE);
 
@@ -28,7 +28,7 @@ extension BuildContextX on BuildContext {
   Future<dynamic> replaceTo(Widget Function(BuildContext context) page) async =>
       await nav.pushReplacement(MaterialPageRoute(builder: (_) => page(_)));
 
-  Size get screenSize => MediaQuery.of(this).size;
+  Size get screenSize => MediaQuery.sizeOf(this);
   double get screenWidth => screenSize.width;
   double get screenHeight => screenSize.height;
 
@@ -40,9 +40,11 @@ extension BuildContextX on BuildContext {
     required String message,
     Color backgroundColor = Colors.black,
   }) {
-    ScaffoldMessenger.of(this).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: backgroundColor,
-    ));
+    ScaffoldMessenger.of(this).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
   }
 }
