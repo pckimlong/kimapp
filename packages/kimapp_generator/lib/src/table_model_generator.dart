@@ -57,7 +57,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
         final reader = ConstantReader(annotation);
         candidateKey = reader.peek('candidateKey')?.stringValue;
         foreignKey = reader.peek('foreignKey')?.stringValue;
-        if (fieldElement.type.isDartCoreList) {
+        if (fieldElement.type.isDartCoreList || fieldElement.type.toString().contains('IList')) {
           var elementType = fieldElement.type as ParameterizedType;
           var listType = elementType.typeArguments[0].toString();
           joinedModel = listType;

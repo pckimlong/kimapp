@@ -9,9 +9,9 @@
     },
     {
       "name": "args",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/args-2.4.2",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/args-2.5.0",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.0"
     },
     {
       "name": "async",
@@ -45,9 +45,9 @@
     },
     {
       "name": "collection",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/collection-1.18.0",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/collection-1.19.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.4"
     },
     {
       "name": "conventional_commit",
@@ -81,9 +81,9 @@
     },
     {
       "name": "http_parser",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/http_parser-4.0.2",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/http_parser-4.1.0",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.4"
     },
     {
       "name": "io",
@@ -93,9 +93,9 @@
     },
     {
       "name": "json_annotation",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/json_annotation-4.8.1",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/json_annotation-4.9.0",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.0"
     },
     {
       "name": "matcher",
@@ -111,7 +111,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/meta-1.12.0",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/meta-1.15.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -129,9 +129,9 @@
     },
     {
       "name": "platform",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/platform-3.1.4",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/platform-3.1.5",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.2"
     },
     {
       "name": "pool",
@@ -207,9 +207,9 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/test_api-0.7.0",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/test_api-0.7.2",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.2"
     },
     {
       "name": "typed_data",
@@ -237,9 +237,9 @@
     },
     {
       "name": "yaml_edit",
-      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/yaml_edit-2.2.0",
+      "rootUri": "file:///Users/kim/.pub-cache/hosted/pub.dev/yaml_edit-2.2.1",
       "packageUri": "lib/",
-      "languageVersion": "2.19"
+      "languageVersion": "3.0"
     },
     {
       "name": "kimapp_packages",
@@ -248,7 +248,10 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2024-03-12T23:41:08.873637Z",
+  "generated": "2024-06-22T09:36:44.708174Z",
   "generator": "pub",
-  "generatorVersion": "3.3.1"
+  "generatorVersion": "3.4.0",
+  "flutterRoot": "file:///Users/kim/Development/flutter",
+  "flutterVersion": "3.22.0",
+  "pubCache": "file:///Users/kim/.pub-cache"
 }
