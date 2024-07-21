@@ -1,84 +1,136 @@
-/// Allow to code generator to generate a table class contain name and columns name
-/// which can be use in side data class for example as a json key, which will be help error prone
-/// and also generate a raw data class model if any column string contain specific format for
-/// generator to generate data class
+/// Annotation to generate a table class containing table name and column names.
+/// This can be used in data classes, for example as JSON keys, to help prevent errors.
+/// It can also generate a raw data class model if any column string contains a specific format
+/// for the generator to create a data class.
 class TableStructure {
   const TableStructure(
     this.tableName, {
     required this.columns,
     this.idColumn,
     this.classPrefixName,
+    this.additionalClasses = const [],
+    this.generateRawClass = false,
   });
 
-  /// List of columns names which will be generate
+  /// List of column names to be generated.
   ///
-  /// If any value inside the list contain semicolon `:` in format of `ColumnName:DataType`
+  /// If any value inside the list contains a colon `:` in the format of `ColumnName:DataType`,
+  /// the generator will create a raw data class model along with the table.
   ///
-  /// Generator will generate a raw data class model along with table
-  /// but if column contain `:` but in a incorrect format build will fail
-  ///
-  /// [ColumnName] is the name of real database column usually it a snake_case string, generator will
-  /// generate a camelCase String variable link to original snake_case string eg
+  /// [ColumnName] is the name of the actual database column, usually in snake_case. The generator will
+  /// create a camelCase String variable linked to the original snake_case string, e.g.:
   ///
   /// ```dart
   ///   'first_name' => String firstName = 'first_name';
   /// ```
   ///
-  /// [DataType] is a data type of the column
+  /// [DataType] specifies the data type of the column.
+  /// 
+  /// To generate additional classes, add [...] at the end with the DataType and class indices.
+  ///
+  /// Example:
+  /// Define additional classes:
+  /// ```dart
+  ///  additionalClasses: ['CreateUserParam', 'UpdateUserParam']
+  /// ```
+  /// 
+  /// Then define columns:
+  /// ```dart
+  ///  columns: ['first_name:String[0,1]', 'last_name:String[0,1]']
+  /// ```
+  ///
+  /// This will generate 2 additional classes:
+  /// ```dart
+  ///  class CreateUserParam {
+  ///    String firstName;
+  ///    String lastName;
+  ///  }
+  /// class UpdateUserParam {
+  ///    String firstName;
+  ///    String lastName;
+  /// }
+  /// ```
+  /// The values 0,1 are indices of the additional classes.
   final List<String> columns;
 
-  /// Table name
+  /// Whether to generate a raw class or not.
+  /// 
+  /// If true, it will generate a raw class with all columns that have a DataType specified.
+  /// Default is false.
+  final bool generateRawClass;
+
+  /// The name of the table.
   final String tableName;
 
-  /// Generate identity class for given table if provided or not null
+  /// Generates an identity class for the given table if provided and not null.
   ///
   /// Format rule:
   /// `Name:DataType`
   ///
-  /// [Name] is identity class name, you can customize whatever you want
-  /// suffix with :
+  /// [Name] is the identity class name, which can be customized as needed.
+  /// It should be followed by a colon `:`.
   ///
-  /// [DataType] is internal type of id value in the class, eg int, String...
+  /// [DataType] is the internal type of the id value in the class, e.g., int, String, etc.
   ///
-  /// Example
+  /// Example:
   /// ```dart
   ///  idColumn: 'UserId:int'
   /// ```
   final String? idColumn;
 
-  /// Prefix table class name to any given name
+  /// Prefix for the table class name.
   ///
-  /// by default table name will be use as class name
+  /// By default, the table name will be used as the class name.
+  /// This allows you to specify a custom prefix.
   final String? classPrefixName;
+
+  /// Additional classes to generate, including fromJson/toJson handlers.
+  ///
+  /// Example:
+  /// ```dart
+  ///  additionalClasses: ['CreateUserParam', 'UpdateUserParam']
+  /// ```
+  /// 
+  /// The fields of each generated class will be affected by how you define [columns].
+  /// The structure and types of the generated classes will correspond to the column definitions.
+  final List<String> additionalClasses;
 }
 
+/// Represents a table model with a table name.
 class TableModel {
   const TableModel(this.tableName);
 
+  /// The name of the table.
   final String tableName;
 }
 
+/// Represents a joined column in a database relationship.
 class JoinedColumn {
   const JoinedColumn({
     this.foreignKey,
     this.candidateKey,
   });
 
-  final String? candidateKey;
+  /// The foreign key in the relationship.
   final String? foreignKey;
+
+  /// The candidate key in the relationship.
+  final String? candidateKey;
 }
 
-/// Generate form widget and handle state with ease
+/// Annotation to generate a form widget and handle state with ease.
 class KimappForm {
   const KimappForm();
 }
 
+/// Constant instance of KimappForm for easy use in annotations.
 const kimappForm = KimappForm();
 
-
-/// Generate widget with ease. Using riverpod selector and generate all widget from given return type
+/// Annotation to generate a widget with ease.
+/// Uses Riverpod selector and generates all widgets from the given return type.
 class StateWidget {
   const StateWidget();
 }
 
+/// Constant instance of StateWidget for easy use in annotations.
 const stateWidget = StateWidget();
