@@ -149,6 +149,31 @@ class TableStructure {
   /// 
   /// Note: Non-PascalCase column names will be converted to PascalCase for property names,
   /// while preserving the original name in the `@JsonKey` annotation.
+  /// 
+  /// You can define joined columns for additional classes by adding parentheses
+  /// after the column's data type, specifying the foreign key.
+  /// This feature is only available when using `:table` for the additional class.
+  ///
+  /// Example:
+  /// ```dart
+  /// additionalClasses: ['User:table(users)[id:int, name:String, user:UserModel(created_by)]']
+  /// ```
+  ///
+  /// This will generate a Table model as:
+  ///
+  /// ```dart
+  /// class User {
+  ///   // other columns
+  ///   @JoinColumn(foreignKey: 'created_by')
+  ///   required UserModel user;
+  /// }
+  /// ```
+  ///
+  /// Important notes:
+  /// 1. This feature is only available for additional classes, not for the main columns.
+  /// 2. The joined table (e.g., UserModel) must also be annotated with @TableModel.
+  /// 3. Use this syntax: `columnName:DataType(foreignKey)` for joined columns.
+  /// 4. The `:table` suffix is required to enable this feature for an additional class.
   final List<String> additionalClasses;
 }
 
