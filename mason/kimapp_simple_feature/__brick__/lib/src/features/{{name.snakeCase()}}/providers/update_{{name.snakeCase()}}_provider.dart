@@ -1,33 +1,33 @@
-// ignore: prefer_const_constructors
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-
 import '../../../../exports.dart';
-
-
-import '../{{name.snakeCase()}}.dart';
+import '../{{name.snakeCase()}}_model.dart';
+import '../i_{{name.snakeCase()}}_repo.dart';
+import '../params/update_{{name.snakeCase()}}_param.dart';
+import 'providers.dart';
 
 part 'update_{{name.snakeCase()}}_provider.freezed.dart';
 part 'update_{{name.snakeCase()}}_provider.g.dart';
 
 @freezed
 class Update{{name.pascalCase()}}State
-    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}DetailModel>, UpdateFormMixin {
+    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}Model>, UpdateFormMixin {
   const factory Update{{name.pascalCase()}}State({
-    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}DetailModel> status,
+    // TODO - Add form properties
+    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
     @Default(false) bool initialLoaded,
   }) = _Update{{name.pascalCase()}}State;
 
   const Update{{name.pascalCase()}}State._();
 
   @override
-  Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}DetailModel> newStatus) {
+  Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
     return copyWith(status: newStatus);
   }
 
   Update{{name.pascalCase()}}Param toParam() {
+    // TODO - perform validation
     return const Update{{name.pascalCase()}}Param();
   }
 }
@@ -35,16 +35,16 @@ class Update{{name.pascalCase()}}State
 @kimappForm
 @riverpod
 class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$Update{{name.pascalCase()}}Form {
-  Future<ProviderStatus<{{name.pascalCase()}}DetailModel>> call() async {
-    return await perform<{{name.pascalCase()}}DetailModel>(
+  Future<ProviderStatus<{{name.pascalCase()}}Model>> call() async {
+    return await perform<{{name.pascalCase()}}Model>(
       (state) async {
         final param = state.toParam();
         final result = await ref.read({{name.camelCase()}}RepoProvider).update({{name.camelCase()}}Id, data: param);
         return result.getOrThrow();
       },
       onSuccess: (success) {
-        ref.read({{name.camelCase()}}ListProvider.notifier).updateItem({{name.pascalCase()}}Model.fromDetailModel(success));
-        ref.read({{name.camelCase()}}DetailProvider(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id)).notifier).updateState((_) => success);
+        ref.read({{name.camelCase()}}ListProvider.notifier).updateItem(success);
+        ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).notifier).updateState((_) => success);
         ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       },
     );
@@ -60,7 +60,7 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
 
     final result =  await ref
         .read({{name.camelCase()}}RepoProvider)
-        .findOne(FindOne{{name.pascalCase()}}Param.byId({{name.camelCase()}}Id))
+        .findOne({{name.camelCase()}}Id)
         .then((value) => value.getOrThrow());
         
     return const   Update{{name.pascalCase()}}State();

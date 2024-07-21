@@ -16,6 +16,7 @@ targets:
         generate_for:
           include:
             - lib/src/features/**_objects.dart
+            - lib/src/features/**_model.dart
       json_serializable:
         enabled: true
         options:
