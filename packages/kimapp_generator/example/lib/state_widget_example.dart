@@ -1,6 +1,6 @@
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:kimapp/annotation.dart';
+import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 export 'state_widget_example.dart';
@@ -12,10 +12,14 @@ part 'state_widget_example.g.dart';
 @freezed
 class ExampleModel with _$ExampleModel {
   const ExampleModel._();
-
+  @TableModel('xxx')
   const factory ExampleModel(
     {required  int id, required String name}
 ) = _ExampleModel;
+
+  factory ExampleModel.fromJson(Map<String, dynamic> json) => _$ExampleModelFromJson(json);
+
+  static const table = _tableExampleModel;
 }
 
 
