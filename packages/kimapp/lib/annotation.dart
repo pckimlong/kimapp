@@ -11,6 +11,7 @@ class TableStructure {
     this.additionalClasses = const [],
     this.generateRawClass = false,
     this.rawClassTableMode = true,
+    this.customTypes = const [],
   });
 
   /// List of column names to be generated.
@@ -53,6 +54,26 @@ class TableStructure {
   /// ```
   /// The values 0,1 are indices of the additional classes.
   final List<String> columns;
+
+    /// Specifies custom types to be used in the generated classes.
+  ///
+  /// This is required when you want to use custom types in the generated classes.
+  /// It ensures correct imports and type usage in the generated code.
+  ///
+  /// Example:
+  /// ```dart
+  /// customTypes: [IList, ISet, CustomType]
+  /// ```
+  ///
+  /// The builder will throw an error if a custom type is used in a column definition
+  /// but not provided in this list.
+  ///
+  /// Custom types are any types that are not Dart core types.
+  /// Dart core types (which don't need to be specified here) include:
+  /// String, int, double, bool, DateTime, Map, List, Set, and Object.
+  ///
+  /// Use this to ensure proper type handling and import generation for your custom types.
+  final List<Type> customTypes;
 
   /// Whether to generate a raw class or not.
   /// 
