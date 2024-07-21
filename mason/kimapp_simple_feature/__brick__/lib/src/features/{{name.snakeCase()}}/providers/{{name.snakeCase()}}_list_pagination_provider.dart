@@ -1,10 +1,11 @@
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-
 import '../../../../exports.dart';
 
-import '../{{name.snakeCase()}}.dart';
+import '../params/params.dart';
+import '../{{name.snakeCase()}}_model.dart';
+import '../i_{{name.snakeCase()}}_repo.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 
