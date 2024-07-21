@@ -4,6 +4,7 @@
 // KimappStateWidgetGenerator
 // **************************************************************************
 
+// ignore_for_file: unused_import, depend_on_referenced_packages
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'state_widget_example.dart';
 import 'package:flutter/widgets.dart';
