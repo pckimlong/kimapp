@@ -4,10 +4,12 @@
 // TableStructureGenerator
 // **************************************************************************
 
-// ignore_for_file: invalid_annotation_target, unnecessary_import
+import 'package:example/state_widget_example.dart';
+// ignore_for_file: invalid_annotation_target, unused_import
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:kimapp/kimapp.dart';
+
+import 'table_structure_example.dart';
 
 part 'table_structure_example.table.freezed.dart';
 part 'table_structure_example.table.g.dart';
@@ -37,32 +39,48 @@ class SampleTable {
   static const String description = "description";
   static const String createdAt = "createdAt";
   static const String updatedAt = "updatedAt";
+  static const String ids = "ids";
+  static const String good = "good";
 }
 
 @freezed
-class CreateSampleParam with _$CreateSampleParam {
-  const CreateSampleParam._();
-  const factory CreateSampleParam({
-    @JsonKey(name: 'id') required int id,
-    @JsonKey(name: 'name') required String name,
-    @JsonKey(name: 'description') String? description,
-    @JsonKey(name: 'createdAt') required DateTime createdAt,
-  }) = _CreateSampleParam;
+class SampleRawModel with _$SampleRawModel {
+  const SampleRawModel._();
 
-  factory CreateSampleParam.fromJson(Map<String, dynamic> json) =>
-      _$CreateSampleParamFromJson(json);
+  @TableModel("samples")
+  const factory SampleRawModel({
+    @JsonKey(name: "id") required int id,
+    @JsonKey(name: "name") required String name,
+    @JsonKey(name: "description") String? description,
+    @JsonKey(name: "createdAt") required DateTime createdAt,
+    @JsonKey(name: "updatedAt") required DateTime updatedAt,
+    @JsonKey(name: "ids") required List<int> ids,
+  }) = _SampleRawModel;
+
+  factory SampleRawModel.fromJson(Map<String, dynamic> json) =>
+      _$SampleRawModelFromJson(json);
+
+  static const TableBuilder table = _tableSampleRawModel;
 }
 
 @freezed
 class UpdateSampleParam with _$UpdateSampleParam {
   const UpdateSampleParam._();
+
+  @TableModel("v_sample")
   const factory UpdateSampleParam({
-    @JsonKey(name: 'id') required int id,
-    @JsonKey(name: 'name') required String name,
-    @JsonKey(name: 'description') String? description,
-    @JsonKey(name: 'createdAt') required DateTime createdAt,
+    @JsonKey(name: "name") required String name,
+    @JsonKey(name: "description") String? description,
+    @JsonKey(name: "updatedAt") required DateTime updatedAt,
+    @JsonKey(name: "ids") required List<int> ids,
+    @JsonKey(name: "address") required int address,
+    @JoinedColumn(foreignKey: "example_id")
+    @JsonKey(name: "ex")
+    required ExampleModel ex,
   }) = _UpdateSampleParam;
 
   factory UpdateSampleParam.fromJson(Map<String, dynamic> json) =>
       _$UpdateSampleParamFromJson(json);
+
+  static const TableBuilder table = _tableUpdateSampleParam;
 }

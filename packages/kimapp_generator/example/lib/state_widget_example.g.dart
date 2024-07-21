@@ -3,6 +3,34 @@
 part of 'state_widget_example.dart';
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$ExampleModelImpl _$$ExampleModelImplFromJson(Map<String, dynamic> json) =>
+    _$ExampleModelImpl(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$$ExampleModelImplToJson(_$ExampleModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+// **************************************************************************
+// TableModelGenerator
+// **************************************************************************
+
+const _tableExampleModel = TableBuilder(
+  tableName: "xxx",
+  columns: [
+    ColumnBuilder('id'),
+    ColumnBuilder('name'),
+  ],
+);
+
+// **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
