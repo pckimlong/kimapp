@@ -74,3 +74,11 @@ class KimappForm {
 }
 
 const kimappForm = KimappForm();
+
+
+/// Generate widget with ease. Using riverpod selector and generate all widget from given return type
+class StateWidget {
+  const StateWidget();
+}
+
+const stateWidget = StateWidget();
