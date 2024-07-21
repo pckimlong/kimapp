@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:kimapp/kimapp.dart';
+import 'package:path/path.dart' as path;
 import 'package:recase/recase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:source_gen/source_gen.dart';
@@ -13,51 +14,76 @@ const futureTypeChecker = TypeChecker.fromRuntime(Future);
 const streamTypeChecker = TypeChecker.fromRuntime(Stream);
 const iterableTypeChecker = TypeChecker.fromRuntime(Iterable);
 
-class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
+class KimappStateWidgetGenerator extends Generator {
   @override
-  String generateForAnnotatedElement(
-    Element element,
-    ConstantReader annotation,
-    BuildStep buildStep,
-  ) {
-    _validateElement(element);
+  String generate(LibraryReader library, BuildStep buildStep) {
+    final providers = library.annotatedWith(TypeChecker.fromRuntime(StateWidget));
 
-    final providerType = _getProviderType(element);
-    final baseReturnType = _getBaseReturnType(providerType);
-    final isAsyncValue = _isAsyncValueType(providerType);
-
-    _validateReturnType(baseReturnType);
-
-    final fields = _getFields(isAsyncValue ? baseReturnType! : providerType);
-    final isSingleValue = fields.isEmpty;
-    final familyParams = _getFamilyParams(element);
-
-    final buffer = StringBuffer();
-    buffer.writeln('import \'package:flutter/widgets.dart\';');
-    buffer.writeln('import \'package:flutter_riverpod/src/consumer.dart\';\n');
-
-
-    if (familyParams.isNotEmpty && !isSingleValue) {
-      buffer.writeln(_generateDebugCheckFunction(element));
-      buffer.writeln(_generateParamsProvider(element, familyParams));
+    if (providers.isEmpty) {
+      return '';
     }
 
-    buffer.writeln(_generateMainStateWidget(element, familyParams, isAsyncValue, baseReturnType!, isSingleValue));
+    final buffer = StringBuffer();
+    final imports = _getSourceFileImports(library);
+    
+    final currentFilePath = buildStep.inputId.path;
+    final currentFileName = path.basename(currentFilePath);
+    imports.add("import '$currentFileName';");
 
-    if (!isSingleValue) {
-      buffer.writeln(_generateSubWidgets(element, fields, familyParams, isAsyncValue, isSingleValue));
+    // Add additional necessary imports
+    imports.add("import 'package:flutter/widgets.dart';");
+    imports.add("import 'package:flutter_riverpod/flutter_riverpod.dart';");
+
+    buffer.writeln(imports.join('\n'));
+    buffer.writeln();
+
+
+    for (final provider in providers) {
+      final element = provider.element;
+
+      final providerType = _getProviderType(element);
+      final baseReturnType = _getBaseReturnType(providerType);
+      final isAsyncValue = _isAsyncValueType(providerType);
+
+      _validateReturnType(baseReturnType);
+
+      final fields = _getFields(isAsyncValue ? baseReturnType! : providerType);
+      final isSingleValue = fields.isEmpty;
+      final familyParams = _getFamilyParams(element);
+
+      if (familyParams.isNotEmpty && !isSingleValue) {
+        buffer.writeln(_generateDebugCheckFunction(element));
+        buffer.writeln(_generateParamsProvider(element, familyParams));
+      }
+
+      buffer.writeln(_generateMainStateWidget(element, familyParams, isAsyncValue, baseReturnType!, isSingleValue));
+
+      if (!isSingleValue) {
+        buffer.writeln(_generateSubWidgets(element, fields, familyParams, isAsyncValue, isSingleValue));
+      }
+
+      buffer.writeln();
     }
 
     return buffer.toString();
   }
-
-  void _validateElement(Element element) {
-    if (!_isAnnotatedWithRiverpod(element)) {
-      throw InvalidGenerationSourceError(
-        'The @StateWidget annotation can only be applied to Generated Riverpod providers.',
-        element: element,
-      );
+  Set<String> _getSourceFileImports(LibraryReader library) {
+    final imports = Set<String>();
+    for (var import in library.element.importedLibraries) {
+        final uri = import.source.uri;
+          String importStr = "import '${uri.toString()}';";
+          
+          // Avoid duplicating package imports
+          if (!uri.isScheme('dart') &&
+              !uri.toString().contains('package:flutter/') && 
+              !uri.toString().contains('package:flutter_riverpod/') &&
+              !uri.toString().contains('package:riverpod/') &&
+              !uri.toString().contains('annotation/') &&
+              !uri.toString().contains('package:kimapp/')) {
+            imports.add(importStr);
+          }
     }
+    return imports;
   }
 
   void _validateReturnType(DartType? baseReturnType) {
