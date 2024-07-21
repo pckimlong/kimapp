@@ -248,10 +248,10 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2024-06-22T09:36:44.708174Z",
+  "generated": "2024-07-21T10:12:56.257735Z",
   "generator": "pub",
-  "generatorVersion": "3.4.0",
+  "generatorVersion": "3.4.3",
   "flutterRoot": "file:///Users/kim/Development/flutter",
-  "flutterVersion": "3.22.0",
+  "flutterVersion": "3.22.2",
   "pubCache": "file:///Users/kim/.pub-cache"
 }
