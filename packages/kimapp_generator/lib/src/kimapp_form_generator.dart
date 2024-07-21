@@ -1,6 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-// ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:recase/recase.dart';
