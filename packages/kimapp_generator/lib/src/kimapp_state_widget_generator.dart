@@ -33,6 +33,9 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     final familyParams = _getFamilyParams(element);
 
     final buffer = StringBuffer();
+    buffer.writeln('import \'package:flutter/widgets.dart\';');
+    buffer.writeln('import \'package:flutter_riverpod/src/consumer.dart\';\n');
+
 
     if (familyParams.isNotEmpty && !isSingleValue) {
       buffer.writeln(_generateDebugCheckFunction(element));

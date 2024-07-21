@@ -17,6 +17,11 @@ targets:
           include:
             - lib/src/features/**_objects.dart
             - lib/src/features/**_model.dart
+      kimapp_generator|kimapp_state_widget_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/**_provider.dart
       json_serializable:
         enabled: true
         options:
