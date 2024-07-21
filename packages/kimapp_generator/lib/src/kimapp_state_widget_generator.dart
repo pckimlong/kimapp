@@ -69,6 +69,8 @@ class KimappStateWidgetGenerator extends Generator {
 
     return buffer.toString();
   }
+
+  
   Set<String> _getSourceFileImports(LibraryReader library) {
     final imports = Set<String>();
     for (var import in library.element.importedLibraries) {

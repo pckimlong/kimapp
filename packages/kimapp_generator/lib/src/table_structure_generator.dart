@@ -1,90 +1,262 @@
-import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:kimapp/annotation.dart';
+import 'package:path/path.dart' as path;
 import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 
-class TableStructureGenerator extends GeneratorForAnnotation<TableStructure> {
+const _dartCoreTypes = {'String', 'int', 'double', 'bool', 'DateTime', 'Map', 'List', 'Set', 'Object'};
+class ColumnDefinition {
+  final String name;
+  final String? type;
+  final bool isNullable;
+  final List<int> additionalInfo;
+  final String? foreignKey;
+
+  ColumnDefinition(this.name, this.type, this.isNullable, this.additionalInfo, this.foreignKey);
+
+  factory ColumnDefinition.parse(String columnDef) {
+    final parts = columnDef.split(':');
+    final name = parts[0].trim();
+    String? type;
+    bool isNullable = false;
+    List<int> additionalInfo = [];
+    String? foreignKey;
+
+    if (parts.length > 1) {
+      final typeAndInfo = parts[1].split('[');
+      type = typeAndInfo[0].trim();
+      isNullable = type.endsWith('?');
+      type = type.replaceAll('?', '');
+
+      if (typeAndInfo.length > 1) {
+        additionalInfo = typeAndInfo[1].replaceAll(']', '').split(',').map(int.parse).toList();
+      }
+
+      final foreignKeyMatch = RegExp(r'\((.*?)\)').firstMatch(parts[1]);
+      if (foreignKeyMatch != null) {
+        foreignKey = foreignKeyMatch.group(1);
+        // Remove the foreign key part from the type
+        type = type.split('(')[0].trim();
+      }
+    }
+
+    return ColumnDefinition(name, type, isNullable, additionalInfo, foreignKey);
+  }
+
+  bool get hasExplicitType => type != null;
+  bool get isJoinColumn => foreignKey != null;
+
+  String? get baseType {
+    if (type == null) return null;
+    final genericMatch = RegExp(r'^(\w+)<').firstMatch(type!);
+    return genericMatch != null ? genericMatch.group(1) : type;
+  }
+}
+class AdditionalClassDefinition {
+  final String className;
+  final String? tableName;
+  final List<ColumnDefinition> columns;
+  final int classIndex;
+
+  AdditionalClassDefinition(this.className, this.tableName, this.columns, this.classIndex);
+
+  factory AdditionalClassDefinition.parse(String additionalClass, List<ColumnDefinition> baseColumns, int index, String defaultTableName) {
+    final parts = additionalClass.split(':');
+    final className = parts[0];
+    String? tableName;
+    List<ColumnDefinition> columns = [];
+
+    if (parts.length > 1 && parts[1].startsWith('table')) {
+      final tableMatch = RegExp(r'table(\((.*?)\))?').firstMatch(parts[1]);
+      if (tableMatch != null) {
+        tableName = tableMatch.group(2) ?? defaultTableName;
+      } else {
+        tableName = defaultTableName;
+      }
+    }
+
+    final columnMatch = RegExp(r'\[(.*?)\]').firstMatch(additionalClass);
+    if (columnMatch != null) {
+      columns = columnMatch.group(1)!.split(',').map((col) => ColumnDefinition.parse(col.trim())).toList();
+    } 
+
+    final effectiveBaseColumns = baseColumns.where((col) => col.additionalInfo.contains(index)).toList();
+
+    return AdditionalClassDefinition(className, tableName, [...effectiveBaseColumns, ...columns], index);
+  }
+
+  bool get isTableModel => tableName != null;
+}
+
+class TableStructureGenerator extends Generator {
+  Set<String> _getSourceFileImports(LibraryReader library) {
+    final imports = Set<String>();
+    for (var import in library.element.importedLibraries) {
+        final uri = import.source.uri;
+          String importStr = "import '${uri.toString()}';";
+          
+          // Avoid duplicating package imports
+          if (!uri.isScheme('dart') &&
+              !uri.toString().contains('package:flutter/') && 
+              !uri.toString().contains('package:flutter_riverpod/') &&
+              !uri.toString().contains('package:riverpod/') &&
+              !uri.toString().contains('annotation/') &&
+              !uri.toString().contains('package:kimapp/')) {
+            imports.add(importStr);
+          }
+    }
+
+    return imports;
+  }
   @override
-  String generateForAnnotatedElement(
-    Element element,
-    ConstantReader annotation,
-    BuildStep buildStep,
-  ) {
-    final tableName = annotation.read('tableName').stringValue;
-    final prefixName = annotation.peek('classPrefixName')?.stringValue;
-    final className = prefixName == null ? tableName.pascalCase : prefixName.pascalCase;
-    final columns = annotation.read('columns').listValue
-        .map((e) => e.toStringValue()!)
-        .toList();
-    final idColumn = annotation.peek('idColumn')?.stringValue;
-    final additionalClasses = annotation.read('additionalClasses').listValue
-        .map((e) => e.toStringValue()!)
-        .toList();
-    final generateRawClass = annotation.read('generateRawClass').boolValue;
+  String generate(LibraryReader library, BuildStep buildStep) {
+    final providers = library.annotatedWith(TypeChecker.fromRuntime(TableStructure));
+
+     if (providers.isEmpty) {
+      return '';
+    }
 
     final buffer = StringBuffer();
 
-    buffer.writeln("// ignore_for_file: invalid_annotation_target, unnecessary_import");
+    buffer.writeln("// ignore_for_file: invalid_annotation_target, unused_import");
+
+    final imports = _getSourceFileImports(library);
+    
+    final currentFilePath = buildStep.inputId.path;
+    final currentFileName = path.basename(currentFilePath);
+    imports.add("import '$currentFileName';");
 
     // Add necessary imports
     buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
-    buffer.writeln("import 'package:json_annotation/json_annotation.dart';");
     buffer.writeln("import 'package:kimapp/kimapp.dart';");
     buffer.writeln();
-    buffer.writeln("part 'table_structure_example.table.freezed.dart';");
-    buffer.writeln("part 'table_structure_example.table.g.dart';");
+    buffer.writeln(imports.join('\n'));
+    buffer.writeln();
+    buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.freezed.dart';");
+    buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.g.dart';");
     buffer.writeln();
 
-    // Generate ID class if idColumn is provided
-    if (idColumn != null) {
-      buffer.writeln(_generateIdClass(idColumn));
-    }
+    for (final provider in providers){
+      final annotation = provider.annotation;
 
-    // Generate table class
-    buffer.writeln(_generateTableClass(tableName, columns, className));
+      final tableName = annotation.read('tableName').stringValue;
+      final prefixName = annotation.peek('classPrefixName')?.stringValue;
+      final className = prefixName == null ? tableName.pascalCase : prefixName.pascalCase;
+          final columns = annotation.read('columns').listValue
+          .map((e) => e.toStringValue()!)
+          .toList();
+      
+      // Validate column formats
+      _validateColumnFormats(columns);
 
-    // Generate raw data class if specified
-    if (generateRawClass) {
-      buffer.writeln(_generateRawDataClass(className, columns));
-    }
+      final parsedColumns = columns.map(ColumnDefinition.parse).toList();
 
-    // Generate additional Freezed classes
-    for (final additionalClass in additionalClasses) {
-      buffer.writeln(_generateAdditionalClass(additionalClass, columns, className));
+      final idColumn = annotation.peek('idColumn')?.stringValue;
+      
+      final additionalClasses = annotation.read('additionalClasses').listValue
+          .asMap()
+          .entries
+          .map((entry) => AdditionalClassDefinition.parse(entry.value.toStringValue()!, parsedColumns, entry.key, tableName))
+          .toList();
+
+
+      final generateRawClass = annotation.read('generateRawClass').boolValue;
+      final rawClassTableMode = annotation.read('rawClassTableMode').boolValue;
+      final customTypes = annotation.read('customTypes').listValue
+          .map((e) => e.toTypeValue()!.getDisplayString(withNullability: false))
+          .toSet();
+
+      _validateCustomTypes(parsedColumns, customTypes, idColumn);
+
+      for (final additionalClass in additionalClasses) {
+        final additionalColumns = additionalClass.columns;
+        _validateCustomTypes(additionalColumns, customTypes, null);
+      }
+
+      // Generate ID class if idColumn is provided
+      if (idColumn != null) {
+        buffer.writeln(_generateIdClass(idColumn));
+      }
+
+      // Generate table class
+      buffer.writeln(_generateTableClass(tableName, parsedColumns, className));
+
+      // Generate raw data class if specified
+      if (generateRawClass) {
+        buffer.writeln(_generateRawDataClass(className, parsedColumns, tableName, rawClassTableMode));
+      }
+
+      // Generate additional classes
+      for (final additionalClass in additionalClasses) {
+        buffer.writeln(_generateAdditionalClass(additionalClass, className));
+      }
     }
 
     return buffer.toString();
   }
 
-  String _generateIdClass(String idColumn) {
-    final parts = idColumn.split(':');
-    if (parts.length != 2) {
-      throw 'Error trying to parse idColumn string. To generate id class [idColumn] must include data type. eg [IdClassName:DataType]';
+   void _validateColumnFormats(List<String> columns) {
+    final validFormat = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*(\:[a-zA-Z<>?,]+(\[\d+(,\d+)*\])?)?$');
+    
+    for (final column in columns) {
+      if (!validFormat.hasMatch(column)) {
+        throw InvalidGenerationSourceError(
+          'Invalid column format: "$column". '
+          'The correct format is "name" or "name:type" or "name:type[additionalInfo]".',
+          todo: 'Correct the format of the column definition.',
+        );
+      }
     }
-    final className = parts[0].pascalCase;
-    final dataType = parts[1];
-
-    return '''
-class $className extends Identity<$dataType> {
-  const $className._(this.value);
-
-  @override
-  final $dataType value;
-
-  factory $className.fromJson(dynamic value) {
-    return $className._(value);
   }
 
-  factory $className.fromValue($dataType value) {
-    return $className._(value);
+  void _validateCustomTypes(List<ColumnDefinition> columns, Set<String> customTypes, String? idColumn) {
+    for (final column in columns) {
+      if (column.name == idColumn) continue; // Skip ID column
+      if (column.hasExplicitType && 
+          !_isDartCoreType(column.baseType!) && 
+          !customTypes.contains(column.baseType)) {
+        throw InvalidGenerationSourceError(
+          'Custom type "${column.baseType}" used in column "${column.name}" is not provided in the customTypes list.',
+          todo: 'Add "${column.baseType}" to the customTypes list in the @TableStructure annotation.',
+        );
+      }
+    }
   }
-}
-''';
+  bool _isDartCoreType(String type) {
+    return _dartCoreTypes.contains(type) || type.startsWith('List<') || type.startsWith('Map<') || type.startsWith('Set<');
   }
 
-  String _generateTableClass(String tableName, List<String> columns, String className) {
+
+  String _generateIdClass(String idColumn) {
+      final parts = idColumn.split(':');
+      if (parts.length != 2) {
+        throw 'Error trying to parse idColumn string. To generate id class [idColumn] must include data type. eg [IdClassName:DataType]';
+      }
+      final className = parts[0].pascalCase;
+      final dataType = parts[1];
+
+      return '''
+  class $className extends Identity<$dataType> {
+    const $className._(this.value);
+
+    @override
+    final $dataType value;
+
+    factory $className.fromJson(dynamic value) {
+      return $className._(value);
+    }
+
+    factory $className.fromValue($dataType value) {
+      return $className._(value);
+    }
+  }
+  ''';
+    }
+
+
+  String _generateTableClass(String tableName, List<ColumnDefinition> columns, String className) {
     final buffer = StringBuffer();
+
     buffer.writeln("class ${className}Table {");
     buffer.writeln("  const ${className}Table._();");
     buffer.writeln();
@@ -92,162 +264,96 @@ class $className extends Identity<$dataType> {
     buffer.writeln();
 
     for (final column in columns) {
-      final parts = column.split(':');
-      final columnName = parts[0];
-
-      // Ensure column name starts with a letter and contains only valid characters
-      if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_]*$').hasMatch(columnName)) {
-        throw 'Invalid column name: $columnName. Column names must start with a letter and contain only letters, numbers, and underscores.';
-      }
-
-      buffer.writeln('  static const String ${columnName.camelCase} = "$columnName";');
+      final constantName = column.name.split('[')[0].camelCase;
+      buffer.writeln('  static const String $constantName = "${column.name}";');
     }
 
     buffer.writeln("}");
     return buffer.toString();
   }
 
-  String _generateRawDataClass(String className, List<String> columns) {
+  String _generateRawDataClass(String className, List<ColumnDefinition> columns, String tableName, bool rawClassTableMode) {
     final buffer = StringBuffer();
-    final props = <String, String>{};
+
+    buffer.writeln('@freezed');
+    buffer.writeln('class ${className}RawModel with _\$${className}RawModel {');
+    buffer.writeln('  const ${className}RawModel._();');
+    buffer.writeln();
+    
+    if (rawClassTableMode) {
+      buffer.writeln('  @TableModel("$tableName")');
+    }
+    
+    buffer.writeln('  const factory ${className}RawModel({');
 
     for (final column in columns) {
-      final parts = column.split(':');
-      if (parts.length == 2) {
-        props[parts[0]] = parts[1].split('[')[0];
+      if (column.hasExplicitType) {
+        buffer.writeln('    @JsonKey(name: "${column.name}") ${column.isNullable ? '' : 'required '}${column.type}${column.isNullable ? '?' : ''} ${column.name.camelCase},');
       }
     }
 
-    buffer.writeln('@JsonSerializable()');
-    buffer.writeln('class ${className}RawModel {');
-    buffer.writeln('  ${className}RawModel({');
-    for (final prop in props.keys) {
-      final isNullable = props[prop]!.endsWith('?');
-      buffer.writeln('    @JsonKey(name: \'$prop\') ${isNullable ? '' : 'required '}this.${prop.camelCase},');
-    }
-    buffer.writeln('  });');
-    buffer.writeln();
-
-    for (final entry in props.entries) {
-      buffer.writeln('  @JsonKey(name: \'${entry.key}\')');
-      buffer.writeln('  final ${entry.value} ${entry.key.camelCase};');
-    }
-
-    buffer.writeln();
-    buffer.writeln('  @override');
-    buffer.writeln('  bool operator ==(covariant ${className}RawModel other) {');
-    buffer.writeln('    if (identical(this, other)) return true;');
-    buffer.writeln();
-    buffer.writeln('    return ${props.keys.map((e) => "other.${e.camelCase} == ${e.camelCase}").join(' && ')};');
-    buffer.writeln('  }');
-    buffer.writeln();
-
-    buffer.writeln('  @override');
-    buffer.writeln('  int get hashCode => ${props.keys.map((e) => "${e.camelCase}.hashCode").join(' ^ ')};');
-    buffer.writeln();
-
-    buffer.writeln('  @override');
-    buffer.writeln("  String toString() => '${className}RawModel(${props.keys.map((e) => "${e.camelCase}: \$${e.camelCase}").join(', ')})';");
-    buffer.writeln();
-
-    buffer.writeln('  ${className}RawModel copyWith({');
-    for (final entry in props.entries) {
-      final type = entry.value.endsWith('?') ? entry.value : '${entry.value}?';
-      buffer.writeln('    $type ${entry.key.camelCase},');
-    }
-    buffer.writeln('  }) {');
-    buffer.writeln('    return ${className}RawModel(');
-    for (final prop in props.keys) {
-      buffer.writeln('      ${prop.camelCase}: ${prop.camelCase} ?? this.${prop.camelCase},');
-    }
-    buffer.writeln('    );');
-    buffer.writeln('  }');
-
+    buffer.writeln('  }) = _${className}RawModel;');
     buffer.writeln();
     buffer.writeln('  factory ${className}RawModel.fromJson(Map<String, dynamic> json) => _\$${className}RawModelFromJson(json);');
-    buffer.writeln('  Map<String, dynamic> toJson() => _\$${className}RawModelToJson(this);');
-
+    
+    if (rawClassTableMode) {
+      buffer.writeln();
+      buffer.writeln('  static const TableBuilder table = _table${className}RawModel;');
+    }
+    
     buffer.writeln('}');
+
     return buffer.toString();
   }
-String _generateAdditionalClass(String additionalClass, List<String> defaultColumns, String parentClassName) {
+
+  String _generateAdditionalClass(AdditionalClassDefinition additionalClass, String parentClassName) {
     final buffer = StringBuffer();
-    final parts = additionalClass.split(':');
-    final className = parts[0];
-    bool isTableModel = false;
-    String? customTableName;
-    List<String> customColumns = [];
 
-    // Check if it's a TableModel
-    if (parts.length > 1 && parts[1].startsWith('table')) {
-      isTableModel = true;
-      if (parts[1].contains('(') && parts[1].contains(')')) {
-        customTableName = parts[1].substring(parts[1].indexOf('(') + 1, parts[1].indexOf(')'));
+    final classNameParts = additionalClass.className.split('[');
+    final className = classNameParts[0];
+    final additionalFields = classNameParts.length > 1 ? classNameParts[1].replaceAll(']', '').split(',') : [];
+
+    buffer.writeln('@freezed');
+    buffer.writeln('class $className with _\$$className {');
+    buffer.writeln('  const $className._();');
+    buffer.writeln();
+    
+    if (additionalClass.isTableModel) {
+      buffer.writeln('  @TableModel("${additionalClass.tableName}")');
+    }
+    
+    buffer.writeln('  const factory $className({');
+
+    for (final column in additionalClass.columns) {
+      if (column.isJoinColumn) {
+        buffer.writeln('    @JoinedColumn(foreignKey: "${column.foreignKey}")');
+      }
+      final nullabilitySuffix = column.isNullable ? '?' : '';
+      final requiredKeyword = column.isNullable ? '' : 'required ';
+      buffer.writeln('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
+    }
+
+    // Add additional fields
+    for (final field in additionalFields) {
+      final parts = field.split(':');
+      if (parts.length == 2) {
+        final fieldName = parts[0].trim();
+        final fieldType = parts[1].trim();
+        buffer.writeln('    required $fieldType $fieldName,');
       }
     }
 
-    // Parse custom columns if provided
-    final customColumnMatch = RegExp(r'\[(.*?)\]').firstMatch(additionalClass);
-    if (customColumnMatch != null) {
-      customColumns = customColumnMatch.group(1)!.split(',');
-    }
-
-    final columnsToUse = customColumns.isNotEmpty ? customColumns : defaultColumns;
-
-    if (isTableModel) {
-      buffer.writeln('@freezed');
-      buffer.writeln('class $className with _\$$className {');
-      buffer.writeln('  const $className._();');
-      buffer.writeln();
-      buffer.writeln('  @TableModel(${customTableName ?? parentClassName}Table.table)');
-      buffer.writeln('  const factory $className({');
-
-      for (final column in columnsToUse) {
-        final parts = column.split(':');
-        if (parts.length == 2) {
-          final columnName = parts[0];
-          final dataType = parts[1].split('[')[0];
-          final isNullable = dataType.endsWith('?');
-          buffer.writeln('    @JsonKey(name: ${parentClassName}Table.${columnName.camelCase}) ${isNullable ? '' : 'required '}$dataType ${columnName.camelCase},');
-        }
-      }
-
-      buffer.writeln('  }) = _$className;');
-      buffer.writeln();
-      buffer.writeln('  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);');
+    buffer.writeln('  }) = _$className;');
+    buffer.writeln();
+    buffer.writeln('  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);');
+    
+    if (additionalClass.isTableModel) {
       buffer.writeln();
       buffer.writeln('  static const TableBuilder table = _table$className;');
-      buffer.writeln('}');
-    } else {
-      buffer.writeln('@freezed');
-      buffer.writeln('class $className with _\$$className {');
-      buffer.writeln('  const $className._();');
-      buffer.writeln('  const factory $className({');
-
-      for (final column in columnsToUse) {
-        final parts = column.split(':');
-        if (parts.length == 2) {
-          final columnName = parts[0];
-          final dataType = parts[1].split('[')[0];
-          final isNullable = dataType.endsWith('?');
-          buffer.writeln('    @JsonKey(name: \'$columnName\') ${isNullable ? '' : 'required '}$dataType ${columnName.camelCase},');
-        }
-      }
-
-      buffer.writeln('  }) = _$className;');
-      buffer.writeln();
-      buffer.writeln('  factory $className.fromJson(Map<String, dynamic> json) => _\$${className}FromJson(json);');
-      buffer.writeln('}');
     }
+    
+    buffer.writeln('}');
 
     return buffer.toString();
-  }
-
-  List<int> _parseIndices(String columnDefinition) {
-    final match = RegExp(r'\[(.*?)\]').firstMatch(columnDefinition);
-    if (match != null) {
-      return match.group(1)!.split(',').map(int.parse).toList();
-    }
-    return [];
   }
 }
