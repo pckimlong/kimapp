@@ -24,6 +24,8 @@ class KimappStateWidgetGenerator extends Generator {
     }
 
     final buffer = StringBuffer();
+    buffer.writeln("// ignore_for_file: unused_import, depend_on_referenced_packages");
+
     final imports = _getSourceFileImports(library);
     
     final currentFilePath = buildStep.inputId.path;
