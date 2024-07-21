@@ -93,6 +93,36 @@ class TableStructure {
   /// 
   /// The fields of each generated class will be affected by how you define [columns].
   /// The structure and types of the generated classes will correspond to the column definitions.
+  /// 
+  /// You can generate a [TableModel] for a class by appending `:table` to the class name.
+  /// 
+  /// Example:
+  /// ```dart
+  /// additionalClasses: ['UserLiteModel:table']
+  /// ```
+  /// 
+  /// This generates a table class. See [TableModel] for more details.
+  /// 
+  /// To specify a custom table name, use `:table(tableName)`:
+  /// 
+  /// Example:
+  /// ```dart
+  /// additionalClasses: ['UserLiteModel:table(users_tbl)']
+  /// ```
+  /// 
+  /// You can also define custom columns for each additional class using square brackets [...].
+  /// The format for custom columns is `ColumnName:DataType`, similar to [columns].
+  /// 
+  /// Example:
+  /// ```dart
+  /// additionalClasses: [
+  ///   'CreateUserParam[firstName:String,lastName:String]', 
+  ///   'UpdateUserParam:table[id:int,name:String]'
+  /// ]
+  /// ```
+  /// 
+  /// Note: Non-PascalCase column names will be converted to PascalCase for property names,
+  /// while preserving the original name in the `@JsonKey` annotation.
   final List<String> additionalClasses;
 }
 
