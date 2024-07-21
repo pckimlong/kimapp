@@ -10,6 +10,7 @@ class TableStructure {
     this.classPrefixName,
     this.additionalClasses = const [],
     this.generateRawClass = false,
+    this.rawClassTableMode = true,
   });
 
   /// List of column names to be generated.
@@ -58,6 +59,10 @@ class TableStructure {
   /// If true, it will generate a raw class with all columns that have a DataType specified.
   /// Default is false.
   final bool generateRawClass;
+
+  /// If true and [generateRawClass] is true, it will generate raw class with [TableModel] annotation.
+  /// default is true.
+  final bool rawClassTableMode;
 
   /// The name of the table.
   final String tableName;
