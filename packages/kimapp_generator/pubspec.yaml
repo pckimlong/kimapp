@@ -17,11 +17,11 @@ dependencies:
   riverpod:
   flutter:
     sdk: flutter
-  # kimapp:
-  #   git: 
-  #     url: https://github.com/pckimlong/kimapp.git
-  #     ref: master
-  #     path: packages/kimapp
+  kimapp:
+    git: 
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
 
 dev_dependencies:
   build_runner: null

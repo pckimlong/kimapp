@@ -37,18 +37,18 @@ dependencies:
   cupertino_icons: ^1.0.6
   fast_immutable_collections:
   freezed_annotation: 
-  # kimapp:
-  #   git:
-  #     url: https://github.com/pckimlong/kimapp.git
-  #     ref: master
-  #     path: packages/kimapp
+  kimapp:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
   flutter_riverpod:
   json_annotation:
   riverpod_annotation:
 
 dev_dependencies:
-  # kimapp_generator:
-  #   path: ../../kimapp_generator
+  kimapp_generator:
+    path: ../../kimapp_generator
   build_runner: ^2.4.1
   riverpod_generator:
   freezed:

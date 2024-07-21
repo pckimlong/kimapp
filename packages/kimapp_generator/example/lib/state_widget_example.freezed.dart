@@ -14,11 +14,16 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+ExampleModel _$ExampleModelFromJson(Map<String, dynamic> json) {
+  return _ExampleModel.fromJson(json);
+}
+
 /// @nodoc
 mixin _$ExampleModel {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ExampleModelCopyWith<ExampleModel> get copyWith =>
       throw _privateConstructorUsedError;
@@ -101,9 +106,13 @@ class __$$ExampleModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
+@TableModel('xxx')
 class _$ExampleModelImpl extends _ExampleModel {
   const _$ExampleModelImpl({required this.id, required this.name}) : super._();
+
+  factory _$ExampleModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ExampleModelImplFromJson(json);
 
   @override
   final int id;
@@ -124,6 +133,7 @@ class _$ExampleModelImpl extends _ExampleModel {
             (identical(other.name, name) || other.name == name));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name);
 
@@ -132,12 +142,22 @@ class _$ExampleModelImpl extends _ExampleModel {
   @pragma('vm:prefer-inline')
   _$$ExampleModelImplCopyWith<_$ExampleModelImpl> get copyWith =>
       __$$ExampleModelImplCopyWithImpl<_$ExampleModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ExampleModelImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _ExampleModel extends ExampleModel {
   const factory _ExampleModel(
       {required final int id, required final String name}) = _$ExampleModelImpl;
   const _ExampleModel._() : super._();
+
+  factory _ExampleModel.fromJson(Map<String, dynamic> json) =
+      _$ExampleModelImpl.fromJson;
 
   @override
   int get id;
