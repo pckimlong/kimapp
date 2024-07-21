@@ -17,4 +17,4 @@ Builder kimappFormGenerator(BuilderOptions options) =>
     SharedPartBuilder([KimappFormGenerator()], 'kimapp_form_generator');
 
 Builder kimappStateWidgetGenerator(BuilderOptions options) =>
-    SharedPartBuilder([KimappStateWidgetGenerator()], 'kimapp_state_widget_generator');
+    LibraryBuilder(KimappStateWidgetGenerator(), generatedExtension: '.widget.dart');
