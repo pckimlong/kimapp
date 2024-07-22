@@ -4,11 +4,11 @@
 // TableStructureGenerator
 // **************************************************************************
 
-import 'package:example/state_widget_example.dart';
 // ignore_for_file: invalid_annotation_target, unused_import
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/kimapp.dart';
 
+import 'package:example/state_widget_example.dart';
 import 'table_structure_example.dart';
 
 part 'table_structure_example.table.freezed.dart';
@@ -49,7 +49,7 @@ class SampleRawModel with _$SampleRawModel {
 
   @TableModel("samples")
   const factory SampleRawModel({
-    @JsonKey(name: "id") required int id,
+    @JsonKey(name: "id") required SampleId id,
     @JsonKey(name: "name") required String name,
     @JsonKey(name: "description") String? description,
     @JsonKey(name: "createdAt") required DateTime createdAt,
@@ -69,6 +69,7 @@ class UpdateSampleParam with _$UpdateSampleParam {
 
   @TableModel("v_sample")
   const factory UpdateSampleParam({
+    @JsonKey(name: "id") required SampleId id,
     @JsonKey(name: "name") required String name,
     @JsonKey(name: "description") String? description,
     @JsonKey(name: "updatedAt") required DateTime updatedAt,

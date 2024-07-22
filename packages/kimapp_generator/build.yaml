@@ -20,6 +20,20 @@ builders:
     required_inputs: [".freezed.dart", ".g.dart"]
     auto_apply: dependents
     build_to: source
+  
+  kimapp_schema_builder_generator:
+    import: "package:kimapp_generator/builder.dart"
+    builder_factories: ["kimappSchemaBuilderGenerator"]
+    build_extensions: {".dart": [".schema.dart"]}
+    auto_apply: dependents
+    build_to: source
+    runs_before:
+      - freezed|freezed
+      - kimapp_generator|kimapp_model_generator
+      - kimapp_generator|kimapp_form_generator
+      - json_serializable|json_serializable
+      - riverpod_generator|riverpod_generator
+      - auto_route_generator|auto_route_generator
 
   kimapp_model_generator:
     import: "package:kimapp_generator/builder.dart"

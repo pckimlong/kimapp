@@ -145,13 +145,14 @@ class TableStructureGenerator extends Generator {
           final columns = annotation.read('columns').listValue
           .map((e) => e.toStringValue()!)
           .toList();
+
+      final idColumn = annotation.peek('idColumn')?.stringValue;
       
       // Validate column formats
-      _validateColumnFormats(columns);
+      _validateColumnFormats(columns, idColumn);
 
       final parsedColumns = columns.map(ColumnDefinition.parse).toList();
 
-      final idColumn = annotation.peek('idColumn')?.stringValue;
       
       final additionalClasses = annotation.read('additionalClasses').listValue
           .asMap()
@@ -170,7 +171,7 @@ class TableStructureGenerator extends Generator {
 
       for (final additionalClass in additionalClasses) {
         final additionalColumns = additionalClass.columns;
-        _validateCustomTypes(additionalColumns, customTypes, null);
+        _validateCustomTypes(additionalColumns, customTypes, idColumn);
       }
 
       // Generate ID class if idColumn is provided
@@ -195,10 +196,16 @@ class TableStructureGenerator extends Generator {
     return buffer.toString();
   }
 
-   void _validateColumnFormats(List<String> columns) {
+   void _validateColumnFormats(List<String> columns, String? idColumn) {
     final validFormat = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*(\:[a-zA-Z<>?,]+(\[\d+(,\d+)*\])?)?$');
     
     for (final column in columns) {
+      final splitColumn = column.split(':');
+      if (splitColumn.length > 1 && idColumn != null) {
+        final pureDataType = splitColumn[1].replaceAll(RegExp(r'\[.*?\]'), '');
+        if (pureDataType == idColumn.split(':').first) continue;
+      }
+
       if (!validFormat.hasMatch(column)) {
         throw InvalidGenerationSourceError(
           'Invalid column format: "$column". '
@@ -211,7 +218,8 @@ class TableStructureGenerator extends Generator {
 
   void _validateCustomTypes(List<ColumnDefinition> columns, Set<String> customTypes, String? idColumn) {
     for (final column in columns) {
-      if (column.name == idColumn) continue; // Skip ID column
+      if(column.baseType == idColumn?.split(':').first) continue;
+
       if (column.hasExplicitType && 
           !_isDartCoreType(column.baseType!) && 
           !customTypes.contains(column.baseType)) {
