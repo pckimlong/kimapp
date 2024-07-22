@@ -10,7 +10,7 @@ import 'package:kimapp/annotation.dart';
     'UpdateSampleParam:table(v_sample)[address:int, ex:ExampleModel(example_id)]',
   ],
   columns: [
-    'id:int',
+    'id:SampleId[0]',
     'name:String[0,1]',
     'description:String?[0,1]',
     'createdAt:DateTime[1]',

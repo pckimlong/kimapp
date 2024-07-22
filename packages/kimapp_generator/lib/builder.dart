@@ -1,5 +1,6 @@
 import 'package:build/build.dart';
 import 'package:kimapp_generator/src/kimapp_form_generator.dart';
+import 'package:kimapp_generator/src/kimapp_schema_generator.dart';
 import 'package:kimapp_generator/src/table_model_generator.dart';
 import 'package:kimapp_generator/src/table_structure_generator.dart';
 import 'package:source_gen/source_gen.dart';
@@ -18,3 +19,6 @@ Builder kimappFormGenerator(BuilderOptions options) =>
 
 Builder kimappStateWidgetGenerator(BuilderOptions options) =>
     LibraryBuilder(KimappStateWidgetGenerator(), generatedExtension: '.widget.dart');
+
+Builder kimappSchemaBuilderGenerator(BuilderOptions options) =>
+    LibraryBuilder(KimappSchemaGenerator(), generatedExtension: '.schema.dart');
