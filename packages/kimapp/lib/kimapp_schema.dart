@@ -321,6 +321,7 @@ class Model {
     required this.name,
     this.columns = const [],
     this.supabaseTable,
+    this.inheritAllFields = false,
   });
 
   /// The name of the model.
@@ -339,4 +340,9 @@ class Model {
   /// When provided, this instructs the code generator to create a Kimapp table model,
   /// which includes Supabase-specific functionality for database operations.
   final SupabaseTable? supabaseTable;
+
+  /// If true, all fields in [KimappSchema.columns] will be included in this model. even it not specify in addToModels.
+  /// 
+  /// default is false.
+  final bool inheritAllFields;
 }
