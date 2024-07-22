@@ -21,7 +21,7 @@ SampleRawModel _$SampleRawModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$SampleRawModel {
   @JsonKey(name: "id")
-  int get id => throw _privateConstructorUsedError;
+  SampleId get id => throw _privateConstructorUsedError;
   @JsonKey(name: "name")
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: "description")
@@ -46,7 +46,7 @@ abstract class $SampleRawModelCopyWith<$Res> {
       _$SampleRawModelCopyWithImpl<$Res, SampleRawModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: "id") int id,
+      {@JsonKey(name: "id") SampleId id,
       @JsonKey(name: "name") String name,
       @JsonKey(name: "description") String? description,
       @JsonKey(name: "createdAt") DateTime createdAt,
@@ -78,7 +78,7 @@ class _$SampleRawModelCopyWithImpl<$Res, $Val extends SampleRawModel>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as SampleId,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -112,7 +112,7 @@ abstract class _$$SampleRawModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "id") int id,
+      {@JsonKey(name: "id") SampleId id,
       @JsonKey(name: "name") String name,
       @JsonKey(name: "description") String? description,
       @JsonKey(name: "createdAt") DateTime createdAt,
@@ -142,7 +142,7 @@ class __$$SampleRawModelImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as SampleId,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -186,7 +186,7 @@ class _$SampleRawModelImpl extends _SampleRawModel {
 
   @override
   @JsonKey(name: "id")
-  final int id;
+  final SampleId id;
   @override
   @JsonKey(name: "name")
   final String name;
@@ -251,7 +251,7 @@ class _$SampleRawModelImpl extends _SampleRawModel {
 
 abstract class _SampleRawModel extends SampleRawModel {
   const factory _SampleRawModel(
-          {@JsonKey(name: "id") required final int id,
+          {@JsonKey(name: "id") required final SampleId id,
           @JsonKey(name: "name") required final String name,
           @JsonKey(name: "description") final String? description,
           @JsonKey(name: "createdAt") required final DateTime createdAt,
@@ -265,7 +265,7 @@ abstract class _SampleRawModel extends SampleRawModel {
 
   @override
   @JsonKey(name: "id")
-  int get id;
+  SampleId get id;
   @override
   @JsonKey(name: "name")
   String get name;
@@ -293,6 +293,8 @@ UpdateSampleParam _$UpdateSampleParamFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UpdateSampleParam {
+  @JsonKey(name: "id")
+  SampleId get id => throw _privateConstructorUsedError;
   @JsonKey(name: "name")
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: "description")
@@ -320,7 +322,8 @@ abstract class $UpdateSampleParamCopyWith<$Res> {
       _$UpdateSampleParamCopyWithImpl<$Res, UpdateSampleParam>;
   @useResult
   $Res call(
-      {@JsonKey(name: "name") String name,
+      {@JsonKey(name: "id") SampleId id,
+      @JsonKey(name: "name") String name,
       @JsonKey(name: "description") String? description,
       @JsonKey(name: "updatedAt") DateTime updatedAt,
       @JsonKey(name: "ids") List<int> ids,
@@ -345,6 +348,7 @@ class _$UpdateSampleParamCopyWithImpl<$Res, $Val extends UpdateSampleParam>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? description = freezed,
     Object? updatedAt = null,
@@ -353,6 +357,10 @@ class _$UpdateSampleParamCopyWithImpl<$Res, $Val extends UpdateSampleParam>
     Object? ex = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as SampleId,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -398,7 +406,8 @@ abstract class _$$UpdateSampleParamImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "name") String name,
+      {@JsonKey(name: "id") SampleId id,
+      @JsonKey(name: "name") String name,
       @JsonKey(name: "description") String? description,
       @JsonKey(name: "updatedAt") DateTime updatedAt,
       @JsonKey(name: "ids") List<int> ids,
@@ -422,6 +431,7 @@ class __$$UpdateSampleParamImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? description = freezed,
     Object? updatedAt = null,
@@ -430,6 +440,10 @@ class __$$UpdateSampleParamImplCopyWithImpl<$Res>
     Object? ex = null,
   }) {
     return _then(_$UpdateSampleParamImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as SampleId,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -463,7 +477,8 @@ class __$$UpdateSampleParamImplCopyWithImpl<$Res>
 @TableModel("v_sample")
 class _$UpdateSampleParamImpl extends _UpdateSampleParam {
   const _$UpdateSampleParamImpl(
-      {@JsonKey(name: "name") required this.name,
+      {@JsonKey(name: "id") required this.id,
+      @JsonKey(name: "name") required this.name,
       @JsonKey(name: "description") this.description,
       @JsonKey(name: "updatedAt") required this.updatedAt,
       @JsonKey(name: "ids") required final List<int> ids,
@@ -477,6 +492,9 @@ class _$UpdateSampleParamImpl extends _UpdateSampleParam {
   factory _$UpdateSampleParamImpl.fromJson(Map<String, dynamic> json) =>
       _$$UpdateSampleParamImplFromJson(json);
 
+  @override
+  @JsonKey(name: "id")
+  final SampleId id;
   @override
   @JsonKey(name: "name")
   final String name;
@@ -505,7 +523,7 @@ class _$UpdateSampleParamImpl extends _UpdateSampleParam {
 
   @override
   String toString() {
-    return 'UpdateSampleParam(name: $name, description: $description, updatedAt: $updatedAt, ids: $ids, address: $address, ex: $ex)';
+    return 'UpdateSampleParam(id: $id, name: $name, description: $description, updatedAt: $updatedAt, ids: $ids, address: $address, ex: $ex)';
   }
 
   @override
@@ -513,6 +531,7 @@ class _$UpdateSampleParamImpl extends _UpdateSampleParam {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UpdateSampleParamImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -525,7 +544,7 @@ class _$UpdateSampleParamImpl extends _UpdateSampleParam {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, description, updatedAt,
+  int get hashCode => Object.hash(runtimeType, id, name, description, updatedAt,
       const DeepCollectionEquality().hash(_ids), address, ex);
 
   @JsonKey(ignore: true)
@@ -545,7 +564,8 @@ class _$UpdateSampleParamImpl extends _UpdateSampleParam {
 
 abstract class _UpdateSampleParam extends UpdateSampleParam {
   const factory _UpdateSampleParam(
-      {@JsonKey(name: "name") required final String name,
+      {@JsonKey(name: "id") required final SampleId id,
+      @JsonKey(name: "name") required final String name,
       @JsonKey(name: "description") final String? description,
       @JsonKey(name: "updatedAt") required final DateTime updatedAt,
       @JsonKey(name: "ids") required final List<int> ids,
@@ -558,6 +578,9 @@ abstract class _UpdateSampleParam extends UpdateSampleParam {
   factory _UpdateSampleParam.fromJson(Map<String, dynamic> json) =
       _$UpdateSampleParamImpl.fromJson;
 
+  @override
+  @JsonKey(name: "id")
+  SampleId get id;
   @override
   @JsonKey(name: "name")
   String get name;
