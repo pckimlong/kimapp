@@ -218,11 +218,26 @@ const stateWidget = StateWidget();
 
 
 
+class SchemaBuilder {
+  const SchemaBuilder(); 
+}
+
+const schemaBuilder = SchemaBuilder();
+
+/// Represents a flexible schema definition for database tables and related classes.
+///
+/// This class is the main entry point for defining your database schema, table structures,
+/// and associated classes like DTOs and view models. It provides a more flexible and
 /// powerful way to describe your data model compared to the original TableStructure.
 ///
-/// Example:
+/// The table model feature is particularly useful for Supabase integration, allowing
+/// for seamless mapping between your Dart models and Supabase tables.
+///
+/// There are two ways to define a schema using FlexibleSchemaBuilder:
+///
+/// 1. As an annotation on an empty class:
 /// ```dart
-/// final userSchema = FlexibleSchemaDefinition(
+/// @FlexibleSchemaBuilder(
 ///   tableName: 'users',
 ///   columns: [
 ///     ColumnDefinition('first_name', String, includeIn: ['CreateUserDTO', 'UserViewModel']),
@@ -234,8 +249,36 @@ const stateWidget = StateWidget();
 ///     AdditionalClass.builder('CreateUserDTO').build(),
 ///     AdditionalClass.builder('UserViewModel').build(),
 ///   ],
-/// );
+/// )
+/// class UserSchema {}
 /// ```
+///
+/// 2. As a class that implements FlexibleSchemaBuilder:
+/// ```dart
+/// @schemaBuilder
+/// class UserSchema implements FlexibleSchemaBuilder {
+///   @override
+///   String get tableName => 'users';
+///
+///   @override
+///   List<ColumnDefinition> get columns => [
+///     ColumnDefinition('first_name', String, includeIn: ['CreateUserDTO', 'UserViewModel']),
+///     ColumnDefinition('last_name', String, includeIn: ['CreateUserDTO', 'UserViewModel']),
+///     ColumnDefinition('email', String, includeIn: ['CreateUserDTO', 'UserViewModel']),
+///   ];
+///
+///   @override
+///   IdColumn? get idColumn => IdColumn('id', int);
+///
+///   @override
+///   List<AdditionalClass> get additionalClasses => [
+///     AdditionalClass.builder('CreateUserDTO').build(),
+///     AdditionalClass.builder('UserViewModel').build(),
+///   ];
+/// }
+/// ```
+///
+/// Both approaches offer the same capabilities. Choose the one that best fits your coding style and project structure.
 class FlexibleSchemaBuilder {
   /// Constructs a FlexibleSchemaDefinition with the given properties.
   ///
