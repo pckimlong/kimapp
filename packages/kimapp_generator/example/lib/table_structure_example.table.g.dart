@@ -8,7 +8,7 @@ part of 'table_structure_example.table.dart';
 
 _$SampleRawModelImpl _$$SampleRawModelImplFromJson(Map<String, dynamic> json) =>
     _$SampleRawModelImpl(
-      id: (json['id'] as num).toInt(),
+      id: SampleId.fromJson(json['id']),
       name: json['name'] as String,
       description: json['description'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -32,6 +32,7 @@ Map<String, dynamic> _$$SampleRawModelImplToJson(
 _$UpdateSampleParamImpl _$$UpdateSampleParamImplFromJson(
         Map<String, dynamic> json) =>
     _$UpdateSampleParamImpl(
+      id: SampleId.fromJson(json['id']),
       name: json['name'] as String,
       description: json['description'] as String?,
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -45,6 +46,7 @@ _$UpdateSampleParamImpl _$$UpdateSampleParamImplFromJson(
 Map<String, dynamic> _$$UpdateSampleParamImplToJson(
         _$UpdateSampleParamImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'description': instance.description,
       'updatedAt': instance.updatedAt.toIso8601String(),
@@ -72,6 +74,7 @@ const _tableSampleRawModel = TableBuilder(
 const _tableUpdateSampleParam = TableBuilder(
   tableName: "v_sample",
   columns: [
+    ColumnBuilder('id'),
     ColumnBuilder('name'),
     ColumnBuilder('description'),
     ColumnBuilder('updatedAt'),
