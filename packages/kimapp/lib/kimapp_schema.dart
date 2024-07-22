@@ -1,28 +1,3 @@
-import 'dart:core';
-
-@KimappSchema(
-  tableName: "users",
-  className: 'User',
-  baseModelName: 'UserModel',
-  columns: [
-    IdField('id', generateAs: 'UserId', type: int),
-    Field('name', type: String, addToModels: ['CreateUserParam', 'UpdateUserParam']),
-    Field('email', type: String, addToModels: ['CreateUserParam', 'UpdateUserParam']),
-    Field('password', type: String, addToModels: ['CreateUserParam']),
-    JoinField('createdBy', type: int, foreignKey: 'created_by', addToModels: ['UserLiteModel']),
-  ],
-  models: [
-    Model(name: 'CreateUserParam'),
-    Model(name: 'UpdateUserParam'),
-    Model(name: 'UserListParam',columns: [Field('type', type: String)]),
-    Model(
-      name: 'UserLiteModel',
-      supabaseTable: SupabaseTable(tableName: 'v_users'),
-    ),
-  ],
-)
-int a = 1;
-
 /// Represents the schema configuration for a Kimapp database table.
 ///
 /// This class is used as an annotation to define the structure and properties
