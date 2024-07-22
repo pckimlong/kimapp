@@ -293,6 +293,8 @@ class Field {
   /// of the model, such as computed fields or fields that are only relevant in
   /// certain contexts.
   final bool ignoreRaw;
+
+  String get typeAsString => type?.toString() ?? 'dynamic';
 }
 
 /// Represents a model in the application, which can correspond to a database table or a custom data structure.
