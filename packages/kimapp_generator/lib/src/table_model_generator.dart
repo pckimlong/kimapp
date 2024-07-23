@@ -13,64 +13,40 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     BuildStep buildStep,
   ) {
     if (element is! ClassElement) {
-      throw 'Only classes can be annotated with @TableModel. $element is not a ClassElement.';
+      throw ArgumentError('Only classes can be annotated with @TableModel. $element is not a ClassElement.');
     }
 
-    /// Freezed generated has been update, in order to get the class name, we need to get nested class supertype
-    final className = element.supertype!.element.supertype.toString();
+    final className = _getClassName(element);
     final tableName = annotation.peek('tableName')?.stringValue;
 
     final constructor = element.unnamedConstructor;
     if (constructor is! ConstructorElement) {
-      throw 'Default constructor for ${element.name} is missing';
+      throw ArgumentError('Default constructor for ${element.name} is missing');
     }
 
+    final fields = _extractFields(constructor);
+
+    return _buildTableDefinition(className, tableName, fields);
+  }
+
+  String _getClassName(ClassElement element) {
+    return element.supertype!.element.supertype.toString();
+  }
+
+  List<TableFieldInfo> _extractFields(ConstructorElement constructor) {
     final fields = <TableFieldInfo>[];
 
     for (final fieldElement in constructor.parameters) {
-      String? key;
-      String? candidateKey;
-      String? foreignKey;
-      String? joinedModel;
-
-      // Ignore this and continue to next if the fieldElement is private
       if (fieldElement.isPrivate) {
         continue;
       }
 
-      const checker = TypeChecker.fromRuntime(JsonKey);
-
-      final annotation = checker.firstAnnotationOf(fieldElement);
-
-      final reader = ConstantReader(annotation);
-
-      if (reader.peek('ignore')?.boolValue == true) {
-        break;
-      }
-
-      key = reader.peek('name')?.stringValue;
-
-      // If the field is a list, we add more algorithm to check if it is a joined column
-      if (_fieldHasAnnotation(JoinedColumn, fieldElement)) {
-        const checker = TypeChecker.fromRuntime(JoinedColumn);
-        final annotation = checker.firstAnnotationOf(fieldElement);
-        final reader = ConstantReader(annotation);
-        candidateKey = reader.peek('candidateKey')?.stringValue;
-        foreignKey = reader.peek('foreignKey')?.stringValue;
-        if (fieldElement.type.isDartCoreList || fieldElement.type.toString().contains('IList')) {
-          var elementType = fieldElement.type as ParameterizedType;
-          var listType = elementType.typeArguments[0].toString();
-          joinedModel = listType;
-        } else {
-          joinedModel = fieldElement.type.toString();
-        }
-      }
-
-      key ??= fieldElement.name;
+      final key = _getKeyFromJsonKey(fieldElement);
+      final (candidateKey, foreignKey, joinedModel) = _getJoinedColumnInfo(fieldElement);
 
       fields.add(
         TableFieldInfo(
-          key: key,
+          key: key ?? fieldElement.name,
           candidateKey: candidateKey,
           foreignKey: foreignKey,
           joinedModel: joinedModel,
@@ -78,10 +54,50 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       );
     }
 
+    return fields;
+  }
+
+  String? _getKeyFromJsonKey(ParameterElement fieldElement) {
+    const checker = TypeChecker.fromRuntime(JsonKey);
+    final annotation = checker.firstAnnotationOf(fieldElement);
+    if (annotation == null) return null;
+
+    final reader = ConstantReader(annotation);
+    if (reader.peek('ignore')?.boolValue == true) {
+      return null;
+    }
+
+    return reader.peek('name')?.stringValue;
+  }
+
+  (String?, String?, String?) _getJoinedColumnInfo(ParameterElement fieldElement) {
+    if (!_fieldHasAnnotation(JoinedColumn, fieldElement)) {
+      return (null, null, null);
+    }
+
+    const checker = TypeChecker.fromRuntime(JoinedColumn);
+    final annotation = checker.firstAnnotationOf(fieldElement);
+    final reader = ConstantReader(annotation);
+
+    final candidateKey = reader.peek('candidateKey')?.stringValue;
+    final foreignKey = reader.peek('foreignKey')?.stringValue;
+    final joinedModel = _getJoinedModel(fieldElement);
+
+    return (candidateKey, foreignKey, joinedModel);
+  }
+
+  String? _getJoinedModel(ParameterElement fieldElement) {
+    if (fieldElement.type.isDartCoreList || fieldElement.type.toString().contains('IList')) {
+      var elementType = fieldElement.type as ParameterizedType;
+      return elementType.typeArguments[0].toString();
+    }
+    return fieldElement.type.toString();
+  }
+
+  String _buildTableDefinition(String className, String? tableName, List<TableFieldInfo> fields) {
     final classBuffer = StringBuffer();
 
-    classBuffer.writeln(
-        'const _table${className.replaceAll('_', '').replaceAll('\$', '')} = TableBuilder(');
+    classBuffer.writeln('const _table${className.replaceAll('_', '').replaceAll('\$', '')} = TableBuilder(');
     classBuffer.writeln(' tableName: "$tableName",');
     classBuffer.writeln(' columns: [');
 

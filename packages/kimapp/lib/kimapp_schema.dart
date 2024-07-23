@@ -11,8 +11,8 @@
 ///   className: 'User',
 ///   baseModelName: 'UserModel',
 ///   columns: [
-///     IdField('id', generateAs: 'UserId', type: 'int'),
-///     Field('name', type: 'String', addToModels: ['CreateUserParam', 'UpdateUserParam']),
+///     IdField('id', generateAs: 'UserId', type: int),
+///     Field('name', type: String, addToModels: ['CreateUserParam', 'UpdateUserParam']),
 ///     // ... other fields
 ///   ],
 ///   models: [
@@ -82,7 +82,7 @@ class KimappSchema {
   /// 2. [JoinField]: Represents a foreign key column. By default, ignored in the table constraint class.
   /// 3. [Field]: Represents a standard column.
   /// 
-  /// If a column has a type specified as a String, it will be added as a field to the [baseModel].
+  /// If a column has a DataType, it will be added as a field to the [baseModel].
   /// If [addToModels] is specified for a column, it will be added to the specified models in the [models] list.
   /// 
   /// Note: If a model name in [addToModels] doesn't exist in [models], an error will be thrown during code generation.
@@ -90,9 +90,9 @@ class KimappSchema {
   /// Example:
   /// ```dart
   /// columns: [
-  ///   IdField('id', generateAs: 'UserId', type: 'int'),
-  ///   Field('name', type: 'String', addToModels: ['CreateUserParam', 'UpdateUserParam']),
-  ///   JoinField('createdBy', type: 'int', foreignKey: 'created_by'),
+  ///   IdField('id', generateAs: 'UserId', type: int),
+  ///   Field('name', type: String, addToModels: ['CreateUserParam', 'UpdateUserParam']),
+  ///   JoinField('createdBy', type: int, foreignKey: 'created_by'),
   /// ]
   /// ```
   final List<Field> columns;
@@ -116,7 +116,7 @@ class KimappSchema {
   ///   Model(name: 'UpdateUserParam'),
   ///   Model(
   ///     name: 'UserListParam',
-  ///     columns: [Field('type', type: 'String')]
+  ///     columns: [Field('type', type: String)]
   ///   ),
   ///   Model(
   ///     name: 'UserTable',
@@ -141,7 +141,7 @@ class KimappSchema {
 /// IdField(
 ///   'user_id',
 ///   generateAs: 'UserId',
-///   type: 'int',
+///   type: int,
 ///   addToModels: ['UserDetails', 'UserProfile'],
 /// )
 /// ```
@@ -150,12 +150,12 @@ class IdField extends Field {
   ///
   /// [name]: The name of the ID field in the database.
   /// [generateAs]: The name to use when generating the ID type.
-  /// [type]: The Dart type of the ID field as a String (e.g., 'int', 'String').
+  /// [type]: The Dart type of the ID field (e.g., int, String).
   /// [addToModels]: Optional list of model names to include this field in.
   const IdField(
     super.name, {
     required this.generateAs,
-    required super.type,
+    required Type super.type,
     super.addToModels,
   });
 
@@ -177,7 +177,7 @@ class IdField extends Field {
 /// ```dart
 /// JoinField(
 ///   'department',
-///   type: 'int',
+///   type: int,
 ///   foreignKey: 'department_id',
 ///   addToModels: ['EmployeeDetails'],
 /// )
@@ -186,7 +186,7 @@ class JoinField extends Field {
   /// Creates a [JoinField] instance.
   ///
   /// [name]: The name of the join field in the generated model class. e.g., 'department'
-  /// [type]: The Dart type of the join field as a String.
+  /// [type]: The Dart type of the join field.
   /// [foreignKey]: Optional foreign key reference (e.g., 'department_id').
   /// [candidateKey]: Optional candidate key in the referenced table.
   /// [addToModels]: Optional list of model names to include this field in.
@@ -249,7 +249,7 @@ class SupabaseTable {
 /// ```dart
 /// Field(
 ///   'email',
-///   type: 'String',
+///   type: String,
 ///   addToModels: ['UserSignup', 'UserProfile'],
 ///   ignoreRaw: false,
 /// )
@@ -258,7 +258,7 @@ class Field {
   /// Creates a [Field] instance.
   ///
   /// [name]: The name of the field.
-  /// [type]: The Dart type of the field as a String (optional).
+  /// [type]: The Dart type of the field (optional).
   /// [addToModels]: List of model names to include this field in.
   /// [ignoreRaw]: If true, this field will be excluded from the raw model class.
   const Field(
@@ -274,18 +274,12 @@ class Field {
   /// property name in the Dart model.
   final String name;
 
-  /// DataType of the field as a String. If it's nullable, add '?' at the end of the type.
+  /// The Dart type of the field.
   ///
   /// If null, the field can be included in any model classes but will only be added
   /// to the [className]Table constraint class. This allows for fields that are
   /// present in the database but not necessarily represented in all Dart models.
-  ///
-  /// Note: I decided to use String instead of actual Dart types in my kimapp_schema
-  /// due to build order issues. The generated classes use freezed, and since I run
-  /// this before freezed, I can't get the actual types. This is a temporary solution,
-  /// and I plan to improve it when I find a better way to handle type information
-  /// during code generation.
-  final String? type;
+  final Type? type;
 
   /// List of model names where this field should be included.
   /// 
@@ -311,8 +305,8 @@ class Field {
 /// Model(
 ///   name: 'User',
 ///   columns: [
-///     Field('name', type: 'String'),
-///     Field('age', type: 'int'),
+///     Field('name', type: String),
+///     Field('age', type: int),
 ///   ],
 ///   supabaseTable: SupabaseTable(tableName: 'users'),
 /// )
