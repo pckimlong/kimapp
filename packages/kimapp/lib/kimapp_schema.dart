@@ -33,7 +33,6 @@ class KimappSchema {
     this.baseModelName,
     this.className,
     this.models = const [],
-    this.customTypes = const [],
   });
 
   /// The name of the database table this schema represents.
@@ -129,23 +128,6 @@ class KimappSchema {
   /// This structure allows for flexible model creation, including input parameters,
   /// custom models, and Supabase-compatible table models, enhancing the versatility of the generated code.
   final List<Model> models;
-
-  /// A list of custom types used in the schema that require explicit import.
-  ///
-  /// Custom types are any types that are not Dart core types (e.g., String, int, bool, DateTime, Map, List).
-  /// These types need to be imported in the generated code to be available to the models.
-  ///
-  /// Examples of custom types include:
-  /// - User-defined classes (e.g., `UserRole`, `ProductCategory`)
-  /// - Types from external packages
-  ///
-  /// The code generator will use this list to:
-  /// 1. Generate necessary import statements in the output file.
-  /// 2. Properly reference these types in the generated models and methods.
-  ///
-  /// If a custom type is used in the schema but not provided in this list,
-  /// the code generator will throw an error to ensure type safety and correct imports.
-  final List<Type> customTypes;
 }
 
 /// Represents an ID field in a database table, typically used as a primary key.
