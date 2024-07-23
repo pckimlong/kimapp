@@ -155,7 +155,8 @@ class IdField extends Field {
   const IdField(
     super.name, {
     required this.generateAs,
-    required Type super.type,
+    required super.type,
+    super.nullable = false,
     super.addToModels,
   });
 
@@ -194,6 +195,7 @@ class JoinField extends Field {
   const JoinField(
     super.name, {
     required super.type,
+    required super.nullable,
     this.foreignKey,
     this.candidateKey,
     super.addToModels,
@@ -263,7 +265,8 @@ class Field {
   /// [ignoreRaw]: If true, this field will be excluded from the raw model class.
   const Field(
     this.name, {
-    this.type,
+    required this.type,
+    required this.nullable,
     this.addToModels = const [],
     this.ignoreRaw = false,
   });
@@ -276,10 +279,10 @@ class Field {
 
   /// The Dart type of the field.
   ///
-  /// If null, the field can be included in any model classes but will only be added
-  /// to the [className]Table constraint class. This allows for fields that are
   /// present in the database but not necessarily represented in all Dart models.
-  final Type? type;
+  final Type type;
+
+  final bool nullable;
 
   /// List of model names where this field should be included.
   /// 
