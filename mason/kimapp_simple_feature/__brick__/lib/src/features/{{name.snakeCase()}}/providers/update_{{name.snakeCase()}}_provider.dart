@@ -2,9 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../exports.dart';
-import '../{{name.snakeCase()}}_model.dart';
-import '../i_{{name.snakeCase()}}_repo.dart';
-import '../params/update_{{name.snakeCase()}}_param.dart';
+import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
 part 'update_{{name.snakeCase()}}_provider.freezed.dart';
@@ -28,7 +27,7 @@ class Update{{name.pascalCase()}}State
 
   Update{{name.pascalCase()}}Param toParam() {
     // TODO - perform validation
-    return const Update{{name.pascalCase()}}Param();
+    throw UnimplementedError();
   }
 }
 

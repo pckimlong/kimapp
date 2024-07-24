@@ -2,8 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../{{name.snakeCase()}}_model.dart';
-import '../i_{{name.snakeCase()}}_repo.dart';
+import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
 part 'delete_{{name.snakeCase()}}_provider.g.dart';
