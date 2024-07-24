@@ -195,6 +195,8 @@ class JoinField extends Field {
   /// [candidateKey]: Optional candidate key in the referenced table.
   /// [addToModels]: Optional list of model names to include this field in.
   /// [ignoreRaw]: If true, this field will be excluded from the raw model class.
+  ///
+  /// Important: JoinField cannot reference a type to itself. The type must be a different entity.
   const JoinField(
     super.name, {
     required super.type,

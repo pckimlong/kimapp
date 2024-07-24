@@ -6,6 +6,7 @@ targets:
         generate_for:
           include:
             - lib/src/features/**_model.dart
+            - lib/**.schema.dart
       kimapp_generator|kimapp_form_generator:
         enabled: true
         generate_for:
@@ -22,6 +23,11 @@ targets:
         generate_for:
           include:
             - lib/src/**_provider.dart
+      kimapp_generator|kimapp_schema_builder_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/**.dart
       json_serializable:
         enabled: true
         options:
@@ -30,6 +36,7 @@ targets:
           include:
             - lib/**_model.dart
             - lib/**_param.dart
+            - lib/**.schema.dart
       freezed|freezed:
         enabled: true
         generate_for:

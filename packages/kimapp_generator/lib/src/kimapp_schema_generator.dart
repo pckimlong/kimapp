@@ -9,73 +9,83 @@ import 'package:source_gen/source_gen.dart';
 class KimappSchemaGenerator extends Generator {
   @override
   String generate(LibraryReader library, BuildStep buildStep) {
-    try {
-      final schemas = library.annotatedWith(TypeChecker.fromRuntime(KimappSchema));
+    final schemas = library.annotatedWith(TypeChecker.fromRuntime(KimappSchema));
+    if (schemas.isEmpty) return '';
 
-      if (schemas.isEmpty) {
-        return '';
+    final buffer = StringBuffer();
+    buffer.writeln("// ignore_for_file: invalid_annotation_target, unused_import");
+    buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
+    buffer.writeln("import 'package:kimapp/kimapp.dart';");
+    buffer.writeln();
+
+    final currentFilePath = buildStep.inputId.path;
+    final currentFileName = path.basename(currentFilePath);
+    final basename = path.basenameWithoutExtension(currentFilePath);
+
+    final imports = _getSourceFileImports(library);
+    for (final import in imports) {
+      if (!import.contains(basename)) buffer.writeln(import);
+    }
+
+    buffer.writeln("import '$currentFileName';");
+    buffer.writeln();
+    buffer.writeln("part '${basename}.schema.freezed.dart';");
+    buffer.writeln("part '${basename}.schema.g.dart';");
+    buffer.writeln();
+
+    for (final schema in schemas) {
+      final annotation = ConstantReader(schema.annotation.objectValue);
+      final tableName = _safeRead(annotation, 'tableName', 'string')!;
+      final className = _safeRead(annotation, 'className', 'string') ?? tableName.pascalCase;
+      final baseModelName = _safeRead(annotation, 'baseModelName', 'string') ?? '${className}RawModel';
+      
+      final fields = _safeReadList(annotation, 'fields')
+          .map((e) => _createFieldDefinition(ConstantReader(e)))
+          .toList();
+
+      final models = _safeReadList(annotation, 'models')
+          .map((e) => ModelDefinition.fromAnnotation(ConstantReader(e)))
+          .toList();
+
+      _checkDuplicateFields(fields);
+
+      final idField = fields.firstWhereOrNull((field) => field is IdFieldDefinition);
+      if (idField != null) {
+        buffer.writeln(_generateIdClass(idField as IdFieldDefinition, className));
       }
 
-      final buffer = StringBuffer();
+      buffer.writeln(_generateTableConstraintClass(tableName, fields, className));
+      buffer.writeln(_generateBaseModelClass(baseModelName, tableName, fields));
 
-      buffer.writeln("// ignore_for_file: invalid_annotation_target, unused_import");
-      buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
-      buffer.writeln("import 'package:kimapp/kimapp.dart';");
-      buffer.writeln();
+      for (final model in models) {
+        buffer.writeln(_generateModelClass(model, fields, className, tableName));
+      }
 
-      final currentFilePath = buildStep.inputId.path;
-      final currentFileName = path.basename(currentFilePath);
-      buffer.writeln("import '$currentFileName';");
-      buffer.writeln();
-      buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.schema.freezed.dart';");
-      buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.schema.g.dart';");
-      buffer.writeln();
+      _checkIncorrectModelNames(fields, models);
+    }
 
-      for (final schema in schemas) {
-        final annotation = ConstantReader(schema.annotation.objectValue);
-        
-        final tableName = _safeRead(annotation, 'tableName', 'string')!;
-        final className = _safeRead(annotation, 'className', 'string') ?? tableName.pascalCase;
-        final baseModelName = _safeRead(annotation, 'baseModelName', 'string') ?? '${className}RawModel';
-        
-        final columns = _safeReadList(annotation, 'columns')
-            .map((e) => _createFieldDefinition(ConstantReader(e)))
-            .toList();
+    return buffer.toString();
+  }
 
-        final models = _safeReadList(annotation, 'models')
-            .map((e) => ModelDefinition.fromAnnotation(ConstantReader(e)))
-            .toList();
+   Set<String> _getSourceFileImports(LibraryReader library) {
+    final imports = Set<String>();
+    for (var import in library.element.importedLibraries) {
+        final uri = import.source.uri;
+          String importStr = "import '${uri.toString()}';";
+          
+          // Avoid duplicating package imports
+          if (!uri.isScheme('dart') &&
 
-          // Check for duplicate field names
-          _checkDuplicateFields(columns);
-
-          // Generate ID class if there's an IdField
-          final idField = columns.firstWhereOrNull((col) => col is IdFieldDefinition);
-          if (idField != null) {
-            buffer.writeln(_generateIdClass(idField as IdFieldDefinition, className));
+              !uri.toString().contains('package:flutter/') && 
+              !uri.toString().contains('package:flutter_riverpod/') &&
+              !uri.toString().contains('package:riverpod/') &&
+              !uri.toString().contains('annotation/') &&
+              !uri.toString().contains('package:kimapp/')) {
+            imports.add(importStr);
           }
+    }
 
-          // Generate table constraint class
-          buffer.writeln(_generateTableConstraintClass(tableName, columns, className));
-
-          // Generate base model class
-          buffer.writeln(_generateBaseModelClass(baseModelName, tableName, columns));
-
-          // Generate additional model classes
-          for (final model in models) {
-            buffer.writeln(_generateModelClass(model, columns, className, tableName));
-          }
-
-          // Check for incorrect model names in addToModels
-          _checkIncorrectModelNames(columns, models);
-      }
-
-      return buffer.toString();
-      } catch (e, s) {
-        print('Error in KimappSchemaGenerator: $e');
-        print('Stack trace: $s');
-        rethrow;
-      }
+    return imports;
   }
 
   String? _safeRead(ConstantReader reader, String field, String type) {
@@ -107,12 +117,14 @@ class KimappSchemaGenerator extends Generator {
 
   FieldDefinition _createFieldDefinition(ConstantReader reader) {
     try {
-      if (reader.peek('generateAs') != null) {
-        return IdFieldDefinition.fromAnnotation(reader);
-      } else if (reader.peek('foreignKey') != null) {
-        return JoinFieldDefinition.fromAnnotation(reader);
-      } else {
-        return FieldDefinition.fromAnnotation(reader);
+      final fieldType = _safeRead(reader, 'fieldType', 'string') ?? 'Field';
+      switch (fieldType) {
+        case 'IdField':
+          return IdFieldDefinition.fromAnnotation(reader);
+        case 'JoinField':
+          return JoinFieldDefinition.fromAnnotation(reader);
+        default:
+          return FieldDefinition.fromAnnotation(reader);
       }
     } catch (e) {
       print('Error creating FieldDefinition: $e');
@@ -139,54 +151,102 @@ class KimappSchemaGenerator extends Generator {
 
   String _generateIdClass(IdFieldDefinition idField, String className) {
     final idClassName = idField.generateAs ?? '${className}Id';
-    return '''
-/// Represents the unique identifier for a $className.
-class $idClassName extends Identity<${idField.type}> {
-  const $idClassName._(this.value);
+    final buffer = StringBuffer();
 
-  @override
-  final ${idField.type} value;
+    buffer.writeln('/// Represents the unique identifier for a $className.');
+    buffer.writeln('/// This class wraps the `${idField.type}` value, providing type safety and encapsulation.');
+    buffer.writeln('class $idClassName extends Identity<${idField.type}> {');
+    buffer.writeln('  const $idClassName._(this.value);');
+    buffer.writeln();
+    buffer.writeln('  @override');
+    buffer.writeln('  final ${idField.type} value;');
+    buffer.writeln();
+    buffer.writeln('  /// Creates an instance of $idClassName from a JSON value.');
+    buffer.writeln('  /// Accepts ${idField.type} representations.');
+    buffer.writeln('  /// Throws ArgumentError if the value is null or not of type ${idField.type}.');
+    buffer.writeln('  factory $idClassName.fromJson(dynamic value) {');
+    buffer.writeln('    if (value is ${idField.type}) {');
+    buffer.writeln('      return $idClassName._(value);');
+    buffer.writeln('    } else if (value == null) {');
+    buffer.writeln('      throw ArgumentError.notNull(\'value\');');
+    buffer.writeln('    } else {');
+    buffer.writeln('      throw ArgumentError(\'Value of $idClassName must be of type ${idField.type}, but was \${value.runtimeType}. Please provide the correct type.\');');
+    buffer.writeln('    }');
+    buffer.writeln('  }');
+    buffer.writeln();
+    buffer.writeln('  /// Creates an instance of $idClassName from a ${idField.type} value.');
+    buffer.writeln('  factory $idClassName.fromValue(${idField.type} value) {');
+    buffer.writeln('    return $idClassName._(value);');
+    buffer.writeln('  }');
+    buffer.writeln('}');
 
-  factory $idClassName.fromJson(dynamic value) {
-    return $idClassName._(value);
-  }
-
-  factory $idClassName.fromValue(${idField.type} value) {
-    return $idClassName._(value);
-  }
-}
-''';
+    return buffer.toString();
   }
 
   String _generateTableConstraintClass(String tableName, List<FieldDefinition> columns, String className) {
     final buffer = StringBuffer();
 
+    final idColumns = columns.where((col) => col is IdFieldDefinition).toList();
+    final regularColumns = columns.where((col) => col is! IdFieldDefinition && col is! JoinFieldDefinition).toList();
+    final joinColumns = columns.whereType<JoinFieldDefinition>().toList();
+
     buffer.writeln("/// Defines the table structure for $className.");
+    buffer.writeln("/// This class provides constant string values for table and column names,");
+    buffer.writeln("/// facilitating type-safe database operations and query building.");
     buffer.writeln("class ${className}Table {");
     buffer.writeln("  const ${className}Table._();");
     buffer.writeln();
-    buffer.writeln('  /// The name of the database table.');
+    buffer.writeln('  /// The name of the database table for $className entities.');
+    buffer.writeln('  /// Use this constant for constructing SQL queries to ensure consistency.');
     buffer.writeln('  static const String table = "${tableName.toLowerCase()}";');
     buffer.writeln();
 
     for (final column in columns) {
       if (column is JoinFieldDefinition) {
-        if (column.foreignKey != null) {
-          buffer.writeln('  /// Foreign key column: ${column.name}');
-          buffer.writeln('  static const String ${column.name.camelCase} = "${column.foreignKey}";');
-        }
+        continue;
       } else {
         buffer.writeln('  /// Column: ${column.name}');
+        buffer.writeln('  /// Represents the ${column.name.replaceAll('_', ' ')} of the $className entity.');
+        if (column is IdFieldDefinition) {
+          buffer.writeln('  /// This is the primary key column for the $className table.');
+          buffer.writeln('  /// Data type: `${column.type}`');
+        } else if (column.type != null) {
+          buffer.writeln('  /// Data type: `${column.type}`');
+        }
         buffer.writeln('  static const String ${column.name.camelCase} = "${column.name}";');
       }
+      buffer.writeln();
     }
 
+    buffer.writeln('  /// List of all column names for $className table.');
+    buffer.writeln('  static const List<String> allColumns = [');
+    for (final column in columns) {
+      if (column is JoinFieldDefinition) {
+        continue;
+      }
+      buffer.writeln('    ${column.name.camelCase},');
+    }
+    buffer.writeln('  ];');
+    buffer.writeln();
+
+    if (idColumns.isNotEmpty) {
+      buffer.writeln('  /// List of primary key column names for $className table.');
+      buffer.writeln('  static const List<String> primaryKeys = [');
+      for (final column in idColumns) {
+        buffer.writeln('    ${column.name.camelCase},');
+      }
+      buffer.writeln('  ];');
+      buffer.writeln();
+    }
+
+    buffer.writeln();
     buffer.writeln("}");
     return buffer.toString();
   }
-
+  
   String _generateBaseModelClass(String baseModelName, String tableName, List<FieldDefinition> columns) {
     final buffer = StringBuffer();
+    final idField = columns.firstWhereOrNull((col) => col is IdFieldDefinition) as IdFieldDefinition?;
 
     buffer.writeln('/// Base model class for $baseModelName.');
     buffer.writeln('@freezed');
@@ -196,13 +256,22 @@ class $idClassName extends Identity<${idField.type}> {
     buffer.writeln('  @TableModel("$tableName")');
     buffer.writeln('  const factory $baseModelName({');
 
+    // Handle ID field first
+    if (idField != null) {
+      final idType = idField.generateAs ?? '${baseModelName}Id';
+      buffer.writeln('    /// ${idField.name} field');
+      buffer.writeln('    @JsonKey(name: "${idField.name}") required $idType ${idField.name.camelCase},');
+    }
+
+    // Handle other fields
     for (final column in columns) {
-      if (!column.ignoreRaw && column.type != null) {
+      if (column is! IdFieldDefinition && !column.ignoreRaw && column.type != null) {
         final nullabilitySuffix = column.type!.endsWith('?') ? '' : '';
         final requiredKeyword = column.type!.endsWith('?') ? '' : 'required ';
         buffer.writeln('    /// ${column.name} field');
-        if (column is JoinFieldDefinition && column.foreignKey != null) {
-          buffer.writeln('    @JsonKey(name: "${column.foreignKey}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
+        if (column is JoinFieldDefinition) {
+          buffer.writeln('    @JoinedColumn(foreignKey: ${column.foreignKey == null ? null : '${column.foreignKey}'}, candidateKey: ${column.candidateKey == null ? null : '${column.candidateKey}'})');
+          buffer.writeln('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
         } else {
           buffer.writeln('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
         }
@@ -222,94 +291,130 @@ class $idClassName extends Identity<${idField.type}> {
   }
 
   String _generateModelClass(ModelDefinition model, List<FieldDefinition> schemaColumns, String className, String baseTableName) {
-  final buffer = StringBuffer();
+    final buffer = StringBuffer();
+    final idField = schemaColumns.firstWhereOrNull((col) => col is IdFieldDefinition) as IdFieldDefinition?;
 
-  buffer.writeln('/// Represents the ${model.name} model.');
-  buffer.writeln('@freezed');
-  buffer.writeln('class ${model.name} with _\$${model.name} {');
-  buffer.writeln('  const ${model.name}._();');
-  buffer.writeln();
-  
-  if (model.supabaseTable != null) {
-    final tableName = model.supabaseTable!.tableName ?? baseTableName;
-    buffer.writeln('  @TableModel("$tableName")');
-  }
-  
-  buffer.write('  const factory ${model.name}(');
-
-  final fields = <String>[];
-
-  // Add fields from schema columns that are included in this model
-  for (final column in schemaColumns) {
-    if (column.addToModels.contains(model.name) && column.type != null) {
-      final nullabilitySuffix = column.type!.endsWith('?') ? '' : '';
-      final requiredKeyword = column.type!.endsWith('?') ? '' : 'required ';
-      final fieldName = column is JoinFieldDefinition && column.foreignKey != null
-          ? column.foreignKey!
-          : column.name;
-      fields.add('    @JsonKey(name: "$fieldName") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
-    }
-  }
-
-  // Add model-specific fields
-  for (final field in model.columns) {
-    if (field.type != null) {
-      final nullabilitySuffix = field.type!.endsWith('?') ? '' : '';
-      final requiredKeyword = field.type!.endsWith('?') ? '' : 'required ';
-      fields.add('    @JsonKey(name: "${field.name}") $requiredKeyword${field.type}$nullabilitySuffix ${field.name.camelCase},');
-    }
-  }
-
-  if (fields.isNotEmpty) {
-    buffer.writeln('{');
-    buffer.writeln(fields.join('\n'));
-    buffer.writeln('  })');
-  } else {
-    buffer.writeln(')');
-  }
-
-  buffer.writeln(' = _${model.name};');
-  buffer.writeln();
-  buffer.writeln('  /// Creates an instance of ${model.name} from a JSON map.');
-  buffer.writeln('  factory ${model.name}.fromJson(Map<String, dynamic> json) => _\$${model.name}FromJson(json);');
-  
-  if (model.supabaseTable != null) {
+    buffer.writeln('/// Represents the ${model.name} model.');
+    buffer.writeln('@freezed');
+    buffer.writeln('class ${model.name} with _\$${model.name} {');
+    buffer.writeln('  const ${model.name}._();');
     buffer.writeln();
-    buffer.writeln('  /// Supabase table configuration for this model.');
-    buffer.writeln('  static const TableBuilder table = _table${model.name};');
-  }
-  
-  buffer.writeln('}');
+    
+    if (model.supabaseTable != null) {
+      final tableName = model.supabaseTable!.tableName ?? baseTableName;
+      buffer.writeln('  @TableModel("$tableName")');
+    }
+    
+    buffer.write('  const factory ${model.name}(');
 
-  return buffer.toString();
-}
+    final fields = <String>[];
+
+    // Add ID field if it exists and should be inherited
+    if (idField != null && (model.inheritAllFields || idField.addToModels.contains(model.name))) {
+      final idType = idField.generateAs ?? '${className}Id';
+      fields.add('    @JsonKey(name: "${idField.name}") required $idType ${idField.name.camelCase},');
+    }
+
+    // Add fields from schema columns that are included in this model
+    for (final column in schemaColumns) {
+      if (column is! IdFieldDefinition && 
+          (model.inheritAllFields || column.addToModels.contains(model.name)) && 
+          column.type != null) {
+        final nullabilitySuffix = column.type!.endsWith('?') ? '' : '';
+        final requiredKeyword = column.type!.endsWith('?') ? '' : 'required ';
+        if (column is JoinFieldDefinition) {
+          fields.add('    @JoinedColumn(foreignKey: ${column.foreignKey == null ? null : '${column.foreignKey}'}, candidateKey: ${column.candidateKey == null ? null : '${column.candidateKey}'})');
+          fields.add('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
+        } else {
+          fields.add('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
+        }
+      }
+    }
+
+    // Add model-specific fields
+    for (final field in model.fields) {
+      if (field.type != null) {
+        final nullabilitySuffix = field.type!.endsWith('?') ? '' : '';
+        final requiredKeyword = field.type!.endsWith('?') ? '' : 'required ';
+        if (field is JoinFieldDefinition) {
+          fields.add('    @JoinedColumn(foreignKey: "${field.foreignKey}", candidateKey: "${field.candidateKey}")');
+          fields.add('    @JsonKey(name: "${field.name}") $requiredKeyword${field.type}$nullabilitySuffix ${field.name.camelCase},');
+        } else {
+          fields.add('    @JsonKey(name: "${field.name}") $requiredKeyword${field.type}$nullabilitySuffix ${field.name.camelCase},');
+        }
+      }
+    }
+
+    if (fields.isNotEmpty) {
+      buffer.writeln('{');
+      buffer.writeln(fields.join('\n'));
+      buffer.writeln('  })');
+    } else {
+      buffer.writeln(')');
+    }
+
+    buffer.writeln(' = _${model.name};');
+    buffer.writeln();
+    buffer.writeln('  /// Creates an instance of ${model.name} from a JSON map.');
+    buffer.writeln('  factory ${model.name}.fromJson(Map<String, dynamic> json) => _\$${model.name}FromJson(json);');
+    
+    if (model.supabaseTable != null) {
+      buffer.writeln();
+      buffer.writeln('  /// Supabase table configuration for this model.');
+      buffer.writeln('  static const TableBuilder table = _table${model.name};');
+    }
+    
+    buffer.writeln('}');
+
+    return buffer.toString();
+  }
 }
 
 class FieldDefinition {
   FieldDefinition(this.name, this.type, this.addToModels, this.ignoreRaw);
-
+  
   factory FieldDefinition.fromAnnotation(ConstantReader annotation) {
-    try {
-      final name = annotation.read('name').stringValue;
-      final typeObj = annotation.read('type').objectValue;
-      final type = typeObj.toTypeValue()?.getDisplayString(withNullability: true);
-      final addToModels = annotation.read('addToModels').listValue
-          .map((e) => e.toStringValue())
-          .whereType<String>()
-          .toList();
-      final ignoreRaw = annotation.read('ignoreRaw').boolValue;
-
-      return FieldDefinition(name, type, addToModels, ignoreRaw);
-    } catch (e) {
-      print('Error in FieldDefinition.fromAnnotation: $e');
-      rethrow;
+    final name = annotation.read('name').stringValue;
+    final typeObj = annotation.peek('type');
+    
+    String? type;
+    String? typeModifier;
+    
+    if (typeObj != null && !typeObj.isNull) {
+      final typeField = typeObj.objectValue.getField('type');
+      final typeModifierField = typeObj.objectValue.getField('typeModifier');
+      
+      type = typeField?.toTypeValue()?.getDisplayString(withNullability: false);
+      typeModifier = typeModifierField?.toStringValue();
+      
+      if (type == null && typeModifier == '?') {
+        throw InvalidGenerationSourceError('Type is required for field "$name".');
+      }
+      
+      type = _constructFullType(type, typeModifier);
     }
+    
+    return FieldDefinition(
+      name,
+      type,
+      annotation.read('addToModels').listValue
+        .map((e) => e.toStringValue())
+        .whereType<String>()
+        .toList(),
+      annotation.read('ignoreRaw').boolValue,
+    );
   }
 
-  final List<String> addToModels;
-  final bool ignoreRaw;
+  static String? _constructFullType(String? baseType, String? modifier) {
+    if (baseType == null && modifier == null) return null;
+    if (modifier == null) return baseType;
+    if (modifier == '?') return '$baseType?';
+    return modifier.endsWith('?') ? modifier : modifier;
+  }
   final String name;
   final String? type;
+  final List<String> addToModels;
+  final bool ignoreRaw;
 }
 
 class IdFieldDefinition extends FieldDefinition {
@@ -320,13 +425,7 @@ class IdFieldDefinition extends FieldDefinition {
     final field = FieldDefinition.fromAnnotation(annotation);
     final generateAs = annotation.read('generateAs').stringValue;
 
-    return IdFieldDefinition(
-      field.name,
-      field.type,
-      field.addToModels,
-      field.ignoreRaw,
-      generateAs,
-    );
+    return IdFieldDefinition(field.name, field.type, field.addToModels, field.ignoreRaw, generateAs);
   }
 
   final String? generateAs;
@@ -338,49 +437,40 @@ class JoinFieldDefinition extends FieldDefinition {
 
   factory JoinFieldDefinition.fromAnnotation(ConstantReader annotation) {
     final field = FieldDefinition.fromAnnotation(annotation);
-    final foreignKey = annotation.read('foreignKey').stringValue;
-    final candidateKey = annotation.read('candidateKey').stringValue;
+    final foreignKey = annotation.peek('foreignKey')?.stringValue;
+    final candidateKey = annotation.peek('candidateKey')?.stringValue;
 
-    return JoinFieldDefinition(
-      field.name,
-      field.type,
-      field.addToModels,
-      field.ignoreRaw,
-      foreignKey,
-      candidateKey,
-    );
+    return JoinFieldDefinition(field.name, field.type, field.addToModels, field.ignoreRaw, foreignKey, candidateKey);
   }
 
-  final String? candidateKey;
   final String? foreignKey;
+  final String? candidateKey;
 }
 
 class ModelDefinition {
-  final String name;
-  final List<FieldDefinition> columns;
-  final SupabaseTable? supabaseTable;
-
-  ModelDefinition(this.name, this.columns, this.supabaseTable);
+  ModelDefinition(this.name, this.fields, this.supabaseTable, this.inheritAllFields);
 
   factory ModelDefinition.fromAnnotation(ConstantReader annotation) {
-    try {
-      final name = annotation.read('name').stringValue;
-      final columns = annotation.read('columns').listValue
-          .map((e) => FieldDefinition.fromAnnotation(ConstantReader(e)))
-          .toList();
+    final name = annotation.read('name').stringValue;
+    final fields = annotation.read('fields').listValue
+        .map((e) => FieldDefinition.fromAnnotation(ConstantReader(e)))
+        .toList();
 
-      final supabaseTableObj = annotation.peek('supabaseTable');
-      SupabaseTable? supabaseTable;
-      if (supabaseTableObj != null && !supabaseTableObj.isNull) {
-        final tableNameObj = supabaseTableObj.read('tableName');
-        final tableName = tableNameObj.isNull ? null : tableNameObj.stringValue;
-        supabaseTable = SupabaseTable(tableName: tableName);
-      }
-
-      return ModelDefinition(name, columns, supabaseTable);
-    } catch (e) {
-      print('Error in ModelDefinition.fromAnnotation: $e');
-      rethrow;
+    final supabaseTableObj = annotation.peek('supabaseTable');
+    SupabaseTable? supabaseTable;
+    if (supabaseTableObj != null && !supabaseTableObj.isNull) {
+      final tableNameObj = supabaseTableObj.read('tableName');
+      final tableName = tableNameObj.isNull ? null : tableNameObj.stringValue;
+      supabaseTable = SupabaseTable(tableName: tableName);
     }
+
+    final inheritAllFields = annotation.read('inheritAllFields').boolValue;
+
+    return ModelDefinition(name, fields, supabaseTable, inheritAllFields);
   }
+
+  final String name;
+  final List<FieldDefinition> fields;
+  final SupabaseTable? supabaseTable;
+  final bool inheritAllFields;
 }

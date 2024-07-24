@@ -6,58 +6,58 @@ part of 'kimapp_schema_example.schema.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ExampleModelImpl _$$ExampleModelImplFromJson(Map<String, dynamic> json) =>
-    _$ExampleModelImpl(
-      id: (json['id'] as num).toInt(),
+_$Example2ModelImpl _$$Example2ModelImplFromJson(Map<String, dynamic> json) =>
+    _$Example2ModelImpl(
+      id: ExmapleId.fromJson(json['id']),
       name: json['name'] as String,
-      age: (json['age'] as num).toInt(),
+      phone: json['phone'] as String,
     );
 
-Map<String, dynamic> _$$ExampleModelImplToJson(_$ExampleModelImpl instance) =>
+Map<String, dynamic> _$$Example2ModelImplToJson(_$Example2ModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'age': instance.age,
+      'phone': instance.phone,
     };
 
 _$CreateExampleParamImpl _$$CreateExampleParamImplFromJson(
         Map<String, dynamic> json) =>
     _$CreateExampleParamImpl(
       name: json['name'] as String,
-      age: (json['age'] as num).toInt(),
+      phone: json['phone'] as String,
     );
 
 Map<String, dynamic> _$$CreateExampleParamImplToJson(
         _$CreateExampleParamImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'age': instance.age,
+      'phone': instance.phone,
     };
 
-_$UpdateExampleParamImpl _$$UpdateExampleParamImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UpdateExampleParamImpl();
-
-Map<String, dynamic> _$$UpdateExampleParamImplToJson(
-        _$UpdateExampleParamImpl instance) =>
-    <String, dynamic>{};
-
 _$ExampleViewImpl _$$ExampleViewImplFromJson(Map<String, dynamic> json) =>
-    _$ExampleViewImpl();
+    _$ExampleViewImpl(
+      id: ExmapleId.fromJson(json['id']),
+      name: json['name'] as String,
+      phone: json['phone'] as String,
+    );
 
 Map<String, dynamic> _$$ExampleViewImplToJson(_$ExampleViewImpl instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'phone': instance.phone,
+    };
 
 // **************************************************************************
 // TableModelGenerator
 // **************************************************************************
 
-const _tableExampleModel = TableBuilder(
+const _tableExample2Model = TableBuilder(
   tableName: "exampleses",
   columns: [
     ColumnBuilder('id'),
     ColumnBuilder('name'),
-    ColumnBuilder('age'),
+    ColumnBuilder('phone'),
   ],
 );
 
@@ -65,16 +65,15 @@ const _tableCreateExampleParam = TableBuilder(
   tableName: "exampleses",
   columns: [
     ColumnBuilder('name'),
-    ColumnBuilder('age'),
+    ColumnBuilder('phone'),
   ],
-);
-
-const _tableUpdateExampleParam = TableBuilder(
-  tableName: "exampleses",
-  columns: [],
 );
 
 const _tableExampleView = TableBuilder(
   tableName: "v_examples",
-  columns: [],
+  columns: [
+    ColumnBuilder('id'),
+    ColumnBuilder('name'),
+    ColumnBuilder('phone'),
+  ],
 );
