@@ -112,7 +112,7 @@ class TableStructureGenerator extends Generator {
   String generate(LibraryReader library, BuildStep buildStep) {
     final providers = library.annotatedWith(TypeChecker.fromRuntime(TableStructure));
 
-     if (providers.isEmpty) {
+    if (providers.isEmpty) {
       return '';
     }
 
@@ -132,9 +132,27 @@ class TableStructureGenerator extends Generator {
     buffer.writeln();
     buffer.writeln(imports.join('\n'));
     buffer.writeln();
-    buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.freezed.dart';");
-    buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.g.dart';");
-    buffer.writeln();
+
+    bool hasGeneratedClasses = false;
+
+    // First pass: check if any classes will be generated
+    for (final provider in providers) {
+      final annotation = provider.annotation;
+      final generateRawClass = annotation.read('generateRawClass').boolValue;
+      final additionalClasses = annotation.read('additionalClasses').listValue;
+
+      if (generateRawClass || additionalClasses.isNotEmpty) {
+        hasGeneratedClasses = true;
+        break;
+      }
+    }
+
+    // Add part statements if classes will be generated
+    if (hasGeneratedClasses) {
+      buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.freezed.dart';");
+      buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.g.dart';");
+      buffer.writeln();
+    }
 
     for (final provider in providers){
       final annotation = provider.annotation;
