@@ -11,8 +11,8 @@
 ///   className: 'User',
 ///   baseModelName: 'UserModel',
 ///   columns: [
-///     IdField('id', generateAs: 'UserId', type: int),
-///     Field('name', type: String, addToModels: ['CreateUserParam', 'UpdateUserParam']),
+///     IdField('id', generateAs: 'UserId', type: T(int)),
+///     Field('name', type: T(String), addToModels: ['CreateUserParam', 'UpdateUserParam']),
 ///     // ... other fields
 ///   ],
 ///   models: [
@@ -29,7 +29,7 @@ class KimappSchema {
   /// and its associated Dart classes.
   const KimappSchema({
     required this.tableName,
-    required this.columns,
+    required this.fields,
     this.baseModelName,
     this.className,
     this.models = const [],
@@ -90,23 +90,23 @@ class KimappSchema {
   /// Example:
   /// ```dart
   /// columns: [
-  ///   IdField('id', generateAs: 'UserId', type: int),
-  ///   Field('name', type: String, addToModels: ['CreateUserParam', 'UpdateUserParam']),
-  ///   JoinField('createdBy', type: int, foreignKey: 'created_by'),
+  ///   IdField('id', generateAs: 'UserId', type: T(int)),
+  ///   Field('name', type: T(String), addToModels: ['CreateUserParam', 'UpdateUserParam']),
+  ///   JoinField('createdBy', type: T(int), foreignKey: 'created_by'),
   /// ]
   /// ```
-  final List<Field> columns;
+  final List<Field> fields;
 
   /// Additional model classes to be generated based on this schema.
   /// 
-  /// These models can include fields from [columns] (specified by [addToModels])
+  /// These models can include fields from [fields] (specified by [addToModels])
   /// and can also have their own additional fields. This allows for creating
   /// specialized models for different use cases (e.g., creation, updating, listing).
   /// 
   /// Key points:
-  /// - Models can incorporate fields from [columns] using [addToModels].
+  /// - Models can incorporate fields from [fields] using [addToModels].
   /// - Models can define their own unique fields not present in the main table.
-  /// - Duplicate field definitions (in both [columns] and model-specific fields) will raise an error.
+  /// - Duplicate field definitions (in both [fields] and model-specific fields) will raise an error.
   /// - Use [SupabaseTable] with [Model] to designate it as a table model, facilitating Supabase integration.
   /// 
   /// Example:
@@ -116,7 +116,7 @@ class KimappSchema {
   ///   Model(name: 'UpdateUserParam'),
   ///   Model(
   ///     name: 'UserListParam',
-  ///     columns: [Field('type', type: String)]
+  ///     columns: [Field('type', type: T(String))]
   ///   ),
   ///   Model(
   ///     name: 'UserTable',
@@ -141,7 +141,7 @@ class KimappSchema {
 /// IdField(
 ///   'user_id',
 ///   generateAs: 'UserId',
-///   type: int,
+///   type: T(int),
 ///   addToModels: ['UserDetails', 'UserProfile'],
 /// )
 /// ```
@@ -150,13 +150,12 @@ class IdField extends Field {
   ///
   /// [name]: The name of the ID field in the database.
   /// [generateAs]: The name to use when generating the ID type.
-  /// [type]: The Dart type of the ID field (e.g., int, String).
+  /// [type]: The type descriptor for the ID field (e.g., T(int), T(String)).
   /// [addToModels]: Optional list of model names to include this field in.
   const IdField(
     super.name, {
     required this.generateAs,
     required super.type,
-    super.nullable = false,
     super.addToModels,
   });
 
@@ -174,11 +173,13 @@ class IdField extends Field {
 /// Join fields are essential for establishing relationships between tables and
 /// often require special handling in queries and data operations.
 ///
+/// The type of a JoinField must be a custom type, typically representing the joined entity.
+///
 /// Example:
 /// ```dart
 /// JoinField(
 ///   'department',
-///   type: int,
+///   type: T(Department, 'Department?'),
 ///   foreignKey: 'department_id',
 ///   addToModels: ['EmployeeDetails'],
 /// )
@@ -187,7 +188,7 @@ class JoinField extends Field {
   /// Creates a [JoinField] instance.
   ///
   /// [name]: The name of the join field in the generated model class. e.g., 'department'
-  /// [type]: The Dart type of the join field.
+  /// [type]: The type descriptor for the join field.
   /// [foreignKey]: Optional foreign key reference (e.g., 'department_id').
   /// [candidateKey]: Optional candidate key in the referenced table.
   /// [addToModels]: Optional list of model names to include this field in.
@@ -195,7 +196,6 @@ class JoinField extends Field {
   const JoinField(
     super.name, {
     required super.type,
-    required super.nullable,
     this.foreignKey,
     this.candidateKey,
     super.addToModels,
@@ -241,6 +241,55 @@ class SupabaseTable {
   final String? tableName;
 }
 
+/// Represents a type descriptor for code generation.
+/// It captures information about the base type, nullability, and custom type names.
+class T {
+  /// The base Type (e.g., int, String, List, Map, etc.)
+  final Type type;
+
+  /// Modifier for the type. It can be:
+  /// - null: for raw types
+  /// - '?': for nullable types
+  /// - A custom type name: must match the base Type name, optionally followed by '?'
+  final String? typeModifier;
+
+  /// Constructor for T
+  /// @param type The base Type
+  /// @param typeModifier Optional modifier for nullability or custom type
+  /// 
+  /// Example:
+  /// ```dart
+  /// T(int); // base type
+  /// T(int, '?'); // base type nullable
+  /// T(int, 'UserId'); // custom type
+  /// T(int, 'UserId?'); // custom type with nullable
+  /// ```
+  T(this.type, [this.typeModifier]) {
+    assert(typeModifier == null || typeModifier == '?' || _isValidCustomType,
+        'Custom type must match the base Type name and can only end with "?"');
+  }
+
+  /// Checks if the type is nullable
+  /// @return true if the type is nullable, false otherwise
+  bool get isNullable => typeModifier == '?' || (customType?.endsWith('?') ?? false);
+
+  /// Retrieves the custom type name, if any
+  /// @return The custom type name without '?', or null if not a custom type
+  String? get customType {
+    if (typeModifier == null || typeModifier == '?') return null;
+    return typeModifier!.endsWith('?') 
+        ? typeModifier!.substring(0, typeModifier!.length - 1) 
+        : typeModifier;
+  }
+
+  /// Validates if the custom type is correctly formatted
+  bool get _isValidCustomType {
+    if (typeModifier == null || typeModifier == '?') return true;
+    var baseName = type.toString().replaceAll('?', '');
+    return typeModifier == baseName || typeModifier == '$baseName?';
+  }
+}
+
 /// Represents a field in a database table or model.
 ///
 /// This class is the base for all field types and can be used for standard columns.
@@ -251,7 +300,7 @@ class SupabaseTable {
 /// ```dart
 /// Field(
 ///   'email',
-///   type: String,
+///   type: T(String),
 ///   addToModels: ['UserSignup', 'UserProfile'],
 ///   ignoreRaw: false,
 /// )
@@ -259,14 +308,13 @@ class SupabaseTable {
 class Field {
   /// Creates a [Field] instance.
   ///
-  /// [name]: The name of the field.
-  /// [type]: The Dart type of the field (optional).
-  /// [addToModels]: List of model names to include this field in.
-  /// [ignoreRaw]: If true, this field will be excluded from the raw model class.
+  /// [name]: The name of the field in the database or model.
+  /// [type]: The type descriptor for the field.
+  /// [addToModels]: List of model names to include this field in (optional).
+  /// [ignoreRaw]: If true, this field will be excluded from the raw model class (optional).
   const Field(
     this.name, {
-    required this.type,
-    required this.nullable,
+    this.type,
     this.addToModels = const [],
     this.ignoreRaw = false,
   });
@@ -277,13 +325,27 @@ class Field {
   /// property name in the Dart model.
   final String name;
 
-  /// The Dart type of the field.
+  /// The type descriptor for the field.
   ///
-  /// present in the database but not necessarily represented in all Dart models.
-  final Type type;
-
-  final bool nullable;
-
+  /// This property specifies the data type of the field using the [T] class.
+  /// It supports both primitive Dart types and custom types.
+  /// 
+  /// Examples:
+  /// ```dart
+  /// Field('age', type: T(int))
+  /// Field('name', type: T(String))
+  /// Field('isActive', type: T(bool))
+  /// Field('createdAt', type: T(DateTime))
+  /// Field('nickname', type: T(String, '?')) // Nullable type
+  /// Field('userId', type: T(int, 'UserId')) // Custom type
+  /// Field('optionalId', type: T(int, 'UserId?')) // Nullable custom type
+  /// ```
+  ///
+  /// Note: Complex types like List or Map should be handled using custom types.
+  /// All custom types that cannot be resolved by the generator will require
+  /// explicit specification to ensure proper type handling and code generation.
+  final T? type;
+  
   /// List of model names where this field should be included.
   /// 
   /// This allows for selective inclusion of fields in different model types.
@@ -298,6 +360,7 @@ class Field {
   final bool ignoreRaw;
 }
 
+
 /// Represents a model in the application, which can correspond to a database table or a custom data structure.
 ///
 /// This class is used to define the structure of models, including their fields and Supabase table information.
@@ -308,18 +371,20 @@ class Field {
 /// Model(
 ///   name: 'User',
 ///   columns: [
-///     Field('name', type: String),
-///     Field('age', type: int),
+///     Field('name', type: T(String)),
+///     Field('age', type: T(int)),
 ///   ],
 ///   supabaseTable: SupabaseTable(tableName: 'users'),
+///   inheritAllFields: true,
 /// )
 /// ```
 class Model {
   /// Creates a [Model] instance.
   ///
-  /// [name]: The name of the model.
-  /// [columns]: Additional fields/columns in the model.
-  /// [supabaseTable]: Optional Supabase table configuration for this model.
+  /// [name]: The name of the model. This will be used as the class name for the generated model in Dart.
+  /// [columns]: Additional fields/columns specific to this model. These are optional and can extend or override the base schema.
+  /// [supabaseTable]: Optional Supabase table configuration for this model. When provided, it instructs the code generator to create a Kimapp table model with Supabase-specific functionality.
+  /// [inheritAllFields]: If true, all fields from [KimappSchema.fields] will be included in this model, even if not specified in addToModels. Defaults to false.
   const Model({
     required this.name,
     this.columns = const [],
@@ -330,22 +395,47 @@ class Model {
   /// The name of the model.
   ///
   /// This will be used as the class name for the generated model in Dart.
+  /// It should follow Dart naming conventions, typically starting with an uppercase letter.
   final String name;
 
-  /// List of fields/columns in the model.
+  /// List of fields/columns specific to this model.
   /// 
-  /// This field is optional, as the model can inherit fields from [KimappSchema.columns].
+  /// This property is optional, as the model can inherit fields from [KimappSchema.fields].
   /// However, additional fields can be defined here to extend or override the base schema.
+  /// These fields are in addition to any fields inherited from the base schema or included via [addToModels].
+  ///
+  /// Example:
+  /// ```dart
+  /// columns: [
+  ///   Field('lastLoginDate', type: T(DateTime)),
+  ///   Field('isVerified', type: T(bool)),
+  /// ]
+  /// ```
   final List<Field> columns;
 
   /// Supabase table configuration for this model, if applicable.
   /// 
   /// When provided, this instructs the code generator to create a Kimapp table model,
   /// which includes Supabase-specific functionality for database operations.
+  /// This is particularly useful when the model directly corresponds to a Supabase table.
+  ///
+  /// Example:
+  /// ```dart
+  /// supabaseTable: SupabaseTable(tableName: 'users')
+  /// ```
   final SupabaseTable? supabaseTable;
 
-  /// If true, all fields in [KimappSchema.columns] will be included in this model. even it not specify in addToModels.
+  /// Determines whether all fields from [KimappSchema.fields] should be included in this model.
   /// 
-  /// default is false.
+  /// If true, all fields in [KimappSchema.fields] will be included in this model, 
+  /// even if they are not explicitly specified in [addToModels].
+  /// This is useful for creating comprehensive models that include all table fields.
+  ///
+  /// Default is false, meaning only fields specified in [addToModels] or in this model's [columns] are included.
+  ///
+  /// Example:
+  /// ```dart
+  /// inheritAllFields: true
+  /// ```
   final bool inheritAllFields;
 }
