@@ -264,10 +264,8 @@ class T {
   /// T(int, 'UserId'); // custom type
   /// T(int, 'UserId?'); // custom type with nullable
   /// ```
-  T(this.type, [this.typeModifier]) {
-    assert(typeModifier == null || typeModifier == '?' || _isValidCustomType,
-        'Custom type must match the base Type name and can only end with "?"');
-  }
+  const T(this.type, [this.typeModifier]);
+  
 
   /// Checks if the type is nullable
   /// @return true if the type is nullable, false otherwise
@@ -280,13 +278,6 @@ class T {
     return typeModifier!.endsWith('?') 
         ? typeModifier!.substring(0, typeModifier!.length - 1) 
         : typeModifier;
-  }
-
-  /// Validates if the custom type is correctly formatted
-  bool get _isValidCustomType {
-    if (typeModifier == null || typeModifier == '?') return true;
-    var baseName = type.toString().replaceAll('?', '');
-    return typeModifier == baseName || typeModifier == '$baseName?';
   }
 }
 
