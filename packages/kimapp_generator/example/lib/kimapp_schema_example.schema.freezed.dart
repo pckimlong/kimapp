@@ -14,46 +14,46 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-ExampleModel _$ExampleModelFromJson(Map<String, dynamic> json) {
-  return _ExampleModel.fromJson(json);
+Example2Model _$Example2ModelFromJson(Map<String, dynamic> json) {
+  return _Example2Model.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ExampleModel {
+mixin _$Example2Model {
   /// id field
   @JsonKey(name: "id")
-  int get id => throw _privateConstructorUsedError;
+  ExmapleId get id => throw _privateConstructorUsedError;
 
   /// name field
   @JsonKey(name: "name")
   String get name => throw _privateConstructorUsedError;
 
-  /// age field
-  @JsonKey(name: "age")
-  int get age => throw _privateConstructorUsedError;
+  /// phone field
+  @JsonKey(name: "phone")
+  String get phone => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ExampleModelCopyWith<ExampleModel> get copyWith =>
+  $Example2ModelCopyWith<Example2Model> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ExampleModelCopyWith<$Res> {
-  factory $ExampleModelCopyWith(
-          ExampleModel value, $Res Function(ExampleModel) then) =
-      _$ExampleModelCopyWithImpl<$Res, ExampleModel>;
+abstract class $Example2ModelCopyWith<$Res> {
+  factory $Example2ModelCopyWith(
+          Example2Model value, $Res Function(Example2Model) then) =
+      _$Example2ModelCopyWithImpl<$Res, Example2Model>;
   @useResult
   $Res call(
-      {@JsonKey(name: "id") int id,
+      {@JsonKey(name: "id") ExmapleId id,
       @JsonKey(name: "name") String name,
-      @JsonKey(name: "age") int age});
+      @JsonKey(name: "phone") String phone});
 }
 
 /// @nodoc
-class _$ExampleModelCopyWithImpl<$Res, $Val extends ExampleModel>
-    implements $ExampleModelCopyWith<$Res> {
-  _$ExampleModelCopyWithImpl(this._value, this._then);
+class _$Example2ModelCopyWithImpl<$Res, $Val extends Example2Model>
+    implements $Example2ModelCopyWith<$Res> {
+  _$Example2ModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -65,45 +65,45 @@ class _$ExampleModelCopyWithImpl<$Res, $Val extends ExampleModel>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? age = null,
+    Object? phone = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as ExmapleId,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      age: null == age
-          ? _value.age
-          : age // ignore: cast_nullable_to_non_nullable
-              as int,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$ExampleModelImplCopyWith<$Res>
-    implements $ExampleModelCopyWith<$Res> {
-  factory _$$ExampleModelImplCopyWith(
-          _$ExampleModelImpl value, $Res Function(_$ExampleModelImpl) then) =
-      __$$ExampleModelImplCopyWithImpl<$Res>;
+abstract class _$$Example2ModelImplCopyWith<$Res>
+    implements $Example2ModelCopyWith<$Res> {
+  factory _$$Example2ModelImplCopyWith(
+          _$Example2ModelImpl value, $Res Function(_$Example2ModelImpl) then) =
+      __$$Example2ModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "id") int id,
+      {@JsonKey(name: "id") ExmapleId id,
       @JsonKey(name: "name") String name,
-      @JsonKey(name: "age") int age});
+      @JsonKey(name: "phone") String phone});
 }
 
 /// @nodoc
-class __$$ExampleModelImplCopyWithImpl<$Res>
-    extends _$ExampleModelCopyWithImpl<$Res, _$ExampleModelImpl>
-    implements _$$ExampleModelImplCopyWith<$Res> {
-  __$$ExampleModelImplCopyWithImpl(
-      _$ExampleModelImpl _value, $Res Function(_$ExampleModelImpl) _then)
+class __$$Example2ModelImplCopyWithImpl<$Res>
+    extends _$Example2ModelCopyWithImpl<$Res, _$Example2ModelImpl>
+    implements _$$Example2ModelImplCopyWith<$Res> {
+  __$$Example2ModelImplCopyWithImpl(
+      _$Example2ModelImpl _value, $Res Function(_$Example2ModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -111,21 +111,21 @@ class __$$ExampleModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? age = null,
+    Object? phone = null,
   }) {
-    return _then(_$ExampleModelImpl(
+    return _then(_$Example2ModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as ExmapleId,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      age: null == age
-          ? _value.age
-          : age // ignore: cast_nullable_to_non_nullable
-              as int,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -133,79 +133,80 @@ class __$$ExampleModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 @TableModel("exampleses")
-class _$ExampleModelImpl extends _ExampleModel {
-  const _$ExampleModelImpl(
+class _$Example2ModelImpl extends _Example2Model {
+  const _$Example2ModelImpl(
       {@JsonKey(name: "id") required this.id,
       @JsonKey(name: "name") required this.name,
-      @JsonKey(name: "age") required this.age})
+      @JsonKey(name: "phone") required this.phone})
       : super._();
 
-  factory _$ExampleModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ExampleModelImplFromJson(json);
+  factory _$Example2ModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$Example2ModelImplFromJson(json);
 
   /// id field
   @override
   @JsonKey(name: "id")
-  final int id;
+  final ExmapleId id;
 
   /// name field
   @override
   @JsonKey(name: "name")
   final String name;
 
-  /// age field
+  /// phone field
   @override
-  @JsonKey(name: "age")
-  final int age;
+  @JsonKey(name: "phone")
+  final String phone;
 
   @override
   String toString() {
-    return 'ExampleModel(id: $id, name: $name, age: $age)';
+    return 'Example2Model(id: $id, name: $name, phone: $phone)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ExampleModelImpl &&
+            other is _$Example2ModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.age, age) || other.age == age));
+            (identical(other.phone, phone) || other.phone == phone));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, age);
+  int get hashCode => Object.hash(runtimeType, id, name, phone);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ExampleModelImplCopyWith<_$ExampleModelImpl> get copyWith =>
-      __$$ExampleModelImplCopyWithImpl<_$ExampleModelImpl>(this, _$identity);
+  _$$Example2ModelImplCopyWith<_$Example2ModelImpl> get copyWith =>
+      __$$Example2ModelImplCopyWithImpl<_$Example2ModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ExampleModelImplToJson(
+    return _$$Example2ModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _ExampleModel extends ExampleModel {
-  const factory _ExampleModel(
-      {@JsonKey(name: "id") required final int id,
-      @JsonKey(name: "name") required final String name,
-      @JsonKey(name: "age") required final int age}) = _$ExampleModelImpl;
-  const _ExampleModel._() : super._();
+abstract class _Example2Model extends Example2Model {
+  const factory _Example2Model(
+          {@JsonKey(name: "id") required final ExmapleId id,
+          @JsonKey(name: "name") required final String name,
+          @JsonKey(name: "phone") required final String phone}) =
+      _$Example2ModelImpl;
+  const _Example2Model._() : super._();
 
-  factory _ExampleModel.fromJson(Map<String, dynamic> json) =
-      _$ExampleModelImpl.fromJson;
+  factory _Example2Model.fromJson(Map<String, dynamic> json) =
+      _$Example2ModelImpl.fromJson;
 
   @override
 
   /// id field
   @JsonKey(name: "id")
-  int get id;
+  ExmapleId get id;
   @override
 
   /// name field
@@ -213,12 +214,12 @@ abstract class _ExampleModel extends ExampleModel {
   String get name;
   @override
 
-  /// age field
-  @JsonKey(name: "age")
-  int get age;
+  /// phone field
+  @JsonKey(name: "phone")
+  String get phone;
   @override
   @JsonKey(ignore: true)
-  _$$ExampleModelImplCopyWith<_$ExampleModelImpl> get copyWith =>
+  _$$Example2ModelImplCopyWith<_$Example2ModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -230,8 +231,8 @@ CreateExampleParam _$CreateExampleParamFromJson(Map<String, dynamic> json) {
 mixin _$CreateExampleParam {
   @JsonKey(name: "name")
   String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: "age")
-  int get age => throw _privateConstructorUsedError;
+  @JsonKey(name: "phone")
+  String get phone => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -246,7 +247,8 @@ abstract class $CreateExampleParamCopyWith<$Res> {
       _$CreateExampleParamCopyWithImpl<$Res, CreateExampleParam>;
   @useResult
   $Res call(
-      {@JsonKey(name: "name") String name, @JsonKey(name: "age") int age});
+      {@JsonKey(name: "name") String name,
+      @JsonKey(name: "phone") String phone});
 }
 
 /// @nodoc
@@ -263,17 +265,17 @@ class _$CreateExampleParamCopyWithImpl<$Res, $Val extends CreateExampleParam>
   @override
   $Res call({
     Object? name = null,
-    Object? age = null,
+    Object? phone = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      age: null == age
-          ? _value.age
-          : age // ignore: cast_nullable_to_non_nullable
-              as int,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -287,7 +289,8 @@ abstract class _$$CreateExampleParamImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "name") String name, @JsonKey(name: "age") int age});
+      {@JsonKey(name: "name") String name,
+      @JsonKey(name: "phone") String phone});
 }
 
 /// @nodoc
@@ -302,17 +305,17 @@ class __$$CreateExampleParamImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = null,
-    Object? age = null,
+    Object? phone = null,
   }) {
     return _then(_$CreateExampleParamImpl(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      age: null == age
-          ? _value.age
-          : age // ignore: cast_nullable_to_non_nullable
-              as int,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -323,7 +326,7 @@ class __$$CreateExampleParamImplCopyWithImpl<$Res>
 class _$CreateExampleParamImpl extends _CreateExampleParam {
   const _$CreateExampleParamImpl(
       {@JsonKey(name: "name") required this.name,
-      @JsonKey(name: "age") required this.age})
+      @JsonKey(name: "phone") required this.phone})
       : super._();
 
   factory _$CreateExampleParamImpl.fromJson(Map<String, dynamic> json) =>
@@ -333,12 +336,12 @@ class _$CreateExampleParamImpl extends _CreateExampleParam {
   @JsonKey(name: "name")
   final String name;
   @override
-  @JsonKey(name: "age")
-  final int age;
+  @JsonKey(name: "phone")
+  final String phone;
 
   @override
   String toString() {
-    return 'CreateExampleParam(name: $name, age: $age)';
+    return 'CreateExampleParam(name: $name, phone: $phone)';
   }
 
   @override
@@ -347,12 +350,12 @@ class _$CreateExampleParamImpl extends _CreateExampleParam {
         (other.runtimeType == runtimeType &&
             other is _$CreateExampleParamImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.age, age) || other.age == age));
+            (identical(other.phone, phone) || other.phone == phone));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, age);
+  int get hashCode => Object.hash(runtimeType, name, phone);
 
   @JsonKey(ignore: true)
   @override
@@ -371,8 +374,9 @@ class _$CreateExampleParamImpl extends _CreateExampleParam {
 
 abstract class _CreateExampleParam extends CreateExampleParam {
   const factory _CreateExampleParam(
-      {@JsonKey(name: "name") required final String name,
-      @JsonKey(name: "age") required final int age}) = _$CreateExampleParamImpl;
+          {@JsonKey(name: "name") required final String name,
+          @JsonKey(name: "phone") required final String phone}) =
+      _$CreateExampleParamImpl;
   const _CreateExampleParam._() : super._();
 
   factory _CreateExampleParam.fromJson(Map<String, dynamic> json) =
@@ -382,95 +386,12 @@ abstract class _CreateExampleParam extends CreateExampleParam {
   @JsonKey(name: "name")
   String get name;
   @override
-  @JsonKey(name: "age")
-  int get age;
+  @JsonKey(name: "phone")
+  String get phone;
   @override
   @JsonKey(ignore: true)
   _$$CreateExampleParamImplCopyWith<_$CreateExampleParamImpl> get copyWith =>
       throw _privateConstructorUsedError;
-}
-
-UpdateExampleParam _$UpdateExampleParamFromJson(Map<String, dynamic> json) {
-  return _UpdateExampleParam.fromJson(json);
-}
-
-/// @nodoc
-mixin _$UpdateExampleParam {
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $UpdateExampleParamCopyWith<$Res> {
-  factory $UpdateExampleParamCopyWith(
-          UpdateExampleParam value, $Res Function(UpdateExampleParam) then) =
-      _$UpdateExampleParamCopyWithImpl<$Res, UpdateExampleParam>;
-}
-
-/// @nodoc
-class _$UpdateExampleParamCopyWithImpl<$Res, $Val extends UpdateExampleParam>
-    implements $UpdateExampleParamCopyWith<$Res> {
-  _$UpdateExampleParamCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-}
-
-/// @nodoc
-abstract class _$$UpdateExampleParamImplCopyWith<$Res> {
-  factory _$$UpdateExampleParamImplCopyWith(_$UpdateExampleParamImpl value,
-          $Res Function(_$UpdateExampleParamImpl) then) =
-      __$$UpdateExampleParamImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$UpdateExampleParamImplCopyWithImpl<$Res>
-    extends _$UpdateExampleParamCopyWithImpl<$Res, _$UpdateExampleParamImpl>
-    implements _$$UpdateExampleParamImplCopyWith<$Res> {
-  __$$UpdateExampleParamImplCopyWithImpl(_$UpdateExampleParamImpl _value,
-      $Res Function(_$UpdateExampleParamImpl) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-@JsonSerializable()
-@TableModel("exampleses")
-class _$UpdateExampleParamImpl extends _UpdateExampleParam {
-  const _$UpdateExampleParamImpl() : super._();
-
-  factory _$UpdateExampleParamImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UpdateExampleParamImplFromJson(json);
-
-  @override
-  String toString() {
-    return 'UpdateExampleParam()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$UpdateExampleParamImpl);
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UpdateExampleParamImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _UpdateExampleParam extends UpdateExampleParam {
-  const factory _UpdateExampleParam() = _$UpdateExampleParamImpl;
-  const _UpdateExampleParam._() : super._();
-
-  factory _UpdateExampleParam.fromJson(Map<String, dynamic> json) =
-      _$UpdateExampleParamImpl.fromJson;
 }
 
 ExampleView _$ExampleViewFromJson(Map<String, dynamic> json) {
@@ -479,7 +400,17 @@ ExampleView _$ExampleViewFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ExampleView {
+  @JsonKey(name: "id")
+  ExmapleId get id => throw _privateConstructorUsedError;
+  @JsonKey(name: "name")
+  String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: "phone")
+  String get phone => throw _privateConstructorUsedError;
+
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ExampleViewCopyWith<ExampleView> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -487,6 +418,11 @@ abstract class $ExampleViewCopyWith<$Res> {
   factory $ExampleViewCopyWith(
           ExampleView value, $Res Function(ExampleView) then) =
       _$ExampleViewCopyWithImpl<$Res, ExampleView>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") ExmapleId id,
+      @JsonKey(name: "name") String name,
+      @JsonKey(name: "phone") String phone});
 }
 
 /// @nodoc
@@ -498,13 +434,43 @@ class _$ExampleViewCopyWithImpl<$Res, $Val extends ExampleView>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? phone = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as ExmapleId,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$ExampleViewImplCopyWith<$Res> {
+abstract class _$$ExampleViewImplCopyWith<$Res>
+    implements $ExampleViewCopyWith<$Res> {
   factory _$$ExampleViewImplCopyWith(
           _$ExampleViewImpl value, $Res Function(_$ExampleViewImpl) then) =
       __$$ExampleViewImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") ExmapleId id,
+      @JsonKey(name: "name") String name,
+      @JsonKey(name: "phone") String phone});
 }
 
 /// @nodoc
@@ -514,31 +480,78 @@ class __$$ExampleViewImplCopyWithImpl<$Res>
   __$$ExampleViewImplCopyWithImpl(
       _$ExampleViewImpl _value, $Res Function(_$ExampleViewImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? phone = null,
+  }) {
+    return _then(_$ExampleViewImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as ExmapleId,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 @JsonSerializable()
 @TableModel("v_examples")
 class _$ExampleViewImpl extends _ExampleView {
-  const _$ExampleViewImpl() : super._();
+  const _$ExampleViewImpl(
+      {@JsonKey(name: "id") required this.id,
+      @JsonKey(name: "name") required this.name,
+      @JsonKey(name: "phone") required this.phone})
+      : super._();
 
   factory _$ExampleViewImpl.fromJson(Map<String, dynamic> json) =>
       _$$ExampleViewImplFromJson(json);
 
   @override
+  @JsonKey(name: "id")
+  final ExmapleId id;
+  @override
+  @JsonKey(name: "name")
+  final String name;
+  @override
+  @JsonKey(name: "phone")
+  final String phone;
+
+  @override
   String toString() {
-    return 'ExampleView()';
+    return 'ExampleView(id: $id, name: $name, phone: $phone)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ExampleViewImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$ExampleViewImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.phone, phone) || other.phone == phone));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, id, name, phone);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ExampleViewImplCopyWith<_$ExampleViewImpl> get copyWith =>
+      __$$ExampleViewImplCopyWithImpl<_$ExampleViewImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -549,9 +562,26 @@ class _$ExampleViewImpl extends _ExampleView {
 }
 
 abstract class _ExampleView extends ExampleView {
-  const factory _ExampleView() = _$ExampleViewImpl;
+  const factory _ExampleView(
+      {@JsonKey(name: "id") required final ExmapleId id,
+      @JsonKey(name: "name") required final String name,
+      @JsonKey(name: "phone") required final String phone}) = _$ExampleViewImpl;
   const _ExampleView._() : super._();
 
   factory _ExampleView.fromJson(Map<String, dynamic> json) =
       _$ExampleViewImpl.fromJson;
+
+  @override
+  @JsonKey(name: "id")
+  ExmapleId get id;
+  @override
+  @JsonKey(name: "name")
+  String get name;
+  @override
+  @JsonKey(name: "phone")
+  String get phone;
+  @override
+  @JsonKey(ignore: true)
+  _$$ExampleViewImplCopyWith<_$ExampleViewImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
