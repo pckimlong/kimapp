@@ -1,3 +1,5 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 /// Represents the schema configuration for a Kimapp database table.
 ///
 /// This class is used as an annotation to define the structure and properties
@@ -157,7 +159,7 @@ class IdField extends Field {
     required this.generateAs,
     required super.type,
     super.addToModels,
-  });
+  }): super(fieldType: 'IdField');
 
   /// The name to use when generating the ID type.
   ///
@@ -200,7 +202,7 @@ class JoinField extends Field {
     this.candidateKey,
     super.addToModels,
     super.ignoreRaw,
-  });
+  }): super(fieldType: 'JoinField');
 
   /// The foreign key reference, typically in the format 'table.column'.
   ///
@@ -308,6 +310,7 @@ class Field {
     this.type,
     this.addToModels = const [],
     this.ignoreRaw = false,
+    this.fieldType = 'Field',
   });
 
   /// The name of the field in the database or model.
@@ -349,6 +352,15 @@ class Field {
   /// of the model, such as computed fields or fields that are only relevant in
   /// certain contexts.
   final bool ignoreRaw;
+
+
+  /// The type of the field.
+  /// don't use this, it's for internal use only
+  ///
+  /// This is used to determine the type of the field in the generated code.
+  /// It is not used for runtime operations.
+  @internal
+  final String fieldType;
 }
 
 
