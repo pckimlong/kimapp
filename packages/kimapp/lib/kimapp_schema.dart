@@ -378,7 +378,7 @@ class Model {
   /// [inheritAllFields]: If true, all fields from [KimappSchema.fields] will be included in this model, even if not specified in addToModels. Defaults to false.
   const Model({
     required this.name,
-    this.columns = const [],
+    this.fields = const [],
     this.supabaseTable,
     this.inheritAllFields = false,
   });
@@ -397,12 +397,12 @@ class Model {
   ///
   /// Example:
   /// ```dart
-  /// columns: [
+  /// fields: [
   ///   Field('lastLoginDate', type: T(DateTime)),
   ///   Field('isVerified', type: T(bool)),
   /// ]
   /// ```
-  final List<Field> columns;
+  final List<Field> fields;
 
   /// Supabase table configuration for this model, if applicable.
   /// 
@@ -422,7 +422,7 @@ class Model {
   /// even if they are not explicitly specified in [addToModels].
   /// This is useful for creating comprehensive models that include all table fields.
   ///
-  /// Default is false, meaning only fields specified in [addToModels] or in this model's [columns] are included.
+  /// Default is false, meaning only fields specified in [addToModels] or in this model's [fields] are included.
   ///
   /// Example:
   /// ```dart
