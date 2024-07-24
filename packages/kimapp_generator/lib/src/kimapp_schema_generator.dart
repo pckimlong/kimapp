@@ -270,7 +270,7 @@ class KimappSchemaGenerator extends Generator {
         final requiredKeyword = column.type!.endsWith('?') ? '' : 'required ';
         buffer.writeln('    /// ${column.name} field');
         if (column is JoinFieldDefinition) {
-          buffer.writeln('    @JoinedColumn(foreignKey: ${column.foreignKey == null ? null : "${column.foreignKey}"}, candidateKey: ${column.candidateKey == null ? null : "${column.candidateKey}"})');
+          buffer.writeln('    @JoinedColumn(foreignKey: ${column.foreignKey == null ? null : '"${column.foreignKey}"'}, candidateKey: ${column.candidateKey == null ? null : '"${column.candidateKey}"'})');
           buffer.writeln('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
         } else {
           buffer.writeln('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
@@ -323,7 +323,7 @@ class KimappSchemaGenerator extends Generator {
         final nullabilitySuffix = column.type!.endsWith('?') ? '' : '';
         final requiredKeyword = column.type!.endsWith('?') ? '' : 'required ';
         if (column is JoinFieldDefinition) {
-          fields.add('    @JoinedColumn(foreignKey: ${column.foreignKey == null ? null : "${column.foreignKey}"}, candidateKey: ${column.candidateKey == null ? null : "${column.candidateKey}"})');
+          fields.add('    @JoinedColumn(foreignKey: ${column.foreignKey == null ? null : '"${column.foreignKey}"'}, candidateKey: ${column.candidateKey == null ? null : '"${column.candidateKey}"'})');
           fields.add('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
         } else {
           fields.add('    @JsonKey(name: "${column.name}") $requiredKeyword${column.type}$nullabilitySuffix ${column.name.camelCase},');
@@ -337,7 +337,7 @@ class KimappSchemaGenerator extends Generator {
         final nullabilitySuffix = field.type!.endsWith('?') ? '' : '';
         final requiredKeyword = field.type!.endsWith('?') ? '' : 'required ';
         if (field is JoinFieldDefinition) {
-          fields.add('    @JoinedColumn(foreignKey: "${field.foreignKey}", candidateKey: "${field.candidateKey}")');
+          fields.add('    @JoinedColumn(foreignKey: ${field.foreignKey == null ? null : '"${field.foreignKey}"'}, candidateKey: ${field.candidateKey == null ? null : '"${field.candidateKey}"'})');
           fields.add('    @JsonKey(name: "${field.name}") $requiredKeyword${field.type}$nullabilitySuffix ${field.name.camelCase},');
         } else {
           fields.add('    @JsonKey(name: "${field.name}") $requiredKeyword${field.type}$nullabilitySuffix ${field.name.camelCase},');
