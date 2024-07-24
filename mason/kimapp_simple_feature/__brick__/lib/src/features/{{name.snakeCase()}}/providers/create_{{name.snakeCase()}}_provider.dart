@@ -4,9 +4,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
 import '../../../../exports.dart';
-import '../{{name.snakeCase()}}_model.dart';
-import '../i_{{name.snakeCase()}}_repo.dart';
-import '../params/create_{{name.snakeCase()}}_param.dart';
+import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
 part 'create_{{name.snakeCase()}}_provider.freezed.dart';
@@ -29,7 +28,8 @@ class Create{{name.pascalCase()}}State
 
   Create{{name.pascalCase()}}Param toParam() {
     // TODO - perform validation
-    return const Create{{name.pascalCase()}}Param();
+    
+    throw UnimplementedError();
   }
 }
 

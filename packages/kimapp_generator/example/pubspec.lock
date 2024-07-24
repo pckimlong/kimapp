@@ -360,7 +360,7 @@ packages:
     description:
       path: "packages/kimapp"
       ref: master
-      resolved-ref: "495bac2f0942d323d2221e006beee8cc59d1dd1c"
+      resolved-ref: "0ccc6e13b6ff291a276f6f95922d8d6f2455027d"
       url: "https://github.com/pckimlong/kimapp.git"
     source: git
     version: "0.0.1"

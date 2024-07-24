@@ -1,13 +1,15 @@
 
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../exports.dart';
-import '../{{name.snakeCase()}}_model.dart';
-import '../i_{{name.snakeCase()}}_repo.dart';
+import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}_repo.dart';
+
+export '{{name.snakeCase()}}_list_provider.widget.dart';
 
 part '{{name.snakeCase()}}_list_provider.g.dart';
 
+@stateWidget
 @riverpod
 class {{name.pascalCase()}}List extends _${{name.pascalCase()}}List {
   @override

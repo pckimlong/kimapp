@@ -4,8 +4,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../exports.dart';
 
 import '../params/params.dart';
-import '../{{name.snakeCase()}}_model.dart';
-import '../i_{{name.snakeCase()}}_repo.dart';
+import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}_repo.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 
