@@ -364,6 +364,8 @@ class JoinField<DataType> extends BaseField<DataType> {
 
   /// Specifies the foreign key for the join relationship.
   ///
+  /// foreight Key will automatically add to class as ignore field
+  ///
   /// @param key The name of the foreign key in the database.
   /// @return A new [JoinField] instance with the specified foreign key.
   JoinField<DataType> withForeignKey(String key) => JoinField(
