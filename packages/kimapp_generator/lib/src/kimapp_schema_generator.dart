@@ -940,16 +940,15 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   // Handle other fields
   for (final field in fields) {
     if (field is! _IdField) {
-      final nullabilitySuffix = field.dataType.endsWith('?') ? '' : '';
       final requiredKeyword = field.dataType.endsWith('?') ? '' : 'required ';
       if (field is _JoinField) {
         buffer.writeln(
             '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
         buffer.writeln(
-            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
       } else {
         buffer.writeln(
-            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
       }
     }
   }
@@ -1011,7 +1010,6 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
 
   // Generate fields
   for (final field in model.fields) {
-    final nullabilitySuffix = field.dataType.endsWith('?') ? '' : '';
     final requiredKeyword = 'required ';
 
     if (field is _IdField) {
@@ -1022,10 +1020,10 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
       fields.add(
           '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
     } else {
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
     }
   }
 
