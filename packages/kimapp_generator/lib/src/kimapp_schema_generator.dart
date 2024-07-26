@@ -10,7 +10,7 @@ import 'package:source_gen/source_gen.dart';
 
 class KimappSchemaGenerator extends Generator {
   @override
-  String generate(LibraryReader library, BuildStep buildStep) {
+  Future<String> generate(LibraryReader library, BuildStep buildStep) async {
     final schemas = library.annotatedWith(TypeChecker.fromRuntime(Schema));
     if (schemas.isEmpty) return '';
 
@@ -18,21 +18,26 @@ class KimappSchemaGenerator extends Generator {
     _writeFileHeader(buffer, library, buildStep);
 
     for (var schema in schemas) {
-      _processSchema(schema, buffer);
+      await _processSchema(buildStep, schema, buffer);
     }
 
     return buffer.toString();
   }
 
-  void _processSchema(AnnotatedElement schema, StringBuffer buffer) {
+  Future<void> _processSchema(
+    BuildStep buildStep,
+    AnnotatedElement schema,
+    StringBuffer buffer,
+  ) async {
     _checkValidSchemaElement(schema);
 
     final annotation = schema.annotation;
     final schemaMetaData = _SchemaMetaData.fromAnnotation(annotation);
 
     final classElement = schema.element as ClassElement;
-    final fields = _getFields(classElement);
-    final models = _getModels(classElement, fields, schemaMetaData);
+
+    final fields = await _getFields(buildStep, classElement);
+    final models = await _getModels(buildStep, classElement, fields, schemaMetaData);
 
     // Generate Table class
     buffer.writeln(_generateTableClass(schemaMetaData, fields));
@@ -121,6 +126,12 @@ class KimappSchemaGenerator extends Generator {
     return imports;
   }
 
+  Future<LibraryElement> _getLatestLibraryElement(
+      BuildStep buildStep, LibraryElement libraryElement) async {
+    final resolver = buildStep.resolver;
+    return await resolver.libraryFor(await resolver.assetIdForElement(libraryElement));
+  }
+
   String _extractTypeString(TypeArgumentList? typeArguments) {
     if (typeArguments != null && typeArguments.arguments.isNotEmpty) {
       return typeArguments.arguments
@@ -130,16 +141,22 @@ class KimappSchemaGenerator extends Generator {
     return 'dynamic';
   }
 
-  List<_ModelDefinition> _getModels(
+  Future<List<_ModelDefinition>> _getModels(
+    BuildStep buildStep,
     ClassElement element,
     List<_FieldDefinition> baseFields,
     _SchemaMetaData schemaMetaData,
-  ) {
+  ) async {
     final models = <_ModelDefinition>[];
     final modelsGetter = element.getGetter('models');
     if (modelsGetter == null) return [];
 
-    final result = modelsGetter.session!.getParsedLibraryByElement(element.library);
+    // Get the latest library element
+    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library);
+
+    // Use the latest library element to get the session
+    final session = latestLibraryElement.session;
+    final result = session.getParsedLibraryByElement(latestLibraryElement);
     if (result is! ParsedLibraryResult) return [];
 
     final node = result.getElementDeclaration(modelsGetter)?.node;
@@ -417,75 +434,45 @@ class KimappSchemaGenerator extends Generator {
     return addedFields;
   }
 
-  List<_FieldDefinition> _getFields(ClassElement element) {
+  Future<List<_FieldDefinition>> _getFields(BuildStep buildStep, ClassElement element) async {
     final fields = <_FieldDefinition>[];
     final expressions = <String, Expression>{};
+
+    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library);
 
     // Helper function to check if a property is the 'models' property
     bool isModelProperty(String name) => name == 'models';
 
-    // Process getters
-    for (var accessor in element.accessors) {
-      if (accessor.isGetter && !accessor.isStatic && !isModelProperty(accessor.name)) {
-        final result = accessor.session?.getParsedLibraryByElement(element.library);
-        if (result is ParsedLibraryResult) {
-          final node = result.getElementDeclaration(accessor)?.node;
-          if (node is MethodDeclaration && node.body is ExpressionFunctionBody) {
-            final expression = (node.body as ExpressionFunctionBody).expression;
-            expressions[accessor.name] = expression;
+    // Process getters and fields
+    for (var member in [...element.accessors, ...element.fields]) {
+      if ((member is PropertyAccessorElement && member.isGetter && !member.isStatic) ||
+          (member is FieldElement && !member.isStatic)) {
+        if (!isModelProperty(member.name!)) {
+          final session = latestLibraryElement.session;
+          final result = session.getParsedLibraryByElement(element.library);
+          if (result is ParsedLibraryResult) {
+            final node = result.getElementDeclaration(member)?.node;
+            Expression? expression;
+            if (node is MethodDeclaration && node.body is ExpressionFunctionBody) {
+              expression = (node.body as ExpressionFunctionBody).expression;
+            } else if (node is VariableDeclaration && node.initializer != null) {
+              expression = node.initializer!;
+            }
+            if (expression != null) {
+              expressions[member.name!] = expression;
+            }
           }
-        }
-      }
-    }
-
-    // Process fields
-    for (var field in element.fields) {
-      if (!field.isStatic && !isModelProperty(field.name)) {
-        final result = field.session?.getParsedLibraryByElement(element.library);
-        if (result is ParsedLibraryResult) {
-          final node = result.getElementDeclaration(field)?.node;
-          if (node is VariableDeclaration && node.initializer != null) {
-            expressions[field.name] = node.initializer!;
-          }
-        }
-      }
-    }
-
-    // Sort expressions based on the original order in element.accessors and fields
-    final sortedExpressions = <String, Expression>{};
-
-    // First, add getters in their original order
-    for (var accessor in element.accessors) {
-      if (accessor.isGetter && !accessor.isStatic && !isModelProperty(accessor.name)) {
-        final expr = expressions[accessor.name];
-        if (expr != null) {
-          sortedExpressions[accessor.name] = expr;
-        }
-      }
-    }
-
-    // Then, add fields that weren't already added (to preserve declaration order)
-    for (var field in element.fields) {
-      if (!field.isStatic &&
-          !isModelProperty(field.name) &&
-          !sortedExpressions.containsKey(field.name)) {
-        final expr = expressions[field.name];
-        if (expr != null) {
-          sortedExpressions[field.name] = expr;
         }
       }
     }
 
     // Parse the fields
-    for (var entry in sortedExpressions.entries) {
-      // Only parse fields that are of type Field
-      if (!entry.value.toString().startsWith('Field')) {
-        continue;
-      }
-
-      final fieldDefinition = _parseFieldDefinition(entry.key, entry.value);
-      if (fieldDefinition.fieldName.isNotEmpty) {
-        fields.add(fieldDefinition);
+    for (var entry in expressions.entries) {
+      if (entry.value.toString().startsWith('Field')) {
+        final fieldDefinition = _parseFieldDefinition(entry.key, entry.value);
+        if (fieldDefinition.fieldName.isNotEmpty) {
+          fields.add(fieldDefinition);
+        }
       }
     }
 
@@ -537,6 +524,11 @@ class KimappSchemaGenerator extends Generator {
           _FieldType.fromString(_extractTypeString(expression.constructorName.type.typeArguments));
     }
 
+    // If it's a join field and no jsonKey was set, use the foreignKey as the jsonKey
+    if (fieldType == _FieldType.join && jsonKey == null && joinFieldForeignKey != null) {
+      jsonKey = joinFieldForeignKey;
+    }
+
     switch (fieldType) {
       case _FieldType.id:
         return _FieldDefinition.id(
@@ -548,11 +540,14 @@ class KimappSchemaGenerator extends Generator {
         return _FieldDefinition.join(
             fieldName: name,
             dataType: dataType,
-            jsonKey: jsonKey,
+            jsonKey: name,
             foreignKey: joinFieldForeignKey,
             candidateKey: joinFieldCandidateKey);
       case _FieldType.ignore:
-        return _FieldDefinition.ignore(fieldName: name, key: jsonKey!);
+        return _FieldDefinition.ignore(
+          fieldName: name,
+          key: jsonKey ?? name,
+        );
       default:
         return _FieldDefinition.normal(
           fieldName: name,
@@ -804,49 +799,34 @@ String _generateTableClass(_SchemaMetaData schema, List<_FieldDefinition> fields
   buffer.writeln('  static const String table = "${tableName.toLowerCase()}";');
   buffer.writeln();
 
-  final allColumns = <String>[];
-  final idColumns = <String>[];
-
   for (final field in fields) {
+    String columnName;
+    String keyValue;
+
     if (field is _JoinField) {
-      continue;
+      columnName = field.joinFieldForeignKey ?? field.fieldName;
+      keyValue = field.fieldName;
     } else {
-      final columnName = field.jsonKey ?? field.fieldName;
-      allColumns.add(columnName);
-
-      buffer.writeln('  /// Column: $columnName');
-
-      if (field is _IdField) {
-        buffer.writeln('  /// This is the primary key column for the $className table.');
-        buffer.writeln('  /// Data type: `${field.dataType}`');
-        idColumns.add(columnName);
-      } else if (field is _IgnoreField) {
-        buffer.writeln('  /// This column is ignored for base class generator.');
-      } else {
-        buffer.writeln('  /// Data type: `${field.dataType}`');
-      }
-
-      buffer.writeln('  /// Key: `${field.jsonKey}`');
-      buffer.writeln('  static const String ${columnName.camelCase} = "$columnName";');
-      buffer.writeln();
+      columnName = field.jsonKey ?? field.fieldName;
+      keyValue = field.jsonKey ?? field.fieldName;
     }
-  }
 
-  buffer.writeln('  /// List of all column names for $className table.');
-  buffer.writeln('  static const List<String> allColumns = [');
-  for (final column in allColumns) {
-    buffer.writeln('    ${column.camelCase},');
-  }
-  buffer.writeln('  ];');
-  buffer.writeln();
+    buffer.writeln('  /// Column: $columnName');
 
-  if (idColumns.isNotEmpty) {
-    buffer.writeln('  /// List of primary key column names for $className table.');
-    buffer.writeln('  static const List<String> primaryKeys = [');
-    for (final column in idColumns) {
-      buffer.writeln('    ${column.camelCase},');
+    if (field is _IdField) {
+      buffer.writeln('  /// This is the primary key column for the $className table.');
+      buffer.writeln('  /// Data type: `${field.dataType}`');
+    } else if (field is _IgnoreField) {
+      buffer.writeln('  /// This column is ignored for base class generator.');
+    } else if (field is _JoinField) {
+      buffer.writeln('  /// This is a join key for field ${field.fieldName}.');
+      buffer.writeln('  /// Data type: `${field.dataType}`');
+    } else {
+      buffer.writeln('  /// Data type: `${field.dataType}`');
     }
-    buffer.writeln('  ];');
+
+    buffer.writeln('  /// Key: `$keyValue`');
+    buffer.writeln('  static const String ${field.fieldName} = "$keyValue";');
     buffer.writeln();
   }
 
@@ -1057,6 +1037,10 @@ String _generateModelStaticJsonKeys(List<_FieldDefinition> fields) {
   for (final field in fields) {
     final key = field.jsonKey;
     buffer.writeln('  /// Field name for ${field.fieldName} field with JsonKey(\'$key\')');
+    if (field is _JoinField) {
+      buffer.writeln(
+          '  /// This is json key for joined field. with foreign key: ${field.joinFieldForeignKey} and candidate key: ${field.joinFieldCandidateKey}');
+    }
     buffer.writeln('  static const String ${field.fieldName.camelCase}Key = "$key";');
   }
   return buffer.toString();

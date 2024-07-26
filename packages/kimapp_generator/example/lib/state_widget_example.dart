@@ -1,4 +1,3 @@
-import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'demo_schema.schema.dart';
@@ -36,14 +35,10 @@ part 'state_widget_example.g.dart';
 //   return [const ExampleModel(id: 1, name: 'test')];
 // }
 
-@stateWidget
+// @stateWidget
 @riverpod
 Future<DemoModel> asyncGenerate(AsyncGenerateRef ref, int hello) async {
-  return DemoModel(
-    id: DemoId.fromJson(1),
-    name: 'test',
-    description: 'test',
-  );
+  return DemoModel(id: DemoId.fromJson(1), name: 'test', description: 'test', age: 0);
 }
 
 // @stateWidget

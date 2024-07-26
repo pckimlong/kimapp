@@ -6,7 +6,7 @@ part of 'state_widget_example.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$asyncGenerateHash() => r'56f0b0354f597916de97cde0e0e1849421aa32a4';
+String _$asyncGenerateHash() => r'd7b347983924cbfce0f44d98a9e0bbdacef35cd9';
 
 /// Copied from Dart SDK
 class _SystemHash {
