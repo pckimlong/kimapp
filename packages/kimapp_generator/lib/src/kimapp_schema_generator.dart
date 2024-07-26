@@ -920,8 +920,9 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   buffer.writeln('  /// ');
   buffer.writeln('  /// Fields:');
   for (final field in fields) {
-    final dataType =
-        field is _IdField ? (field.generateIdClassNameAs ?? '${baseModelName}Id') : field.dataType;
+    final dataType = field is _IdField
+        ? (field.generateIdClassNameAs ?? '${schema.className}Id')
+        : field.dataType;
     buffer.writeln(
         '  /// - $dataType ${field.fieldName.camelCase} : JsonKey(\'${field.jsonKey ?? field.fieldName}\')');
   }
