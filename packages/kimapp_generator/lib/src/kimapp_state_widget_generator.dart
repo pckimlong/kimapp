@@ -27,10 +27,18 @@ class KimappStateWidgetGenerator extends Generator {
     buffer.writeln("// ignore_for_file: unused_import, depend_on_referenced_packages");
 
     final imports = _getSourceFileImports(library);
-    
+
     final currentFilePath = buildStep.inputId.path;
     final currentFileName = path.basename(currentFilePath);
     imports.add("import '$currentFileName';");
+
+    for (final provider in providers) {
+      final element = provider.element;
+      print('element: $element');
+      final providerType = _getProviderType(element);
+      print('providerType: $providerType');
+      imports.addAll(_getReturnObjectImports(providerType));
+    }
 
     // Add additional necessary imports
     imports.add("import 'package:flutter/widgets.dart';");
@@ -38,7 +46,6 @@ class KimappStateWidgetGenerator extends Generator {
 
     buffer.writeln(imports.join('\n'));
     buffer.writeln();
-
 
     for (final provider in providers) {
       final element = provider.element;
@@ -58,10 +65,12 @@ class KimappStateWidgetGenerator extends Generator {
         buffer.writeln(_generateParamsProvider(element, familyParams));
       }
 
-      buffer.writeln(_generateMainStateWidget(element, familyParams, isAsyncValue, baseReturnType!, isSingleValue));
+      buffer.writeln(_generateMainStateWidget(
+          element, familyParams, isAsyncValue, baseReturnType!, isSingleValue));
 
       if (!isSingleValue) {
-        buffer.writeln(_generateSubWidgets(element, fields, familyParams, isAsyncValue, isSingleValue));
+        buffer.writeln(
+            _generateSubWidgets(element, fields, familyParams, isAsyncValue, isSingleValue));
       }
 
       buffer.writeln();
@@ -70,22 +79,21 @@ class KimappStateWidgetGenerator extends Generator {
     return buffer.toString();
   }
 
-  
   Set<String> _getSourceFileImports(LibraryReader library) {
     final imports = Set<String>();
     for (var import in library.element.importedLibraries) {
-        final uri = import.source.uri;
-          String importStr = "import '${uri.toString()}';";
-          
-          // Avoid duplicating package imports
-          if (!uri.isScheme('dart') &&
-              !uri.toString().contains('package:flutter/') && 
-              !uri.toString().contains('package:flutter_riverpod/') &&
-              !uri.toString().contains('package:riverpod/') &&
-              !uri.toString().contains('annotation/') &&
-              !uri.toString().contains('package:kimapp/')) {
-            imports.add(importStr);
-          }
+      final uri = import.source.uri;
+      String importStr = "import '${uri.toString()}';";
+
+      // Avoid duplicating package imports
+      if (!uri.isScheme('dart') &&
+          !uri.toString().contains('package:flutter/') &&
+          !uri.toString().contains('package:flutter_riverpod/') &&
+          !uri.toString().contains('package:riverpod/') &&
+          !uri.toString().contains('annotation/') &&
+          !uri.toString().contains('package:kimapp/')) {
+        imports.add(importStr);
+      }
     }
     return imports;
   }
@@ -100,7 +108,7 @@ class KimappStateWidgetGenerator extends Generator {
 
   String _generateProviderSuffix(Map<String, Map<String, dynamic>> familyParams) {
     if (familyParams.isEmpty) return '';
-    
+
     return '(${familyParams.entries.map((e) {
       final isNamedParam = e.value['is_named_param'] as bool;
       return isNamedParam ? '${e.key}: ${e.key}' : e.key;
@@ -215,7 +223,7 @@ class KimappStateWidgetGenerator extends Generator {
     }
 
     String withChild() {
-     return '''final content = builder != null
+      return '''final content = builder != null
         ? ${builderString()}
         : child!;
 
@@ -306,18 +314,16 @@ class KimappStateWidgetGenerator extends Generator {
   }
 
   String _generateParamFromFamilyParams(Map<String, Map<String, dynamic>> familyParams) {
-    return familyParams.entries.map((e) => 'final ${e.value['type']} ${e.key} = param.${e.key};').join('\n        ');
-  }
-
-  bool _isAnnotatedWithRiverpod(Element element) {
-    return riverpodChecker.annotationsOf(element).isNotEmpty;
+    return familyParams.entries
+        .map((e) => 'final ${e.value['type']} ${e.key} = param.${e.key};')
+        .join('\n        ');
   }
 
   bool _isAsyncValueType(DartType type) {
     if (asyncValueChecker.isExactlyType(type)) {
       return true;
     }
-    
+
     if (type is ParameterizedType) {
       final isFuture = futureTypeChecker.isAssignableFrom(type.element!);
       if (isFuture) return true;
@@ -352,6 +358,51 @@ class KimappStateWidgetGenerator extends Generator {
     );
   }
 
+  Set<String> _getReturnObjectImports(DartType providerType) {
+    final libraries = Set<String>();
+
+    void addLibrary(Element? element) {
+      if (element != null) {
+        libraries.add(element.library!.source.uri.toString());
+      }
+    }
+
+    void processClassElement(ClassElement classElement) {
+      addLibrary(classElement);
+
+      final validFields = classElement.fields.where((field) => !field.isStatic && field.isPublic);
+      if (validFields.isEmpty) {
+        final constructors =
+            classElement.constructors.where((c) => !c.isPrivate && c.parameters.isNotEmpty);
+        for (final constructor in constructors) {
+          for (final parameter in constructor.parameters) {
+            addLibrary(parameter.type.element);
+          }
+        }
+      } else {
+        for (final field in validFields) {
+          if (field.type.element is ClassElement) {
+            addLibrary(field.type.element);
+          }
+        }
+      }
+    }
+
+    if (providerType is ParameterizedType) {
+      for (final typeArg in providerType.typeArguments) {
+        if (typeArg.element is ClassElement) {
+          processClassElement(typeArg.element as ClassElement);
+        } else {
+          addLibrary(typeArg.element);
+        }
+      }
+    } else if (providerType.element is ClassElement) {
+      processClassElement(providerType.element as ClassElement);
+    }
+
+    return libraries.map((e) => "import '$e';").toSet();
+  }
+
   DartType? _getBaseReturnType(DartType providerType) {
     if (providerType is ParameterizedType && providerType.typeArguments.isNotEmpty) {
       return providerType.typeArguments.first;
@@ -362,8 +413,10 @@ class KimappStateWidgetGenerator extends Generator {
   Map<String, String> _getFields(DartType type) {
     if (type.element is ClassElement) {
       final classType = type.element as ClassElement;
-      
-      if (!classType.isPrivate && !classType.library.isDartCore && !iterableTypeChecker.isAssignableFrom(classType)) {
+
+      if (!classType.isPrivate &&
+          !classType.library.isDartCore &&
+          !iterableTypeChecker.isAssignableFrom(classType)) {
         final validConstructor = classType.constructors.firstWhereOrNull((c) => !c.isPrivate);
         if (validConstructor != null) {
           return {
@@ -408,6 +461,7 @@ class KimappStateWidgetGenerator extends Generator {
   }
 
   String _getCapitalizedName(Element element) => element.name!.pascalCase;
-  String _getNameWithSuffix(Element element, [String suffix = "Provider"]) => "${_getCapitalizedName(element)}$suffix";
+  String _getNameWithSuffix(Element element, [String suffix = "Provider"]) =>
+      "${_getCapitalizedName(element)}$suffix";
   String _getProviderName(Element element) => _getNameWithSuffix(element, "Provider");
 }
