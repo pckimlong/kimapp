@@ -34,9 +34,7 @@ class KimappStateWidgetGenerator extends Generator {
 
     for (final provider in providers) {
       final element = provider.element;
-      print('element: $element');
       final providerType = _getProviderType(element);
-      print('providerType: $providerType');
       imports.addAll(_getReturnObjectImports(providerType));
     }
 
