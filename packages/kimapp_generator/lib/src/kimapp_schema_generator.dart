@@ -508,7 +508,7 @@ class KimappSchemaGenerator extends Generator {
 
       // Extract type arguments
       if (baseMethod.typeArguments != null) {
-        final typeArgs = _extractTypeString(baseMethod.typeArguments);
+        final typeArgs = baseMethod.typeArguments!.arguments.first.toString();
         dataType = typeArgs;
       }
 
