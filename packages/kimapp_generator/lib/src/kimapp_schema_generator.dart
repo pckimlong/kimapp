@@ -932,7 +932,7 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
 
   // Handle ID field first
   if (idField != null) {
-    final idType = idField.generateIdClassNameAs ?? '${baseModelName}Id';
+    final idType = idField.generateIdClassNameAs ?? '${schema.className}Id';
     buffer.writeln(
         '    @JsonKey(name: ${baseModelName}.${idField.fieldName}Key) required $idType ${idField.fieldName.camelCase},');
   }
