@@ -1,4 +1,3 @@
-
 import 'package:kimapp/annotation.dart';
 
 @TableStructure(
@@ -10,6 +9,5 @@ import 'package:kimapp/annotation.dart';
     'name',
     'description',
   ],
-
 )
-const placeHolder = 'It can be anything!'; 
+const placeHolder = 'It can be anything!';
