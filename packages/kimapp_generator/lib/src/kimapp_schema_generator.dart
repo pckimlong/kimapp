@@ -934,7 +934,7 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   if (idField != null) {
     final idType = idField.generateIdClassNameAs ?? '${schema.className}Id';
     buffer.writeln(
-        '    @JsonKey(name: ${baseModelName}.${idField.fieldName}Key) required $idType ${idField.fieldName.camelCase},');
+        '    @JsonKey(name: ${baseModelName}.${idField.fieldName.camelCase}Key) required $idType ${idField.fieldName.camelCase},');
   }
 
   // Handle other fields
@@ -946,10 +946,10 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
         buffer.writeln(
             '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
         buffer.writeln(
-            '    @JsonKey(name: ${baseModelName}.${field.fieldName}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
       } else {
         buffer.writeln(
-            '    @JsonKey(name: ${baseModelName}.${field.fieldName}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
       }
     }
   }
@@ -1017,15 +1017,15 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
     if (field is _IdField) {
       final idType = field.generateIdClassNameAs ?? '${schema.className}Id';
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName}Key) required $idType ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) required $idType ${field.fieldName.camelCase},');
     } else if (field is _JoinField) {
       fields.add(
           '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
     } else {
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType}$nullabilitySuffix ${field.fieldName.camelCase},');
     }
   }
 
