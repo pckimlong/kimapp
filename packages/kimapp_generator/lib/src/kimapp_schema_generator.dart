@@ -74,15 +74,6 @@ class KimappSchemaGenerator extends Generator {
         element: classElement,
       );
     }
-
-    if (classElement.constructors.any((constructor) => constructor.isPublic)) {
-      throw InvalidGenerationSourceError(
-        'The class ${classElement.displayName} must have one private constructor.',
-        element: classElement,
-        todo:
-            'Add a private constructor ${classElement.displayName}._() to the class ${classElement.displayName}',
-      );
-    }
   }
 
   void _writeFileHeader(StringBuffer buffer, LibraryReader library, BuildStep buildStep) {
