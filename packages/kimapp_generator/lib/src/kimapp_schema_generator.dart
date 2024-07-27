@@ -470,6 +470,14 @@ class KimappSchemaGenerator extends Generator {
     for (var entry in expressions.entries) {
       if (entry.value.toString().startsWith('Field')) {
         final fieldDefinition = _parseFieldDefinition(entry.key, entry.value);
+        // Make sure it has key no matter what
+        if (fieldDefinition.jsonKey == null) {
+          throw InvalidGenerationSourceError(
+            'Can\'nt generate key for field ${fieldDefinition.fieldName}.',
+            node: entry.value,
+          );
+        }
+
         if (fieldDefinition.fieldName.isNotEmpty) {
           fields.add(fieldDefinition);
         }
@@ -908,32 +916,38 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   }
 
   buffer.writeln('  @TableModel(${baseModelName}.tableName)');
-  buffer.writeln('  const factory $baseModelName({');
+  buffer.write('  const factory $baseModelName(');
 
-  // Handle ID field first
-  if (idField != null) {
-    final idType = idField.generateIdClassNameAs ?? '${schema.className}Id';
-    buffer.writeln(
-        '    @JsonKey(name: ${baseModelName}.${idField.fieldName.camelCase}Key) required $idType ${idField.fieldName.camelCase},');
-  }
+  if (fields.isNotEmpty) {
+    buffer.writeln('{');
 
-  // Handle other fields
-  for (final field in fields) {
-    if (field is! _IdField) {
-      final requiredKeyword = field.dataType.endsWith('?') ? '' : 'required ';
-      if (field is _JoinField) {
-        buffer.writeln(
-            '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
-        buffer.writeln(
-            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
-      } else {
-        buffer.writeln(
-            '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+    // Handle ID field first
+    if (idField != null) {
+      final idType = idField.generateIdClassNameAs ?? '${schema.className}Id';
+      buffer.writeln(
+          '    @JsonKey(name: ${baseModelName}.${idField.fieldName.camelCase}Key) required $idType ${idField.fieldName.camelCase},');
+    }
+
+    // Handle other fields
+    for (final field in fields) {
+      if (field is! _IdField) {
+        final requiredKeyword = field.dataType.endsWith('?') ? '' : 'required ';
+        if (field is _JoinField) {
+          buffer.writeln(
+              '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
+          buffer.writeln(
+              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+        } else {
+          buffer.writeln(
+              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+        }
       }
     }
+
+    buffer.writeln('  }');
   }
 
-  buffer.writeln('  }) = _$baseModelName;');
+  buffer.writeln(') = _$baseModelName;');
   buffer.writeln();
   buffer.writeln('  /// Creates an instance of $baseModelName from a JSON map.');
   buffer.writeln(
