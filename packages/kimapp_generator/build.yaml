@@ -5,7 +5,6 @@ builders:
     build_extensions: {".dart": [".schema.dart"]}
     auto_apply: dependents
     build_to: source
-    required_inputs: [".schema.dart"]
     runs_before:
       - freezed|freezed
       - kimapp_generator|kimapp_state_widget_generator
