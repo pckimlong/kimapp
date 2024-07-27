@@ -7,16 +7,10 @@ part of 'other_schema.schema.dart';
 // **************************************************************************
 
 _$OtherModelImpl _$$OtherModelImplFromJson(Map<String, dynamic> json) =>
-    _$OtherModelImpl(
-      id: OtherId.fromJson(json['id']),
-      name: json['name'] as String,
-    );
+    _$OtherModelImpl();
 
 Map<String, dynamic> _$$OtherModelImplToJson(_$OtherModelImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-    };
+    <String, dynamic>{};
 
 // **************************************************************************
 // TableModelGenerator
@@ -24,8 +18,5 @@ Map<String, dynamic> _$$OtherModelImplToJson(_$OtherModelImpl instance) =>
 
 const _tableOtherModel = TableBuilder(
   tableName: "others",
-  columns: [
-    ColumnBuilder('id'),
-    ColumnBuilder('name'),
-  ],
+  columns: [],
 );

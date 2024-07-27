@@ -154,7 +154,7 @@ class Model {
 /// This class is abstract and must be extended by concrete implementations.
 /// It provides a list of models that are part of the schema.
 abstract class KimappSchema {
-  /// List of models that are part of the schema.
+  /// List of additional models that are part of the schema.
   ///
   /// This getter should be overridden in concrete implementations to define the models
   /// for the schema. Each model in the list represents a different entity or view
