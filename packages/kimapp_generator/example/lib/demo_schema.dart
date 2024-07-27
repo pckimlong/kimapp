@@ -1,10 +1,10 @@
+import 'package:example/other_schema.schema.dart';
 import 'package:kimapp/kimapp.dart';
-
-import 'other_schema.schema.dart';
 
 @Schema(tableName: 'demos', className: 'Demo', baseModelName: 'DemoModel')
 class Demo extends KimappSchema {
   Demo._();
+
   final id = Field.id<int>('id').generateAs('DemoId');
   final name = Field<String?>('name');
   final description = Field<String?>('description');
