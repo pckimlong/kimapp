@@ -6,26 +6,26 @@ import '../{{name.snakeCase()}}_schema.dart';
 import '../{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
-part 'update_{{name.snakeCase()}}_provider.freezed.dart';
-part 'update_{{name.snakeCase()}}_provider.g.dart';
+part '{{name.snakeCase()}}_update_provider.freezed.dart';
+part '{{name.snakeCase()}}_update_provider.g.dart';
 
 @freezed
-class Update{{name.pascalCase()}}State
-    with _$Update{{name.pascalCase()}}State, ProviderStatusClassMixin<Update{{name.pascalCase()}}State, {{name.pascalCase()}}Model>, UpdateFormMixin {
-  const factory Update{{name.pascalCase()}}State({
+class {{name.pascalCase()}}UpdateState
+    with _${{name.pascalCase()}}UpdateState, ProviderStatusClassMixin<{{name.pascalCase()}}UpdateState, {{name.pascalCase()}}Model>, UpdateFormMixin {
+  const factory {{name.pascalCase()}}UpdateState({
     // TODO - Add form properties
-    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
+    @Default(ProviderStatus.initial()) ProviderStatusconst const <{{name.pascalCase()}}Model> status,
     @Default(false) bool initialLoaded,
-  }) = _Update{{name.pascalCase()}}State;
+  }) = _{{name.pascalCase()}}UpdateState;
 
-  const Update{{name.pascalCase()}}State._();
+  const {{name.pascalCase()}}UpdateState._();
 
   @override
-  Update{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
+  {{name.pascalCase()}}UpdateState updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
     return copyWith(status: newStatus);
   }
 
-  Update{{name.pascalCase()}}Param toParam() {
+  {{name.pascalCase()}}UpdateParam toParam() {
     // TODO - perform validation
     throw UnimplementedError();
   }
@@ -33,7 +33,7 @@ class Update{{name.pascalCase()}}State
 
 @kimappForm
 @riverpod
-class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$Update{{name.pascalCase()}}Form {
+class {{name.pascalCase()}}Update extends _${{name.pascalCase()}}Update with _${{name.pascalCase()}}UpdateForm {
   Future<ProviderStatus<{{name.pascalCase()}}Model>> call() async {
     return await perform<{{name.pascalCase()}}Model>(
       (state) async {
@@ -49,12 +49,12 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
     );
   }
 
-  void updateState(Update{{name.pascalCase()}}State Function(Update{{name.pascalCase()}}State oldState) newState) {
+  void updateState({{name.pascalCase()}}UpdateState Function({{name.pascalCase()}}UpdateState oldState) newState) {
     state = newState(state).copyWith(status: state.status);
   }
 
   @override
-  Future<  Update{{name.pascalCase()}}State> initState([  Update{{name.pascalCase()}}State? local]) async {
+  Future<  {{name.pascalCase()}}UpdateState> initState([  {{name.pascalCase()}}UpdateState? local]) async {
     if (local != null) return local;
 
     final result =  await ref
@@ -62,12 +62,12 @@ class Update{{name.pascalCase()}} extends _$Update{{name.pascalCase()}} with _$U
         .findOne({{name.camelCase()}}Id)
         .then((value) => value.getOrThrow());
         
-    return const   Update{{name.pascalCase()}}State();
+    return const   {{name.pascalCase()}}UpdateState();
   }
 
 
   @override
-  Update{{name.pascalCase()}}State build({{name.pascalCase()}}Id {{name.camelCase()}}Id) =>
-     const Update{{name.pascalCase()}}State();
+  {{name.pascalCase()}}UpdateState build({{name.pascalCase()}}Id {{name.camelCase()}}Id) =>
+     const {{name.pascalCase()}}UpdateState();
   
 }

@@ -6,10 +6,10 @@ import '../{{name.snakeCase()}}_schema.dart';
 import '../{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
-part 'delete_{{name.snakeCase()}}_provider.g.dart';
+part '{{name.snakeCase()}}_delete_provider.g.dart';
 
 @riverpod
-class Delete{{name.pascalCase()}} extends _$Delete{{name.pascalCase()}} {
+class {{name.pascalCase()}}Delete extends _${{name.pascalCase()}}Delete {
   @override
   ProviderStatus<Unit> build({{name.pascalCase()}}Id id) => const ProviderStatus.initial();
 
