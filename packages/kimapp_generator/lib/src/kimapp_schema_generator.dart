@@ -77,7 +77,8 @@ class KimappSchemaGenerator extends Generator {
   }
 
   void _writeFileHeader(StringBuffer buffer, LibraryReader library, BuildStep buildStep) {
-    buffer.writeln("// ignore_for_file: invalid_annotation_target, unused_import");
+    buffer.writeln(
+        "// ignore_for_file: invalid_annotation_target, unused_import, require_trailing_commas");
     buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
     buffer.writeln("import 'package:kimapp/kimapp.dart';");
     buffer.writeln();
@@ -464,7 +465,7 @@ class KimappSchemaGenerator extends Generator {
         // Make sure it has key no matter what
         if (fieldDefinition.jsonKey == null) {
           throw InvalidGenerationSourceError(
-            'Can\'nt generate key for field ${fieldDefinition.fieldName}.',
+            'Cannot generate key for field ${fieldDefinition.fieldName}.',
             node: entry.value,
           );
         }
@@ -907,6 +908,7 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   }
 
   buffer.writeln('  @TableModel(${baseModelName}.tableName)');
+  buffer.writeln('  @JsonSerializable(explicitToJson: true)');
   buffer.write('  const factory $baseModelName(');
 
   if (fields.isNotEmpty) {
@@ -989,6 +991,7 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
     buffer.writeln('  @TableModel(${model.modelName}.tableName)');
   }
 
+  buffer.writeln('  @JsonSerializable(explicitToJson: true)');
   buffer.write('  const factory ${model.modelName}(');
 
   final fields = <String>[];

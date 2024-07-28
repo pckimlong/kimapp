@@ -2,10 +2,12 @@ import 'package:kimapp/kimapp.dart';
 
 export '{{name.snakeCase()}}_schema.schema.dart';
 
-@Schema(tableName: '{{name.snakeCase()}}s', className: '{{name.pascalCase()}}', baseModelName: '{{name.pascalCase()}}Model')
+@Schema(
+  tableName: '{{name.snakeCase()}}s',
+  className: '{{name.pascalCase()}}',
+  baseModelName: '{{name.pascalCase()}}Model',
+)
 class {{name.pascalCase()}}Schema extends KimappSchema {
-  {{name.pascalCase()}}Schema._();
-
   final id = Field.id<{{id_data_type}}>('id').generateAs('{{name.pascalCase()}}Id');
   final name = Field<String>('name');
 
@@ -23,8 +25,9 @@ class {{name.pascalCase()}}Schema extends KimappSchema {
         }),
 
       // Params
-      Model('Create{{name.pascalCase()}}Param')..addFields({'name': name}),
-      Model('Update{{name.pascalCase()}}Param')..addFields({'name': name}),
+      Model('{{name.pascalCase()}}CreateParam')..addFields({'name': name}),
+      Model('{{name.pascalCase()}}UpdateParam')..addFields({'name': name}),
+      Model('{{name.pascalCase()}}ListParam')..addFields({}),
     ];
   }
 }

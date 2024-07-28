@@ -8,25 +8,25 @@ import '../{{name.snakeCase()}}_schema.dart';
 import '../{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
-part 'create_{{name.snakeCase()}}_provider.freezed.dart';
-part 'create_{{name.snakeCase()}}_provider.g.dart';
+part '{{name.snakeCase()}}_create_provider.freezed.dart';
+part '{{name.snakeCase()}}_create_provider.g.dart';
 
 @freezed
-class Create{{name.pascalCase()}}State
-    with _$Create{{name.pascalCase()}}State, ProviderStatusClassMixin<Create{{name.pascalCase()}}State, {{name.pascalCase()}}Model> {
-  const factory Create{{name.pascalCase()}}State({
+class {{name.pascalCase()}}CreateState
+    with _${{name.pascalCase()}}CreateState, ProviderStatusClassMixin<{{name.pascalCase()}}CreateState, {{name.pascalCase()}}Model> {
+  const factory {{name.pascalCase()}}CreateState({
     // TODO - Add form properties
     @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
   }) = _Create{{name.pascalCase()}}State;
 
-  const Create{{name.pascalCase()}}State._();
+  const {{name.pascalCase()}}CreateState._();
 
   @override
-  Create{{name.pascalCase()}}State updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
+  {{name.pascalCase()}}CreateState updateStatus(ProviderStatus<{{name.pascalCase()}}Model> newStatus) {
     return copyWith(status: newStatus);
   }
 
-  Create{{name.pascalCase()}}Param toParam() {
+  {{name.pascalCase()}}CreateParam toParam() {
     // TODO - perform validation
     
     throw UnimplementedError();
@@ -35,7 +35,7 @@ class Create{{name.pascalCase()}}State
 
 @kimappForm
 @riverpod
-class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$Create{{name.pascalCase()}}Form  {
+class {{name.pascalCase()}}Create extends _${{name.pascalCase()}}Create with _${{name.pascalCase()}}CreateForm  {
   Future<ProviderStatus<{{name.pascalCase()}}Model>> call() async {
     return await perform<{{name.pascalCase()}}Model>(
       (state) async {
@@ -49,11 +49,11 @@ class Create{{name.pascalCase()}} extends _$Create{{name.pascalCase()}} with _$C
     );
   }
 
-  void updateState(Create{{name.pascalCase()}}State Function(Create{{name.pascalCase()}}State oldState) newState) {
+  void updateState({{name.pascalCase()}}CreateState Function({{name.pascalCase()}}CreateState oldState) newState) {
     state = newState(state).copyWith(status: state.status);
   }
 
 
   @override
-  Create{{name.pascalCase()}}State build() => const Create{{name.pascalCase()}}State();
+  {{name.pascalCase()}}CreateState build() => const {{name.pascalCase()}}CreateState();
 }
