@@ -3,7 +3,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../exports.dart';
 
-import '../params/params.dart';
 import '../{{name.snakeCase()}}_schema.dart';
 import '../{{name.snakeCase()}}_repo.dart';
 
@@ -15,7 +14,7 @@ const _page{{name.pascalCase()}}Limit = 25;
 FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}ListPagination(
   {{name.pascalCase()}}ListPaginationRef ref, {
   required int page,
-  required {{name.pascalCase()}}ListPaginationParam param,
+  required {{name.pascalCase()}}ListParam param,
 }) async {
   const limit = _page{{name.pascalCase()}}Limit;
   final offset = page * limit;
@@ -38,7 +37,7 @@ FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}ListPagination(
 PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
   {{name.pascalCase()}}PaginatedAtIndexRef ref,
   int index, {
-  required {{name.pascalCase()}}ListPaginationParam param,
+  required {{name.pascalCase()}}ListParam param,
 }) {
   const limit = _page{{name.pascalCase()}}Limit;
   final page = index ~/ limit;

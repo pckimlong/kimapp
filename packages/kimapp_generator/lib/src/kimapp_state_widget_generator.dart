@@ -322,16 +322,19 @@ class KimappStateWidgetGenerator extends Generator {
       return true;
     }
 
-    if (type is ParameterizedType) {
-      final isFuture = futureTypeChecker.isAssignableFrom(type.element!);
-      if (isFuture) return true;
+    if (type is InterfaceType) {
+      // Check if it's a Future
+      if (futureTypeChecker.isAssignableFromType(type)) {
+        return true;
+      }
 
-      final isStream = streamTypeChecker.isAssignableFrom(type.element!);
-      if (isStream) return true;
+      // Check if it's a Stream
+      if (streamTypeChecker.isAssignableFromType(type)) {
+        return true;
+      }
 
-      // TODO: Temporary solution for now
-      final name = type.getDisplayString(withNullability: false);
-      if (name.contains("Future") || name.contains("Stream")) {
+      // Check for FutureOr
+      if (type.isDartAsyncFutureOr) {
         return true;
       }
     }
