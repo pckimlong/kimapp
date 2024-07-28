@@ -3,8 +3,6 @@ import 'package:kimapp/kimapp.dart';
 
 @Schema(tableName: 'demos', className: 'Demo', baseModelName: 'DemoModel')
 class Demo extends KimappSchema {
-  Demo._();
-
   final id = Field.id<int>('id').generateAs('DemoId');
   final name = Field<String?>('name');
   final description = Field<String?>('description');
@@ -16,12 +14,14 @@ class Demo extends KimappSchema {
   List<Model> get models {
     return [
       Model('DemoDetailModel')
-        ..table('v_demo_detail').addFields({
+        ..table('v_demo_detail')
+        ..addFields({
           'id': id,
+          'name': name,
         }),
       Model('DemoLiteModel')
         ..table('test')
-        ..addFields({
+        ..inheritAllFromBase().addFields({
           'demoId': id,
           'description': Field<String?>('description'),
         }),

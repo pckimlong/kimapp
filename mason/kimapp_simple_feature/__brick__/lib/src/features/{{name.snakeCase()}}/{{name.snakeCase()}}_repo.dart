@@ -14,16 +14,16 @@ abstract class I{{name.pascalCase()}}Repo {
 
   Future<Either<Failure, {{name.pascalCase()}}Model>> findOne({{name.pascalCase()}}Id id);
 
-  Future<Either<Failure, {{name.pascalCase()}}Model>> create(Create{{name.pascalCase()}}Param data);
+  Future<Either<Failure, {{name.pascalCase()}}Model>> create({{name.pascalCase()}}CreateParam data);
 
-  Future<Either<Failure, {{name.pascalCase()}}Model>> update({{name.pascalCase()}}Id {{name.camelCase()}}Id ,{required Update{{name.pascalCase()}}Param data});
+  Future<Either<Failure, {{name.pascalCase()}}Model>> update({{name.pascalCase()}}Id {{name.camelCase()}}Id ,{required {{name.pascalCase()}}UpdateParam data});
 
   Future<Either<Failure, Unit>> delete({{name.pascalCase()}}Id id);
 
   Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findPagination({
     required int limit,
     required int offset,
-    required {{name.pascalCase()}}ListPaginationParam param,
+    required {{name.pascalCase()}}ListParam param,
   });
 }
 
@@ -35,7 +35,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   final Ref _ref;
 
   @override
-  Future<Either<Failure,  {{name.pascalCase()}}Model>> create(Create{{name.pascalCase()}}Param data) async{
+  Future<Either<Failure,  {{name.pascalCase()}}Model>> create({{name.pascalCase()}}CreateParam data) async{
    return await errorHandler(() async {
    return await _ref
     .read(supabaseProvider)
@@ -98,7 +98,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findPagination({
     required int limit,
     required int offset,
-    required {{name.pascalCase()}}ListPaginationParam param,
+    required {{name.pascalCase()}}ListParam param,
   }) async{
     var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
     
@@ -117,7 +117,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   }
 
   @override
-  Future<Either<Failure,  {{name.pascalCase()}}Model>> update({{name.pascalCase()}}Id {{name.camelCase()}}Id ,{required Update{{name.pascalCase()}}Param data}) async{
+  Future<Either<Failure,  {{name.pascalCase()}}Model>> update({{name.pascalCase()}}Id {{name.camelCase()}}Id ,{required {{name.pascalCase()}}UpdateParam data}) async{
     return await errorHandler(() async {
     return await _ref
     .read(supabaseProvider)
