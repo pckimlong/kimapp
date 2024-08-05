@@ -886,11 +886,6 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   buffer.writeln('  const $baseModelName._();');
   buffer.writeln();
 
-  buffer.writeln('  /// Table name: `$tableName`');
-  buffer.writeln('  static const String tableName = "$tableName";');
-  buffer.writeln();
-  buffer.writeln(_generateModelStaticJsonKeys(fields));
-
   // Generate constructor comment
   buffer.writeln('  /// Constructor for $baseModelName.');
   buffer.writeln('  /// ');
@@ -924,15 +919,14 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
     // Handle other fields
     for (final field in fields) {
       if (field is! _IdField) {
-        final requiredKeyword = field.dataType.endsWith('?') ? '' : 'required ';
         if (field is _JoinField) {
           buffer.writeln(
               '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
           buffer.writeln(
-              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
         } else {
           buffer.writeln(
-              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
         }
       }
     }
@@ -948,6 +942,11 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   buffer.writeln();
   buffer.writeln('  /// Supabase table configuration for this model.');
   buffer.writeln('  static const TableBuilder table = _table$baseModelName;');
+  buffer.writeln();
+  buffer.writeln('  /// Table name: `$tableName`');
+  buffer.writeln('  static const String tableName = "$tableName";');
+  buffer.writeln();
+  buffer.writeln(_generateModelStaticJsonKeys(fields));
   buffer.writeln('}');
 
   return buffer.toString();
@@ -961,13 +960,6 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
   buffer.writeln('class ${model.modelName} with _\$${model.modelName} {');
   buffer.writeln('  const ${model.modelName}._();');
   buffer.writeln();
-
-  if (model.enableTable) {
-    buffer.writeln('  /// Table name: `${model.tableName ?? schema.tableName}`');
-    buffer.writeln('  static const String tableName = "${model.tableName ?? schema.tableName}";');
-    buffer.writeln();
-  }
-  buffer.writeln(_generateModelStaticJsonKeys(model.fields));
 
   buffer.writeln('  /// Constructor for ${model.modelName}.');
   buffer.writeln('  /// ');
@@ -998,8 +990,6 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
 
   // Generate fields
   for (final field in model.fields) {
-    final requiredKeyword = 'required ';
-
     if (field is _IdField) {
       final idType = field.generateIdClassNameAs ?? '${schema.className}Id';
       fields.add(
@@ -1008,10 +998,10 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
       fields.add(
           '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
     } else {
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) $requiredKeyword${field.dataType} ${field.fieldName.camelCase},');
+          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
     }
   }
 
@@ -1033,7 +1023,13 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
     buffer.writeln();
     buffer.writeln('  /// Supabase table configuration for this model.');
     buffer.writeln('  static const TableBuilder table = _table${model.modelName};');
+    buffer.writeln();
+    buffer.writeln('  /// Table name: `${model.tableName ?? schema.tableName}`');
+    buffer.writeln('  static const String tableName = "${model.tableName ?? schema.tableName}";');
+    buffer.writeln();
   }
+
+  buffer.writeln(_generateModelStaticJsonKeys(model.fields));
 
   buffer.writeln('}');
 
