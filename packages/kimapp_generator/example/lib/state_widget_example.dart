@@ -8,5 +8,12 @@ part 'state_widget_example.g.dart';
 @stateWidget
 @riverpod
 FutureOr<DemoModel> demo(DemoRef ref) {
-  return DemoModel(id: DemoId.fromValue(1), age: 24);
+  return DemoModel(
+    id: DemoId.fromValue(1),
+    age: 24,
+    name: 'John',
+    description: 'John Doe',
+    address: '123 Main St',
+    other: null,
+  );
 }
