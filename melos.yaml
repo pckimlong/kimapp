@@ -1,7 +1,7 @@
 name: kimapp_packages
 
 packages:
-  - packages/*
+  - packages/**
 
 repository: https://github.com/pckimlong/kimapp
 
@@ -9,6 +9,26 @@ ide:
   intellij:
     enabled: false
 
+# command:
+#   version:
+#     generateChangelog: true
+    
+#     linkToCommits: true
+    
+#     updateDependencies: true
+
 scripts:
   analyze:
     exec: dart analyze .
+
+  update_deps:
+    run: melos exec -- flutter pub get
+    description: Update dependencies in all packages
+
+  format:
+    run: melos exec -- dart format .
+    description: Format Dart code in all packages
+  
+  build_all:
+    run: melos exec --depends-on="build_runner" -- flutter pub run build_runner build --delete-conflicting-outputs
+    description: Run build_runner in all packages that depend on it
