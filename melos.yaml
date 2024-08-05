@@ -9,13 +9,12 @@ ide:
   intellij:
     enabled: false
 
-# command:
-#   version:
-#     generateChangelog: true
+command:
+  version:
+    branch: master
+    linkToCommits: true
+    updateGitTagRefs: true
     
-#     linkToCommits: true
-    
-#     updateDependencies: true
 
 scripts:
   analyze:

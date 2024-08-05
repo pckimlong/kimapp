@@ -358,11 +358,9 @@ packages:
   kimapp:
     dependency: "direct main"
     description:
-      path: "packages/kimapp"
-      ref: master
-      resolved-ref: "8a7e0f88050048c9a66724205540ed393b947c7c"
-      url: "https://github.com/pckimlong/kimapp.git"
-    source: git
+      path: "../../kimapp"
+      relative: true
+    source: path
     version: "0.0.1"
   kimapp_generator:
     dependency: "direct main"
