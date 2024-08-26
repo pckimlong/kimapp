@@ -175,6 +175,10 @@ class TableStructureGenerator extends Generator {
       buffer.writeln();
     }
 
+    final generatedClasses = Set<String>();
+    final generatedIdClasses = Set<String>();
+    final generatedTableClasses = Set<String>();
+
     for (final provider in providers) {
       final annotation = provider.annotation;
 
@@ -214,23 +218,35 @@ class TableStructureGenerator extends Generator {
         _validateCustomTypes(additionalColumns, customTypes, idColumn);
       }
 
-      // Generate ID class if idColumn is provided
+      // Generate ID class if idColumn is provided and not already generated
       if (idColumn != null) {
-        buffer.writeln(_generateIdClass(idColumn));
+        final idClassName = idColumn.split(':')[0].pascalCase;
+        if (!generatedIdClasses.contains(idClassName)) {
+          buffer.writeln(_generateIdClass(idColumn));
+          generatedIdClasses.add(idClassName);
+        }
       }
 
-      // Generate table class
-      buffer.writeln(_generateTableClass(tableName, parsedColumns, className));
+      // Generate table class if not already generated
+      if (!generatedTableClasses.contains(className)) {
+        buffer.writeln(_generateTableClass(tableName, parsedColumns, className));
+        generatedTableClasses.add(className);
+      }
 
-      // Generate raw data class if specified
-      if (generateRawClass) {
+      // Generate raw data class if specified and not already generated
+      if (generateRawClass && !generatedClasses.contains('${className}RawModel')) {
         buffer
             .writeln(_generateRawDataClass(className, parsedColumns, tableName, rawClassTableMode));
+        generatedClasses.add('${className}RawModel');
       }
 
       // Generate additional classes
       for (final additionalClass in additionalClasses) {
-        buffer.writeln(_generateAdditionalClass(additionalClass, className));
+        final additionalClassName = additionalClass.className.split('[')[0];
+        if (!generatedClasses.contains(additionalClassName)) {
+          buffer.writeln(_generateAdditionalClass(additionalClass, className));
+          generatedClasses.add(additionalClassName);
+        }
       }
     }
 
