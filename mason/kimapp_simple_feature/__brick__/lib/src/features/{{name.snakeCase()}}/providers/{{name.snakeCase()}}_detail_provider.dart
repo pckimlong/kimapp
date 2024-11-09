@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
 import '../{{name.snakeCase()}}_schema.dart';
-import '../{{name.snakeCase()}}_repo.dart';
+import '../i_{{name.snakeCase()}}_repo.dart';
 
 export '{{name.snakeCase()}}_detail_provider.widget.dart';
 

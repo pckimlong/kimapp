@@ -3,7 +3,7 @@ import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../{{name.snakeCase()}}_schema.dart';
-import '../{{name.snakeCase()}}_repo.dart';
+import '../i_{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
 part '{{name.snakeCase()}}_delete_provider.g.dart';

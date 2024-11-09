@@ -223,6 +223,12 @@ extension RiverpodRefExtension on Ref {
 
     return result;
   }
+
+  void cacheTime(Duration duration) {
+    final cancel = keepAlive();
+    final timer = Timer(duration, cancel.close);
+    onDispose(timer.cancel);
+  }
 }
 
 extension RiverpodCacheExtension on AutoDisposeRef {

@@ -4,11 +4,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../exports.dart';
 
 import '../{{name.snakeCase()}}_schema.dart';
-import '../{{name.snakeCase()}}_repo.dart';
+import '../i_{{name.snakeCase()}}_repo.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 
-const _page{{name.pascalCase()}}Limit = 25;
+_page{{name.pascalCase()}}Limit = 25;
 
 @riverpod
 FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}ListPagination(
