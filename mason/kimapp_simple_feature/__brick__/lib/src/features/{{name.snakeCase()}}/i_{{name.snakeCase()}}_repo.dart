@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../exports.dart';
 import '{{name.snakeCase()}}.dart';
 
-part '{{name.snakeCase()}}_repo.g.dart';
+part 'i_{{name.snakeCase()}}_repo.g.dart';
 
 
 @Riverpod(keepAlive: true)

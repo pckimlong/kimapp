@@ -10,27 +10,45 @@ import 'package:kimapp/kimapp.dart';
 
 import 'table_structure_example.dart';
 
-class SampleId extends Identity<int> {
-  const SampleId._(this.value);
+class ArticleId extends Identity<String> {
+  const ArticleId._(this.value);
 
   @override
-  final int value;
+  final String value;
 
-  factory SampleId.fromJson(dynamic value) {
-    return SampleId._(value);
+  factory ArticleId.fromJson(dynamic value) {
+    return ArticleId._(value);
   }
 
-  factory SampleId.fromValue(int value) {
-    return SampleId._(value);
+  factory ArticleId.fromValue(String value) {
+    return ArticleId._(value);
   }
 }
 
-class SampleTable {
-  const SampleTable._();
+class ArticleTable {
+  const ArticleTable._();
 
-  static const String table = "samples";
+  static const String table = "articles";
 
-  static const String id = "id";
-  static const String name = "name";
+  static const String articleId = "article_id";
+  static const String parentId = "parent_id";
+  static const String linkToLid = "link_to_lid";
+  static const String title = "title";
+  static const String image = "image";
+  static const String link = "link";
+  static const String shortDescription = "short_description";
   static const String description = "description";
+  static const String audio = "audio";
+  static const String addon = "addon";
+  static const String lId = "l_id";
+  static const String view = "view";
+  static const String editDate = "edit_date";
+  static const String publishedDate = "published_date";
+  static const String index = "index";
+  static const String isHidden = "is_hidden";
+  static const String redirectUrl = "redirect_url";
+  static const String ordering = "ordering";
+  static const String tag = "tag";
+  static const String isFullDescription = "is_full_description";
+  static const String frontPage = "front_page";
 }
