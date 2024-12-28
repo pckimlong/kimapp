@@ -66,7 +66,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   @override
   Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findAll({{name.pascalCase()}}ListParam param) async{
     return await errorHandler(() async {
-    var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    var query = _ref.supabaseClient.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
     
     if (true) {}
     
@@ -101,7 +101,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
     required int offset,
     required {{name.pascalCase()}}ListPaginationParam param,
   }) async{
-    var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    var query = _ref.supabaseClient.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
     
     if (true) {}
     

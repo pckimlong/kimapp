@@ -22,7 +22,7 @@ class _Impl implements IAuthRepo {
   @override
   Future<Either<Failure, Option<UserId>>> currentId() async {
     return await errorHandler(() async {
-      final user = _ref.read(supabaseProvider).client.auth.currentSession?.user;
+      final user = _ref.supabaseClient.auth.currentSession?.user;
       return right(Option.fromNullable(user?.userId));
     });
   }
@@ -30,9 +30,7 @@ class _Impl implements IAuthRepo {
   @override
   Future<Either<Failure, UserId>> signIn(SignInParam param) async {
     return await errorHandler(() async {
-      final result = await _ref
-          .read(supabaseProvider)
-          .client
+      final result = await _ref.supabaseClient
           .auth
           .signInWithPassword(email: param.email, password: param.password.trim());
 
@@ -43,7 +41,7 @@ class _Impl implements IAuthRepo {
   @override
   Future<Either<Failure, Unit>> signOut() async {
     return await errorHandler(() async {
-      await _ref.read(supabaseProvider).client.auth.signOut();
+      await _ref.supabaseClient.auth.signOut();
       return right(unit);
     });
   }
