@@ -1,9 +1,9 @@
-
+import '../../../exports.dart';
 import 'my_error_widget.dart';
 
 class AsyncValueWidget<T> extends StatelessWidget {
   const AsyncValueWidget({
-    Key? key,
+    super.key,
     required this.value,
     required this.data,
     this.error,
@@ -12,7 +12,7 @@ class AsyncValueWidget<T> extends StatelessWidget {
     this.useAnimation = true,
     this.skipLoadingOnReload = false,
     this.skipLoadingOnRefresh = false,
-  }) : super(key: key);
+  });
 
   final AsyncValue<T> value;
   final Widget Function(T) data;

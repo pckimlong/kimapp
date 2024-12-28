@@ -7,7 +7,7 @@ import '../../commons.dart';
 part "cache_manager_provider.g.dart";
 
 @Riverpod(keepAlive: true)
-Box cacheBox(CacheBoxRef ref) => Hive.box(_keyValueBox);
+Box cacheBox(Ref ref) => Hive.box(_keyValueBox);
 
 @Riverpod(keepAlive: true)
 FutureOr<KimappCacheManager> cacheManager(CacheManagerRef ref) async {

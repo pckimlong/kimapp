@@ -1,10 +1,11 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'app_router_guard.dart';
 
 @AutoRouterConfig(
   replaceInRouteName: 'Page|Screen,Route',
 )
-class AppRouter extends $AppRouter {
+class AppRouter extends RootStackRouter {
   final Ref _ref;
 
   AppRouter(this._ref);

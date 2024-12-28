@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../exports.dart';
-import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
 import 'providers.dart';
 
@@ -14,7 +14,7 @@ class {{name.pascalCase()}}UpdateState
     with _${{name.pascalCase()}}UpdateState, ProviderStatusClassMixin<{{name.pascalCase()}}UpdateState, {{name.pascalCase()}}Model>, UpdateFormMixin {
   const factory {{name.pascalCase()}}UpdateState({
     // TODO - Add form properties
-    @Default(ProviderStatus.initial()) ProviderStatusconst const <{{name.pascalCase()}}Model> status,
+    @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
     @Default(false) bool initialLoaded,
   }) = _{{name.pascalCase()}}UpdateState;
 

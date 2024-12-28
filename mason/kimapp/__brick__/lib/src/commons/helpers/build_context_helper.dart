@@ -1,3 +1,5 @@
+import 'package:page_transition/page_transition.dart';
+
 import '../../../exports.dart';
 
 extension BuildContextHelper on BuildContext {
@@ -22,8 +24,20 @@ extension BuildContextX on BuildContext {
 
   pop([dynamic data]) => Navigator.of(this, rootNavigator: true).pop(data);
 
-  Future<dynamic> pushTo(Widget Function(BuildContext context) page) async =>
-      await nav.push(MaterialPageRoute(builder: (_) => page(_)));
+  Future<dynamic> pushTo(
+    Widget Function(BuildContext context) page, {
+    PageTransitionType? pageTransitionType,
+  }) async {
+    if (pageTransitionType != null) {
+      return await nav.push(
+        PageTransition(
+          child: page(this),
+          type: pageTransitionType,
+        ),
+      );
+    }
+    return await nav.push(MaterialPageRoute(builder: (context) => page(context)));
+  }
 
   Future<dynamic> replaceTo(Widget Function(BuildContext context) page) async =>
       await nav.pushReplacement(MaterialPageRoute(builder: (_) => page(_)));
