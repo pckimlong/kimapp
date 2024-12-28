@@ -23,8 +23,8 @@ class {{name.pascalCase()}}Schema extends KimappSchema {
         }),
 
       // Params
-      Model('{{name.pascalCase()}}CreateParam')..addFields({'name': name}),
-      Model('{{name.pascalCase()}}UpdateParam')..addFields({'name': name}),
+      Model('{{name.pascalCase()}}CreateParam')..addFields({}),
+      Model('{{name.pascalCase()}}UpdateParam')..addFields({}),
       Model('{{name.pascalCase()}}ListParam')..addFields({}),
     ];
   }

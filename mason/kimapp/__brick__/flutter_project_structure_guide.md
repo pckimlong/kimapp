@@ -15,7 +15,7 @@ lib/
 ├── main.dart          # Production entry
 ├── main_dev.dart      # Development entry
 └── src/
-    ├── commons/       # Shared utilities
+    ├── core/       # Core widely used components
     │   ├── account/   # Current user & auth management
     │   ├── cache_manager/
     │   ├── device/    # Device info
@@ -23,6 +23,7 @@ lib/
     │   ├── file/      # File operations
     │   ├── helpers/   # Utility functions
     │   └── supabase/  # Supabase config
+            core.dart -- export all core components
     ├── features/      # Core business logic
     │   └── feature_name/  # Example feature
     │       ├── providers/
@@ -52,12 +53,12 @@ import 'package:kimapp/kimapp_schema.dart';
 
 @Schema(
   tableName: 'features', // Table name
-  className: 'Feature', // The class it will generate
+  className: 'Feature', // The class it will generate. This should be singular. eg if the database table is called `categories`, the class name should be `Category`
   baseModelName: 'FeatureModel',
 )
 class FeatureSchema extends KimappSchema {
   // Define fields with types and database columns
-  final id = Field.id<int>('id').generateAs('FeatureId'); // This should only use one to generate the ID. If later on we want to use this id for another table, just use Field<FeatureId>('id') like other fields
+  final id = Field.id<int>('id').generateAs('FeatureId'); // This should only use one to generate the ID. If later on we want to use this id for another table, just use Field<FeatureId>('id') like other fields. Similar to className this should be singular
   final name = Field<String>('name');
   final description = Field<String?>('description'); // Nullable
   final isActive = Field<bool>('is_active');
@@ -245,9 +246,12 @@ FeatureCreateFormWidget(
 )
 ```
 
+
+
 ## Best Practices
 
 1. Schema Design
+- UUID is String type in dart
 - Define clear field types and relationships
 - Use appropriate model variations
 - Consider query optimization in schema design
@@ -272,3 +276,18 @@ FeatureCreateFormWidget(
 - Use @kimappForm for consistent handling
 - Validate in toParam methods
 - Use generated widgets for UI
+
+## Quick Feature Generation
+
+Generate a complete feature with one command:
+
+```bash
+mason make kimapp_simple_feature --name <feature_name> --id_data_type <string|int>
+```
+
+- `name`: Use singular form (e.g., "user_setting" for "user_settings" table)
+- `id_data_type`: Use "string" for UUID or "int" for auto-increment
+
+Example:
+```bash
+mason make kimapp_simple_feature --name user_setting --id_data_type string
