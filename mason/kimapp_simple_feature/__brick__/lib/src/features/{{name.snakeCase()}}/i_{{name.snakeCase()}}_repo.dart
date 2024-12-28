@@ -37,9 +37,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   @override
   Future<Either<Failure,  {{name.pascalCase()}}Model>> create({{name.pascalCase()}}CreateParam data) async{
    return await errorHandler(() async {
-   return await _ref
-    .read(supabaseProvider)
-    .client
+   return await _ref.supabaseClient
     .from({{name.pascalCase()}}Model.table.tableName)
     .insert(data.toJson())
     .select({{name.pascalCase()}}Model.table.selectStatement)
@@ -51,9 +49,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   @override
   Future<Either<Failure, Unit>> delete({{name.pascalCase()}}Id id) async{
     return await errorHandler(() async {
-    await _ref
-    .read(supabaseProvider)
-    .client
+    await _ref.supabaseClient
     .from({{name.pascalCase()}}Table.table)
     .delete()
     .eq({{name.pascalCase()}}Table.id, id.value);
@@ -65,7 +61,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   @override
   Future<Either<Failure, IList<{{name.pascalCase()}}Model>>> findAll() async{
     return await errorHandler(() async {
-    var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    var query = _ref.supabaseClient.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
     
     if (true) {}
     
@@ -82,9 +78,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   @override
   Future<Either<Failure,  {{name.pascalCase()}}Model>> findOne({{name.pascalCase()}}Id id) async{
    return await errorHandler(() async {
-   final query = _ref
-   .read(supabaseProvider)
-   .client
+   final query = _ref.supabaseClient
    .from({{name.pascalCase()}}Model.table.tableName)
    .select({{name.pascalCase()}}Model.table.selectStatement)
    .eq({{name.pascalCase()}}Table.id, id.value);
@@ -100,7 +94,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
     required int offset,
     required {{name.pascalCase()}}ListParam param,
   }) async{
-    var query = _ref.read(supabaseProvider).client.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    var query = _ref.supabaseClient.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
     
     if (true) {}
     
@@ -119,9 +113,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
   @override
   Future<Either<Failure,  {{name.pascalCase()}}Model>> update({{name.pascalCase()}}Id {{name.camelCase()}}Id ,{required {{name.pascalCase()}}UpdateParam data}) async{
     return await errorHandler(() async {
-    return await _ref
-    .read(supabaseProvider)
-    .client
+    return await _ref.supabaseClient
     .from({{name.pascalCase()}}Model.table.tableName)
     .update(data.toJson())
     .eq({{name.pascalCase()}}Table.id, {{name.camelCase()}}Id.value)
