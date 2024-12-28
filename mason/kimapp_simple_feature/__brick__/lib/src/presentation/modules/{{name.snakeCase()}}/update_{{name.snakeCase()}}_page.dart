@@ -1,4 +1,4 @@
-import '../../../../../../exports.dart';
+import '../../../../exports.dart';
 
 @RoutePage()
 class Update{{name.pascalCase()}}Page extends HookConsumerWidget {

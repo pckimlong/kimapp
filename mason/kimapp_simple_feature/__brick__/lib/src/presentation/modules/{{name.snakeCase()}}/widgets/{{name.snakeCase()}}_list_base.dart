@@ -1,4 +1,4 @@
-import '../../../../../../exports.dart';
+import '../../../../../exports.dart';
 
 import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}.dart';
 
@@ -6,7 +6,7 @@ class  {{name.pascalCase()}}ListBaseConfig{
   const  {{name.pascalCase()}}ListBaseConfig();
 }
 
-final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListPaginationParam>((ref) {
+final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListParam>((ref) {
   throw UnimplementedError();
 });
 
@@ -14,10 +14,10 @@ final _configProvider = Provider.autoDispose<{{name.pascalCase()}}ListBaseConfig
   throw UnimplementedError();
 });
 
-final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListPaginationParam>(
+final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListParam>(
   (ref) {
     final initialParam = ref.watch(_initialParamProvider);
-    return initialParam ?? const {{name.pascalCase()}}ListPaginationParam();
+    return initialParam;
   },
   dependencies: [_initialParamProvider],
 );
@@ -25,18 +25,18 @@ final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListPagina
 class {{name.pascalCase()}}ListBase extends ConsumerWidget {
   const {{name.pascalCase()}}ListBase({
     super.key, 
-    required this.initialParam,
+    this.initialParam,
     this.config = const {{name.pascalCase()}}ListBaseConfig(),
   });
 
-  final {{name.pascalCase()}}ListPaginationParam initialParam;
+  final {{name.pascalCase()}}ListParam? initialParam;
   final {{name.pascalCase()}}ListBaseConfig config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ProviderScope(
       overrides: [
-          _initialParamProvider.overrideWithValue(initialParam),
+          _initialParamProvider.overrideWithValue(initialParam ?? const {{name.pascalCase()}}ListParam()),
           _configProvider.overrideWithValue(config),
         ],
       child: const _Content(),
