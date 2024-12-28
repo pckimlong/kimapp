@@ -27,7 +27,7 @@ targets:
         enabled: true
         generate_for:
           include:
-            - lib/src/**.dart
+            - lib/src/**_schema.dart
       json_serializable:
         enabled: true
         options:

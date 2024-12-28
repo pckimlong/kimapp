@@ -1,7 +1,5 @@
 import 'package:kimapp/kimapp.dart';
 
-export '{{name.snakeCase()}}_schema.schema.dart';
-
 @Schema(
   tableName: '{{name.snakeCase()}}s',
   className: '{{name.pascalCase()}}',

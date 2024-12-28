@@ -21,11 +21,11 @@ Future<void> initializeSupabase({
 }
 
 @Riverpod(keepAlive: true)
-Supabase supabase(SupabaseRef ref) {
+Supabase supabase(Ref ref) {
   return Supabase.instance;
 }
 
 @riverpod
-SupabaseClient supabaseAdmin(SupabaseAdminRef ref) {
+SupabaseClient supabaseAdmin(Ref ref) {
   return SupabaseClient(_url, _adminKey);
 }
