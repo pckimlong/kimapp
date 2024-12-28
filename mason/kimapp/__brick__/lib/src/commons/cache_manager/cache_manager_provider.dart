@@ -1,8 +1,7 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../commons.dart';
+import '../../../exports.dart';
 
 part "cache_manager_provider.g.dart";
 

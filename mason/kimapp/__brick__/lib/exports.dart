@@ -11,7 +11,7 @@ export 'package:flutter/foundation.dart' show kIsWeb;
 export 'package:flutter/material.dart';
 export 'package:flutter_hooks/flutter_hooks.dart';
 export 'package:form_builder_validators/form_builder_validators.dart';
-export 'package:fpdart/fpdart.dart' hide State, Tuple2, Reader, Predicate, id;
+export 'package:fpdart/fpdart.dart' hide State, Reader;
 export 'package:hooks_riverpod/hooks_riverpod.dart';
 export 'package:kimapp/kimapp.dart';
 export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';

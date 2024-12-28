@@ -4,6 +4,7 @@ import '../../../config.dart';
 import '../../../exports.dart';
 import '../router/app_router_provider.dart';
 import 'app_theme_provider.dart';
+import './app_state_provider.dart';
 
 // Response for initialize app, and other global state
 class _EagerInitialization extends ConsumerWidget {

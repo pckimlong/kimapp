@@ -8,7 +8,7 @@ import '../i_{{name.snakeCase()}}_repo.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 
-int _page{{name.pascalCase()}}Limit = 25;
+const int _page{{name.pascalCase()}}Limit = 25;
 
 @riverpod
 FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}Future<dynamic> ListPagination(
