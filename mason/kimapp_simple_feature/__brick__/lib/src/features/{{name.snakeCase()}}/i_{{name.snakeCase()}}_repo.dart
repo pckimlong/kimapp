@@ -6,7 +6,7 @@ part 'i_{{name.snakeCase()}}_repo.g.dart';
 
 
 @Riverpod(keepAlive: true)
-I{{name.pascalCase()}}Repo {{name.camelCase()}}Repo({{name.pascalCase()}}RepoRef ref) => _Impl(ref);
+I{{name.pascalCase()}}Repo {{name.camelCase()}}Repo(Ref ref) => _Impl(ref);
 
 
 abstract class I{{name.pascalCase()}}Repo {

@@ -1,0 +1,19 @@
+analyzer:
+  exclude:
+    - "brick/**"
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  language:
+    strict-raw-types: false
+  errors:
+    prefer_const_constructors: ignore
+    prefer_const_literals_to_create_immutables: ignore
+    prefer_const_declarations: ignore
+    constant_identifier_names: ignore
+    non_constant_identifier_names: ignore
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    prefer_const_constructors: false
+    prefer_const_declarations: false

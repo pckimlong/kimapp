@@ -3,14 +3,11 @@ import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 
-import '../{{name.snakeCase()}}_schema.dart';
+import '../{{name.snakeCase()}}.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
-
-export '{{name.snakeCase()}}_detail_provider.widget.dart';
 
 part '{{name.snakeCase()}}_detail_provider.g.dart';
 
-@stateWidget
 @riverpod
 class {{name.pascalCase()}}Detail extends _${{name.pascalCase()}}Detail {
   @override
