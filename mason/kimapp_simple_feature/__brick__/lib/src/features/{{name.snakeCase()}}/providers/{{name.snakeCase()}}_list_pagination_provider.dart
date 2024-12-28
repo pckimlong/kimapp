@@ -11,7 +11,7 @@ part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 const int _page{{name.pascalCase()}}Limit = 25;
 
 @riverpod
-FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}Future<dynamic> ListPagination(
+FutureOr<IList<{{name.pascalCase()}}Model>> {{name.camelCase()}}ListPagination(
   Ref ref, {
   required int page,
   required {{name.pascalCase()}}ListParam param,
