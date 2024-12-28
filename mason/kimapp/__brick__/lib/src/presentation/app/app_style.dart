@@ -8,6 +8,8 @@ class AS {
   static const double tabletBreakpoint = 800;
   static const double desktopBreakpoint = 1000;
 
+  static const double sidePadding = 16;
+
   static const wGap12 = SizedBox(width: 12, height: 0);
   static const wGap16 = SizedBox(width: 16, height: 0);
   static const wGap20 = SizedBox(width: 20, height: 0);

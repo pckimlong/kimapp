@@ -54,13 +54,13 @@ class _ActionableFormState extends State<ActionableForm> {
             else
               SizedBox(
                 width: widget.onCancel == null ? context.screenWidth * 0.8 : null,
-                child: FilledButton(onPressed: widget.onSubmit, child: const Text(AppStrings.save)),
+                child: FilledButton(onPressed: widget.onSubmit, child: const Text("Save")),
               ),
             if (widget.onCancel != null) ...[
               AS.wGap12,
               OutlinedButton(
                 onPressed: widget.onCancel,
-                child: const Text(AppStrings.cancel),
+                child: const Text("Cancel"),
               ),
             ],
           ],

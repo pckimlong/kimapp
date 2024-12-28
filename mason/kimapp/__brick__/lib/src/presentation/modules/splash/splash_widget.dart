@@ -39,7 +39,7 @@ class SplashWidget extends StatelessWidget {
               Text(appVersion ?? ""),
               if (error != null && !loadedInMain) ...[
                 const SizedBox(height: 16),
-                Text(error),
+                Text(error ?? "Something went wrong"),
               ],
             ],
           ),
