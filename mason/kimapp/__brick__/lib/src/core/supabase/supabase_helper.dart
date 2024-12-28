@@ -2,7 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../exports.dart';
 import '../../features/auth/auth.dart';
-import './supabase_provider.dart';
+import 'supabase_provider.dart';
 
 extension SupabaseUserX on User {
   UserId get userId => UserId.fromValue(id);

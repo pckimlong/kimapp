@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'supabase_key.dart';
-part 'supabase_provider.g.dart';
+part '../../commons/supabase/supabase_provider.g.dart';
 
 Future<void> initializeSupabase({
   required String url,

@@ -18,6 +18,6 @@ export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 export 'package:responsive_framework/responsive_framework.dart';
 
 export 'gen/locale_keys.g.dart';
-export 'src/commons/commons.dart';
+export 'src/core/commons.dart';
 export 'src/presentation/app/app_style.dart';
 export 'src/presentation/router/app_router.gr.dart';
