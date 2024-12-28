@@ -6,7 +6,7 @@ import '../auth.dart';
 part 'i_auth_repo.g.dart';
 
 @Riverpod(keepAlive: true)
-IAuthRepo authRepo(AuthRepoRef ref) => _Impl(ref);
+IAuthRepo authRepo(Ref ref) => _Impl(ref);
 
 abstract class IAuthRepo {
   Future<Either<Failure, Option<UserId>>> currentId();
