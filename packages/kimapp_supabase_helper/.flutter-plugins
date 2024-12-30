@@ -2,6 +2,11 @@
 app_links=/Users/kim/.pub-cache/hosted/pub.dev/app_links-6.3.3/
 app_links_linux=/Users/kim/.pub-cache/hosted/pub.dev/app_links_linux-1.0.3/
 app_links_web=/Users/kim/.pub-cache/hosted/pub.dev/app_links_web-1.0.4/
+flutter_image_compress=/Users/kim/.pub-cache/hosted/pub.dev/flutter_image_compress-2.3.0/
+flutter_image_compress_common=/Users/kim/.pub-cache/hosted/pub.dev/flutter_image_compress_common-1.0.5/
+flutter_image_compress_macos=/Users/kim/.pub-cache/hosted/pub.dev/flutter_image_compress_macos-1.0.2/
+flutter_image_compress_ohos=/Users/kim/.pub-cache/hosted/pub.dev/flutter_image_compress_ohos-0.0.3/
+flutter_image_compress_web=/Users/kim/.pub-cache/hosted/pub.dev/flutter_image_compress_web-0.1.4+1/
 gtk=/Users/kim/.pub-cache/hosted/pub.dev/gtk-2.1.0/
 path_provider=/Users/kim/.pub-cache/hosted/pub.dev/path_provider-2.1.5/
 path_provider_android=/Users/kim/.pub-cache/hosted/pub.dev/path_provider_android-2.2.15/
