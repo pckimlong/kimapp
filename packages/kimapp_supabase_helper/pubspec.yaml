@@ -10,8 +10,13 @@ environment:
 dependencies:
   supabase_flutter: 
   riverpod: 
+  riverpod_annotation:
   logger:
   fpdart: 
+  mime:
+  path:
+  dartx: 
+  flutter_image_compress:
   flutter:
     sdk: flutter
   kimapp:
@@ -24,12 +29,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  build_runner:
+  riverpod_generator:
+  mocktail: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
 
   # To add assets to your package, add an assets section, like this:
   # assets:
