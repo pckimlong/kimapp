@@ -1,1 +1,1 @@
-library {{name.snakeCase()}};
+library;
