@@ -1,33 +1,41 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../exports.dart';
+import 'app_theme.dart';
 
 part 'app_theme_provider.g.dart';
 
 const _themeModeCacheKey = "theme-mode";
 
 @Riverpod(keepAlive: true)
-FutureOr<ThemeMode> themeMode(ThemeModeRef ref) async {
-  final cache = await ref.watch(cacheManagerProvider.future);
+class AppThemeMode extends _$AppThemeMode {
+  @override
+  FutureOr<ThemeMode> build() async {
+    final cache = await ref.watch(cacheManagerProvider.future);
 
-  // Store to local storage whenever theme mode change
-  ref.listenSelf((previous, next) {
-    if (previous != next && next.hasValue) {
-      cache.saveEnum(_themeModeCacheKey, next.valueOrNull);
-    }
-  });
+    // Store to local storage whenever theme mode change
+    listenSelf((previous, next) {
+      if (previous != next && next.hasValue) {
+        cache.saveEnum(_themeModeCacheKey, next.valueOrNull);
+      }
+    });
 
-  // Read stored theme mode in the local storage
-  final themeMode = await cache.readEnum(
-    _themeModeCacheKey,
-    ThemeMode.values.byName,
-  );
+    // Read stored theme mode in the local storage
+    final themeMode = await cache.readEnum(
+      _themeModeCacheKey,
+      ThemeMode.values.byName,
+    );
 
-  // If no theme mode store, return ThemeMode.light() as default theme
-  return themeMode ?? ThemeMode.light;
+    return themeMode ?? ThemeMode.system;
+  }
+
+  void change(ThemeMode themeMode) {
+    state = state.whenData((_) => themeMode);
+  }
 }
 
-@Riverpod(keepAlive: true)
-ThemeData theme(ThemeRef ref) {
-  return ThemeData.light();
-}
+@riverpod
+ThemeData ligtTheme(Ref ref) => AppTheme.light;
+
+@riverpod
+ThemeData darkTheme(Ref ref) => AppTheme.dark;
