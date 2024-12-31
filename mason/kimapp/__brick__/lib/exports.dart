@@ -16,7 +16,7 @@ export 'package:hooks_riverpod/hooks_riverpod.dart';
 export 'package:kimapp/kimapp.dart';
 export 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 export 'package:responsive_framework/responsive_framework.dart';
-
+export 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 export 'gen/locale_keys.g.dart';
 export 'src/core/core.dart';
 export 'src/presentation/app/app_style.dart';

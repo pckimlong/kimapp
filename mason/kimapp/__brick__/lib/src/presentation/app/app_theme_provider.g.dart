@@ -8,32 +8,52 @@ part of 'app_theme_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeModeHash() => r'1ff87940a8a4e939815605c4ad58cb90d18a68c4';
+String _$ligtThemeHash() => r'fe32bf42b6c5bdb7e1b1b829cfebe3fa98c12582';
 
-/// See also [themeMode].
-@ProviderFor(themeMode)
-final themeModeProvider = FutureProvider<ThemeMode>.internal(
-  themeMode,
-  name: r'themeModeProvider',
+/// See also [ligtTheme].
+@ProviderFor(ligtTheme)
+final ligtThemeProvider = AutoDisposeProvider<ThemeData>.internal(
+  ligtTheme,
+  name: r'ligtThemeProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$themeModeHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$ligtThemeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef ThemeModeRef = FutureProviderRef<ThemeMode>;
-String _$themeHash() => r'ea9d2d7a96cc2ae8b954731bde91e03a49a6a98c';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LigtThemeRef = AutoDisposeProviderRef<ThemeData>;
+String _$darkThemeHash() => r'de495df328aa639f862ca7bc7c1d8512e8475059';
 
-/// See also [theme].
-@ProviderFor(theme)
-final themeProvider = Provider<ThemeData>.internal(
-  theme,
-  name: r'themeProvider',
+/// See also [darkTheme].
+@ProviderFor(darkTheme)
+final darkThemeProvider = AutoDisposeProvider<ThemeData>.internal(
+  darkTheme,
+  name: r'darkThemeProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$themeHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$darkThemeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef ThemeRef = ProviderRef<ThemeData>;
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DarkThemeRef = AutoDisposeProviderRef<ThemeData>;
+String _$appThemeModeHash() => r'b07a0befcbd5c5ddce50fd725ab59a007296d671';
+
+/// See also [AppThemeMode].
+@ProviderFor(AppThemeMode)
+final appThemeModeProvider =
+    AsyncNotifierProvider<AppThemeMode, ThemeMode>.internal(
+  AppThemeMode.new,
+  name: r'appThemeModeProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appThemeModeHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AppThemeMode = AsyncNotifier<ThemeMode>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
