@@ -157,6 +157,10 @@ abstract class BaseStorageObject {
 
   /// Get public URL for the file
   String getUrl({SupabaseStorageClient? client}) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
     final storage = client ?? Supabase.instance.client.storage;
     return storage.from(bucket).getPublicUrl(path);
   }
@@ -368,12 +372,20 @@ abstract class CompressibleImageObject extends BaseStorageObject {
 
   /// Get URL for the first compressed version (80% quality)
   String getCompressed1Url({SupabaseStorageClient? client}) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
     final storage = client ?? Supabase.instance.client.storage;
     return storage.from(bucket).getPublicUrl(_compressedPath1);
   }
 
   /// Get URL for the second compressed version (40% quality)
   String getCompressed2Url({SupabaseStorageClient? client}) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
     final storage = client ?? Supabase.instance.client.storage;
     return storage.from(bucket).getPublicUrl(_compressedPath2);
   }
