@@ -7,3 +7,4 @@ export 'kimapp_schema.dart';
 export 'object/object.dart';
 export 'riverpod_helper.dart';
 export 'service.dart';
+export 'startup.dart';
