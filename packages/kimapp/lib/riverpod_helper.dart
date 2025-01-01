@@ -141,7 +141,7 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
   Failure? get failure => whenOrNull(failure: (value) => value);
 }
 
-extension ProviderStatusProviderX<T> on NotifierProviderRef<ProviderStatus<T>> {
+extension ProviderStatusProviderX<T> on Ref<ProviderStatus<T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
     listenSelf(
       (previous, next) {
@@ -240,8 +240,7 @@ extension RiverpodCacheExtension on AutoDisposeRef {
   }
 }
 
-extension ProviderStatusClassProviderX<B, T>
-    on NotifierProviderRef<ProviderStatusClassMixin<B, T>> {
+extension ProviderStatusClassProviderX<B, T> on Ref<ProviderStatusClassMixin<B, T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
     listenSelf(
       (previous, next) {
