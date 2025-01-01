@@ -21,12 +21,13 @@ dev_dependencies:
   mockito:
   build_runner: null
   flutter_lints: ^3.0.0
-
+  flutter_test:
+    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
-flutter: null
+
 
 # To add assets to your package, add an assets section, like this:
 # assets:
