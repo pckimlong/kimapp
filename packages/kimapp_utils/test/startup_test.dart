@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kimapp/startup.dart';
+import 'package:kimapp_utils/startup.dart';
 
 void main() {
   group('IntegrationMode Tests', () {
@@ -31,7 +31,7 @@ void main() {
 
   group('PlatformType Tests', () {
     test('platform type getters work correctly', () {
-      final webPlatform = PlatformType.web;
+      const webPlatform = PlatformType.web;
       expect(webPlatform.isWeb, isTrue);
       expect(webPlatform.isAndroid, isFalse);
       expect(webPlatform.isIos, isFalse);
@@ -39,7 +39,7 @@ void main() {
       expect(webPlatform.isWindows, isFalse);
       expect(webPlatform.isLinux, isFalse);
 
-      final androidPlatform = PlatformType.android;
+      const androidPlatform = PlatformType.android;
       expect(androidPlatform.isAndroid, isTrue);
       expect(androidPlatform.isWeb, isFalse);
     });
