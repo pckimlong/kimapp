@@ -11,11 +11,16 @@ dependencies:
   flutter:
     sdk: flutter
   {{#kimapp}}
-    kimapp:
+  kimapp:
     git:
       url: https://github.com/pckimlong/kimapp.git
       ref: master
       path: packages/kimapp
+  kimapp_supabase_helper:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp_supabase_helper
   {{/kimapp}}
   dartx: any
   mocktail: any
@@ -33,6 +38,7 @@ dependencies:
   hooks_riverpod: any
   {{/ui}}
   {{/riverpod}}
+
 
 dev_dependencies:
   build_runner: 
@@ -55,11 +61,7 @@ dev_dependencies:
   riverpod_lint: any
   riverpod_generator: any
   {{/riverpod}}
-  kimapp_supabase_helper:
-    git:
-      url: https://github.com/pckimlong/kimapp.git
-      ref: master
-      path: packages/kimapp_supabase_helper
+
   
 
 {{#ui}}
