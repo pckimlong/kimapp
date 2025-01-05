@@ -3,6 +3,7 @@ export 'dart:async' hide AsyncError;
 export 'package:animate_do/animate_do.dart';
 export 'package:auto_route/auto_route.dart';
 export 'package:bot_toast/bot_toast.dart';
+export 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 export 'package:dartx/dartx.dart' hide IterableSumBy;
 export 'package:easy_localization/easy_localization.dart' hide TextDirection;
 export 'package:fast_immutable_collections/fast_immutable_collections.dart';
