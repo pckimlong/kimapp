@@ -53,7 +53,7 @@ class AppWidget extends HookConsumerWidget {
         locale: context.locale,
         builder: (context, child) {
           child = BotToastInit()(context, child);
-          child = _Unfocus(child: child);
+          child = KeyboardDismiss(child: child);
           child = _LifecycleWatcher(child: child);
           child = ResponsiveBreakpoints.builder(
             child: child,
@@ -67,20 +67,6 @@ class AppWidget extends HookConsumerWidget {
           return child;
         },
       ),
-    );
-  }
-}
-
-class _Unfocus extends StatelessWidget {
-  const _Unfocus({required this.child});
-
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusManager.instance.primaryFocus?.unfocus,
-      child: child,
     );
   }
 }

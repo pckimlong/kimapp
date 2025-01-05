@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
 
+typedef PaginatedItemBuilder<T> = Widget Function(int index, T data);
+
 /// A pagination-enabled ListView that integrates with Riverpod for data fetching and state management.
 ///
 /// This widget extends ConsumerWidget to work with Riverpod and provides built-in support for:
@@ -81,7 +83,7 @@ class RiverpodPaginationListView<T> extends ConsumerWidget {
   /// Parameters:
   /// - [index]: The position in the list (adjusted for external items if [adjustDataIndex] is true)
   /// - [data]: The data item of type T
-  final Widget Function(int index, T data) itemBuilder;
+  final PaginatedItemBuilder<T> itemBuilder;
 
   /// Function to fetch paginated data using Riverpod.
   ///
@@ -160,13 +162,13 @@ class RiverpodPaginationListView<T> extends ConsumerWidget {
       restorationId: restorationId,
       clipBehavior: clipBehavior,
       itemBuilder: (context, index) {
+        if (loading) {
+          return loadingItemBuilder(index, false);
+        }
+
         // Check if there's an external item at this index
         if (externalItems.containsKey(index)) {
           return externalItems[index]!(context);
-        }
-
-        if (loading) {
-          return loadingItemBuilder(index, false);
         }
 
         // Adjust the index for data fetching if needed
@@ -201,7 +203,7 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
   final bool loading;
   final int loadingItemCount;
   final Widget Function(int index, bool isFirstItem) loadingItemBuilder;
-  final Widget Function(T data) itemBuilder;
+  final PaginatedItemBuilder<T> itemBuilder;
   final bool addAutomaticKeepAlives;
   final bool addRepaintBoundaries;
   final bool addSemanticIndexes;
@@ -222,13 +224,13 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
+          if (loading) {
+            return loadingItemBuilder(index, false);
+          }
+
           // Check if there's an external item at this index
           if (externalItems.containsKey(index)) {
             return externalItems[index]!(context);
-          }
-
-          if (loading) {
-            return loadingItemBuilder(index, false);
           }
 
           // Adjust the index for data fetching if needed
@@ -237,7 +239,7 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
 
           return paginated?.whenOrNull(
             loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
-            data: (category) => itemBuilder(category),
+            data: (data) => itemBuilder(index, data),
           );
         },
         childCount: loading ? loadingItemCount : null,
@@ -282,7 +284,7 @@ class RiverpodPaginationGrid<T> extends ConsumerWidget {
   final int loadingItemCount;
   final EdgeInsets padding;
   final Widget Function(int index, bool isFirstItem) loadingItemBuilder;
-  final Widget Function(int index, T data) itemBuilder;
+  final PaginatedItemBuilder<T> itemBuilder;
   final SliverGridDelegate gridDelegate;
   final ScrollPhysics? physics;
   final Axis scrollDirection;
@@ -330,13 +332,13 @@ class RiverpodPaginationGrid<T> extends ConsumerWidget {
       restorationId: restorationId,
       clipBehavior: clipBehavior,
       itemBuilder: (context, index) {
+        if (loading) {
+          return loadingItemBuilder(index, false);
+        }
+
         // Check if there's an external item at this index
         if (externalItems.containsKey(index)) {
           return externalItems[index]!(context);
-        }
-
-        if (loading) {
-          return loadingItemBuilder(index, false);
         }
 
         // Adjust the index for data fetching if needed
@@ -372,7 +374,7 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
   final bool loading;
   final int loadingItemCount;
   final Widget Function(int index, bool isFirstItem) loadingItemBuilder;
-  final Widget Function(T data) itemBuilder;
+  final PaginatedItemBuilder<T> itemBuilder;
   final SliverGridDelegate gridDelegate;
   final bool addAutomaticKeepAlives;
   final bool addRepaintBoundaries;
@@ -395,13 +397,13 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
       gridDelegate: gridDelegate,
       delegate: SliverChildBuilderDelegate(
         (context, index) {
+          if (loading) {
+            return loadingItemBuilder(index, false);
+          }
+
           // Check if there's an external item at this index
           if (externalItems.containsKey(index)) {
             return externalItems[index]!(context);
-          }
-
-          if (loading) {
-            return loadingItemBuilder(index, false);
           }
 
           // Adjust the index for data fetching if needed
@@ -410,7 +412,7 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
 
           return paginated?.whenOrNull(
             loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
-            data: (category) => itemBuilder(category),
+            data: (data) => itemBuilder(index, data),
           );
         },
         childCount: loading ? loadingItemCount : null,
@@ -419,6 +421,164 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
         addSemanticIndexes: addSemanticIndexes,
         semanticIndexOffset: semanticIndexOffset,
       ),
+    );
+  }
+}
+
+class RiverpodPaginationCustomGrid<T> extends ConsumerWidget {
+  const RiverpodPaginationCustomGrid({
+    super.key,
+    this.padding = const EdgeInsets.all(0),
+    this.loading = false,
+    this.loadingItemCount = 20,
+    required this.getData,
+    required this.gridDelegate,
+    required this.loadingItemBuilder,
+    required this.itemBuilder,
+    this.physics,
+    this.scrollDirection = Axis.vertical,
+    this.reverse = false,
+    this.controller,
+    this.primary,
+    this.shrinkWrap = false,
+    this.cacheExtent,
+    this.semanticChildCount,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.restorationId,
+    this.clipBehavior = Clip.hardEdge,
+    this.externalItems = const {},
+    this.adjustDataIndex = true,
+  });
+
+  final bool loading;
+  final int loadingItemCount;
+  final EdgeInsets padding;
+  final Widget Function(int index, bool isFirstItem) loadingItemBuilder;
+  final PaginatedItemBuilder<T> itemBuilder;
+  final SliverGridDelegate gridDelegate;
+  final ScrollPhysics? physics;
+  final Axis scrollDirection;
+  final bool reverse;
+  final ScrollController? controller;
+  final bool? primary;
+  final bool shrinkWrap;
+  final double? cacheExtent;
+  final int? semanticChildCount;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final String? restorationId;
+  final Clip clipBehavior;
+  final Map<int, Widget Function(BuildContext context)> externalItems;
+  final bool adjustDataIndex;
+
+  final PaginatedItem<T>? Function(WidgetRef ref, int index) getData;
+
+  /// Calculate the actual data index considering external items
+  int _getDataIndex(int viewIndex) {
+    if (!adjustDataIndex) return viewIndex;
+    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GridView.custom(
+      padding: padding,
+      gridDelegate: gridDelegate,
+      childrenDelegate: SliverChildBuilderDelegate(
+        childCount: loading ? loadingItemCount : null,
+        (context, index) {
+          if (loading) {
+            return loadingItemBuilder(index, false);
+          }
+          // Check if there's an external item at this index
+          if (externalItems.containsKey(index)) {
+            return externalItems[index]!(context);
+          }
+
+          // Adjust the index for data fetching if needed
+          final dataIndex = _getDataIndex(index);
+          final paginated = getData(ref, dataIndex);
+
+          return paginated?.whenOrNull(
+            loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
+            data: (data) => itemBuilder(index, data),
+          );
+        },
+      ),
+      physics: loading ? const NeverScrollableScrollPhysics() : physics,
+      scrollDirection: scrollDirection,
+      reverse: reverse,
+      controller: controller,
+      primary: primary,
+      shrinkWrap: shrinkWrap,
+      cacheExtent: cacheExtent,
+      semanticChildCount: semanticChildCount,
+      keyboardDismissBehavior: keyboardDismissBehavior,
+      restorationId: restorationId,
+      clipBehavior: clipBehavior,
+    );
+  }
+}
+
+class RiverpodPaginationCustom<T> extends ConsumerWidget {
+  const RiverpodPaginationCustom({
+    super.key,
+    this.loading = false,
+    this.loadingItemCount = 20,
+    required this.getData,
+    required this.loadingItemBuilder,
+    required this.itemBuilder,
+    this.externalItems = const {},
+    this.adjustDataIndex = true,
+    required this.builder,
+  });
+
+  final bool loading;
+  final int loadingItemCount;
+  final Widget Function(int index, bool isFirstItem) loadingItemBuilder;
+  final PaginatedItemBuilder<T> itemBuilder;
+  final Map<int, Widget Function(BuildContext context)> externalItems;
+  final bool adjustDataIndex;
+  final PaginatedItem<T>? Function(WidgetRef ref, int index) getData;
+
+  /// Calculate the actual data index considering external items
+  int _getDataIndex(int viewIndex) {
+    if (!adjustDataIndex) return viewIndex;
+    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+  }
+
+  final Widget Function(
+    BuildContext context,
+    bool loading,
+    int? itemCount,
+    Widget? Function(int index) getItem,
+  ) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final itemCount = loading ? loadingItemCount : null;
+
+    return builder(
+      context,
+      loading,
+      itemCount,
+      (index) {
+        if (loading) {
+          return loadingItemBuilder(index, false);
+        }
+        // Check if there's an external item at this index
+        if (externalItems.containsKey(index)) {
+          return externalItems[index]!(context);
+        }
+
+        // Adjust the index for data fetching if needed
+        final dataIndex = _getDataIndex(index);
+        final paginated = getData(ref, dataIndex);
+
+        return paginated?.whenOrNull(
+          loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
+          data: (data) => itemBuilder(index, data),
+        );
+      },
     );
   }
 }
