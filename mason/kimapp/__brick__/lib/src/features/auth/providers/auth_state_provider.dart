@@ -1,8 +1,8 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:kimapp/extensions.dart';
+import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../exports.dart';
 import '../auth.dart';
 
 part "auth_state_provider.freezed.dart";

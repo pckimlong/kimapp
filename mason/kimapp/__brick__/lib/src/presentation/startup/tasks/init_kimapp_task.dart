@@ -1,4 +1,7 @@
-import '../../../../exports.dart';
+import 'package:kimapp/kimapp.dart';
+
+import '../../../core/errors/error.dart';
+import '../../../core/helpers/helpers.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 

@@ -1,10 +1,19 @@
+import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../config.dart';
-import '../../../exports.dart';
+import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
-import 'app_theme_provider.dart';
 import './app_state_provider.dart';
+import 'app_style.dart';
+import 'app_theme_provider.dart';
 
 // Response for initialize app, and other global state
 class _EagerInitialization extends ConsumerWidget {

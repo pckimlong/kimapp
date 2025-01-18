@@ -1,5 +1,10 @@
-import '../../../../exports.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../../../core/app/app_info_provider.dart';
 import '../../app/app_state_provider.dart';
+import '../../router/app_router.gr.dart';
 import 'splash_widget.dart';
 
 @RoutePage()
@@ -15,11 +20,18 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
+  String? _error;
   @override
   void initState() {
     super.initState();
 
-    ref.read(appStateProvider.notifier).initialize().then((value) {
+    ref.read(appStateProvider.notifier).initialize(
+      onError: (error) {
+        setState(() {
+          _error = error;
+        });
+      },
+    ).then((value) {
       if (value == ApplicationState.initialized) {
         if (widget.onInitialized != null) {
           widget.onInitialized!();
@@ -37,7 +49,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     return SplashWidget(
       loadedInMain: false,
       appVersion: appVersion,
-      error: null,
+      error: _error,
     );
   }
 }

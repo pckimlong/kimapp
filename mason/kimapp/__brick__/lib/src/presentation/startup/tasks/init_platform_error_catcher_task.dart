@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../../exports.dart';
+import '../../../core/helpers/helpers.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 

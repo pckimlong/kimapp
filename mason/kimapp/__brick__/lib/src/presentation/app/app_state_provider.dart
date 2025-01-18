@@ -1,9 +1,10 @@
+import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../exports.dart';
+import '../../core/helpers/logger.dart';
 import '../../features/auth/auth.dart';
+import '../router/app_router.gr.dart';
 import '../router/app_router_provider.dart';
-import 'app_theme_provider.dart';
 
 part 'app_state_provider.g.dart';
 
