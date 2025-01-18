@@ -1,6 +1,9 @@
-import '../../../../../exports.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}.dart';
+import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
+import '../../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_list_pagination_provider.dart';
+import '../../../app/app_style.dart';
 
 class  {{name.pascalCase()}}ListBaseConfig{
   const  {{name.pascalCase()}}ListBaseConfig();

@@ -1,12 +1,12 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:kimapp/kimapp.dart';
+import 'package:kimapp/riverpod_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-
-import '../../../../exports.dart';
-import '../{{name.snakeCase()}}.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
-import 'providers.dart';
+import '../{{name.snakeCase()}}_schema.schema.dart';
+import '{{name.snakeCase()}}_list_pagination_provider.dart';
+import '{{name.snakeCase()}}_list_provider.dart';
 
 part '{{name.snakeCase()}}_create_provider.freezed.dart';
 part '{{name.snakeCase()}}_create_provider.g.dart';
