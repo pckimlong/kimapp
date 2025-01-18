@@ -2,9 +2,11 @@ import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../{{name.snakeCase()}}.dart';
+import '../{{name.snakeCase()}}_schema.schema.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
-import 'providers.dart';
+import '{{name.snakeCase()}}_detail_provider.dart';
+import '{{name.snakeCase()}}_list_pagination_provider.dart';
+import '{{name.snakeCase()}}_list_provider.dart';
 
 part '{{name.snakeCase()}}_delete_provider.g.dart';
 
