@@ -1,5 +1,7 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
 
-import '../../../../exports.dart';
+import '../../app/app_style.dart';
 
 class SplashWidget extends StatelessWidget {
   const SplashWidget({

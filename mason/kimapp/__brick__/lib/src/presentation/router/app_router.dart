@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
+import 'app_router.gr.dart';
 import 'app_router_guard.dart';
 
 @AutoRouterConfig(

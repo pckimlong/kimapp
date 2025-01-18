@@ -1,6 +1,11 @@
-import '../../../exports.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../../core/account/account.dart';
+import '../../core/helpers/helpers.dart';
 import '../../features/auth/auth.dart';
 import '../app/app_state_provider.dart';
+import 'app_router.gr.dart';
 
 class AuthGuard extends _AppStateRouteGuard {
   AuthGuard(this._ref);
@@ -45,10 +50,10 @@ abstract class _AppStateRouteGuard extends AutoRouteGuard with LoggerMixin {
     final appState = _ref.read(appStateProvider);
     final accountState = _ref.read(currentAccountProvider);
     if (appState == ApplicationState.initialized && accountState.hasValue) {
-      log.v('Call onAppStateInitialized');
+      log.i('Call onAppStateInitialized');
       onAppStateInitialized(resolver, router);
     } else {
-      log.v('uninitialized push to splash page');
+      log.i('uninitialized push to splash page');
       resolver.redirect(
         SplashRoute(
           onInitialized: () {

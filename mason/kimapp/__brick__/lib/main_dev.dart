@@ -1,4 +1,5 @@
-import 'package:kimapp/kimapp.dart';
+import 'package:kimapp_utils/kimapp_utils.dart';
+
 import 'src/presentation/startup/startup.dart';
 
 void main() => runKimappApp(env: IntegrationMode.develop);

@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp/riverpod_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:{{project_name.snakeCase()}}/exports.dart';
 
 part "file_from_url_provider.g.dart";
 
 /// Provide use to get uint8list from url and also cache it
 @riverpod
-FutureOr<File?> fileFromUrl(FileFromUrlRef ref, String? url) async {
+FutureOr<File?> fileFromUrl(Ref ref, String? url) async {
   ref.cacheTime(const Duration(minutes: 3));
 
   if (url == null) return null;

@@ -1,7 +1,9 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp/kimapp_cache_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../exports.dart';
+import '../helpers/logger.dart';
 
 part "cache_manager_provider.g.dart";
 
@@ -9,7 +11,7 @@ part "cache_manager_provider.g.dart";
 Box cacheBox(Ref ref) => Hive.box(_keyValueBox);
 
 @Riverpod(keepAlive: true)
-FutureOr<KimappCacheManager> cacheManager(CacheManagerRef ref) async {
+FutureOr<KimappCacheManager> cacheManager(Ref ref) async {
   final storage = HiveCacheManager();
   await storage.initialize();
   return storage;
@@ -47,7 +49,7 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
     try {
       return [for (final m in data.values) m].map((e) => fromMap(_mapParser(e)!)).toList();
     } catch (e) {
-      logger.e('Error reading object from local storage with key [$key], Null will be return');
+      log.e('Error reading object from local storage with key [$key], Null will be return');
       if (onFail != null) {
         onFail(e, data);
       }
@@ -67,7 +69,7 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
     try {
       return fromMap(data);
     } catch (e) {
-      logger.e('Error reading object from local storage with key [$key], Null will be return');
+      log.e('Error reading object from local storage with key [$key], Null will be return');
       if (onFail != null) {
         onFail(e, data);
       }

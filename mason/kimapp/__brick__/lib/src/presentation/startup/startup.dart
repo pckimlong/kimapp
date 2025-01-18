@@ -1,10 +1,12 @@
-import 'dart:io';
-
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/widgets.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import '../../../exports.dart';
+import '../../../config.dart';
+import '../../core/helpers/helpers.dart';
 import '../app/app_widget.dart';
-import '../modules/splash/splash_widget.dart';
 import 'tasks/tasks.dart';
 
 Future<void> runKimappApp({IntegrationMode? env, LaunchConfiguration? config}) async {

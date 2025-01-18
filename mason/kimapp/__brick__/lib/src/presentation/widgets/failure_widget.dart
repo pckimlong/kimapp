@@ -1,4 +1,7 @@
-import '../../../exports.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp/object/failure.dart';
+
 import 'my_error_widget.dart';
 
 class FailureWidget extends ConsumerWidget {

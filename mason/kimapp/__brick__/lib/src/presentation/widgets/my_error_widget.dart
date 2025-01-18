@@ -1,4 +1,8 @@
-import '../../../exports.dart';
+import 'package:flutter/material.dart';
+import 'package:kimapp/kimapp.dart';
+import 'package:makk/src/core/helpers/helpers.dart';
+
+import '../app/app_style.dart';
 
 class MyErrorWidget extends StatelessWidget {
   const MyErrorWidget({super.key, required this.error, this.fontSize});
