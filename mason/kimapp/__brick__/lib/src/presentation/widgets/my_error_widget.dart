@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kimapp/kimapp.dart';
-import 'package:makk/src/core/helpers/helpers.dart';
 
+import '../../core/helpers/build_context_helper.dart';
 import '../app/app_style.dart';
 
 class MyErrorWidget extends StatelessWidget {

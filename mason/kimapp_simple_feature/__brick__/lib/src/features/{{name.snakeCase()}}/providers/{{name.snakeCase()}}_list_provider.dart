@@ -1,8 +1,8 @@
-
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../exports.dart';
-import '../{{name.snakeCase()}}.dart';
+import '../{{name.snakeCase()}}_schema.schema.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
 
 part '{{name.snakeCase()}}_list_provider.g.dart';
