@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-
-import '../../../exports.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 extension BuildContextHelper on BuildContext {
   ResponsiveBreakpointsData get responsive => ResponsiveBreakpoints.of(this);
