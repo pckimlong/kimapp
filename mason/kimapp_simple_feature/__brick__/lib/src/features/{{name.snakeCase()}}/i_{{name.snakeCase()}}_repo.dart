@@ -1,6 +1,11 @@
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../exports.dart';
-import '{{name.snakeCase()}}.dart';
+import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
+
+import '{{name.snakeCase()}}_schema.schema.dart';
 
 part 'i_{{name.snakeCase()}}_repo.g.dart';
 
