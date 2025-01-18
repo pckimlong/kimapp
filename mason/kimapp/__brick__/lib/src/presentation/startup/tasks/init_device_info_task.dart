@@ -1,4 +1,4 @@
-import '../../../../exports.dart';
+import '../../../core/device/device_info_provider.dart';
 import '../startup.dart';
 
 class InitDeviceInfoTask extends StartUpTask {

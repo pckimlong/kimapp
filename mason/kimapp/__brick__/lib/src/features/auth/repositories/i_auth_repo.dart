@@ -1,6 +1,9 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp/kimapp.dart';
+import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../exports.dart';
 import '../auth.dart';
 
 part 'i_auth_repo.g.dart';
@@ -23,18 +26,20 @@ class _Impl implements IAuthRepo {
   Future<Either<Failure, Option<UserId>>> currentId() async {
     return await errorHandler(() async {
       final user = _ref.supabaseClient.auth.currentSession?.user;
-      return right(Option.fromNullable(user?.userId));
+      if (user == null) return right(Option.none());
+      return right(Option.fromNullable(UserId.fromValue(user.id)));
     });
   }
 
   @override
   Future<Either<Failure, UserId>> signIn(SignInParam param) async {
     return await errorHandler(() async {
-      final result = await _ref.supabaseClient
-          .auth
-          .signInWithPassword(email: param.email, password: param.password.trim());
+      final result = await _ref.supabaseClient.auth.signInWithPassword(
+        email: param.email,
+        password: param.password.trim(),
+      );
 
-      return right(result.user!.userId);
+      return right(UserId.fromValue(result.user!.id));
     });
   }
 

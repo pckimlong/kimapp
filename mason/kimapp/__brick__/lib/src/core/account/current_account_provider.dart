@@ -1,15 +1,15 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../exports.dart';
 import '../../features/auth/auth.dart';
 
 part 'current_account_provider.freezed.dart';
 part 'current_account_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-UserId? currentUserId(CurrentUserIdRef ref) =>
+UserId? currentUserId(Ref ref) =>
     ref.watch(authStateProvider).whenOrNull(authenticated: (id) => id);
 
 @freezed

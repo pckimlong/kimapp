@@ -1,4 +1,5 @@
-import '../../../../exports.dart';
+import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
+
 import '../startup.dart';
 
 const _devUrl = "http://192.168.0.199:54321";

@@ -52,6 +52,11 @@ dependencies:
   device_info_plus: ^11.2.0
   flex_color_scheme: ^8.1.0
   path_provider: ^2.1.5
+  kimapp_utils:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp_utils
 
 dev_dependencies:
   auto_route_generator: ^9.0.0
