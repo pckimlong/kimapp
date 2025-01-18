@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp_utils/kimapp_utils.dart';
 
 import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
 import '../../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_list_pagination_provider.dart';
@@ -46,7 +47,6 @@ class {{name.pascalCase()}}ListBase extends ConsumerWidget {
     );
   }
 }
-
 class _Content extends ConsumerWidget {
   const _Content();
 
@@ -54,57 +54,38 @@ class _Content extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(_configProvider);
     final param = ref.watch(_paramProvider);
-    final firstPageAsync = ref.watch(
+    final isFirstPageLoading = ref.watch(
       {{name.pascalCase()}}ListPaginationProvider(page: 0, param: param).select(
-        (value) => value.whenData((value) => value.length),
+        (value) => value.isLoading,
       ),
     );
 
-    return firstPageAsync.when(
-      data: (count) => _ItemList(firstPageItemCount: count),
-      error: (err, s) => Center(child: Text(err.toString())),
-      loading: () => const CircularProgressIndicator(),
+    return RiverpodPaginationListView(
+      loading: isFirstPageLoading,
+      getData: (ref, index) => ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param)),
+      loadingItemBuilder: (index, isFirstItem) {
+        return const _Item(item: null);
+      },
+      itemBuilder: (index, data) {
+        return _Item(key: ValueKey(index), item: data);
+      },
     );
   }
 }
 
-class _ItemList extends ConsumerWidget {
-  const _ItemList({required this.firstPageItemCount});
+class _Item extends ConsumerWidget {
+  const _Item({
+    super.key,
+    required this.item,
+  });
 
-  final int firstPageItemCount;
+  final {{name.pascalCase()}}Model? item;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (firstPageItemCount == 0) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('No Item'),
-            AS.hGap12,
-            // TODO - Add refresh button with ref.invalidate(...)
-          ],
-        ),
-      );
+    if (item == null) {
+      return Text('Loading...');
     }
-
-    final param = ref.watch(_paramProvider);
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        final paginated = ref.watch({{name.pascalCase()}}PaginatedAtIndexProvider(index, param: param));
-        return paginated?.whenOrNull(
-            loading: (isFirstItem) {
-              if(isFirstItem){
-                return const Text('Loading...', textAlign: TextAlign.center);
-              }
-              return const Text('Loading old item...', textAlign: TextAlign.center);
-            },
-            data: (financial) {
-              // TODO - Implement financial item widget
-              return Text(financial.id.value.toString());
-            },
-          );
-      },
-    );
+    return Text(item!.id.toString());
   }
 }
