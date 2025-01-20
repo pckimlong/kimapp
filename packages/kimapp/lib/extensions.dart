@@ -20,3 +20,11 @@ extension OptionX<T> on Option<T> {
     );
   }
 }
+
+extension FutureEitherX<T> on Future<Either<Failure, T>> {
+  Future<T> getOrThrow() async => (await this).getOrThrow();
+
+  Future<T?> getOrNull() async => (await this).getOrNull();
+
+  Future<N> mapOrThrow<N>(N Function(T r) map) async => (await this).mapOrThrow(map);
+}
