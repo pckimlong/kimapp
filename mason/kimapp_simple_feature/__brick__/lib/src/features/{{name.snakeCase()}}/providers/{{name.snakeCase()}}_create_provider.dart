@@ -2,6 +2,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:kimapp/riverpod_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../i_{{name.snakeCase()}}_repo.dart';
 import '../{{name.snakeCase()}}_schema.schema.dart';

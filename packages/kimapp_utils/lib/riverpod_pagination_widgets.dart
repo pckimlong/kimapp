@@ -221,13 +221,25 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (loading) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: loadingItemCount,
+          physics: const NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+          addRepaintBoundaries: addRepaintBoundaries,
+          addSemanticIndexes: addSemanticIndexes,
+          itemBuilder: (context, index) => loadingItemBuilder(index, false),
+        ),
+      );
+    }
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          if (loading) {
-            return loadingItemBuilder(index, false);
-          }
-
           // Check if there's an external item at this index
           if (externalItems.containsKey(index)) {
             return externalItems[index]!(context);
@@ -393,14 +405,27 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (loading) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: GridView.builder(
+          padding: EdgeInsets.zero,
+          gridDelegate: gridDelegate,
+          itemCount: loadingItemCount,
+          physics: const NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+          addRepaintBoundaries: addRepaintBoundaries,
+          addSemanticIndexes: addSemanticIndexes,
+          itemBuilder: (context, index) => loadingItemBuilder(index, false),
+        ),
+      );
+    }
+
     return SliverGrid(
       gridDelegate: gridDelegate,
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          if (loading) {
-            return loadingItemBuilder(index, false);
-          }
-
           // Check if there's an external item at this index
           if (externalItems.containsKey(index)) {
             return externalItems[index]!(context);
@@ -480,15 +505,29 @@ class RiverpodPaginationCustomGrid<T> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (loading) {
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: GridView.custom(
+          padding: padding,
+          gridDelegate: gridDelegate,
+          childrenDelegate: SliverChildBuilderDelegate(
+            (context, index) => loadingItemBuilder(index, false),
+            childCount: loadingItemCount,
+            addAutomaticKeepAlives: true,
+            addRepaintBoundaries: true,
+            addSemanticIndexes: true,
+          ),
+        ),
+      );
+    }
+
     return GridView.custom(
       padding: padding,
       gridDelegate: gridDelegate,
       childrenDelegate: SliverChildBuilderDelegate(
         childCount: loading ? loadingItemCount : null,
         (context, index) {
-          if (loading) {
-            return loadingItemBuilder(index, false);
-          }
           // Check if there's an external item at this index
           if (externalItems.containsKey(index)) {
             return externalItems[index]!(context);
