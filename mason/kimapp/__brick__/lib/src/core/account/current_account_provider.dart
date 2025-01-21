@@ -30,8 +30,6 @@ extension CurrentAccountStateDataX on CurrentAccountStateData {}
 class CurrentAccount extends _$CurrentAccount {
   @override
   FutureOr<CurrentAccountState> build() async {
-    ref.autoInvalidateSelf(const Duration(minutes: 5));
-
     final uid = ref.watch(currentUserIdProvider);
     if (uid == null) return const CurrentAccountState.none();
 

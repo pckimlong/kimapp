@@ -25,22 +25,30 @@ class AuthenticationState with _$AuthenticationState {
 class AuthState extends _$AuthState {
   Future<void> initialize() async {
     final authUserIdOption = (await ref.watch(authRepoProvider).currentId()).getOrThrow();
-    state = authUserIdOption.match(
+    final newState = authUserIdOption.match(
       () => const AuthenticationState.unauthenticated(),
       (userId) => AuthenticationState.authenticated(userId),
     );
+
+    // Only update state if it's different to avoid unnecessary rebuilds
+    if (newState != state) {
+      state = newState;
+    }
   }
 
   @override
   AuthenticationState build() {
+    // Set up auth state change listener
     final supabaseAuth = ref.watch(supabaseProvider).client.auth;
-    final subscription = supabaseAuth.onAuthStateChange.listen(
-      (_) => initialize(),
-    );
+
+    final subscription = supabaseAuth.onAuthStateChange.distinct().listen((_) {
+      // Add slight delay to allow Supabase to stabilize
+      Future.delayed(const Duration(milliseconds: 100), initialize);
+    });
 
     ref.onDispose(subscription.cancel);
 
-    /// Return unauthenticated by default and let splash page initial actual state
+    // Still return unauthenticated by default
     return const AuthenticationState.unauthenticated();
   }
 }
