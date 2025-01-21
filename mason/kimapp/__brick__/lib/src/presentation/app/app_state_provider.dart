@@ -1,6 +1,8 @@
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../config.dart';
+import '../../core/account/account.dart';
 import '../../core/helpers/logger.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router.gr.dart';
@@ -12,80 +14,107 @@ enum ApplicationState { uninitialized, initialized }
 
 @Riverpod(keepAlive: true)
 class AppState extends _$AppState with LoggerMixin {
+  /// Initialize the application state and handle all necessary startup processes
   Future<ApplicationState> initialize({void Function(String error)? onError}) async {
-    if (state == ApplicationState.initialized) {
-      log.i('Reinitialize app...');
-    } else {
-      log.i('Initializing app...');
-    }
+    log.i(state == ApplicationState.initialized ? 'Reinitialize app...' : 'Initializing app...');
 
     try {
-      final startedAt = DateTime.now();
-      await _initialize();
-      final finishedAt = DateTime.now();
-
-      // Delay a bit if it too fast, this allow to show splash page
-      // Calculate the actual duration of the initialization process
-      final duration = finishedAt.difference(startedAt).inMilliseconds;
-
-      // Calculate the delay needed to meet the minimum splash duration
-      final delay = duration < 1150 ? 1150 - duration : 0;
-
-      // Delay if needed
-      await Future.delayed(Duration(milliseconds: delay));
-
-      return ApplicationState.initialized;
+      return await _executeInitialization(onError);
     } catch (e, stack) {
-      String message = e.toString();
-
-      // Error when switch from debug and release mode, should call to sign out in this case
-      if (message.contains('JWSError JWSInvalidSignature')) {
-        await ref.read(signOutProvider.notifier).call();
-      }
-
-      if (e is Failure) {
-        message = e.message();
-      }
-
-      onError?.call(message);
-      log.e('Error while initializing app', error: e, stackTrace: stack);
-      return ApplicationState.uninitialized;
+      return _handleInitializationError(e, stack, onError);
     }
   }
 
-  Future<ApplicationState> _initialize() async {
-    await Future.wait([
-      ref.read(authStateProvider.notifier).initialize(),
-    ]);
+  /// Execute the initialization process with proper timing
+  Future<ApplicationState> _executeInitialization(void Function(String error)? onError) async {
+    final startedAt = DateTime.now();
+    await _initializeCore();
 
+    // Ensure minimum splash screen duration
+    final elapsedDuration = DateTime.now().difference(startedAt).inMilliseconds;
+    final remainingDelay = Config.minSplashDurationInMs - elapsedDuration;
+
+    if (remainingDelay > 0) {
+      await Future.delayed(Duration(milliseconds: remainingDelay));
+    }
+
+    return ApplicationState.initialized;
+  }
+
+  /// Core initialization logic
+  Future<void> _initializeCore() async {
+    // Initialize auth state
+    await ref.read(authStateProvider.notifier).initialize();
+
+    // Handle auth-dependent initialization
     final authState = ref.read(authStateProvider);
-    await authState.when(
-      authenticated: (uuid) async {
-        log.i('Authenticated');
-        // TODO - Initial user data
-      },
-      unauthenticated: () {
-        log.i('Unauthenticated. Redirecting to sign page...');
-      },
+    authState.when(
+      authenticated: _handleAuthenticatedState,
+      unauthenticated: _handleUnauthenticatedState,
     );
 
     state = ApplicationState.initialized;
     log.i('Application initialized');
-    return state;
   }
 
+  /// Handle authenticated state initialization
+  Future<void> _handleAuthenticatedState(UserId uuid) async {
+    log.i('Authenticated, initializing user data');
+    await Future.wait([
+      ref.refresh(currentAccountProvider.future),
+    ]);
+  }
+
+  /// Handle unauthenticated state
+  void _handleUnauthenticatedState() {
+    log.i('Unauthenticated. Redirecting to sign page...');
+    // eg refresh some provider which is dependent on auth state
+  }
+
+  /// Handle initialization errors
+  ApplicationState _handleInitializationError(
+    Object error,
+    StackTrace stack,
+    void Function(String error)? onError,
+  ) {
+    final errorMessage = _processErrorMessage(error);
+
+    if (_isJWTSignatureError(errorMessage)) {
+      _handleJWTError();
+    }
+
+    onError?.call(errorMessage);
+    log.e('Error while initializing app', error: error, stackTrace: stack);
+    return ApplicationState.uninitialized;
+  }
+
+  /// Process error message based on error type
+  String _processErrorMessage(Object error) {
+    if (error is Failure) {
+      return error.message();
+    }
+    return error.toString();
+  }
+
+  /// Check if error is JWT related
+  bool _isJWTSignatureError(String message) {
+    return message.contains('JWSError JWSInvalidSignature');
+  }
+
+  /// Handle JWT specific errors
+  Future<void> _handleJWTError() async {
+    await ref.read(signOutProvider.notifier).call();
+  }
+
+  /// Watch auth state changes and handle navigation
   void _watchAuthState() {
     ref.listen(
       authStateProvider,
-      (previous, next) async {
-        if (previous != next && state == ApplicationState.initialized) {
-          log.i('Auth state changed from $previous to $next');
-          // Reinitialize app to refresh data which depend on auth state
-          await initialize();
-        }
-
+      (previous, next) {
+        // We just only replace the route to splash page, to allow it automatically handle where it should navigate to
+        // I use to reinitialize the appstate, but I think by just replace it with splash, it will automatically reinitialize
         if (previous?.isAuthenticated == true && next.isUnauthenticated) {
-          ref.read(appRouterProvider).replace(SignInRoute());
+          ref.read(appRouterProvider).replace(SplashRoute());
         }
       },
     );
