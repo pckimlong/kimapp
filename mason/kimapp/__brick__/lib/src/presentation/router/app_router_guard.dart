@@ -20,7 +20,24 @@ class AuthGuard extends _AppStateRouteGuard {
     authState.when(
       authenticated: (_) => resolver.next(true),
       unauthenticated: () {
-        resolver.redirect(SignInRoute(onSuccess: () => resolver.next(true)));
+        log.i('Unauthenticated. Redirecting to sign page...');
+        resolver.redirect(
+          SignInRoute(
+            onSuccess: () {
+              // We need to navigate to splash page again to initialize state base on auth
+              // if not doing this, it might cause issue
+              log.i('Redirecting to splash page after sign in initialization...');
+              resolver.redirect(
+                SplashRoute(
+                  onInitialized: () {
+                    log.i('AuthGuard checked');
+                    resolver.next(true);
+                  },
+                ),
+              );
+            },
+          ),
+        );
       },
     );
   }
