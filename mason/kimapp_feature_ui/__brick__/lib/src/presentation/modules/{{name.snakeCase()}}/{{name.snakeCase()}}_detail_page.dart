@@ -5,12 +5,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_detail_provider.dart';
 import '../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
 import '../../widgets/async_value_widget.dart';
+import '../../router/app_router.gr.dart';
 
 @RoutePage()
 class {{name.pascalCase()}}DetailPage extends StatefulHookConsumerWidget {
   const {{name.pascalCase()}}DetailPage({super.key, @PathParam('id') required this.{{name.camelCase()}}IdString,});
 
   final String {{name.camelCase()}}IdString;
+
+  static void show(BuildContext context, {{name.pascalCase()}}Id {{name.camelCase()}}Id) {
+    context.pushRoute({{name.pascalCase()}}DetailRoute({{name.camelCase()}}IdString: {{name.camelCase()}}Id.toString()));
+  }
 
   @override
   ConsumerState<{{name.pascalCase()}}DetailPage> createState() => _{{name.pascalCase()}}DetailPageState();
