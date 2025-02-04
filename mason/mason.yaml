@@ -17,3 +17,5 @@ bricks:
     path: ./kimapp_feature
   kimapp_package:
     path: ./kimapp_package
+  kimapp_simple_feature:
+    path:./kimapp_simple_feature
