@@ -10,3 +10,15 @@ class {{name.pascalCase()}}Page extends HookConsumerWidget {
     return AutoRouter();
   }
 }
+// TODO: Move this route definition to app_router.dart
+// AutoRoute(
+//   page: {{name.pascalCase()}}Route.page,
+//   path: '{{name.camelCase()}}s',
+//   children: [
+//     AutoRoute(page: {{name.pascalCase()}}ListRoute.page, path: ''),
+//     AutoRoute(page: {{name.pascalCase()}}CreateRoute.page, path: 'create'),
+//     AutoRoute(page: {{name.pascalCase()}}DetailRoute.page, path: ':id'),
+//     AutoRoute(page: {{name.pascalCase()}}UpdateRoute.page, path: ':id/update'),
+//     RedirectRoute(path: '*', redirectTo: ''),
+//   ],
+// )
