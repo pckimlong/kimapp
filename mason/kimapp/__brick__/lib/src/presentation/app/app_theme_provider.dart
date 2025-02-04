@@ -37,7 +37,7 @@ class AppThemeMode extends _$AppThemeMode {
 }
 
 @riverpod
-ThemeData ligtTheme(Ref ref) => AppTheme.light;
+ThemeData lightTheme(Ref ref) => AppTheme.light;
 
 @riverpod
 ThemeData darkTheme(Ref ref) => AppTheme.dark;
