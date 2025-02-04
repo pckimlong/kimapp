@@ -226,6 +226,7 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
         hasScrollBody: false,
         child: ListView.builder(
           padding: EdgeInsets.zero,
+          shrinkWrap: true,
           itemCount: loadingItemCount,
           physics: const NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
@@ -410,6 +411,7 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
         hasScrollBody: false,
         child: GridView.builder(
           padding: EdgeInsets.zero,
+          shrinkWrap: true,
           gridDelegate: gridDelegate,
           itemCount: loadingItemCount,
           physics: const NeverScrollableScrollPhysics(),
@@ -506,18 +508,17 @@ class RiverpodPaginationCustomGrid<T> extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (loading) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
-        child: GridView.custom(
-          padding: padding,
-          gridDelegate: gridDelegate,
-          childrenDelegate: SliverChildBuilderDelegate(
-            (context, index) => loadingItemBuilder(index, false),
-            childCount: loadingItemCount,
-            addAutomaticKeepAlives: true,
-            addRepaintBoundaries: true,
-            addSemanticIndexes: true,
-          ),
+      return GridView.custom(
+        padding: padding,
+        gridDelegate: gridDelegate,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        childrenDelegate: SliverChildBuilderDelegate(
+          (context, index) => loadingItemBuilder(index, false),
+          childCount: loadingItemCount,
+          addAutomaticKeepAlives: true,
+          addRepaintBoundaries: true,
+          addSemanticIndexes: true,
         ),
       );
     }

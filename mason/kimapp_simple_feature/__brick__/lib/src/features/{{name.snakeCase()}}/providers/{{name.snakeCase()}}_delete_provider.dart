@@ -21,9 +21,12 @@ class {{name.pascalCase()}}Delete extends _${{name.pascalCase()}}Delete {
      final result = await ref.read({{name.camelCase()}}RepoProvider).delete(id);
      return result.getOrThrow();
 }, onSuccess: (success) {
-  ref.invalidate({{name.camelCase()}}ListProvider);
-  ref.invalidate({{name.camelCase()}}DetailProvider(id));
-  ref.invalidate({{name.camelCase()}}ListPaginationProvider);
-},);
+    ref.invalidate({{name.camelCase()}}ListProvider);
+    ref.invalidate({{name.camelCase()}}DetailProvider(id));
+
+    /// Can set the invalidateOnLength to 0, but if it just 1, the invalidate is not expensive, it deserve to be used
+    /// since it will help accurate the data consistency
+    {{name.pascalCase()}}PaginationTracker.instance.deletePaginatedItem(ref, id, invalidateOnLength: 1);
+  },);
   }
 }

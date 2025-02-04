@@ -49,7 +49,12 @@ class {{name.pascalCase()}}Update extends _${{name.pascalCase()}}Update with _${
       onSuccess: (success) {
         ref.read({{name.camelCase()}}ListProvider.notifier).updateItem(success);
         ref.read({{name.camelCase()}}DetailProvider({{name.camelCase()}}Id).notifier).updateState((_) => success);
-        ref.invalidate({{name.camelCase()}}ListPaginationProvider);
+
+        //! Use with caution
+        /// this update might lead to data inconsistency, for example, if we have update the item to not meet the param filter
+        /// in this case, the item should be removed from the paginated list, but using this method will just update the item
+        /// other case is if we update sort order, the item might need to change position
+        {{name.pascalCase()}}PaginationTracker.instance.updatePaginatedItem(ref, success);
       },
     );
   }

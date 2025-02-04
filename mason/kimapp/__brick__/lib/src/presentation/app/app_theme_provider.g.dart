@@ -8,22 +8,21 @@ part of 'app_theme_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$ligtThemeHash() => r'fe32bf42b6c5bdb7e1b1b829cfebe3fa98c12582';
+String _$lightThemeHash() => r'e831759e5bda627e74c30d27c7ff299a38f7294e';
 
-/// See also [ligtTheme].
-@ProviderFor(ligtTheme)
-final ligtThemeProvider = AutoDisposeProvider<ThemeData>.internal(
-  ligtTheme,
-  name: r'ligtThemeProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$ligtThemeHash,
+/// See also [lightTheme].
+@ProviderFor(lightTheme)
+final lightThemeProvider = AutoDisposeProvider<ThemeData>.internal(
+  lightTheme,
+  name: r'lightThemeProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$lightThemeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef LigtThemeRef = AutoDisposeProviderRef<ThemeData>;
+typedef LightThemeRef = AutoDisposeProviderRef<ThemeData>;
 String _$darkThemeHash() => r'de495df328aa639f862ca7bc7c1d8512e8475059';
 
 /// See also [darkTheme].
@@ -31,8 +30,7 @@ String _$darkThemeHash() => r'de495df328aa639f862ca7bc7c1d8512e8475059';
 final darkThemeProvider = AutoDisposeProvider<ThemeData>.internal(
   darkTheme,
   name: r'darkThemeProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$darkThemeHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product') ? null : _$darkThemeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -44,8 +42,7 @@ String _$appThemeModeHash() => r'b07a0befcbd5c5ddce50fd725ab59a007296d671';
 
 /// See also [AppThemeMode].
 @ProviderFor(AppThemeMode)
-final appThemeModeProvider =
-    AsyncNotifierProvider<AppThemeMode, ThemeMode>.internal(
+final appThemeModeProvider = AsyncNotifierProvider<AppThemeMode, ThemeMode>.internal(
   AppThemeMode.new,
   name: r'appThemeModeProvider',
   debugGetCreateSourceHash:
