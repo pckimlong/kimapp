@@ -48,13 +48,16 @@ class _BodyState extends ConsumerState<_Body> {
         ),
       ),
       {{name.camelCase()}}Id: widget.{{name.camelCase()}}Id,
-      builder: (ref, status, isProgressing, failure, submit) {
+      builder: (ref, formKey, status, isProgressing, failure, submit) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Update {{name.pascalCase()}}'),
             actions: [
               TextButton(
                 onPressed: () async {
+                  if (!formKey.currentState!.validate()) return;
+                  formKey.currentState!.save();
+                  
                   final result = await submit();
                   if (result.isSuccess) {
                     BotToast.showText(text: '{{name.pascalCase()}} Updated');

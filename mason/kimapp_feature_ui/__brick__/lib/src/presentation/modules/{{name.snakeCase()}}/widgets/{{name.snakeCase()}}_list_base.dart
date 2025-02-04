@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
 
 import '../../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
+import '../../../../features/{{name.snakeCase()}}/params/{{name.snakeCase()}}_list_param.dart';
 import '../../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_list_pagination_provider.dart';
 import '../../../app/app_style.dart';
 

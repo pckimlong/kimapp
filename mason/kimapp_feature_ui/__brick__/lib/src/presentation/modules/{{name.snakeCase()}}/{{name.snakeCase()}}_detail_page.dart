@@ -1,5 +1,6 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_detail_provider.dart';

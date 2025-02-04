@@ -1,0 +1,7 @@
+name: kimapp_simple_feature_hook
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  mason: any
