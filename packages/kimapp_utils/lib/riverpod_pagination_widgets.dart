@@ -222,8 +222,7 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (loading) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
+      return SliverToBoxAdapter(
         child: ListView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
@@ -407,8 +406,7 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (loading) {
-      return SliverFillRemaining(
-        hasScrollBody: false,
+      return SliverToBoxAdapter(
         child: GridView.builder(
           padding: EdgeInsets.zero,
           shrinkWrap: true,
