@@ -19,6 +19,7 @@ class {{name.pascalCase()}}UpdateState
     with _${{name.pascalCase()}}UpdateState, ProviderStatusClassMixin<{{name.pascalCase()}}UpdateState, {{name.pascalCase()}}Model>, UpdateFormMixin {
   const factory {{name.pascalCase()}}UpdateState({
     // TODO - Add form properties
+    required String name,
     @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
     @Default(false) bool initialLoaded,
   }) = _{{name.pascalCase()}}UpdateState;
@@ -78,6 +79,6 @@ class {{name.pascalCase()}}Update extends _${{name.pascalCase()}}Update with _${
 
   @override
   {{name.pascalCase()}}UpdateState build({{name.pascalCase()}}Id {{name.camelCase()}}Id) =>
-     const {{name.pascalCase()}}UpdateState();
+     const {{name.pascalCase()}}UpdateState(name: '');
   
 }
