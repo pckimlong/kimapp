@@ -5,7 +5,7 @@ import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 
-import '{{name.snakeCase()}}_list_param.dart';
+import 'params/{{name.snakeCase()}}_list_param.dart';
 import '{{name.snakeCase()}}_schema.schema.dart';
 
 part 'i_{{name.snakeCase()}}_repo.g.dart';

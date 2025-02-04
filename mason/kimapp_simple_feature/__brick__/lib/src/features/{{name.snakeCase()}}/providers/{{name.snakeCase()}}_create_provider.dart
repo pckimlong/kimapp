@@ -19,6 +19,7 @@ class {{name.pascalCase()}}CreateState
     with _${{name.pascalCase()}}CreateState, ProviderStatusClassMixin<{{name.pascalCase()}}CreateState, {{name.pascalCase()}}Model> {
   const factory {{name.pascalCase()}}CreateState({
     // TODO - Add form properties
+    @Default('') String name,
     @Default(ProviderStatus.initial()) ProviderStatus<{{name.pascalCase()}}Model> status,
   }) = _Create{{name.pascalCase()}}State;
 
