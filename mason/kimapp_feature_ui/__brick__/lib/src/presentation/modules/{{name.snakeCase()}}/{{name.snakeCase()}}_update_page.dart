@@ -7,12 +7,17 @@ import 'package:kimapp/kimapp.dart';
 
 import '../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_update_provider.dart';
 import '../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
+import '../../router/app_router.gr.dart';
 
 @RoutePage()
 class {{name.pascalCase()}}UpdatePage extends HookConsumerWidget {
   const {{name.pascalCase()}}UpdatePage({super.key, @PathParam('id') required this.{{name.camelCase()}}IdString,});
 
   final String {{name.camelCase()}}IdString;
+
+  static Future<{{name.pascalCase()}}Model?> show(BuildContext context, {{name.pascalCase()}}Id {{name.camelCase()}}Id) async {
+    return await context.pushRoute({{name.pascalCase()}}UpdateRoute({{name.camelCase()}}IdString: {{name.camelCase()}}Id.toString()));
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,7 +59,7 @@ class _BodyState extends ConsumerState<_Body> {
                   if (result.isSuccess) {
                     BotToast.showText(text: '{{name.pascalCase()}} Updated');
                     if (context.mounted) {
-                      context.maybePop();
+                      context.maybePop(result.successOrNull);
                     }
                   }
 
