@@ -4,6 +4,7 @@ import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../{{name.snakeCase()}}_schema.schema.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
+import '../{{name.snakeCase()}}_list_param.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 
