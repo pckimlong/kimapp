@@ -6,10 +6,16 @@ import 'package:kimapp/kimapp.dart';
 
 import '../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_create_provider.dart';
 import '../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
+import '../../router/app_router.gr.dart';
 
 @RoutePage()
 class {{name.pascalCase()}}CreatePage extends HookConsumerWidget {
   const {{name.pascalCase()}}CreatePage({super.key});
+
+  static Future<{{name.pascalCase()}}Model?> show(BuildContext context) async {
+    return await context.pushRoute(const {{name.pascalCase()}}CreateRoute());
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return _Body();
@@ -37,7 +43,7 @@ class _BodyState extends ConsumerState<_Body> {
                   if (result.isSuccess) {
                     BotToast.showText(text: '{{name.pascalCase()}} Created');
                     if (context.mounted) {
-                      context.maybePop();
+                      context.maybePop(result.successOrNull);
                     }
                   }
 
