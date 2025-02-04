@@ -50,7 +50,7 @@ class AppWidget extends HookConsumerWidget {
           ],
         ),
         title: Config.appName,
-        theme: ref.watch(ligtThemeProvider),
+        theme: ref.watch(lightThemeProvider),
         darkTheme: ref.watch(darkThemeProvider),
         themeMode: ref.watch(appThemeModeProvider).valueOrNull,
         localizationsDelegates: [

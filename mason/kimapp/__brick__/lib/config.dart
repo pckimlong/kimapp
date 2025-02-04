@@ -8,4 +8,6 @@ class Config {
 
   /// Enable riverpod observers on error state
   static const bool logRiverpodError = true;
+
+  static const int minSplashDurationInMs = 800;
 }

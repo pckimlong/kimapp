@@ -99,7 +99,8 @@ class _Impl implements I{{name.pascalCase()}}Repo {
     required int offset,
     required {{name.pascalCase()}}ListParam param,
   }) async{
-    var query = _ref.supabaseClient.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
+    return await errorHandler(() async {
+      var query = _ref.supabaseClient.from({{name.pascalCase()}}Model.table.tableName).select({{name.pascalCase()}}Model.table.selectStatement);
     
     if (true) {}
     
@@ -112,6 +113,7 @@ class _Impl implements I{{name.pascalCase()}}Repo {
         (json) => {{name.pascalCase()}}Model.fromJson(json as Map<String, dynamic>),
       );
       return right(items);
+    });
     });
   }
 
