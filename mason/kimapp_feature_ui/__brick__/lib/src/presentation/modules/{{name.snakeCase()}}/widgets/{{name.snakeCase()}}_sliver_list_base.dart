@@ -8,15 +8,15 @@ import '../../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}
 import '../../../app/app_style.dart';
 import '../../../widgets/my_error_widget.dart';
 
-class  {{name.pascalCase()}}ListBaseConfig{
-  const  {{name.pascalCase()}}ListBaseConfig();
+class  {{name.pascalCase()}}SliverListBaseConfig{
+  const  {{name.pascalCase()}}SliverListBaseConfig();
 }
 
 final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListParam>((ref) {
   throw UnimplementedError();
 });
 
-final _configProvider = Provider.autoDispose<{{name.pascalCase()}}ListBaseConfig>((ref) {
+final _configProvider = Provider.autoDispose<{{name.pascalCase()}}SliverListBaseConfig>((ref) {
   throw UnimplementedError();
 });
 
@@ -28,15 +28,15 @@ final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListParam>
   dependencies: [_initialParamProvider],
 );
 
-class {{name.pascalCase()}}ListBase extends ConsumerWidget {
-  const {{name.pascalCase()}}ListBase({
+class {{name.pascalCase()}}SliverListBase extends ConsumerWidget {
+  const {{name.pascalCase()}}SliverListBase({
     super.key, 
     this.initialParam,
-    this.config = const {{name.pascalCase()}}ListBaseConfig(),
+    this.config = const {{name.pascalCase()}}SliverListBaseConfig(),
   });
 
   final {{name.pascalCase()}}ListParam? initialParam;
-  final {{name.pascalCase()}}ListBaseConfig config;
+  final {{name.pascalCase()}}SliverListBaseConfig config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,6 +56,7 @@ class _Content extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final config = ref.watch(_configProvider);
     final param = ref.watch(_paramProvider);
+    
     final firstPageCount = ref.watch(
       {{name.pascalCase()}}ListPaginationProvider(page: 0, param: param).select(
         (value) => value.whenData((value) => value.length),
@@ -64,24 +65,28 @@ class _Content extends ConsumerWidget {
 
     if (firstPageCount.hasValue) {
       if (firstPageCount.requireValue == 0) {
-        return Center(
-          child: Text(
-            'No data',
-            textAlign: TextAlign.center,
+        return SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'No data',
+              textAlign: TextAlign.center,
+            ),
           ),
         );
       }
     }
 
+
     if (firstPageCount.hasError) {
-      return Center(
-        child: MyErrorWidget(error: firstPageCount.error),
+      return SliverFillRemaining(
+        child: Center(
+          child: MyErrorWidget(error: firstPageCount.error),
+        ),
       );
     }
 
-    final loading =
+     final loading =
         (firstPageCount.isLoading && !firstPageCount.isRefreshing) || firstPageCount.hasError;
-
 
     return RiverpodPaginationListView(
       loading: loading,
