@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb, kReleaseMode;
 
 enum IntegrationMode {
   develop,
+  stage,
   release,
   unitTest,
   integrationTest;
@@ -13,6 +14,7 @@ enum IntegrationMode {
   bool get isIntegrationTest => this == IntegrationMode.integrationTest;
   bool get isRelease => this == IntegrationMode.release;
   bool get isDevelop => this == IntegrationMode.develop;
+  bool get isStage => this == IntegrationMode.stage;
 
   static void setMode(IntegrationMode mode) {
     _integrationMode = mode;
