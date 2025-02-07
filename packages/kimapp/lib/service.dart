@@ -72,6 +72,24 @@ class Kimapp {
 
   late bool _debugMode;
   bool get debugMode => _debugMode;
+
+  void log(
+    LoggerType type, {
+    required String message,
+    String? title,
+    Object? object,
+    StackTrace? stackTrace,
+  }) {
+    if (logger != null) {
+      logger!(
+        LoggerType.error,
+        message,
+        title,
+        stackTrace,
+        object,
+      );
+    }
+  }
 }
 
 typedef LoggerCallback = void Function(
