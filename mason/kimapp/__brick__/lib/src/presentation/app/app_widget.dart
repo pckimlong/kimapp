@@ -7,8 +7,10 @@ import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../../config.dart';
+import '../../core/helpers/logger.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
 import './app_state_provider.dart';
@@ -47,6 +49,7 @@ class AppWidget extends HookConsumerWidget {
           reevaluateListenable: authListenable,
           navigatorObservers: () => [
             SentryNavigatorObserver(),
+            TalkerRouteObserver(talker),
           ],
         ),
         title: Config.appName,

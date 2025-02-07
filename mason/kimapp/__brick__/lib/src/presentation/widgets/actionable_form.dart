@@ -2,7 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:kimapp/object/failure.dart';
 
-import '../../core/helpers/helpers.dart';
+import '../../core/helpers/build_context_helper.dart';
 import '../app/app_style.dart';
 import 'failure_widget.dart';
 
