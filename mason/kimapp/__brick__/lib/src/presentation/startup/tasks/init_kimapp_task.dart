@@ -1,7 +1,7 @@
 import 'package:kimapp/kimapp.dart';
+import 'package:kimapp_supabase_helper/supabase_storage.dart';
 
-import '../../../core/errors/error.dart';
-import '../../../core/helpers/helpers.dart';
+import '../../../core/helpers/logger.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 
@@ -12,7 +12,6 @@ class InitKimappTask extends StartUpTask with LoggerMixin {
   Future<void> initialize(LaunchContext context) async {
     await Kimapp.initialize(
       debugMode: context.env.isDevelop,
-      customFailureMessage: CustomFailureMessage(),
       logger: (type, message, [title, stackTrace, errorObject]) {
         if (context.env.isRelease) {
           reportError(errorObject, stackTrace);
@@ -20,15 +19,27 @@ class InitKimappTask extends StartUpTask with LoggerMixin {
 
         switch (type) {
           case LoggerType.debug:
-            log.d(message);
+            logDebug(message, stackTrace);
           case LoggerType.info:
-            log.i(message);
+            logInfo(message, errorObject, stackTrace);
           case LoggerType.warning:
-            log.w(message);
+            logWarning(message, errorObject, stackTrace);
           case LoggerType.error:
-            log.e(message, error: errorObject, stackTrace: stackTrace);
+            logError(message, errorObject, stackTrace);
         }
       },
+    );
+
+    StorageManager.initialize(
+      config: const StorageConfig(
+        bucketFileTypes: {
+          'files': [FileType.image],
+        },
+        maxFileSizeBytes: 10 * 1024 * 1024,
+        typeSpecificMaxSizes: {
+          FileType.image: 5 * 1024 * 1024,
+        },
+      ),
     );
   }
 }

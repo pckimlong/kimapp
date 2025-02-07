@@ -9,6 +9,8 @@ environment:
   sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
+  talker_riverpod_logger: ^4.6.10
+  talker_flutter: ^4.6.10
   easy_localization: ^3.0.7
   animate_do: ^3.3.4
   auto_route: ^9.2.2
@@ -41,7 +43,6 @@ dependencies:
       url: https://github.com/pckimlong/kimapp.git
       ref: master
       path: packages/kimapp_supabase_helper
-  logger: ^2.5.0
   mocktail: ^1.0.4
   package_info_plus: ^8.1.2
   responsive_framework: ^1.5.1

@@ -48,8 +48,8 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
     try {
       return [for (final m in data.values) m].map((e) => fromMap(_mapParser(e)!)).toList();
-    } catch (e) {
-      log.e('Error reading object from local storage with key [$key], Null will be return');
+    } catch (e, s) {
+      logError('Error reading object with key [$key], Null will be return', e, s);
       if (onFail != null) {
         onFail(e, data);
       }
@@ -68,8 +68,8 @@ class HiveCacheManager extends KimappCacheManager with LoggerMixin {
 
     try {
       return fromMap(data);
-    } catch (e) {
-      log.e('Error reading object from local storage with key [$key], Null will be return');
+    } catch (e, s) {
+      logError('Error reading object with key [$key], Null will be return', e, s);
       if (onFail != null) {
         onFail(e, data);
       }
