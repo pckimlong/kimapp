@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
-import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Constants for error codes and messages
@@ -34,8 +33,6 @@ final List<String> internetErrorPatterns = [
 
 /// Logger utility class
 class ErrorLogger {
-  final Logger _logger = Logger();
-
   void logError(String title, String message, StackTrace stackTrace, Object error) {
     final loggerCallback = Kimapp.instance.logger;
     if (loggerCallback != null) {
@@ -47,8 +44,6 @@ class ErrorLogger {
         error,
       );
     }
-    // Also log to default logger
-    _logger.e('$title: $message', error: error, stackTrace: stackTrace);
   }
 }
 

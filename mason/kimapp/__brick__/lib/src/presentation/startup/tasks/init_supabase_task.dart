@@ -1,4 +1,5 @@
 import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
+import 'package:kimapp_utils/startup.dart';
 
 import '../startup.dart';
 

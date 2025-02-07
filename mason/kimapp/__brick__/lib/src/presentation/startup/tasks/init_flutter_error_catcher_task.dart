@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../core/helpers/helpers.dart';
+import '../../../core/helpers/logger.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 
@@ -12,7 +12,7 @@ class InitFlutterErrorCatcherTask extends StartUpTask with LoggerMixin {
   @override
   Future<void> initialize(LaunchContext context) async {
     FlutterError.onError = (details) {
-      log.e('Uncaught flutter error', error: details.exception, stackTrace: details.stack);
+      logError('Uncaught flutter error', details.exception, details.stack);
 
       if (context.env.isRelease) {
         Zone.current.handleUncaughtError(details.exception, details.stack!);

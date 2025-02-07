@@ -2,12 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../core/account/account.dart';
-import '../../core/helpers/helpers.dart';
+import '../../core/helpers/logger.dart';
 import '../../features/auth/auth.dart';
 import '../app/app_state_provider.dart';
 import 'app_router.gr.dart';
 
-class AuthGuard extends _AppStateRouteGuard {
+class AuthGuard extends _AppStateRouteGuard with LoggerMixin {
   AuthGuard(this._ref);
 
   @override
@@ -20,17 +20,17 @@ class AuthGuard extends _AppStateRouteGuard {
     authState.when(
       authenticated: (_) => resolver.next(true),
       unauthenticated: () {
-        log.i('Unauthenticated. Redirecting to sign page...');
+        logInfo('Unauthenticated. Redirecting to sign page...');
         resolver.redirect(
           SignInRoute(
             onSuccess: () {
               // We need to navigate to splash page again to initialize state base on auth
               // if not doing this, it might cause issue
-              log.i('Redirecting to splash page after sign in initialization...');
+              logInfo('Redirecting to splash page after sign in initialization...');
               resolver.redirect(
                 SplashRoute(
                   onInitialized: () {
-                    log.i('AuthGuard checked');
+                    logInfo('AuthGuard checked');
                     resolver.next(true);
                   },
                 ),
@@ -43,7 +43,7 @@ class AuthGuard extends _AppStateRouteGuard {
   }
 }
 
-class LoginGuard extends _AppStateRouteGuard {
+class LoginGuard extends _AppStateRouteGuard with LoggerMixin {
   LoginGuard(this._ref);
 
   @override
@@ -67,14 +67,14 @@ abstract class _AppStateRouteGuard extends AutoRouteGuard with LoggerMixin {
     final appState = _ref.read(appStateProvider);
     final accountState = _ref.read(currentAccountProvider);
     if (appState == ApplicationState.initialized && accountState.hasValue) {
-      log.i('Call onAppStateInitialized');
+      logInfo('Call onAppStateInitialized');
       onAppStateInitialized(resolver, router);
     } else {
-      log.i('uninitialized push to splash page');
+      logInfo('uninitialized push to splash page');
       resolver.redirect(
         SplashRoute(
           onInitialized: () {
-            log.v('Call onAppStateInitialized after initialize from splash page');
+            logInfo('Call onAppStateInitialized after initialize from splash page');
             onAppStateInitialized(resolver, router);
           },
         ),
