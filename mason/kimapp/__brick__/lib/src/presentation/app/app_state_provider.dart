@@ -16,7 +16,7 @@ enum ApplicationState { uninitialized, initialized }
 class AppState extends _$AppState with LoggerMixin {
   /// Initialize the application state and handle all necessary startup processes
   Future<ApplicationState> initialize({void Function(String error)? onError}) async {
-    log.i(state == ApplicationState.initialized ? 'Reinitialize app...' : 'Initializing app...');
+    logInfo(state == ApplicationState.initialized ? 'Reinitialize app...' : 'Initializing app...');
 
     try {
       return await _executeInitialization(onError);
@@ -54,12 +54,12 @@ class AppState extends _$AppState with LoggerMixin {
     );
 
     state = ApplicationState.initialized;
-    log.i('Application initialized');
+    logInfo('Application initialized');
   }
 
   /// Handle authenticated state initialization
   Future<void> _handleAuthenticatedState(UserId uuid) async {
-    log.i('Authenticated, initializing user data');
+    logInfo('Authenticated, initializing user data');
     await Future.wait([
       ref.refresh(currentAccountProvider.future),
     ]);
@@ -67,7 +67,7 @@ class AppState extends _$AppState with LoggerMixin {
 
   /// Handle unauthenticated state
   void _handleUnauthenticatedState() {
-    log.i('Unauthenticated. Redirecting to sign page...');
+    logInfo('Unauthenticated. Redirecting to sign page...');
     // eg refresh some provider which is dependent on auth state
   }
 
@@ -84,7 +84,7 @@ class AppState extends _$AppState with LoggerMixin {
     }
 
     onError?.call(errorMessage);
-    log.e('Error while initializing app', error: error, stackTrace: stack);
+    logError('Error while initializing app', error, stack);
     return ApplicationState.uninitialized;
   }
 

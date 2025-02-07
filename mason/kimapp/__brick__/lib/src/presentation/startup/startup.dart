@@ -4,10 +4,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import '../../../config.dart';
-import '../../core/helpers/helpers.dart';
+import '../../core/helpers/logger.dart';
 import '../app/app_widget.dart';
-import 'tasks/tasks.dart';
+import 'tasks/init_app_setting_task.dart';
+import 'tasks/init_cache_manager_task.dart';
+import 'tasks/init_device_info_task.dart';
+import 'tasks/init_error_reporter_task.dart';
+import 'tasks/init_flutter_error_catcher_task.dart';
+import 'tasks/init_kimapp_task.dart';
+import 'tasks/init_localization_task.dart';
+import 'tasks/init_platform_error_catcher_task.dart';
+import 'tasks/init_supabase_task.dart';
 
 Future<void> runKimappApp({IntegrationMode? env, LaunchConfiguration? config}) async {
   await KimappRunner.run(
@@ -26,12 +33,8 @@ class KimappRunner {
     IntegrationMode.setMode(env);
     WidgetsFlutterBinding.ensureInitialized();
 
-    final container = ProviderContainer(
-      observers: [
-        if (Config.logRiverpod) ProviderLogger(),
-        if (Config.logRiverpodError) ProviderCrashlytics(),
-      ],
-    );
+    final talker = initTalker(env);
+    final container = ProviderContainer(observers: [riverpodObserver(talker)]);
     final context = LaunchContext(container, env, platformType, config);
 
     const tasks = [
@@ -77,9 +80,9 @@ abstract class StartUpTask with LoggerMixin {
   Future<void> _initialize(LaunchContext context) async {
     try {
       await initialize(context);
-      log.i('Initialized ${runtimeType.toString()}');
+      logInfo('Initialized ${runtimeType.toString()}');
     } catch (e, s) {
-      log.e("Error initial startup task: ${runtimeType.toString()}", stackTrace: s);
+      logError("Error initial startup task: ${runtimeType.toString()}", e, s);
       rethrow;
     }
   }
