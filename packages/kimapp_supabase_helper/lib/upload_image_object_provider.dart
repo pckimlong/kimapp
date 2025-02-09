@@ -209,6 +209,10 @@ extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
       }
     }
 
+    if (uploadResult.isFailure) {
+      throw uploadResult.failure!;
+    }
+
     throw uploadResult;
   }
 }
