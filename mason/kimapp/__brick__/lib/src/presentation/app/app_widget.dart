@@ -1,8 +1,8 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:core/core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -10,7 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../../config.dart';
-import '../../core/helpers/logger.dart';
+import '../../core/helpers/build_context_helper.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
 import './app_state_provider.dart';
@@ -31,27 +31,49 @@ class _EagerInitialization extends ConsumerWidget {
   }
 }
 
-class AppWidget extends HookConsumerWidget {
+class AppWidget extends StatefulHookConsumerWidget {
   const AppWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(appRouterProvider);
+  ConsumerState<AppWidget> createState() => _AppWidgetState();
+}
 
-    // Convert auth state to listenable, and use it to reevaluate router
-    final authListenable = useValueNotifier<Option<AuthenticationState>>(none());
-    ref.listen(authStateProvider, (_, next) => authListenable.value = some(next));
+class _AppWidgetState extends ConsumerState<AppWidget> {
+  late final ValueNotifier<Option<AuthenticationState>> _authListenable;
+
+  @override
+  void initState() {
+    super.initState();
+    _authListenable = ValueNotifier(none());
+    ref.listenManual(authStateProvider, (pre, next) {
+      if (pre != next) {
+        _authListenable.value = some(next);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authListenable.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final router = ref.watch(appRouterProvider);
 
     return _EagerInitialization(
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: router.config(
-          reevaluateListenable: authListenable,
+          reevaluateListenable: _authListenable,
           navigatorObservers: () => [
             SentryNavigatorObserver(),
-            TalkerRouteObserver(talker),
+            TalkerRouteObserver(ref.watch(talkerProvider)),
           ],
         ),
+        restorationScopeId: Config.appName,
+        key: ValueKey(Config.appName),
         title: Config.appName,
         theme: ref.watch(lightThemeProvider),
         darkTheme: ref.watch(darkThemeProvider),
@@ -72,13 +94,30 @@ class AppWidget extends HookConsumerWidget {
             breakpoints: [
               const Breakpoint(start: 0, end: AS.mobileBreakpoint, name: MOBILE),
               const Breakpoint(start: AS.mobileBreakpoint, end: AS.tabletBreakpoint, name: TABLET),
-              const Breakpoint(start: AS.desktopBreakpoint, end: 1920, name: DESKTOP),
+              const Breakpoint(start: AS.tabletBreakpoint, end: 1920, name: DESKTOP),
               const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
             ],
           );
-          return child;
+
+          return _CustomTheme(child: child);
         },
       ),
+    );
+  }
+}
+
+class _CustomTheme extends ConsumerWidget {
+  const _CustomTheme({
+    required this.child,
+  });
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Theme(
+      data: context.theme.copyWith(),
+      child: child,
     );
   }
 }
@@ -108,9 +147,16 @@ class __LifecycleWatcherState extends ConsumerState<_LifecycleWatcher> with Widg
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // App is resumed from background
-    if (state == AppLifecycleState.resumed) {
-      // TODO: Handle app resume
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // Refresh critical data
+        ref.invalidate(appStateProvider);
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
     }
   }
 
