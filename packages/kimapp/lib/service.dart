@@ -82,7 +82,7 @@ class Kimapp {
   }) {
     if (logger != null) {
       logger!(
-        LoggerType.error,
+        type,
         message,
         title,
         stackTrace,
