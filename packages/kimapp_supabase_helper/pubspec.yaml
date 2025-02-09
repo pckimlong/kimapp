@@ -4,7 +4,7 @@ version: 0.0.2
 publish_to: none
 
 environment:
-  sdk: '>=2.19.3 <3.0.0'
+  sdk: ">=3.3.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -14,8 +14,12 @@ dependencies:
   logger:
   fpdart: 
   mime:
+  image:
+  slugify: 
   path:
   dartx: 
+  uuid:
+  cross_file: 
   flutter_image_compress:
   flutter:
     sdk: flutter
