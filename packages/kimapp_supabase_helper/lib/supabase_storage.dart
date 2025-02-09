@@ -30,6 +30,11 @@ enum FileType {
     return FileType.other;
   }
 
+  static FileType fromPath(String path) {
+    final mimeType = lookupMimeType(path);
+    return FileType.fromMimeType(mimeType);
+  }
+
   bool get isImage => this == FileType.image;
   bool get isVideo => this == FileType.video;
   bool get isAudio => this == FileType.audio;
@@ -207,6 +212,8 @@ abstract class BaseStorageObject {
       return right(bytes);
     });
   }
+
+  Future<Either<Failure, Unit>> delete({SupabaseStorageClient? client});
 }
 
 /// For testing purposes
@@ -422,6 +429,7 @@ abstract class CompressibleImageObject extends BaseStorageObject {
   }
 
   /// Delete all versions of the image
+  @override
   Future<Either<Failure, Unit>> delete({SupabaseStorageClient? client}) async {
     return await errorHandler(() async {
       final storage = client ?? Supabase.instance.client.storage;
@@ -499,6 +507,7 @@ abstract class StorageObject extends BaseStorageObject {
     });
   }
 
+  @override
   Future<Either<Failure, Unit>> delete({SupabaseStorageClient? client}) async {
     return await errorHandler(() async {
       final storage = client ?? Supabase.instance.client.storage;

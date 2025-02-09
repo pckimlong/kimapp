@@ -9,6 +9,7 @@ import 'package:talker_riverpod_logger/talker_riverpod_logger.dart';
 import '../../../config.dart';
 import '../app/app_widget.dart';
 import '../../../src/core/helpers/flutter_talker.dart';
+import '../../../src/core/helpers/kimapp_riverpod_observer.dart';
 import 'tasks/init_app_setting_task.dart';
 import 'tasks/init_cache_manager_task.dart';
 import 'tasks/init_device_info_task.dart';
@@ -76,7 +77,7 @@ class KimappRunner {
         talkerProvider.overrideWithValue(taker),
       ],
       observers: [
-        TalkerRiverpodObserver(
+        KimappTalkerRiverpodObserver(
           talker: taker,
           settings: Config.riverpodObserverSetting,
         ),
