@@ -122,9 +122,9 @@ class UploadImageObject extends _$UploadImageObject {
 
   /// Upload the file to storage and return the object
   /// It will auto generate the path including image dimensions
-  Future<ProviderStatus<BaseStorageObject>> call(
+  Future<ProviderStatus<T>> call<T extends BaseStorageObject>(
     XFile image, {
-    required BaseStorageObject Function(String generatedPath) object,
+    required T Function(String generatedPath) object,
     String? customPrefix,
     String directory = '',
   }) async {
@@ -160,6 +160,6 @@ class UploadImageObject extends _$UploadImageObject {
       onSuccess: (success) {
         ref.invalidateSelf();
       },
-    );
+    ) as ProviderStatus<T>;
   }
 }
