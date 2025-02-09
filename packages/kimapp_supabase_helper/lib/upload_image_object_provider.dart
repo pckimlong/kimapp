@@ -4,6 +4,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:dartx/dartx.dart';
 import 'package:image/image.dart' as img;
 import 'package:kimapp/kimapp.dart';
+import 'package:kimapp_supabase_helper/helper.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:slugify/slugify.dart';
@@ -127,6 +128,7 @@ class UploadImageObject extends _$UploadImageObject {
     required T Function(String generatedPath) object,
     String? customPrefix,
     String directory = '',
+    bool upsert = false,
   }) async {
     return await perform(
       (state) async {
@@ -153,7 +155,11 @@ class UploadImageObject extends _$UploadImageObject {
 
         // Create and upload storage object
         final storageObject = object(storagePath);
-        final uploadResult = await storageObject.upload(fileBytes);
+        final uploadResult = await storageObject.upload(
+          fileBytes,
+          client: ref.supabaseStorage,
+          upsert: upsert,
+        );
 
         return uploadResult.getOrThrow();
       },
@@ -161,5 +167,48 @@ class UploadImageObject extends _$UploadImageObject {
         ref.invalidateSelf();
       },
     ) as ProviderStatus<T>;
+  }
+}
+
+extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
+  /// Wrapper function to handle image upload and callback execution
+  /// This can be use to make sure if the upload is successful, the callback will be executed
+  /// but failed upload will be handled and deleted
+  ///
+  ///
+  /// [T] The return type of the callback function
+  /// [M] The type of storage object to be created, must extend BaseStorageObject
+  /// [image] The image file to upload
+  /// [object] Function to create the storage object
+  /// [callback] Function to execute after successful upload
+  /// [customPrefix] Optional prefix for the generated filename
+  /// [directory] Optional directory path
+  /// [upsert] Whether to overwrite existing files
+  Future<T> uploadImageWrapper<T, M extends BaseStorageObject>(
+    XFile image,
+    M Function(String generatedPath) object, {
+    required FutureOr<T> Function(M image) callback,
+    String? customPrefix,
+    String directory = '',
+    bool upsert = false,
+  }) async {
+    final uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
+          image,
+          object: object,
+          customPrefix: customPrefix,
+          directory: directory,
+          upsert: upsert,
+        );
+
+    if (uploadResult.isSuccess) {
+      try {
+        return callback(uploadResult as M);
+      } catch (_) {
+        await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
+        rethrow;
+      }
+    }
+
+    throw uploadResult;
   }
 }

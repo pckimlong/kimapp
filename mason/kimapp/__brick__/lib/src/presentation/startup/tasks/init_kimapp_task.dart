@@ -20,12 +20,16 @@ class InitKimappTask extends StartUpTask {
         switch (type) {
           case LoggerType.debug:
             context.talker.debug(message, stackTrace);
+            break;
           case LoggerType.info:
             context.talker.info(message, object, stackTrace);
+            break;
           case LoggerType.warning:
             context.talker.warning(message, object, stackTrace);
+            break;
           case LoggerType.error:
             context.talker.error(message, object, stackTrace);
+            break;
         }
       },
     );
