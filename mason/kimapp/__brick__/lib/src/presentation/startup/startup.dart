@@ -3,9 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:talker_flutter/talker_flutter.dart';
+import 'package:talker_riverpod_logger/talker_riverpod_logger.dart';
 
-import '../../core/helpers/logger.dart';
+import '../../../config.dart';
 import '../app/app_widget.dart';
+import '../../../src/core/helpers/flutter_talker.dart';
 import 'tasks/init_app_setting_task.dart';
 import 'tasks/init_cache_manager_task.dart';
 import 'tasks/init_device_info_task.dart';
@@ -33,16 +36,16 @@ class KimappRunner {
     IntegrationMode.setMode(env);
     WidgetsFlutterBinding.ensureInitialized();
 
-    final talker = initTalker(env);
-    final container = ProviderContainer(observers: [riverpodObserver(talker)]);
-    final context = LaunchContext(container, env, platformType, config);
+    final taker = initFlutterTalker(env);
+    final container = _createProviderContainer(taker);
+    final context = LaunchContext(container, env, platformType, config, taker);
 
     const tasks = [
+      InitKimappTask(),
       InitCacheManagerTask(),
       InitErrorReporterTask(),
       InitPlatformErrorCatcherTask(),
       InitFlutterErrorCatcherTask(),
-      InitKimappTask(),
       InitSupabaseTask(),
       InitLocalizationTask(),
       InitDeviceInfoTask(),
@@ -66,13 +69,27 @@ class KimappRunner {
       ),
     );
   }
+
+  static ProviderContainer _createProviderContainer(Talker taker) {
+    return ProviderContainer(
+      overrides: [
+        talkerProvider.overrideWithValue(taker),
+      ],
+      observers: [
+        TalkerRiverpodObserver(
+          talker: taker,
+          settings: Config.riverpodObserverSetting,
+        ),
+      ],
+    );
+  }
 }
 
 class LaunchConfiguration {
   const LaunchConfiguration();
 }
 
-abstract class StartUpTask with LoggerMixin {
+abstract class StartUpTask {
   const StartUpTask();
 
   Future<void> initialize(LaunchContext context);
@@ -80,9 +97,9 @@ abstract class StartUpTask with LoggerMixin {
   Future<void> _initialize(LaunchContext context) async {
     try {
       await initialize(context);
-      logInfo('Initialized ${runtimeType.toString()}');
+      context.talker.info('Initialized ${runtimeType.toString()}');
     } catch (e, s) {
-      logError("Error initial startup task: ${runtimeType.toString()}", e, s);
+      context.talker.error("Error initial startup task: ${runtimeType.toString()}", e, s);
       rethrow;
     }
   }
@@ -94,10 +111,12 @@ class LaunchContext {
     this.env,
     this.platform,
     this.config,
+    this.talker,
   );
 
   LaunchConfiguration config;
   ProviderContainer container;
   IntegrationMode env;
   PlatformType platform;
+  Talker talker;
 }

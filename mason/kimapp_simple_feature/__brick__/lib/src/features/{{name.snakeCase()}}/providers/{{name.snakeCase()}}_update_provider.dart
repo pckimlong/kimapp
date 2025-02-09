@@ -73,7 +73,7 @@ class {{name.pascalCase()}}Update extends _${{name.pascalCase()}}Update with _${
         .findOne({{name.camelCase()}}Id)
         .then((value) => value.getOrThrow());
         
-    return const   {{name.pascalCase()}}UpdateState();
+    return   {{name.pascalCase()}}UpdateState(name: result.name);
   }
 
 

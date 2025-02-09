@@ -5,11 +5,10 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
+import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'failure.dart';
 
 /// Represents different types of files that can be stored
 enum FileType {
@@ -139,6 +138,11 @@ abstract class BaseStorageObject {
   /// Detected mime type
   String? get mimeType => lookupMimeType(path);
 
+  ImageDimensions? get dimensions {
+    if (!fileType.isImage) return null;
+    return ImageDimensions.fromPath(path);
+  }
+
   @override
   bool operator ==(covariant BaseStorageObject other) {
     if (identical(this, other)) return true;
@@ -223,6 +227,8 @@ ImageCompressor? imageCompressorOverride;
 
 /// Storage object specifically for compressible images with multiple quality versions
 /// Configuration for image compression
+/// TODO: We can make compression more flexible by using this, each app used it can config List of this, mean supporting compression format, we can use this to get whatever size we want
+/// The idea is to accept list of compression config, and it use it to get url for each compression version
 class CompressConfig {
   final int quality;
   final int targetWidth;
@@ -233,6 +239,9 @@ class CompressConfig {
   });
 }
 
+const _compressedImageExtension = "webp";
+const _compressFormat = CompressFormat.webp;
+
 abstract class CompressibleImageObject extends BaseStorageObject {
   @override
   bool get compressible => true;
@@ -240,6 +249,33 @@ abstract class CompressibleImageObject extends BaseStorageObject {
   @override
   List<FileType> get types => [FileType.image];
 
+  String get _efficiencyPath {
+    return "$name.$_compressedImageExtension";
+  }
+
+  (String, ImageDimensions?) get _compressed80Path {
+    if (dimensions == null) ("${name}_compressed_80.$_compressedImageExtension", null);
+
+    // recalculate dimension by multiplying by 0.8
+    final width = dimensions!.width! * 0.8;
+    final height = dimensions!.height! * 0.8;
+    final newDimensions = ImageDimensions(width: width, height: height);
+    final newPath = newDimensions.toPath(name);
+    return ("$newPath.$_compressedImageExtension", newDimensions);
+  }
+
+  (String, ImageDimensions?) get _compressed40Path {
+    if (dimensions == null) ("${name}_compressed_40.$_compressedImageExtension", null);
+
+    // recalculate dimension by multiplying by 0.4
+    final width = dimensions!.width! * 0.4;
+    final height = dimensions!.height! * 0.4;
+    final newDimensions = ImageDimensions(width: width, height: height);
+    final newPath = newDimensions.toPath(name);
+    return ("$newPath.$_compressedImageExtension", newDimensions);
+  }
+
+  //! Keep to make compilable with old version
   /// Path for the first compression level (80% quality)
   String get _compressedPath1 => "${name}_compressed_1$fileExtension";
 
@@ -280,23 +316,32 @@ abstract class CompressibleImageObject extends BaseStorageObject {
       await api.uploadBinary(path, bytes, fileOptions: option);
 
       try {
-        // Create compressed versions with different qualities and sizes
-        final highQuality = await _compress(
+        final efficiency = await _compress(
+          bytes,
+          quality: 100,
+          targetWidth: 1200,
+          dimensions: dimensions,
+        );
+
+        final quality80 = await _compress(
           bytes,
           quality: 80,
           targetWidth: 1200,
+          dimensions: dimensions,
         );
 
-        final lowQuality = await _compress(
+        final quality40 = await _compress(
           bytes,
           quality: 40,
           targetWidth: 400,
+          dimensions: dimensions,
         );
 
         // Upload compressed versions in parallel
         await Future.wait([
-          api.uploadBinary(_compressedPath1, highQuality, fileOptions: option),
-          api.uploadBinary(_compressedPath2, lowQuality, fileOptions: option),
+          api.uploadBinary(_efficiencyPath, efficiency, fileOptions: option),
+          api.uploadBinary(_compressed80Path.$1, quality80, fileOptions: option),
+          api.uploadBinary(_compressed40Path.$1, quality40, fileOptions: option),
         ]);
 
         return right(this);
@@ -313,7 +358,23 @@ abstract class CompressibleImageObject extends BaseStorageObject {
     Uint8List bytes, {
     required int quality,
     int targetWidth = 800, // Default target width for compressed images
+    ImageDimensions? dimensions,
   }) async {
+    if (dimensions != null) {
+      final width = dimensions.width!;
+      final height = dimensions.height!;
+      return await FlutterImageCompress.compressWithList(
+        bytes,
+        minWidth: width.toInt(),
+        minHeight: height.toInt(),
+        quality: quality,
+        keepExif: true,
+        autoCorrectionAngle: true,
+        format: _compressFormat,
+        inSampleSize: 1,
+      );
+    }
+
     // Use override for testing if available
     if (imageDecoderOverride != null && imageCompressorOverride != null) {
       final image = await imageDecoderOverride!(bytes);
@@ -330,7 +391,7 @@ abstract class CompressibleImageObject extends BaseStorageObject {
         quality: quality,
         keepExif: true,
         autoCorrectionAngle: true,
-        format: CompressFormat.jpeg,
+        format: _compressFormat,
         inSampleSize: 1,
       );
     }
@@ -354,7 +415,7 @@ abstract class CompressibleImageObject extends BaseStorageObject {
       // Rotate image according to EXIF data
       autoCorrectionAngle: true,
       // Format-specific options
-      format: CompressFormat.jpeg,
+      format: _compressFormat,
       // Retain some color quality
       inSampleSize: 1, // Don't skip pixels
     );
@@ -388,6 +449,33 @@ abstract class CompressibleImageObject extends BaseStorageObject {
 
     final storage = client ?? Supabase.instance.client.storage;
     return storage.from(bucket).getPublicUrl(_compressedPath2);
+  }
+
+  String getEfficiencyUrl({SupabaseStorageClient? client}) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    final storage = client ?? Supabase.instance.client.storage;
+    return storage.from(bucket).getPublicUrl(_efficiencyPath);
+  }
+
+  String getCompressed80Url({SupabaseStorageClient? client}) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    final storage = client ?? Supabase.instance.client.storage;
+    return storage.from(bucket).getPublicUrl(_compressed80Path.$1);
+  }
+
+  String getCompressed40Url({SupabaseStorageClient? client}) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    final storage = client ?? Supabase.instance.client.storage;
+    return storage.from(bucket).getPublicUrl(_compressed40Path.$1);
   }
 }
 

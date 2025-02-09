@@ -1,4 +1,5 @@
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 import '../startup.dart';
 
@@ -21,10 +22,20 @@ class InitErrorReporterTask extends StartUpTask {
   }
 }
 
-// Enable by default
 bool _reportErrorEnabled = false;
-
-Future<void> reportError(dynamic error, dynamic stackTrace) async {
+// Here we can report the error to Sentry or Crashlytics
+Future<void> _reportError(dynamic error, dynamic stackTrace) async {
   if (!_reportErrorEnabled) return;
+
   await Sentry.captureException(error, stackTrace: stackTrace);
+}
+
+class CrashlyticsTalkerObserver extends TalkerObserver {
+  CrashlyticsTalkerObserver();
+
+  @override
+  void onError(err) async => await _reportError(err.error, err.stackTrace);
+
+  @override
+  void onException(err) async => await _reportError(err.exception, err.stackTrace);
 }

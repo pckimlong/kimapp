@@ -1,31 +1,31 @@
 import 'package:kimapp/kimapp.dart';
 import 'package:kimapp_supabase_helper/supabase_storage.dart';
 
-import '../../../core/helpers/logger.dart';
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
 
-class InitKimappTask extends StartUpTask with LoggerMixin {
+class InitKimappTask extends StartUpTask {
   const InitKimappTask();
 
   @override
   Future<void> initialize(LaunchContext context) async {
     await Kimapp.initialize(
       debugMode: context.env.isDevelop,
-      logger: (type, message, [title, stackTrace, errorObject]) {
-        if (context.env.isRelease) {
-          reportError(errorObject, stackTrace);
+      logger: (type, message, [title, stackTrace, object]) {
+        // Only report error to crashlytics in release mode
+        if (context.env.isRelease && type == LoggerType.error) {
+          reportErrorToCrashlyticsService(object, stackTrace);
         }
 
         switch (type) {
           case LoggerType.debug:
-            logDebug(message, stackTrace);
+            context.talker.debug(message, stackTrace);
           case LoggerType.info:
-            logInfo(message, errorObject, stackTrace);
+            context.talker.info(message, object, stackTrace);
           case LoggerType.warning:
-            logWarning(message, errorObject, stackTrace);
+            context.talker.warning(message, object, stackTrace);
           case LoggerType.error:
-            logError(message, errorObject, stackTrace);
+            context.talker.error(message, object, stackTrace);
         }
       },
     );
