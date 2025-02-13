@@ -25,8 +25,12 @@ mixin _$OtherModel {
   @JsonKey(name: OtherModel.nameKey)
   String get name => throw _privateConstructorUsedError;
 
+  /// Serializes this OtherModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of OtherModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $OtherModelCopyWith<OtherModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -52,6 +56,8 @@ class _$OtherModelCopyWithImpl<$Res, $Val extends OtherModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of OtherModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -92,6 +98,8 @@ class __$$OtherModelImplCopyWithImpl<$Res>
       _$OtherModelImpl _value, $Res Function(_$OtherModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of OtherModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -145,11 +153,13 @@ class _$OtherModelImpl extends _OtherModel {
             (identical(other.name, name) || other.name == name));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of OtherModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$OtherModelImplCopyWith<_$OtherModelImpl> get copyWith =>
@@ -179,8 +189,11 @@ abstract class _OtherModel extends OtherModel {
   @override
   @JsonKey(name: OtherModel.nameKey)
   String get name;
+
+  /// Create a copy of OtherModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$OtherModelImplCopyWith<_$OtherModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

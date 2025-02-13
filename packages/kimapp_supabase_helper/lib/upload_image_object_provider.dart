@@ -1,7 +1,9 @@
-import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as img;
 import 'package:kimapp/kimapp.dart';
 import 'package:kimapp_supabase_helper/helper.dart';
@@ -24,12 +26,23 @@ class ImageDimensions {
     required this.height,
   });
 
+  Size? get size {
+    if (!hasSize) {
+      return null;
+    }
+    return Size(width!, height!);
+  }
+
+  bool get hasSize => width != null && height != null;
+
   @override
   String toString() {
     if (width == null || height == null) {
       return '';
     }
-    return '${width}x$height';
+
+    // TODO: Should we make it more percise?
+    return '${width!.toInt()}x${height!.toInt()}';
   }
 
   String toPath(String filePath) {
@@ -38,7 +51,7 @@ class ImageDimensions {
     }
 
     final extension = p.extension(filePath);
-    final pathWithoutExtension = p.basenameWithoutExtension(filePath);
+    final pathWithoutExtension = p.withoutExtension(filePath);
 
     // Check if path already contains dimensions
     final hasDimensions = RegExp(r'\d+\.?\d*x\d+\.?\d*$').hasMatch(pathWithoutExtension);
@@ -69,8 +82,13 @@ class ImageDimensions {
     final match = matches.last;
 
     try {
-      final width = double.tryParse(match.group(1)!);
-      final height = double.tryParse(match.group(2)!);
+      final first = match.group(1);
+      final second = match.group(2);
+      if (first == null || second == null) {
+        return const ImageDimensions(width: null, height: null);
+      }
+      final width = double.tryParse(first);
+      final height = double.tryParse(second);
 
       return ImageDimensions(width: width, height: height);
     } on FormatException {
@@ -101,7 +119,9 @@ class UploadImageObject extends _$UploadImageObject {
     );
 
     if (sanitizedName.isEmpty) {
-      throw Exception('Invalid filename after sanitization');
+      throw Exception(
+        'Invalid filename after sanitization.',
+      );
     }
 
     return '$sanitizedName$extension';
@@ -109,15 +129,21 @@ class UploadImageObject extends _$UploadImageObject {
 
   /// Extracts image dimensions from the file
   Future<ImageDimensions> _getImageDimensions(Uint8List bytes) async {
-    final image = img.decodeImage(bytes);
-
-    if (image == null) {
-      throw Exception('Could not decode image');
-    }
+    // Passing bytes directly avoids unnecessary wrapper
+    final dimensions = await compute<Uint8List, Map<String, double>>((bytes) {
+      final image = img.decodeImage(bytes);
+      if (image == null) {
+        throw Exception('Could not decode image');
+      }
+      return {
+        'width': image.width.toDouble(),
+        'height': image.height.toDouble(),
+      };
+    }, bytes);
 
     return ImageDimensions(
-      width: image.width.toDouble(),
-      height: image.height.toDouble(),
+      width: dimensions['width']!,
+      height: dimensions['height']!,
     );
   }
 
@@ -133,7 +159,7 @@ class UploadImageObject extends _$UploadImageObject {
     return await perform(
       (state) async {
         // Validate filename
-        final validFilename = _validateFilename(image.path);
+        final validFilename = _validateFilename(image.name);
 
         final fileBytes = await image.readAsBytes();
 
@@ -147,6 +173,7 @@ class UploadImageObject extends _$UploadImageObject {
         final imagePath = [
               bucketName,
               filename,
+              'd${DateTime.now().toUtc().millisecondsSinceEpoch}', // this help to determine the version of the file
               if (dimensions.toString().isNotBlank) dimensions.toString(),
             ].join('-') +
             p.extension(validFilename);
@@ -185,34 +212,52 @@ extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
   /// [directory] Optional directory path
   /// [upsert] Whether to overwrite existing files
   Future<T> uploadImageWrapper<T, M extends BaseStorageObject>(
-    XFile image,
+    XFile? image,
     M Function(String generatedPath) object, {
     required FutureOr<T> Function(M image) callback,
     String? customPrefix,
     String directory = '',
     bool upsert = false,
   }) async {
-    final uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
-          image,
-          object: object,
-          customPrefix: customPrefix,
-          directory: directory,
-          upsert: upsert,
-        );
+    if (image == null) return callback(object(''));
 
-    if (uploadResult.isSuccess) {
-      try {
-        return callback(uploadResult as M);
-      } catch (_) {
-        await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
-        rethrow;
+    ProviderStatus<BaseStorageObject>? uploadResult;
+    try {
+      uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
+            image,
+            object: object,
+            customPrefix: customPrefix,
+            directory: directory,
+            upsert: upsert,
+          );
+
+      if (uploadResult.isFailure) {
+        throw uploadResult.failure!;
       }
-    }
 
-    if (uploadResult.isFailure) {
-      throw uploadResult.failure!;
-    }
+      if (uploadResult.isSuccess) {
+        try {
+          return callback(uploadResult.successOrNull as M);
+        } catch (_) {
+          if (uploadResult.successOrNull != null) {
+            await _deleteImage(uploadResult);
+            uploadResult = null;
+          }
+          rethrow;
+        }
+      }
 
-    throw uploadResult;
+      throw 'Something went wrong';
+    } catch (_) {
+      // If the upload succeeded, but the delete file failed, we delete it again
+      if (uploadResult != null && uploadResult.successOrNull != null) {
+        await _deleteImage(uploadResult);
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> _deleteImage(ProviderStatus<BaseStorageObject> uploadResult) async {
+    await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
   }
 }

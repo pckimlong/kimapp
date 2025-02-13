@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -63,9 +64,12 @@ class OtherId extends Identity<int> {
   }
 }
 
+/// Base class of this schema, this is the parent of all generated models in this schema
+abstract class BaseOtherModel {}
+
 /// Base model class for OtherModel.
 @freezed
-class OtherModel with _$OtherModel {
+class OtherModel with _$OtherModel implements BaseOtherModel {
   const OtherModel._();
 
   /// Constructor for OtherModel.

@@ -1,6 +1,7 @@
-import 'dart:typed_data';
+import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fpdart/fpdart.dart';
@@ -257,29 +258,34 @@ abstract class CompressibleImageObject extends BaseStorageObject {
   List<FileType> get types => [FileType.image];
 
   String get _efficiencyPath {
-    return "$name.$_compressedImageExtension";
+    final newPath = p.withoutExtension(path);
+    return "$newPath-original.$_compressedImageExtension";
   }
 
-  (String, ImageDimensions?) get _compressed80Path {
-    if (dimensions == null) ("${name}_compressed_80.$_compressedImageExtension", null);
+  (String, ImageDimensions?) get _compressed70Path {
+    if (dimensions?.hasSize == false) {
+      return ("$path-compressed-70.$_compressedImageExtension", null);
+    }
 
     // recalculate dimension by multiplying by 0.8
     final width = dimensions!.width! * 0.8;
     final height = dimensions!.height! * 0.8;
     final newDimensions = ImageDimensions(width: width, height: height);
-    final newPath = newDimensions.toPath(name);
-    return ("$newPath.$_compressedImageExtension", newDimensions);
+    final newPath = p.withoutExtension(newDimensions.toPath(path));
+    return ("$newPath-compressed-70.$_compressedImageExtension", newDimensions);
   }
 
-  (String, ImageDimensions?) get _compressed40Path {
-    if (dimensions == null) ("${name}_compressed_40.$_compressedImageExtension", null);
+  (String, ImageDimensions?) get _compressed30Path {
+    if (dimensions?.hasSize == false) {
+      return ("$path-compressed-30.$_compressedImageExtension", null);
+    }
 
     // recalculate dimension by multiplying by 0.4
     final width = dimensions!.width! * 0.4;
     final height = dimensions!.height! * 0.4;
     final newDimensions = ImageDimensions(width: width, height: height);
-    final newPath = newDimensions.toPath(name);
-    return ("$newPath.$_compressedImageExtension", newDimensions);
+    final newPath = p.withoutExtension(newDimensions.toPath(path));
+    return ("$newPath-compressed-30.$_compressedImageExtension", newDimensions);
   }
 
   //! Keep to make compilable with old version
@@ -325,30 +331,51 @@ abstract class CompressibleImageObject extends BaseStorageObject {
       try {
         final efficiency = await _compress(
           bytes,
-          quality: 100,
+          quality: 97,
           targetWidth: 1200,
           dimensions: dimensions,
         );
 
-        final quality80 = await _compress(
+        final quality70 = await _compress(
           bytes,
-          quality: 80,
+          quality: 70,
           targetWidth: 1200,
           dimensions: dimensions,
         );
 
-        final quality40 = await _compress(
+        final quality30 = await _compress(
           bytes,
-          quality: 40,
+          quality: 30,
           targetWidth: 400,
           dimensions: dimensions,
         );
 
         // Upload compressed versions in parallel
         await Future.wait([
-          api.uploadBinary(_efficiencyPath, efficiency, fileOptions: option),
-          api.uploadBinary(_compressed80Path.$1, quality80, fileOptions: option),
-          api.uploadBinary(_compressed40Path.$1, quality40, fileOptions: option),
+          api.uploadBinary(
+            _efficiencyPath,
+            efficiency,
+            fileOptions: FileOptions(
+              contentType: lookupMimeType(_efficiencyPath),
+              upsert: upsert,
+            ),
+          ),
+          api.uploadBinary(
+            _compressed70Path.$1,
+            quality70,
+            fileOptions: FileOptions(
+              contentType: lookupMimeType(_compressed70Path.$1),
+              upsert: upsert,
+            ),
+          ),
+          api.uploadBinary(
+            _compressed30Path.$1,
+            quality30,
+            fileOptions: FileOptions(
+              contentType: lookupMimeType(_compressed30Path.$1),
+              upsert: upsert,
+            ),
+          ),
         ]);
 
         return right(this);
@@ -377,7 +404,11 @@ abstract class CompressibleImageObject extends BaseStorageObject {
         quality: quality,
         keepExif: true,
         autoCorrectionAngle: true,
-        format: _compressFormat,
+        format: kIsWeb
+            ? _compressFormat
+            : Platform.isMacOS
+                ? CompressFormat.jpeg
+                : CompressFormat.webp,
         inSampleSize: 1,
       );
     }
@@ -398,7 +429,11 @@ abstract class CompressibleImageObject extends BaseStorageObject {
         quality: quality,
         keepExif: true,
         autoCorrectionAngle: true,
-        format: _compressFormat,
+        format: kIsWeb
+            ? _compressFormat
+            : Platform.isMacOS
+                ? CompressFormat.jpeg
+                : CompressFormat.webp,
         inSampleSize: 1,
       );
     }
@@ -422,7 +457,11 @@ abstract class CompressibleImageObject extends BaseStorageObject {
       // Rotate image according to EXIF data
       autoCorrectionAngle: true,
       // Format-specific options
-      format: _compressFormat,
+      format: kIsWeb
+          ? _compressFormat
+          : Platform.isMacOS
+              ? CompressFormat.jpeg
+              : CompressFormat.webp,
       // Retain some color quality
       inSampleSize: 1, // Don't skip pixels
     );
@@ -468,22 +507,22 @@ abstract class CompressibleImageObject extends BaseStorageObject {
     return storage.from(bucket).getPublicUrl(_efficiencyPath);
   }
 
-  String getCompressed80Url({SupabaseStorageClient? client}) {
+  String getCompressed70Url({SupabaseStorageClient? client}) {
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
 
     final storage = client ?? Supabase.instance.client.storage;
-    return storage.from(bucket).getPublicUrl(_compressed80Path.$1);
+    return storage.from(bucket).getPublicUrl(_compressed70Path.$1);
   }
 
-  String getCompressed40Url({SupabaseStorageClient? client}) {
+  String getCompressed30Url({SupabaseStorageClient? client}) {
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
 
     final storage = client ?? Supabase.instance.client.storage;
-    return storage.from(bucket).getPublicUrl(_compressed40Path.$1);
+    return storage.from(bucket).getPublicUrl(_compressed30Path.$1);
   }
 }
 

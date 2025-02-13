@@ -257,21 +257,21 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
     final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
     ${useTextField ? """
       final textController = controller ?? useTextEditingController(text: state);
-      useMemoized(() {
-      textController.addListener(() {
-        Future.microtask(() => $callEvent(${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"}));
-      });
-      return null;
-      });
+      useEffect(
+        () {
+          void listener() => $callEvent(${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"});
+          textController.addListener(listener);
+          return () => textController.removeListener(listener);
+        },
+        [textController],
+      );
 
-      ref.listen($providerNameFamily.select((value) => value.$fieldName), (previous, current) {
-        if (previous != current) {
-          if (current != textController.text) {
-            Future.microtask(() => textController.text = ${fieldType == "String?" ? "current ?? ''" : "current"});
-          }
+      useEffect(() {
+        if (state != textController.text) {
+          textController.text = ${fieldType == "String?" ? "state ?? ''" : "state"};
         }
-      });
-
+        return null;
+      }, [state]);
     """ : ""}
     final showValidation = ref.watch($providerNameFamily.select((value) => value.status.isFailure));
     return builder(ref, ${useTextField ? "textController," : ""} state, $callEvent, showValidation,);
@@ -361,6 +361,9 @@ String _generateFormWidget({
     builder = """
     Form(
       key: cachedFormKey,
+      onChanged: onChanged,
+      autovalidateMode: autovalidateMode,
+      onPopInvokedWithResult: onPopInvokedWithResult,
       child: $builder,
     )
     """;
@@ -406,7 +409,10 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
 class ${providerClassName}FormWidget extends HookConsumerWidget {
   const ${providerClassName}FormWidget({
     super.key,
-    ${useFormWidget ? "this.formKey," : ""}
+    ${useFormWidget ? """this.formKey,
+    this.autovalidateMode,
+    this.onPopInvokedWithResult,
+    this.onChanged,""" : ""}
     ${isUpdateForm ? """
     required this.initializingIndicator,
     this.onInitError,
@@ -419,6 +425,9 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
   ${useFormWidget ? """
     /// Form key. If null it will be created by widget
     final GlobalKey<FormState>? formKey;
+    final AutovalidateMode? autovalidateMode;
+    final void Function(bool, Object?)? onPopInvokedWithResult;
+    final void Function()? onChanged;
   """ : ""}
   ${props.map((e) => "final ${_dataType(e, familyParams)} $e;").join('\n\t\t\t')}
 
@@ -454,7 +463,7 @@ class ${providerClassName}FormWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ${useFormWidget ? "final cachedFormKey = useMemoized(() => formKey ?? GlobalKey<FormState>());" : ""}
+    ${useFormWidget ? "final cachedFormKey = useMemoized(() => formKey ?? GlobalKey<FormState>(),[formKey]);" : ""}
     ${_defineLocalFamilyOrEmpty(providerClassName, familyParams)}
     final status = ref.watch($providerNameFamily.select((value) => value.status));
     final isProgressing = status.isInProgress;
