@@ -138,6 +138,19 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       ),
     );
 
+    buffer.write(
+      _generateFormBuilderWidget(
+        providerClassName: providerClassName,
+        providerNameFamily: providerNameWithFamily,
+        familyParams: familyParams,
+        callMethod: callMethod,
+        isUpdateForm: isFormUpdateType,
+        providerStatusType: providerStatusType,
+        buildMethodReturnType: buildMethodReturnType,
+        useFormWidget: useFormWidget,
+      ),
+    );
+
     buffer.writeln('');
 
     // Generate field widget
@@ -517,6 +530,139 @@ ${props.isNotEmpty ? """
   });
 """ : ""}
   """;
+
+  return result;
+}
+
+String _generateFormBuilderWidget({
+  required String providerClassName,
+  required String providerNameFamily,
+  required Map<String, String> familyParams,
+  required String providerStatusType,
+  required MethodElement callMethod,
+  required bool isUpdateForm,
+  required String buildMethodReturnType,
+  required bool useFormWidget,
+}) {
+  final props = familyParams.keys;
+
+  final builderWidget = props.isNotEmpty
+      ? """
+     ProviderScope(
+      overrides: [${_familyProviderName(providerClassName)}.overrideWithValue(family)],
+      child: Consumer(
+        child: this.child,
+        builder: (context, ref, child) {
+          final notifier = ref.watch($providerNameFamily.notifier);
+          final status = ref.watch($providerNameFamily.select((value) => value.status));
+          return builder(
+            context,
+            ref,
+            status,
+            notifier,
+            child,
+          );
+        },
+      ),
+    );
+    """
+      : """
+     Consumer(
+      child: child,
+      builder: (context, ref, child) {
+        final notifier = ref.watch($providerNameFamily.notifier);
+        final status = ref.watch($providerNameFamily.select((value) => value.status));
+        return builder(
+          context,
+          ref,
+          status,
+          notifier,
+          child,
+        );
+      },
+    );
+    """;
+
+  final result = """
+/// Form builder widget for [$providerClassName] provider
+class ${providerClassName}FormBuilderWidget extends ConsumerWidget {
+  const ${providerClassName}FormBuilderWidget({
+    super.key,
+    ${props.map((e) => "required this.$e,").join('\n\t\t\t\t')}
+    ${isUpdateForm ? """
+    required this.initializingIndicator,
+    this.onInitError,
+    this.initialState,
+    """ : ""}
+    required this.builder,
+    this.child,
+  });
+
+  ${props.map((e) => "final ${_dataType(e, familyParams)} $e;").join('\n\t\t\t')}
+  final Widget Function(
+    BuildContext context,
+    WidgetRef ref,
+    $providerStatusType status,
+    $providerClassName notifier,
+    Widget? child,
+  ) builder;
+  final Widget? child;
+
+  ${isUpdateForm ? """
+  /// Indicator widget show when provider init/loading its initial data to form
+  final Widget Function() initializingIndicator;
+
+  /// Optional error widget when initialize initial form data fail. 
+  /// 
+  /// Default to a Text widget with centre error text  
+  final Widget Function(Object? error)? onInitError;
+
+  /// Optional initial state of form provider. If [initialState] is null, fallback handler will done 
+  /// inside provider it self
+  final $buildMethodReturnType? initialState; 
+  """ : ""}
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ${_defineLocalFamilyOrEmpty(providerClassName, familyParams)}
+    ${isUpdateForm ? """
+    final initialLoaded = ref.watch(
+        $providerNameFamily.select((value) => value.initialLoaded));
+    
+    final child = $builderWidget
+
+    if (initialLoaded) {
+      return child;
+    }
+
+    return FutureBuilder(
+      future: ref.read($providerNameFamily.notifier)._initializeFormData(initialState),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if(snapshot.hasError){
+            if(onInitError != null){
+              return onInitError!(snapshot.error);
+            }
+            return Center(
+              child: Text(
+                snapshot.error == null
+                ? "Something went wrong!"
+                : snapshot.error is Failure
+                    ? (snapshot.error as Failure).message()
+                    : snapshot.error.toString(),
+              ),
+            );
+          }
+
+          return child;
+        }
+        return initializingIndicator();
+      },
+    );
+    """ : "return $builderWidget;"}
+  }
+}
+""";
 
   return result;
 }
