@@ -394,17 +394,21 @@ String _generateFormWidget({
   final result = """
 bool _debugCheckHas${providerClassName}FormWidget(BuildContext context) {
   assert(() {
-    if (context.widget is! ${providerClassName}FormWidget && context.findAncestorWidgetOfExactType<${providerClassName}FormWidget>() == null) {
+    if ((context.widget is! ${providerClassName}FormWidget && 
+            context.findAncestorWidgetOfExactType<${providerClassName}FormWidget>() == null) &&
+        (context.widget is! ${providerClassName}FormBuilderWidget && 
+            context.findAncestorWidgetOfExactType<${providerClassName}FormBuilderWidget>() == null)) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No ${providerClassName}FormWidget found'),
-        ErrorDescription('\${context.widget.runtimeType} widgets require a ${providerClassName}FormWidget widget ancestor.'),
+        ErrorSummary('No ${providerClassName}FormWidget or ${providerClassName}FormBuilderWidget found'),
+        ErrorDescription(
+          '\${context.widget.runtimeType} widgets require a ${providerClassName}FormWidget or ${providerClassName}FormBuilderWidget widget ancestor.',
+        ),
       ]);
     }
     return true;
   }());
   return true;
 }
-
 
 typedef ${providerClassName}FormChildBuilder = Widget Function(
   WidgetRef ref,
