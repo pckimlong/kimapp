@@ -58,7 +58,7 @@ class KimappSchemaGenerator extends Generator {
 
     // Generate models
     models.forEach((model) {
-      buffer.writeln(_generateModelClass(model, schemaMetaData));
+      buffer.writeln(_generateModelClass(model, schemaMetaData, fields));
     });
   }
 
@@ -994,7 +994,8 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   return buffer.toString();
 }
 
-String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
+String _generateModelClass(
+    _ModelDefinition model, _SchemaMetaData schema, List<_FieldDefinition> baseFields) {
   final buffer = StringBuffer();
 
   final baseClass = _baseSchemaBaseClassName(schema);
@@ -1085,7 +1086,7 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema) {
     buffer.writeln('  /// Converts this model to a base model.');
     buffer.writeln('  ${schema.baseModelName} to${schema.baseModelName}() {');
     buffer.writeln('    return ${schema.baseModelName}(');
-    for (final field in model.fields) {
+    for (final field in baseFields) {
       if (field is _IdField) {
         buffer.writeln('      ${field.fieldName}: ${field.fieldName},');
       } else {
