@@ -65,11 +65,17 @@ class OtherId extends Identity<int> {
 }
 
 /// Base class of this schema, this is the parent of all generated models in this schema
-abstract class BaseOtherModel {}
+abstract class BaseOtherSchema {}
+
+/// Base model class for this schema, this includes all properties of the base model, and get inherited by all generated models in this schema where [inheritAllFromBase()] is called and without any excepted fields.
+abstract class IOtherModel {
+  OtherId get id;
+  String get name;
+}
 
 /// Base model class for OtherModel.
 @freezed
-class OtherModel with _$OtherModel implements BaseOtherModel {
+class OtherModel with _$OtherModel implements BaseOtherSchema, IOtherModel {
   const OtherModel._();
 
   /// Constructor for OtherModel.

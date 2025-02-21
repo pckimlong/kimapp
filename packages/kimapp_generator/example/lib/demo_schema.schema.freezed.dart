@@ -355,6 +355,17 @@ mixin _$DemoDetailModel {
   DemoId get id => throw _privateConstructorUsedError;
   @JsonKey(name: DemoDetailModel.nameKey)
   String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoDetailModel.descriptionKey)
+  String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoDetailModel.ageKey)
+  int get age => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoDetailModel.birthdateKey)
+  DateTime? get birthdate => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoDetailModel.addressKey)
+  String? get address => throw _privateConstructorUsedError;
+  @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+  @JsonKey(name: DemoDetailModel.otherKey)
+  OtherModel? get other => throw _privateConstructorUsedError;
 
   /// Serializes this DemoDetailModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -374,7 +385,16 @@ abstract class $DemoDetailModelCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: DemoDetailModel.idKey) DemoId id,
-      @JsonKey(name: DemoDetailModel.nameKey) String? name});
+      @JsonKey(name: DemoDetailModel.nameKey) String? name,
+      @JsonKey(name: DemoDetailModel.descriptionKey) String? description,
+      @JsonKey(name: DemoDetailModel.ageKey) int age,
+      @JsonKey(name: DemoDetailModel.birthdateKey) DateTime? birthdate,
+      @JsonKey(name: DemoDetailModel.addressKey) String? address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoDetailModel.otherKey)
+      OtherModel? other});
+
+  $OtherModelCopyWith<$Res>? get other;
 }
 
 /// @nodoc
@@ -394,6 +414,11 @@ class _$DemoDetailModelCopyWithImpl<$Res, $Val extends DemoDetailModel>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? description = freezed,
+    Object? age = null,
+    Object? birthdate = freezed,
+    Object? address = freezed,
+    Object? other = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -404,7 +429,41 @@ class _$DemoDetailModelCopyWithImpl<$Res, $Val extends DemoDetailModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      age: null == age
+          ? _value.age
+          : age // ignore: cast_nullable_to_non_nullable
+              as int,
+      birthdate: freezed == birthdate
+          ? _value.birthdate
+          : birthdate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      other: freezed == other
+          ? _value.other
+          : other // ignore: cast_nullable_to_non_nullable
+              as OtherModel?,
     ) as $Val);
+  }
+
+  /// Create a copy of DemoDetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OtherModelCopyWith<$Res>? get other {
+    if (_value.other == null) {
+      return null;
+    }
+
+    return $OtherModelCopyWith<$Res>(_value.other!, (value) {
+      return _then(_value.copyWith(other: value) as $Val);
+    });
   }
 }
 
@@ -418,7 +477,17 @@ abstract class _$$DemoDetailModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: DemoDetailModel.idKey) DemoId id,
-      @JsonKey(name: DemoDetailModel.nameKey) String? name});
+      @JsonKey(name: DemoDetailModel.nameKey) String? name,
+      @JsonKey(name: DemoDetailModel.descriptionKey) String? description,
+      @JsonKey(name: DemoDetailModel.ageKey) int age,
+      @JsonKey(name: DemoDetailModel.birthdateKey) DateTime? birthdate,
+      @JsonKey(name: DemoDetailModel.addressKey) String? address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoDetailModel.otherKey)
+      OtherModel? other});
+
+  @override
+  $OtherModelCopyWith<$Res>? get other;
 }
 
 /// @nodoc
@@ -436,6 +505,11 @@ class __$$DemoDetailModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? description = freezed,
+    Object? age = null,
+    Object? birthdate = freezed,
+    Object? address = freezed,
+    Object? other = freezed,
   }) {
     return _then(_$DemoDetailModelImpl(
       id: null == id
@@ -446,6 +520,26 @@ class __$$DemoDetailModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      age: null == age
+          ? _value.age
+          : age // ignore: cast_nullable_to_non_nullable
+              as int,
+      birthdate: freezed == birthdate
+          ? _value.birthdate
+          : birthdate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      other: freezed == other
+          ? _value.other
+          : other // ignore: cast_nullable_to_non_nullable
+              as OtherModel?,
     ));
   }
 }
@@ -457,7 +551,14 @@ class __$$DemoDetailModelImplCopyWithImpl<$Res>
 class _$DemoDetailModelImpl extends _DemoDetailModel {
   const _$DemoDetailModelImpl(
       {@JsonKey(name: DemoDetailModel.idKey) required this.id,
-      @JsonKey(name: DemoDetailModel.nameKey) required this.name})
+      @JsonKey(name: DemoDetailModel.nameKey) required this.name,
+      @JsonKey(name: DemoDetailModel.descriptionKey) required this.description,
+      @JsonKey(name: DemoDetailModel.ageKey) required this.age,
+      @JsonKey(name: DemoDetailModel.birthdateKey) required this.birthdate,
+      @JsonKey(name: DemoDetailModel.addressKey) required this.address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoDetailModel.otherKey)
+      required this.other})
       : super._();
 
   factory _$DemoDetailModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -469,10 +570,26 @@ class _$DemoDetailModelImpl extends _DemoDetailModel {
   @override
   @JsonKey(name: DemoDetailModel.nameKey)
   final String? name;
+  @override
+  @JsonKey(name: DemoDetailModel.descriptionKey)
+  final String? description;
+  @override
+  @JsonKey(name: DemoDetailModel.ageKey)
+  final int age;
+  @override
+  @JsonKey(name: DemoDetailModel.birthdateKey)
+  final DateTime? birthdate;
+  @override
+  @JsonKey(name: DemoDetailModel.addressKey)
+  final String? address;
+  @override
+  @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+  @JsonKey(name: DemoDetailModel.otherKey)
+  final OtherModel? other;
 
   @override
   String toString() {
-    return 'DemoDetailModel(id: $id, name: $name)';
+    return 'DemoDetailModel(id: $id, name: $name, description: $description, age: $age, birthdate: $birthdate, address: $address, other: $other)';
   }
 
   @override
@@ -481,12 +598,20 @@ class _$DemoDetailModelImpl extends _DemoDetailModel {
         (other.runtimeType == runtimeType &&
             other is _$DemoDetailModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.age, age) || other.age == age) &&
+            (identical(other.birthdate, birthdate) ||
+                other.birthdate == birthdate) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, description, age, birthdate, address, other);
 
   /// Create a copy of DemoDetailModel
   /// with the given fields replaced by the non-null parameter values.
@@ -508,8 +633,16 @@ class _$DemoDetailModelImpl extends _DemoDetailModel {
 abstract class _DemoDetailModel extends DemoDetailModel {
   const factory _DemoDetailModel(
       {@JsonKey(name: DemoDetailModel.idKey) required final DemoId id,
-      @JsonKey(name: DemoDetailModel.nameKey)
-      required final String? name}) = _$DemoDetailModelImpl;
+      @JsonKey(name: DemoDetailModel.nameKey) required final String? name,
+      @JsonKey(name: DemoDetailModel.descriptionKey)
+      required final String? description,
+      @JsonKey(name: DemoDetailModel.ageKey) required final int age,
+      @JsonKey(name: DemoDetailModel.birthdateKey)
+      required final DateTime? birthdate,
+      @JsonKey(name: DemoDetailModel.addressKey) required final String? address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoDetailModel.otherKey)
+      required final OtherModel? other}) = _$DemoDetailModelImpl;
   const _DemoDetailModel._() : super._();
 
   factory _DemoDetailModel.fromJson(Map<String, dynamic> json) =
@@ -521,6 +654,22 @@ abstract class _DemoDetailModel extends DemoDetailModel {
   @override
   @JsonKey(name: DemoDetailModel.nameKey)
   String? get name;
+  @override
+  @JsonKey(name: DemoDetailModel.descriptionKey)
+  String? get description;
+  @override
+  @JsonKey(name: DemoDetailModel.ageKey)
+  int get age;
+  @override
+  @JsonKey(name: DemoDetailModel.birthdateKey)
+  DateTime? get birthdate;
+  @override
+  @JsonKey(name: DemoDetailModel.addressKey)
+  String? get address;
+  @override
+  @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+  @JsonKey(name: DemoDetailModel.otherKey)
+  OtherModel? get other;
 
   /// Create a copy of DemoDetailModel
   /// with the given fields replaced by the non-null parameter values.
@@ -538,8 +687,17 @@ DemoLiteModel _$DemoLiteModelFromJson(Map<String, dynamic> json) {
 mixin _$DemoLiteModel {
   @JsonKey(name: DemoLiteModel.idKey)
   DemoId get id => throw _privateConstructorUsedError;
-  @JsonKey(name: DemoLiteModel.descriptionKey)
-  String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoLiteModel.nameKey)
+  String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoLiteModel.ageKey)
+  int get age => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoLiteModel.birthdateKey)
+  DateTime? get birthdate => throw _privateConstructorUsedError;
+  @JsonKey(name: DemoLiteModel.addressKey)
+  String? get address => throw _privateConstructorUsedError;
+  @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+  @JsonKey(name: DemoLiteModel.otherKey)
+  OtherModel? get other => throw _privateConstructorUsedError;
 
   /// Serializes this DemoLiteModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -559,7 +717,15 @@ abstract class $DemoLiteModelCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: DemoLiteModel.idKey) DemoId id,
-      @JsonKey(name: DemoLiteModel.descriptionKey) String? description});
+      @JsonKey(name: DemoLiteModel.nameKey) String? name,
+      @JsonKey(name: DemoLiteModel.ageKey) int age,
+      @JsonKey(name: DemoLiteModel.birthdateKey) DateTime? birthdate,
+      @JsonKey(name: DemoLiteModel.addressKey) String? address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoLiteModel.otherKey)
+      OtherModel? other});
+
+  $OtherModelCopyWith<$Res>? get other;
 }
 
 /// @nodoc
@@ -578,18 +744,52 @@ class _$DemoLiteModelCopyWithImpl<$Res, $Val extends DemoLiteModel>
   @override
   $Res call({
     Object? id = null,
-    Object? description = freezed,
+    Object? name = freezed,
+    Object? age = null,
+    Object? birthdate = freezed,
+    Object? address = freezed,
+    Object? other = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as DemoId,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      age: null == age
+          ? _value.age
+          : age // ignore: cast_nullable_to_non_nullable
+              as int,
+      birthdate: freezed == birthdate
+          ? _value.birthdate
+          : birthdate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      other: freezed == other
+          ? _value.other
+          : other // ignore: cast_nullable_to_non_nullable
+              as OtherModel?,
     ) as $Val);
+  }
+
+  /// Create a copy of DemoLiteModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OtherModelCopyWith<$Res>? get other {
+    if (_value.other == null) {
+      return null;
+    }
+
+    return $OtherModelCopyWith<$Res>(_value.other!, (value) {
+      return _then(_value.copyWith(other: value) as $Val);
+    });
   }
 }
 
@@ -603,7 +803,16 @@ abstract class _$$DemoLiteModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: DemoLiteModel.idKey) DemoId id,
-      @JsonKey(name: DemoLiteModel.descriptionKey) String? description});
+      @JsonKey(name: DemoLiteModel.nameKey) String? name,
+      @JsonKey(name: DemoLiteModel.ageKey) int age,
+      @JsonKey(name: DemoLiteModel.birthdateKey) DateTime? birthdate,
+      @JsonKey(name: DemoLiteModel.addressKey) String? address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoLiteModel.otherKey)
+      OtherModel? other});
+
+  @override
+  $OtherModelCopyWith<$Res>? get other;
 }
 
 /// @nodoc
@@ -620,29 +829,54 @@ class __$$DemoLiteModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? description = freezed,
+    Object? name = freezed,
+    Object? age = null,
+    Object? birthdate = freezed,
+    Object? address = freezed,
+    Object? other = freezed,
   }) {
     return _then(_$DemoLiteModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as DemoId,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      age: null == age
+          ? _value.age
+          : age // ignore: cast_nullable_to_non_nullable
+              as int,
+      birthdate: freezed == birthdate
+          ? _value.birthdate
+          : birthdate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
+      other: freezed == other
+          ? _value.other
+          : other // ignore: cast_nullable_to_non_nullable
+              as OtherModel?,
     ));
   }
 }
 
 /// @nodoc
 
-@TableModel(DemoLiteModel.tableName)
 @JsonSerializable(explicitToJson: true)
 class _$DemoLiteModelImpl extends _DemoLiteModel {
   const _$DemoLiteModelImpl(
       {@JsonKey(name: DemoLiteModel.idKey) required this.id,
-      @JsonKey(name: DemoLiteModel.descriptionKey) required this.description})
+      @JsonKey(name: DemoLiteModel.nameKey) required this.name,
+      @JsonKey(name: DemoLiteModel.ageKey) required this.age,
+      @JsonKey(name: DemoLiteModel.birthdateKey) required this.birthdate,
+      @JsonKey(name: DemoLiteModel.addressKey) required this.address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoLiteModel.otherKey)
+      required this.other})
       : super._();
 
   factory _$DemoLiteModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -652,12 +886,25 @@ class _$DemoLiteModelImpl extends _DemoLiteModel {
   @JsonKey(name: DemoLiteModel.idKey)
   final DemoId id;
   @override
-  @JsonKey(name: DemoLiteModel.descriptionKey)
-  final String? description;
+  @JsonKey(name: DemoLiteModel.nameKey)
+  final String? name;
+  @override
+  @JsonKey(name: DemoLiteModel.ageKey)
+  final int age;
+  @override
+  @JsonKey(name: DemoLiteModel.birthdateKey)
+  final DateTime? birthdate;
+  @override
+  @JsonKey(name: DemoLiteModel.addressKey)
+  final String? address;
+  @override
+  @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+  @JsonKey(name: DemoLiteModel.otherKey)
+  final OtherModel? other;
 
   @override
   String toString() {
-    return 'DemoLiteModel(id: $id, description: $description)';
+    return 'DemoLiteModel(id: $id, name: $name, age: $age, birthdate: $birthdate, address: $address, other: $other)';
   }
 
   @override
@@ -666,13 +913,18 @@ class _$DemoLiteModelImpl extends _DemoLiteModel {
         (other.runtimeType == runtimeType &&
             other is _$DemoLiteModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.description, description) ||
-                other.description == description));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.age, age) || other.age == age) &&
+            (identical(other.birthdate, birthdate) ||
+                other.birthdate == birthdate) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, description);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, age, birthdate, address, other);
 
   /// Create a copy of DemoLiteModel
   /// with the given fields replaced by the non-null parameter values.
@@ -693,8 +945,14 @@ class _$DemoLiteModelImpl extends _DemoLiteModel {
 abstract class _DemoLiteModel extends DemoLiteModel {
   const factory _DemoLiteModel(
       {@JsonKey(name: DemoLiteModel.idKey) required final DemoId id,
-      @JsonKey(name: DemoLiteModel.descriptionKey)
-      required final String? description}) = _$DemoLiteModelImpl;
+      @JsonKey(name: DemoLiteModel.nameKey) required final String? name,
+      @JsonKey(name: DemoLiteModel.ageKey) required final int age,
+      @JsonKey(name: DemoLiteModel.birthdateKey)
+      required final DateTime? birthdate,
+      @JsonKey(name: DemoLiteModel.addressKey) required final String? address,
+      @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+      @JsonKey(name: DemoLiteModel.otherKey)
+      required final OtherModel? other}) = _$DemoLiteModelImpl;
   const _DemoLiteModel._() : super._();
 
   factory _DemoLiteModel.fromJson(Map<String, dynamic> json) =
@@ -704,8 +962,21 @@ abstract class _DemoLiteModel extends DemoLiteModel {
   @JsonKey(name: DemoLiteModel.idKey)
   DemoId get id;
   @override
-  @JsonKey(name: DemoLiteModel.descriptionKey)
-  String? get description;
+  @JsonKey(name: DemoLiteModel.nameKey)
+  String? get name;
+  @override
+  @JsonKey(name: DemoLiteModel.ageKey)
+  int get age;
+  @override
+  @JsonKey(name: DemoLiteModel.birthdateKey)
+  DateTime? get birthdate;
+  @override
+  @JsonKey(name: DemoLiteModel.addressKey)
+  String? get address;
+  @override
+  @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+  @JsonKey(name: DemoLiteModel.otherKey)
+  OtherModel? get other;
 
   /// Create a copy of DemoLiteModel
   /// with the given fields replaced by the non-null parameter values.
