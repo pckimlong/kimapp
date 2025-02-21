@@ -156,7 +156,7 @@ class UploadImageObject extends _$UploadImageObject {
     String directory = '',
     bool upsert = false,
   }) async {
-    return await perform(
+    return await perform<T>(
       (state) async {
         // Validate filename
         final validFilename = _validateFilename(image.name);
@@ -182,18 +182,20 @@ class UploadImageObject extends _$UploadImageObject {
 
         // Create and upload storage object
         final storageObject = object(storagePath);
-        final uploadResult = await storageObject.upload(
-          fileBytes,
-          client: ref.supabaseStorage,
-          upsert: upsert,
-        );
+        final uploadResult = await storageObject
+            .upload(
+              fileBytes,
+              client: ref.supabaseStorage,
+              upsert: upsert,
+            )
+            .then((v) => v.getOrThrow());
 
-        return uploadResult.getOrThrow();
+        return uploadResult as T;
       },
       onSuccess: (success) {
         ref.invalidateSelf();
       },
-    ) as ProviderStatus<T>;
+    );
   }
 }
 
@@ -214,12 +216,12 @@ extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
   Future<T> uploadImageWrapper<T, M extends BaseStorageObject>(
     XFile? image,
     M Function(String generatedPath) object, {
-    required FutureOr<T> Function(M image) callback,
+    required FutureOr<T> Function(M? image) callback,
     String? customPrefix,
     String directory = '',
     bool upsert = false,
   }) async {
-    if (image == null) return callback(object(''));
+    if (image == null) return callback(null);
 
     ProviderStatus<BaseStorageObject>? uploadResult;
     try {
