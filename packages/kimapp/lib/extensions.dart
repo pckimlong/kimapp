@@ -3,9 +3,10 @@ import 'package:fpdart/fpdart.dart';
 import 'kimapp.dart';
 
 extension EitherX<T> on Either<Failure, T> {
-  T getOrThrow() => getOrElse((l) => throw l);
+  T getOrThrow() => getOrElse((l) => Error.throwWithStackTrace(l, l.stackTrace));
   T? getOrNull() => fold((l) => null, (r) => r);
-  N mapOrThrow<N>(N Function(T r) map) => fold((l) => throw l, map);
+  N mapOrThrow<N>(N Function(T r) map) =>
+      fold((l) => Error.throwWithStackTrace(l, l.stackTrace), map);
 }
 
 extension OptionX<T> on Option<T> {

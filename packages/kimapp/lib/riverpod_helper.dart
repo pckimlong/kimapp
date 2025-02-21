@@ -272,21 +272,27 @@ extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<Provi
   ///  });
   /// }
   /// ```
-  Future<ProviderStatus<T>> perform(
-    Future<T> Function(ProviderStatus<T> state) callback, {
+  Future<ProviderStatus<R>> perform<R>(
+    Future<R> Function(ProviderStatus<T> state) callback, {
     void Function(Failure failure)? onFailure,
-
-    /// Trigger whenever success
-    void Function(T success)? onSuccess,
+    void Function(R success)? onSuccess,
   }) async {
-    if (state.isInProgress || state.isSuccess) return state;
+    if (state.isInProgress || state.isSuccess) return state as ProviderStatus<R>;
+
     state = ProviderStatus<T>.inProgress();
-    state = await ProviderStatus.guard<T>(() async => await callback(state));
-    final updatedState = state; // prevent if onsuccess or failure update current state
-    if (state.isFailure && onFailure != null) {
-      onFailure(state.whenOrNull(failure: (failure) => failure)!);
+    final result = await ProviderStatus.guard<R>(() async => await callback(state));
+
+    // Store result before callbacks to prevent state updates from affecting return value
+    final updatedState = result;
+
+    if (result.isFailure && onFailure != null) {
+      onFailure(result.whenOrNull(failure: (failure) => failure)!);
     }
-    if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
+
+    if (result.isSuccess && onSuccess != null) {
+      onSuccess(result.successOrNull as R);
+    }
+
     return updatedState;
   }
 }
