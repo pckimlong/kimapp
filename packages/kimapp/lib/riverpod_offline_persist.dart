@@ -6,7 +6,7 @@ import 'package:riverpod/riverpod.dart';
 // ignore: implementation_imports
 import 'package:riverpod/src/async_notifier.dart';
 
-extension PersistRiverpodAsyncNotifier<T> on BuildlessAutoDisposeAsyncNotifier<T> {
+extension PersistRiverpodAsyncNotifier<T> on AsyncNotifierBase<T> {
   /// Persists the state of the notifier by fetching fresh data and persisting it if necessary.
   /// This callback should be called inside build to make it taking effect
   ///
