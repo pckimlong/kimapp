@@ -232,15 +232,6 @@ extension RiverpodRefExtension on Ref {
   }
 }
 
-extension RiverpodCacheExtension on Ref {
-  /// Prevent provider from being disposed in a given duration
-  void cacheTime(Duration duration) {
-    final cancel = keepAlive();
-    final timer = Timer(duration, cancel.close);
-    onDispose(timer.cancel);
-  }
-}
-
 extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
   /// Listens to IList state changes and reports differences when both previous and next states are initialized.
   ///
