@@ -151,6 +151,24 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       ),
     );
 
+    buffer.write(
+      _generateStatusWidget(
+        providerClassName: providerClassName,
+        providerNameFamily: providerNameWithFamily,
+        familyParams: familyParams,
+        providerStatusType: providerStatusType,
+      ),
+    );
+
+    buffer.write(
+      _generateStateWidget(
+        providerClassName: providerClassName,
+        providerNameFamily: providerNameWithFamily,
+        familyParams: familyParams,
+        providerStatusType: providerStatusType,
+      ),
+    );
+
     buffer.writeln('');
 
     // Generate field widget
@@ -663,7 +681,83 @@ class ${providerClassName}FormBuilderWidget extends ConsumerWidget {
         return initializingIndicator();
       },
     );
-    """ : "return $builderWidget;"}
+    """ : "return $builderWidget"}
+  }
+}
+""";
+
+  return result;
+}
+
+String _generateStatusWidget({
+  required String providerClassName,
+  required String providerNameFamily,
+  required Map<String, String> familyParams,
+  required String providerStatusType,
+}) {
+  final result = """
+/// Widget for manage for [$providerClassName] provider status
+class ${providerClassName}StatusWidget extends ConsumerWidget {
+  const ${providerClassName}StatusWidget({
+    super.key,
+    required this.builder,
+    this.child,
+  });
+
+  final Widget Function(
+    WidgetRef ref,
+    $providerStatusType status,
+    $providerClassName notifier,
+    Widget? child,
+  ) builder;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ${_checkHasFormWidgetAssert(providerClassName)}
+    ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
+    final notifier = ref.watch($providerNameFamily.notifier);
+    final status = ref.watch($providerNameFamily.select((value) => value.status));
+
+    return builder(ref, status, notifier, child);
+  }
+}
+""";
+
+  return result;
+}
+
+String _generateStateWidget({
+  required String providerClassName,
+  required String providerNameFamily,
+  required Map<String, String> familyParams,
+  required String providerStatusType,
+}) {
+  final result = """
+/// Widget for manage for [$providerClassName] provider state
+class ${providerClassName}StateWidget extends ConsumerWidget {
+  const ${providerClassName}StateWidget({
+    super.key,
+    required this.builder,
+    this.child,
+  });
+
+  final Widget Function(
+    WidgetRef ref,
+    ${providerClassName}State state,
+    $providerClassName notifier,
+    Widget? child,
+  ) builder;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ${_checkHasFormWidgetAssert(providerClassName)}
+    ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
+    final notifier = ref.watch($providerNameFamily.notifier);
+    final state = ref.watch($providerNameFamily);
+
+    return builder(ref, state, notifier, child);
   }
 }
 """;
