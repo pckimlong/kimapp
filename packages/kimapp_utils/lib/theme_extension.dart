@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'theme_extension.freezed.dart';
 
 /// A theme extension for Kimapp that provides utility functions and widgets for UI customization
 ///
