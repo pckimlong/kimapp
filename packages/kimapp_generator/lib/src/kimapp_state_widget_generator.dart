@@ -118,7 +118,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     /// * [loading] - Custom widget for loading state
     /// * [error] - Custom widget for error state
     /// * [data] - Custom widget for data state
-    ///
+    /// // Might cause problem when we use other theme than Material Theme, eg fluent theme
     /// This widget integrates with [KimappThemeExtension] to provide default loading
     /// and error widgets. To use this functionality:
     ///
@@ -148,7 +148,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     ///   ${familyParams.entries.map((e) => '${e.key}: ${e.key},').join('\n    /// ')}
     ///   builder: (context, ref, state, child) {
     ///     return Text(state.toString());
-    ///   },${isAsyncValue ? '''
+    ///   },${isAsyncValue ? '''\n
     ///   loading: () => const CircularProgressIndicator(),
     ///   error: (error, stack) => Text('Error: \$error'),
     ///   data: (data) => Text(data.toString()),''' : ''}
@@ -172,7 +172,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
       final Widget Function(
         BuildContext context,
         WidgetRef ref,
-        $returnTypeStr state,
+        $returnTypeStr ${isAsyncValue ? 'asyncValue' : 'state'},
         Widget? child,
       )? builder;
 
