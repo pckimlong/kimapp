@@ -111,17 +111,9 @@ class _ThemeOverrider extends ConsumerWidget {
     return Theme(
       data: context.theme.copyWith(
         extensions: <ThemeExtension>[
-          /// Kimapp theme extension
           KimappThemeExtension(
-            /// Default loading for @stateWidget
-            defaultLoadingStateWidget: (context, ref) {
-              return const Center(child: CircularProgressIndicator());
-            },
-
-            /// Default error for @stateWidget
-            defaultErrorStateWidget: (context, ref, error) {
-              return Center(child: MyErrorWidget(error: error));
-            },
+            defaultLoadingStateWidget: (context, ref) => const Center(child: AppCircleProgress()),
+            defaultErrorStateWidget: (_, __, error) => Center(child: MyErrorWidget(error: error)),
           ),
         ],
 
