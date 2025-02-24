@@ -169,6 +169,15 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       ),
     );
 
+    buffer.write(
+      _generateStateSelectorWidget(
+        providerClassName: providerClassName,
+        providerNameFamily: providerNameWithFamily,
+        familyParams: familyParams,
+        providerStatusType: providerStatusType,
+      ),
+    );
+
     buffer.writeln('');
 
     // Generate field widget
@@ -758,6 +767,47 @@ class ${providerClassName}StateWidget extends ConsumerWidget {
     final state = ref.watch($providerNameFamily);
 
     return builder(ref, state, notifier, child);
+  }
+}
+""";
+
+  return result;
+}
+
+String _generateStateSelectorWidget({
+  required String providerClassName,
+  required String providerNameFamily,
+  required Map<String, String> familyParams,
+  required String providerStatusType,
+}) {
+  final result = """
+/// Widget that manages [$providerClassName] provider state with a selector to optimize performance by reducing unnecessary rebuilds.
+/// The selector allows watching only specific parts of the state that are needed.
+class ${providerClassName}SelectStateWidget<Selected> extends ConsumerWidget {
+  const ${providerClassName}SelectStateWidget({
+    super.key,
+    required this.selector,
+    required this.builder,
+    this.child,
+  });
+
+  final Selected Function(${providerClassName}State state) selector;
+  final Widget Function(
+    WidgetRef ref,
+    Selected selected,
+    $providerClassName notifier,
+    Widget? child,
+  ) builder;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ${_checkHasFormWidgetAssert(providerClassName)}
+    ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
+    final notifier = ref.watch($providerNameFamily.notifier);
+    final selected = ref.watch($providerNameFamily.select(selector));
+
+    return builder(ref, selected, notifier, child);
   }
 }
 """;

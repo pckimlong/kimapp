@@ -29,12 +29,7 @@ extension BuildContextX on BuildContext {
     PageTransitionType? pageTransitionType,
   }) async {
     if (pageTransitionType != null) {
-      return await nav.push(
-        PageTransition(
-          child: page(this),
-          type: pageTransitionType,
-        ),
-      );
+      return await nav.push(PageTransition(child: page(this), type: pageTransitionType));
     }
     return await nav.push(MaterialPageRoute(builder: (context) => page(context)));
   }
@@ -50,15 +45,33 @@ extension BuildContextX on BuildContext {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  void showSnackBar({
-    required String message,
-    Color backgroundColor = Colors.black,
-  }) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-      ),
+  void showSnackBar({required String message, Color backgroundColor = Colors.black}) {
+    ScaffoldMessenger.of(
+      this,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: backgroundColor));
+  }
+
+  Future<T?> showAppDialog<T>({
+    required Widget Function(BuildContext context) builder,
+    bool barrierDismissible = true,
+  }) async {
+    return await showDialog<T>(
+      context: this,
+      builder: builder,
+      barrierDismissible: barrierDismissible,
+    );
+  }
+
+  Future<T?> showAppModalBottomSheet<T>({
+    required Widget Function(BuildContext context) builder,
+    bool isDismissible = true,
+    bool enableDrag = true,
+  }) async {
+    return await showModalBottomSheet<T>(
+      context: this,
+      builder: builder,
+      isDismissible: isDismissible,
+      enableDrag: enableDrag,
     );
   }
 }

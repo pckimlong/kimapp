@@ -8,8 +8,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-
+import 'package:kimapp_utils/kimapp_utils.dart';
 import '../../../config.dart';
+import '../widgets/my_error_widget.dart';
 import '../../core/helpers/build_context_helper.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
@@ -67,10 +68,8 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
         debugShowCheckedModeBanner: false,
         routerConfig: router.config(
           reevaluateListenable: _authListenable,
-          navigatorObservers: () => [
-            SentryNavigatorObserver(),
-            TalkerRouteObserver(ref.watch(talkerProvider)),
-          ],
+          navigatorObservers:
+              () => [SentryNavigatorObserver(), TalkerRouteObserver(ref.watch(talkerProvider))],
         ),
         restorationScopeId: Config.appName,
         key: ValueKey(Config.appName),
@@ -78,12 +77,8 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
         theme: ref.watch(lightThemeProvider),
         darkTheme: ref.watch(darkThemeProvider),
         themeMode: ref.watch(appThemeModeProvider).valueOrNull,
-        localizationsDelegates: [
-          ...context.localizationDelegates,
-        ],
-        supportedLocales: [
-          ...context.supportedLocales,
-        ],
+        localizationsDelegates: [...context.localizationDelegates],
+        supportedLocales: [...context.supportedLocales],
         locale: context.locale,
         builder: (context, child) {
           child = BotToastInit()(context, child);
@@ -99,24 +94,39 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
             ],
           );
 
-          return _CustomTheme(child: child);
+          return _ThemeOverrider(child: child);
         },
       ),
     );
   }
 }
 
-class _CustomTheme extends ConsumerWidget {
-  const _CustomTheme({
-    required this.child,
-  });
+class _ThemeOverrider extends ConsumerWidget {
+  const _ThemeOverrider({required this.child});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Theme(
-      data: context.theme.copyWith(),
+      data: context.theme.copyWith(
+        extensions: <ThemeExtension>[
+          /// Kimapp theme extension
+          KimappThemeExtension(
+            /// Default loading for @stateWidget
+            defaultLoadingStateWidget: (context, ref) {
+              return const Center(child: CircularProgressIndicator());
+            },
+
+            /// Default error for @stateWidget
+            defaultErrorStateWidget: (context, ref, error) {
+              return Center(child: MyErrorWidget(error: error));
+            },
+          ),
+        ],
+
+        // Other theme settings here ...
+      ),
       child: child,
     );
   }
