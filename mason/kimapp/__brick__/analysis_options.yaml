@@ -4,7 +4,7 @@ analyzer:
   plugins:
     - custom_lint
   exclude:
-    - "**/*.g.dart"
+    # - "**/*.g.dart" // Need to keep this, since there generated code need to be linted
     - "**/*.freezed.dart"
     - "**/*.gr.dart"
     - "**/*.table.dart"

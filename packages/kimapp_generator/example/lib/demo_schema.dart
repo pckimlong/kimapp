@@ -7,7 +7,6 @@ import 'package:kimapp/kimapp.dart';
   baseModelName: 'DemoModel',
 )
 class Demo extends KimappSchema {
-  final id = Field.id<int>('id').generateAs('DemoId');
   final name = Field<String?>('name');
   final description = Field<String?>('description');
   final age = Field<int>('age');
@@ -22,7 +21,6 @@ class Demo extends KimappSchema {
         ..table('v_demo_detail')
         ..inheritAllFromBase()
         ..addFields({
-          'id': id,
           'name': name,
         }),
       Model('DemoLiteModel')..inheritAllFromBase(excepts: [description])

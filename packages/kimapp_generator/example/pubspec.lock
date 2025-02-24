@@ -377,6 +377,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1+1"
+  kimapp_utils:
+    dependency: "direct main"
+    description:
+      path: "../../kimapp_utils"
+      relative: true
+    source: path
+    version: "0.0.2"
   leak_tracker:
     dependency: transitive
     description:

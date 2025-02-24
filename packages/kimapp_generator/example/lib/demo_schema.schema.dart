@@ -25,12 +25,6 @@ class DemoTable {
   /// Use this constant for constructing SQL queries to ensure consistency.
   static const String table = "demos";
 
-  /// Column: id
-  /// This is the primary key column for the Demo table.
-  /// Data type: `int`
-  /// Key: `id`
-  static const String id = "id";
-
   /// Column: name
   /// Data type: `String?`
   /// Key: `name`
@@ -63,40 +57,11 @@ class DemoTable {
   static const String other = "other";
 }
 
-/// Represents the unique identifier for a Demo.
-/// This class wraps the `int` value, providing type safety and encapsulation.
-class DemoId extends Identity<int> {
-  const DemoId._(this.value);
-
-  @override
-  final int value;
-
-  /// Creates an instance of DemoId from a JSON value.
-  /// Accepts int representations.
-  /// Throws ArgumentError if the value is null or not of type int.
-  factory DemoId.fromJson(dynamic value) {
-    if (value is int) {
-      return DemoId._(value);
-    } else if (value == null) {
-      throw ArgumentError.notNull('value');
-    } else {
-      throw ArgumentError(
-          'Value of DemoId must be of type int, but was ${value.runtimeType}. Please provide the correct type.');
-    }
-  }
-
-  /// Creates an instance of DemoId from a int value.
-  factory DemoId.fromValue(int value) {
-    return DemoId._(value);
-  }
-}
-
 /// Base class of this schema, this is the parent of all generated models in this schema
 abstract class BaseDemoSchema {}
 
 /// Base model class for this schema, this includes all properties of the base model, and get inherited by all generated models in this schema where [inheritAllFromBase()] is called and without any excepted fields.
 abstract class IDemoModel {
-  DemoId get id;
   String? get name;
   String? get description;
   int get age;
@@ -117,7 +82,6 @@ class DemoModel with _$DemoModel implements BaseDemoSchema, IDemoModel {
   /// Table Mode: `enabled` (`demos`)
   ///
   /// Fields:
-  /// - DemoId id : JsonKey('id')
   /// - String? name : JsonKey('name')
   /// - String? description : JsonKey('description')
   /// - int age : JsonKey('age')
@@ -127,7 +91,6 @@ class DemoModel with _$DemoModel implements BaseDemoSchema, IDemoModel {
   @TableModel(DemoModel.tableName)
   @JsonSerializable(explicitToJson: true)
   const factory DemoModel({
-    @JsonKey(name: DemoModel.idKey) required DemoId id,
     @JsonKey(name: DemoModel.nameKey) required String? name,
     @JsonKey(name: DemoModel.descriptionKey) required String? description,
     @JsonKey(name: DemoModel.ageKey) required int age,
@@ -147,9 +110,6 @@ class DemoModel with _$DemoModel implements BaseDemoSchema, IDemoModel {
 
   /// Table name: `demos`
   static const String tableName = "demos";
-
-  /// Field name for id field with JsonKey('id')
-  static const String idKey = "id";
 
   /// Field name for name field with JsonKey('name')
   static const String nameKey = "name";
@@ -186,7 +146,6 @@ class DemoDetailModel
   /// Table Name: `v_demo_detail`
   ///
   /// Fields:
-  /// - DemoId id : JsonKey('id')
   /// - String? name : JsonKey('name')
   /// - String? description : JsonKey('description')
   /// - int age : JsonKey('age')
@@ -196,7 +155,6 @@ class DemoDetailModel
   @TableModel(DemoDetailModel.tableName)
   @JsonSerializable(explicitToJson: true)
   const factory DemoDetailModel({
-    @JsonKey(name: DemoDetailModel.idKey) required DemoId id,
     @JsonKey(name: DemoDetailModel.nameKey) required String? name,
     @JsonKey(name: DemoDetailModel.descriptionKey) required String? description,
     @JsonKey(name: DemoDetailModel.ageKey) required int age,
@@ -216,9 +174,6 @@ class DemoDetailModel
 
   /// Table name: `v_demo_detail`
   static const String tableName = "v_demo_detail";
-
-  /// Field name for id field with JsonKey('id')
-  static const String idKey = "id";
 
   /// Field name for name field with JsonKey('name')
   static const String nameKey = "name";
@@ -242,7 +197,6 @@ class DemoDetailModel
   /// Converts this model to a base model.
   DemoModel toDemoModel() {
     return DemoModel(
-      id: id,
       name: name,
       description: description,
       age: age,
@@ -265,7 +219,6 @@ class DemoLiteModel with _$DemoLiteModel implements BaseDemoSchema {
   /// Table Mode: `disabled`
   ///
   /// Fields:
-  /// - DemoId id : JsonKey('id')
   /// - String? name : JsonKey('name')
   /// - int age : JsonKey('age')
   /// - DateTime? birthdate : JsonKey('birthdate')
@@ -273,7 +226,6 @@ class DemoLiteModel with _$DemoLiteModel implements BaseDemoSchema {
   /// - OtherModel? other : JsonKey('other')
   @JsonSerializable(explicitToJson: true)
   const factory DemoLiteModel({
-    @JsonKey(name: DemoLiteModel.idKey) required DemoId id,
     @JsonKey(name: DemoLiteModel.nameKey) required String? name,
     @JsonKey(name: DemoLiteModel.ageKey) required int age,
     @JsonKey(name: DemoLiteModel.birthdateKey) required DateTime? birthdate,
@@ -286,9 +238,6 @@ class DemoLiteModel with _$DemoLiteModel implements BaseDemoSchema {
   /// Creates an instance of DemoLiteModel from a JSON map.
   factory DemoLiteModel.fromJson(Map<String, dynamic> json) =>
       _$DemoLiteModelFromJson(json);
-
-  /// Field name for id field with JsonKey('id')
-  static const String idKey = "id";
 
   /// Field name for name field with JsonKey('name')
   static const String nameKey = "name";

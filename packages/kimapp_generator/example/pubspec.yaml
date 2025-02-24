@@ -47,6 +47,8 @@ dependencies:
   riverpod_annotation:
   kimapp_generator:
     path: ../../kimapp_generator
+  kimapp_utils:
+    path: ../../kimapp_utils
 
 dev_dependencies:
   build_runner: ^2.4.1
