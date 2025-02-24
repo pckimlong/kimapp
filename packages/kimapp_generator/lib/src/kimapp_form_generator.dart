@@ -178,6 +178,15 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       ),
     );
 
+    buffer.write(
+      _generateNotifierWidget(
+        providerClassName: providerClassName,
+        providerNameFamily: providerNameWithFamily,
+        familyParams: familyParams,
+        providerStatusType: providerStatusType,
+      ),
+    );
+
     buffer.writeln('');
 
     // Generate field widget
@@ -714,6 +723,7 @@ class ${providerClassName}StatusWidget extends ConsumerWidget {
   });
 
   final Widget Function(
+    BuildContext context,
     WidgetRef ref,
     $providerStatusType status,
     $providerClassName notifier,
@@ -728,7 +738,7 @@ class ${providerClassName}StatusWidget extends ConsumerWidget {
     final notifier = ref.watch($providerNameFamily.notifier);
     final status = ref.watch($providerNameFamily.select((value) => value.status));
 
-    return builder(ref, status, notifier, child);
+    return builder(context, ref, status, notifier, child);
   }
 }
 """;
@@ -752,6 +762,7 @@ class ${providerClassName}StateWidget extends ConsumerWidget {
   });
 
   final Widget Function(
+    BuildContext context,
     WidgetRef ref,
     ${providerClassName}State state,
     $providerClassName notifier,
@@ -766,7 +777,7 @@ class ${providerClassName}StateWidget extends ConsumerWidget {
     final notifier = ref.watch($providerNameFamily.notifier);
     final state = ref.watch($providerNameFamily);
 
-    return builder(ref, state, notifier, child);
+    return builder(context, ref, state, notifier, child);
   }
 }
 """;
@@ -783,8 +794,8 @@ String _generateStateSelectorWidget({
   final result = """
 /// Widget that manages [$providerClassName] provider state with a selector to optimize performance by reducing unnecessary rebuilds.
 /// The selector allows watching only specific parts of the state that are needed.
-class ${providerClassName}SelectStateWidget<Selected> extends ConsumerWidget {
-  const ${providerClassName}SelectStateWidget({
+class ${providerClassName}SelectWidget<Selected> extends ConsumerWidget {
+  const ${providerClassName}SelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -793,6 +804,7 @@ class ${providerClassName}SelectStateWidget<Selected> extends ConsumerWidget {
 
   final Selected Function(${providerClassName}State state) selector;
   final Widget Function(
+    BuildContext context,
     WidgetRef ref,
     Selected selected,
     $providerClassName notifier,
@@ -807,7 +819,42 @@ class ${providerClassName}SelectStateWidget<Selected> extends ConsumerWidget {
     final notifier = ref.watch($providerNameFamily.notifier);
     final selected = ref.watch($providerNameFamily.select(selector));
 
-    return builder(ref, selected, notifier, child);
+    return builder(context, ref, selected, notifier, child);
+  }
+}
+""";
+
+  return result;
+}
+
+String _generateNotifierWidget({
+  required String providerClassName,
+  required String providerNameFamily,
+  required Map<String, String> familyParams,
+  required String providerStatusType,
+}) {
+  final result = """
+/// Widget that expose [$providerClassName] provider notifier manage the state
+/// using this ensure the state is correct map even it is family provider
+class ${providerClassName}NotifierWidget extends ConsumerWidget {
+  const ${providerClassName}NotifierWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(
+    BuildContext context,
+    WidgetRef ref,
+    $providerClassName notifier,
+  ) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ${_checkHasFormWidgetAssert(providerClassName)}
+    ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
+    final notifier = ref.watch($providerNameFamily.notifier);
+
+    return builder(context, ref, notifier);
   }
 }
 """;
