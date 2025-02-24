@@ -33,16 +33,6 @@ dependencies:
   connectivity_plus: ^6.1.1
   intl: ^0.20.1
   json_annotation: ^4.9.0
-  kimapp:
-    git:
-      url: https://github.com/pckimlong/kimapp.git
-      ref: master
-      path: packages/kimapp
-  kimapp_supabase_helper:
-    git:
-      url: https://github.com/pckimlong/kimapp.git
-      ref: master
-      path: packages/kimapp_supabase_helper
   mocktail: ^1.0.4
   package_info_plus: ^8.1.2
   responsive_framework: ^1.5.1
@@ -53,6 +43,16 @@ dependencies:
   device_info_plus: ^11.2.0
   flex_color_scheme: ^8.1.0
   path_provider: ^2.1.5
+  kimapp:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
+  kimapp_supabase_helper:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp_supabase_helper
   kimapp_utils:
     git:
       url: https://github.com/pckimlong/kimapp.git
@@ -60,6 +60,11 @@ dependencies:
       path: packages/kimapp_utils
 
 dev_dependencies:
+  kimapp_generator:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp_generator
   auto_route_generator: ^9.0.0
   build_runner: ^2.4.14
   custom_lint: ^0.7.0
@@ -69,11 +74,6 @@ dev_dependencies:
     sdk: flutter
   freezed: ^2.5.7
   json_serializable: ^6.9.2
-  kimapp_generator:
-    git:
-      url: https://github.com/pckimlong/kimapp.git
-      ref: master
-      path: packages/kimapp_generator
   riverpod_generator: ^2.6.3
   riverpod_lint: ^2.6.3
 

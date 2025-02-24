@@ -29,15 +29,16 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
 
     final familyParams = _getFamilyParams(element);
 
-    buffer.writeln(_generateProviderWidget(element, familyParams, isAsyncValue, baseReturnType!));
+    buffer.writeln(_generateProviderScope(element, familyParams, isAsyncValue, baseReturnType!));
 
     if (familyParams.isNotEmpty) {
       buffer.writeln(_generateDebugCheckFunction(element));
       buffer.writeln(_generateParamsProvider(element, familyParams));
+      buffer.writeln(_generateParamWidget(element, familyParams));
     }
 
     buffer.writeln(_generateStateWidget(element, familyParams, isAsyncValue, baseReturnType));
-    buffer.writeln(_generateStateSelectWidget(element, familyParams, isAsyncValue, baseReturnType));
+    buffer.writeln(_generateSelectWidget(element, familyParams, isAsyncValue, baseReturnType));
 
     // return "/*\n" + buffer.toString() + "\n*/";
     return buffer.toString();
@@ -52,13 +53,77 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
   /// Generate code
   /// ==================================================
 
-  String _generateProviderWidget(
+  String _generateParamWidget(
+    Element element,
+    Map<String, Map<String, dynamic>> familyParams,
+  ) {
+    if (familyParams.isEmpty) return '';
+
+    final className = _getNameWithSuffix(element, "ParamWidget");
+    final paramsProviderName = _getNameWithSuffix(element, "ParamsProvider");
+
+    String generateParamsRecord() {
+      final params = familyParams.entries.map((e) => '${e.value['type']} ${e.key}').join(', ');
+      return '({$params})';
+    }
+
+    String generateBuilderParams() {
+      return [
+        'BuildContext context',
+        'WidgetRef ref',
+        '${generateParamsRecord()} params',
+      ].join(',\n    ');
+    }
+
+    String generateRecordParams() {
+      return familyParams.entries.map((e) => '${e.key}: params.${e.key}').join(', ');
+    }
+
+    return '''
+    /// A widget that provides access to the family parameters of ${element.name}Provider.
+    ///
+    /// This widget requires a [${_getNameWithSuffix(element, "ProviderScope")}] ancestor
+    /// and provides access to the family parameters through a builder callback.
+    ///
+    /// Key features:
+    /// * Access to all family parameters through a single record
+    /// * Type-safe parameter handling
+    /// * Automatic parameter updates when the provider changes
+    /// See also:
+    /// * [${_getNameWithSuffix(element, "ProviderScope")}] - The required provider wrapper widget
+    /// * [${_getNameWithSuffix(element, "StateWidget")}] - For state access
+    class $className extends ConsumerWidget {
+      const $className({
+        super.key,
+        required this.builder,
+      });
+
+      final Widget Function(
+        ${generateBuilderParams()}
+      ) builder;
+
+      @override
+      Widget build(BuildContext context, WidgetRef ref) {
+        _debugCheckHas${_getNameWithSuffix(element, "ProviderScope")}(context);
+
+        final params = _$paramsProviderName.of(context)!;
+        return builder(
+          context,
+          ref,
+          (${generateRecordParams()}),
+        );
+      }
+    }
+    ''';
+  }
+
+  String _generateProviderScope(
     Element element,
     Map<String, Map<String, dynamic>> familyParams,
     bool isAsyncValue,
     DartType baseReturnType,
   ) {
-    final className = _getNameWithSuffix(element, "ProviderWidget");
+    final className = _getNameWithSuffix(element, "ProviderScope");
     final providerName = _getProviderName(element).camelCase;
     final paramsProviderName = _getNameWithSuffix(element, "ParamsProvider");
     final returnTypeStr = isAsyncValue
@@ -105,67 +170,92 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     }
 
     return '''
-    /// A widget that provides access to the state of ${element.name}.
+    /// A widget that provides a scoped access point for ${element.name}Provider state management.
     ///
-    /// This widget serves as a provider for state management and must be an ancestor
-    /// of any widgets that need to access the state. It offers flexible state handling
-    /// through various callback options:
+    /// This widget must be placed above any widgets that need to access the state. It provides
+    /// multiple ways to handle state rendering through various callback options.
     ///
-    /// * [builder] - A callback that provides complete control over widget building
-    /// * [child] - A default widget to display when no specific builder logic is needed
+    /// Key Features:
+    /// * Centralized state management and dependency injection
+    /// * Multiple rendering options through different callbacks
+    /// * Automatic error and loading state handling for async providers
+    /// * Theme-aware default loading and error states
+    ///
+    /// Available Callbacks:
+    /// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+    ///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+    ///   manually handle the async states using asyncValue.when()
+    /// * [child] - Simple widget to display when no complex building logic is needed
     ${isAsyncValue ? '''///
-    /// For asynchronous states, additional callbacks are available:
-    /// * [loading] - Custom widget for loading state
-    /// * [error] - Custom widget for error state
-    /// * [data] - Custom widget for data state
-    /// // Might cause problem when we use other theme than Material Theme, eg fluent theme
-    /// This widget integrates with [KimappThemeExtension] to provide default loading
-    /// and error widgets. To use this functionality:
+    /// Async State Handlers (only used when [builder] is not provided):
+    /// * [loading] - Custom widget for loading states
+    /// * [error] - Custom widget for error states with error details
+    /// * [data] - Custom widget for when data is available
     ///
-    /// 1. Add kimapp_utils to your pubspec.yaml:
-    /// ```yaml
-    /// dependencies:
-    ///   kimapp_utils: ^latest_version
-    /// ```
-    ///
-    /// 2. Configure KimappThemeExtension in your app theme:
+    /// Default State Handling:
+    /// Uses [KimappThemeExtension] for consistent loading/error states:
     /// ```dart
-    /// MaterialApp(
-    ///   theme: ThemeData(
+    /// Theme(
+    ///   data: ThemeData(
     ///     extensions: [
     ///       KimappThemeExtension(
-    ///         defaultLoadingStateWidget: (context, ref) => const CircularProgressIndicator(),
-    ///         defaultErrorStateWidget: (context, ref, error) => Text(error.toString()),
+    ///         defaultLoadingStateWidget: (context, ref) => const LoadingSpinner(),
+    ///         defaultErrorStateWidget: (context, ref, error) => ErrorDisplay(error),
     ///       ),
     ///     ],
     ///   ),
+    ///   child: YourApp(),
     /// )
     /// ```''' : ''}
     ///
-    /// Example usage:
+    /// Simple Usage:
     /// ```dart
     /// $className(
-    ///   ${familyParams.entries.map((e) => '${e.key}: ${e.key},').join('\n    /// ')}
-    ///   builder: (context, ref, state, child) {
-    ///     return Text(state.toString());
-    ///   },${isAsyncValue ? '''\n
-    ///   loading: () => const CircularProgressIndicator(),
-    ///   error: (error, stack) => Text('Error: \$error'),
-    ///   data: (data) => Text(data.toString()),''' : ''}
-    ///   child: const Text('Default Content'),
+    ///   ${familyParams.entries.map((e) => '${e.key}: ${e.value['type'].toString().toLowerCase()}Value,').join('\n    /// ')}
+    ///   child: const YourWidget(),
     /// )
     /// ```
     ///
+    /// Advanced Usage with Builder:
+    /// ```dart
+    /// $className(
+    ///   ${familyParams.entries.map((e) => '${e.key}: ${e.value['type'].toString().toLowerCase()}Value,').join('\n    /// ')}
+    ///   builder: (context, ref, asyncValue, child) {
+    ///     // Manual handling of async states
+    ///     return asyncValue.when(
+    ///       data: (data) => Text(data),
+    ///       loading: () => const CircularProgressIndicator(),
+    ///       error: (error, stack) => Text('Error: \$error'),
+    ///     );
+    ///   },
+    /// )
+    /// ```    
+    /// 
+    /// Advanced Usage with State Handlers:
+    /// ```dart
+    /// $className(
+    ///   ${familyParams.entries.map((e) => '${e.key}: ${e.value['type'].toString().toLowerCase()}Value,').join('\n    /// ')}
+    ///   loading: () => const CustomLoadingIndicator(),
+    ///   error: (error, stack) => CustomErrorWidget(error: error),
+    ///   data: (data) => DataDisplay(data: data),
+    /// )
+    /// ```${isAsyncValue ? '' : ''}
+    ///
     /// See also:
     /// * [${_getNameWithSuffix(element, "StateWidget")}] - For direct state access
-    /// * [${_getNameWithSuffix(element, "StateSelectWidget")}] - For optimized state selection
+    /// * [${_getNameWithSuffix(element, "SelectWidget")}] - For optimized state selection
+    /// * [${_getNameWithSuffix(element, "ParamWidget")}] - For family parameter access
     class $className extends StatelessWidget {
       const $className({
         super.key,
         ${generateConstructorParams(usingThis: true)}
         this.child,${isAsyncValue ? '''\nthis.loading,\nthis.error,\nthis.data,''' : ''}
         this.builder,
-      });
+      })${isAsyncValue ? ''' : assert(
+         builder == null || (loading == null && error == null && data == null),
+         'When builder is provided, loading, error, and data callbacks are ignored. '
+         'Remove these callbacks or remove the builder to avoid confusion.',
+       )''' : ''};
 
       ${generateFieldDeclarations()}
       final Widget? child;${isAsyncValue ? '''\nfinal Widget Function()? loading;\nfinal Widget Function(Object error, StackTrace? stackTrace)? error;\nfinal Widget Function($baseReturnType data)? data;''' : ''}
@@ -197,7 +287,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
                 data: (data) {
                   final result = this.data?.call(data) ?? child;
                   if (result == null) {
-                    Kimapp.instance.log(LoggerType.warning, message: 'No child provided for ${element.name}ProviderWidget. Empty SizedBox will be returned.');
+                    Kimapp.instance.log(LoggerType.warning, message: 'No child provided for ${element.name}ProviderScope. Empty SizedBox will be returned.');
                     return const SizedBox.shrink();
                   }
                   return result;
@@ -268,9 +358,9 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     }
 
     return '''
-    /// A widget that provides direct access to the ${element.name} state.
+    /// A widget that provides direct access to the ${element.name}Provider state.
     ///
-    /// This widget requires a [${_getNameWithSuffix(element, "ProviderWidget")}] ancestor
+    /// This widget requires a [${_getNameWithSuffix(element, "ProviderScope")}] ancestor
     /// and provides a more streamlined way to build UI based on the current state.
     /// Unlike the provider widget, this widget assumes the state is available and
     /// ready to use.
@@ -306,7 +396,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
 
       @override
       Widget build(BuildContext context, WidgetRef ref) {
-        ${familyParams.isNotEmpty ? '_debugCheckHas${_getNameWithSuffix(element, "ProviderWidget")}(context);' : ''}
+        ${familyParams.isNotEmpty ? '_debugCheckHas${_getNameWithSuffix(element, "ProviderScope")}(context);' : ''}
 
         ${familyParams.isNotEmpty ? '''
         final params = _$paramsProviderName.of(context);
@@ -327,13 +417,13 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     ''';
   }
 
-  String _generateStateSelectWidget(
+  String _generateSelectWidget(
     Element element,
     Map<String, Map<String, dynamic>> familyParams,
     bool isAsyncValue,
     DartType baseReturnType,
   ) {
-    final className = _getNameWithSuffix(element, "StateSelectWidget");
+    final className = _getNameWithSuffix(element, "SelectWidget");
     final providerName = _getProviderName(element).camelCase;
     final paramsProviderName = _getNameWithSuffix(element, "ParamsProvider");
 
@@ -373,34 +463,50 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
     }
 
     return '''
-    /// A widget that provides optimized access to a selected portion of the ${element.name} state.
+    /// A widget that provides optimized access to selected state data from ${element.name}Provider.
     ///
-    /// This widget enables efficient state management by:
-    /// * Selecting and watching specific parts of the state using [selector]
-    /// * Rebuilding only when the selected value changes
-    /// * Providing type-safe access to the selected state portion
+    /// This widget helps improve performance by:
+    /// * Only rebuilding when the selected data changes
+    /// * Allowing fine-grained control over what parts of the state to watch
+    /// * Providing type-safe access to selected state portions
     ///
-    /// Key benefits:
-    /// * Improved performance through selective rebuilds
-    /// * Clean separation of state selection and UI logic
-    /// * Type-safe state handling with generics support
+    /// Example:
+    /// ```dart
+    /// // Select and watch only the user's name from a larger user state
+    /// $className<String>(
+    ///   selector: (state) => state.userName,
+    ///   builder: (context, ref${familyParams.isNotEmpty ? ', params' : ''}, userName, child) {
+    ///     return Text(userName);
+    ///   },
+    /// )
+    /// ```
     ///
-    /// Note: Requires a [${_getNameWithSuffix(element, "ProviderWidget")}] ancestor to function.
+    /// Performance Benefits:
+    /// * Minimizes unnecessary rebuilds
+    /// * Reduces memory usage by watching only needed data
+    /// * Improves app responsiveness
+    ///
+    /// Best Practices:
+    /// * Keep selectors simple and focused
+    /// * Use for frequently changing state
+    /// * Consider caching complex selections
+    ///
+    /// Note: Requires [${_getNameWithSuffix(element, "ProviderScope")}] ancestor.
     ${familyParams.isNotEmpty ? '''///
     /// Family parameters are automatically inherited from the provider ancestor.''' : ''}
     ///
     /// Example usage:
     /// ```dart
     /// $className<String>(
-    ///   selector: (state) => state.specificField,
-    ///   builder: (context, ref${familyParams.isNotEmpty ? ', params' : ''}, selected, child) {
-    ///     return Text(selected);
+    ///   selector: (state) => state.userName,
+    ///   builder: (context, ref${familyParams.isNotEmpty ? ', params' : ''}, userName, child) {
+    ///     return Text(userName);
     ///   },
     /// )
     /// ```
     ///
     /// See also:
-    /// * [${_getNameWithSuffix(element, "ProviderWidget")}] - The required provider widget
+    /// * [${_getNameWithSuffix(element, "ProviderScope")}] - The required provider wrapper widget
     /// * [${_getNameWithSuffix(element, "StateWidget")}] - For direct state access
     class $className<Selected> extends ConsumerWidget {
       const $className({
@@ -418,7 +524,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
 
       @override
       Widget build(BuildContext context, WidgetRef ref) {
-        ${familyParams.isNotEmpty ? '_debugCheckHas${_getNameWithSuffix(element, "ProviderWidget")}(context);' : ''}
+        ${familyParams.isNotEmpty ? '_debugCheckHas${_getNameWithSuffix(element, "ProviderScope")}(context);' : ''}
 
         ${familyParams.isNotEmpty ? '''
         final params = _$paramsProviderName.of(context);
@@ -474,7 +580,7 @@ class KimappStateWidgetGenerator extends GeneratorForAnnotation<StateWidget> {
   }
 
   String _generateDebugCheckFunction(Element element) {
-    final className = _getNameWithSuffix(element, "ProviderWidget");
+    final className = _getNameWithSuffix(element, "ProviderScope");
     return '''
     bool _debugCheckHas$className(BuildContext context) {
       assert(() {
