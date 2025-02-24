@@ -8,7 +8,6 @@ part of 'demo_schema.schema.dart';
 
 _$DemoModelImpl _$$DemoModelImplFromJson(Map<String, dynamic> json) =>
     _$DemoModelImpl(
-      id: DemoId.fromJson(json['id']),
       name: json['name'] as String?,
       description: json['description'] as String?,
       age: (json['age'] as num).toInt(),
@@ -23,7 +22,6 @@ _$DemoModelImpl _$$DemoModelImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$DemoModelImplToJson(_$DemoModelImpl instance) =>
     <String, dynamic>{
-      'id': instance.id.toJson(),
       'name': instance.name,
       'description': instance.description,
       'age': instance.age,
@@ -35,7 +33,6 @@ Map<String, dynamic> _$$DemoModelImplToJson(_$DemoModelImpl instance) =>
 _$DemoDetailModelImpl _$$DemoDetailModelImplFromJson(
         Map<String, dynamic> json) =>
     _$DemoDetailModelImpl(
-      id: DemoId.fromJson(json['id']),
       name: json['name'] as String?,
       description: json['description'] as String?,
       age: (json['age'] as num).toInt(),
@@ -51,7 +48,6 @@ _$DemoDetailModelImpl _$$DemoDetailModelImplFromJson(
 Map<String, dynamic> _$$DemoDetailModelImplToJson(
         _$DemoDetailModelImpl instance) =>
     <String, dynamic>{
-      'id': instance.id.toJson(),
       'name': instance.name,
       'description': instance.description,
       'age': instance.age,
@@ -62,7 +58,6 @@ Map<String, dynamic> _$$DemoDetailModelImplToJson(
 
 _$DemoLiteModelImpl _$$DemoLiteModelImplFromJson(Map<String, dynamic> json) =>
     _$DemoLiteModelImpl(
-      id: DemoId.fromJson(json['id']),
       name: json['name'] as String?,
       age: (json['age'] as num).toInt(),
       birthdate: json['birthdate'] == null
@@ -76,7 +71,6 @@ _$DemoLiteModelImpl _$$DemoLiteModelImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$DemoLiteModelImplToJson(_$DemoLiteModelImpl instance) =>
     <String, dynamic>{
-      'id': instance.id.toJson(),
       'name': instance.name,
       'age': instance.age,
       'birthdate': instance.birthdate?.toIso8601String(),
@@ -91,7 +85,6 @@ Map<String, dynamic> _$$DemoLiteModelImplToJson(_$DemoLiteModelImpl instance) =>
 const _tableDemoModel = TableBuilder(
   tableName: "demos",
   columns: [
-    ColumnBuilder('id'),
     ColumnBuilder('name'),
     ColumnBuilder('description'),
     ColumnBuilder('age'),
@@ -105,7 +98,6 @@ const _tableDemoModel = TableBuilder(
 const _tableDemoDetailModel = TableBuilder(
   tableName: "v_demo_detail",
   columns: [
-    ColumnBuilder('id'),
     ColumnBuilder('name'),
     ColumnBuilder('description'),
     ColumnBuilder('age'),
