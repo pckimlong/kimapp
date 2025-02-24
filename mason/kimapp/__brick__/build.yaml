@@ -1,63 +1,99 @@
 targets:
   $default:
+    sources:
+      include:
+        - lib/**
+      exclude:
+        # Exclude common editor swap/temporary files
+        - "**/*.swap"
+        - "**/*~"
+        - "**/*.tmp"
+        - "**/#*#"
+        - "**/*___jb_tmp___"
     builders:
-      kimapp_generator|kimapp_model_generator:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/features/**_model.dart
-            - lib/**.schema.dart
-      kimapp_generator|kimapp_form_generator:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/features/**_provider.dart
-      kimapp_generator|kimapp_table_generator:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/features/**_objects.dart
-            - lib/src/features/**_model.dart
-      kimapp_generator|kimapp_state_widget_generator:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/**_provider.dart
+      # Schema builder should run first
       kimapp_generator|kimapp_schema_builder_generator:
         enabled: true
         generate_for:
-          include:
-            - lib/src/**_schema.dart
+          - lib/src/**_schema.dart
+        options:
+          build_extensions: {".dart": [".schema.dart"]}
+          build_to: source
+
+      # Model related generators
+      kimapp_generator|kimapp_model_generator:
+        enabled: true
+        generate_for:
+          - lib/src/features/**_model.dart
+          - lib/src/features/**_models.dart
+          - lib/**.schema.dart
+        options:
+          build_to: cache
+          required_inputs: [".freezed.dart"]
+
+      # Form generator
+      kimapp_generator|kimapp_form_generator:
+        enabled: true
+        generate_for:
+          - lib/src/features/**_provider.dart
+        options:
+          build_to: cache
+
+      # Table generator
+      kimapp_generator|kimapp_table_generator:
+        enabled: true
+        generate_for:
+          - lib/src/features/**_objects.dart
+          - lib/src/features/**_model.dart
+          - lib/src/features/**_models.dart
+        options:
+          build_to: source
+
+      # State widget generator
+      kimapp_generator|kimapp_state_widget_generator:
+        enabled: true
+        generate_for:
+          - lib/src/**_provider.dart
+        options:
+          build_to: cache
+
+      # Third party generators
       json_serializable:
         enabled: true
+        generate_for:
+          - lib/**_model.dart
+          - lib/**_models.dart
+          - lib/**_param.dart
+          - lib/**.schema.dart
         options:
           explicit_to_json: true
-        generate_for:
-          include:
-            - lib/**_model.dart
-            - lib/**_param.dart
-            - lib/**.schema.dart
+          
       freezed|freezed:
         enabled: true
         generate_for:
-          include:
-            - lib/**.dart
+          - lib/src/features/**_model.dart
+          - lib/src/features/**_models.dart
+
       auto_route_generator:auto_route_generator:
-        options:
-          enable_cached_builds: true
+        enabled: true
         generate_for:
           - lib/src/presentation/modules/**_page.dart
-      auto_route_generator:auto_router_generator:
         options:
           enable_cached_builds: true
+
+      auto_route_generator:auto_router_generator:
+        enabled: true
         generate_for:
           - lib/src/presentation/router/app_router.dart
+        options:
+          enable_cached_builds: true
+
       riverpod_generator:
         enabled: true
         generate_for:
-          include:
-            - lib/**_provider.dart
-            - lib/**_repo.dart
+          - lib/**_provider.dart
+          - lib/**_repo.dart
+
       source_gen|combining_builder:
         options:
           ignore_for_file:

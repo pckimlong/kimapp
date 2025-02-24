@@ -6,6 +6,15 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'state_widget_example.g.dart';
 
+@stateWidget
+@riverpod
+class ProductDetail extends _$ProductDetail {
+  @override
+  FutureOr<String> build(int productId) {
+    return 'Product Detail $productId';
+  }
+}
+
 @riverpod
 @stateWidget
 int primative(Ref ref) {

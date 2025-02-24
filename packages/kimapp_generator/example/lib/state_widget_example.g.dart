@@ -6,32 +6,411 @@ part of 'state_widget_example.dart';
 // KimappStateWidgetGenerator
 // **************************************************************************
 
-/// A widget that provides access to the state of PrimativeClass.
+/// A widget that provides a scoped access point for ProductDetailProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
+///
+/// Async State Handlers (only used when [builder] is not provided):
+/// * [loading] - Custom widget for loading states
+/// * [error] - Custom widget for error states with error details
+/// * [data] - Custom widget for when data is available
+///
+/// Default State Handling:
+/// Uses [KimappThemeExtension] for consistent loading/error states:
+/// ```dart
+/// Theme(
+///   data: ThemeData(
+///     extensions: [
+///       KimappThemeExtension(
+///         defaultLoadingStateWidget: (context, ref) => const LoadingSpinner(),
+///         defaultErrorStateWidget: (context, ref, error) => ErrorDisplay(error),
+///       ),
+///     ],
+///   ),
+///   child: YourApp(),
+/// )
+/// ```
+///
+/// Simple Usage:
+/// ```dart
+/// ProductDetailProviderScope(
+///   productId: intValue,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// ProductDetailProviderScope(
+///   productId: intValue,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
+///   },
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// ProductDetailProviderScope(
+///   productId: intValue,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
+/// )
+/// ```
+///
+/// See also:
+/// * [ProductDetailStateWidget] - For direct state access
+/// * [ProductDetailSelectWidget] - For optimized state selection
+/// * [ProductDetailParamWidget] - For family parameter access
+class ProductDetailProviderScope extends StatelessWidget {
+  const ProductDetailProviderScope({
+    super.key,
+    required this.productId,
+    this.child,
+    this.loading,
+    this.error,
+    this.data,
+    this.builder,
+  }) : assert(
+          builder == null || (loading == null && error == null && data == null),
+          'When builder is provided, loading, error, and data callbacks are ignored. '
+          'Remove these callbacks or remove the builder to avoid confusion.',
+        );
 
+  final int productId;
+  final Widget? child;
+  final Widget Function()? loading;
+  final Widget Function(Object error, StackTrace? stackTrace)? error;
+  final Widget Function(String data)? data;
+  final Widget Function(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<String> asyncValue,
+    Widget? child,
+  )? builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ProductDetailParamsProvider(
+        productId: productId,
+        child: Consumer(
+          child: child,
+          builder: (context, ref, child) {
+            final state = ref.watch(productDetailProvider(productId));
+
+            if (builder != null) {
+              return builder!(context, ref, state, child);
+            }
+
+            final themeExtension =
+                Theme.of(context).extension<KimappThemeExtension>();
+            return state.when(
+              data: (data) {
+                final result = this.data?.call(data) ?? child;
+                if (result == null) {
+                  Kimapp.instance.log(LoggerType.warning,
+                      message:
+                          'No child provided for ProductDetailProviderScope. Empty SizedBox will be returned.');
+                  return const SizedBox.shrink();
+                }
+                return result;
+              },
+              error: (error, stack) =>
+                  this.error?.call(error, stack) ??
+                  themeExtension?.defaultErrorStateWidget
+                      ?.call(context, ref, error) ??
+                  const SizedBox.shrink(),
+              loading: () =>
+                  loading?.call() ??
+                  themeExtension?.defaultLoadingStateWidget
+                      ?.call(context, ref) ??
+                  const SizedBox.shrink(),
+            );
+          },
+        ));
+  }
+}
+
+bool _debugCheckHasProductDetailProviderScope(BuildContext context) {
+  assert(() {
+    if (context.widget is! ProductDetailProviderScope &&
+        context.findAncestorWidgetOfExactType<ProductDetailProviderScope>() ==
+            null) {
+      throw FlutterError.fromParts(<DiagnosticsNode>[
+        ErrorSummary('No ProductDetailProviderScope found'),
+        ErrorDescription(
+          '${context.widget.runtimeType} widgets require a ProductDetailProviderScope widget ancestor.',
+        ),
+      ]);
+    }
+    return true;
+  }());
+  return true;
+}
+
+/// An internal InheritedWidget that manages family parameters for ProductDetail widgets.
+///
+/// This widget is used internally by the generated widgets to propagate family parameters
+/// down the widget tree. It should not be used directly in application code.
+class _ProductDetailParamsProvider extends InheritedWidget {
+  const _ProductDetailParamsProvider({
+    required this.productId,
+    required super.child,
+  });
+
+  final int productId;
+
+  static _ProductDetailParamsProvider? of(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_ProductDetailParamsProvider>();
+  }
+
+  @override
+  bool updateShouldNotify(_ProductDetailParamsProvider oldWidget) {
+    return productId != oldWidget.productId;
+  }
+}
+
+/// A widget that provides access to the family parameters of ProductDetailProvider.
+///
+/// This widget requires a [ProductDetailProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [ProductDetailProviderScope] - The required provider wrapper widget
+/// * [ProductDetailStateWidget] - For state access
+class ProductDetailParamWidget extends ConsumerWidget {
+  const ProductDetailParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(
+      BuildContext context, WidgetRef ref, ({int productId}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasProductDetailProviderScope(context);
+
+    final params = _ProductDetailParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (productId: params.productId),
+    );
+  }
+}
+
+/// A widget that provides direct access to the ProductDetailProvider state.
+///
+/// This widget requires a [ProductDetailProviderScope] ancestor
+/// and provides a more streamlined way to build UI based on the current state.
+/// Unlike the provider widget, this widget assumes the state is available and
+/// ready to use.
+///
+/// Key features:
+/// * Direct state access through the [builder] callback
+/// * Automatic state updates when the underlying data changes
+/// * Type-safe state handling
+///
+/// This widget automatically inherits family parameters from its provider ancestor,
+/// making it convenient to use in nested widget structures.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeClassProviderWidget(
-///
-///   builder: (context, ref, state, child) {
+/// ProductDetailStateWidget(
+///   builder: (context, ref, params, state, child) {
 ///     return Text(state.toString());
 ///   },
-///   child: const Text('Default Content'),
+///   child: const Text('Optional child widget'),
+/// )
+/// ```
+class ProductDetailStateWidget extends ConsumerWidget {
+  const ProductDetailStateWidget({
+    super.key,
+    required this.builder,
+    this.child,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int productId}) params, String state, Widget? child) builder;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasProductDetailProviderScope(context);
+
+    final params = _ProductDetailParamsProvider.of(context);
+    final state =
+        ref.watch(productDetailProvider(params!.productId)).requireValue;
+    return builder(
+      context,
+      ref,
+      (productId: params.productId),
+      state,
+      child,
+    );
+  }
+}
+
+/// A widget that provides optimized access to selected state data from ProductDetailProvider.
+///
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
+///
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// ProductDetailSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
+///
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [ProductDetailProviderScope] ancestor.
+///
+/// Family parameters are automatically inherited from the provider ancestor.
+///
+/// Example usage:
+/// ```dart
+/// ProductDetailSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
+///
+/// See also:
+/// * [ProductDetailProviderScope] - The required provider wrapper widget
+/// * [ProductDetailStateWidget] - For direct state access
+class ProductDetailSelectWidget<Selected> extends ConsumerWidget {
+  const ProductDetailSelectWidget({
+    super.key,
+    required this.selector,
+    required this.builder,
+    this.child,
+  });
+
+  final Selected Function(String state) selector;
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int productId}) params, Selected value, Widget? child) builder;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasProductDetailProviderScope(context);
+
+    final params = _ProductDetailParamsProvider.of(context);
+    final selected = ref.watch(
+      productDetailProvider(params!.productId)
+          .select((value) => selector(value.requireValue)),
+    );
+
+    return builder(
+      context,
+      ref,
+      (productId: params.productId),
+      selected,
+      child,
+    );
+  }
+}
+
+/// A widget that provides a scoped access point for PrimativeClassProvider state management.
+///
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
+///
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
+
+///
+/// Simple Usage:
+/// ```dart
+/// PrimativeClassProviderScope(
+///
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeClassProviderScope(
+///
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
+///   },
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeClassProviderScope(
+///
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeClassStateWidget] - For direct state access
-/// * [PrimativeClassStateSelectWidget] - For optimized state selection
-class PrimativeClassProviderWidget extends StatelessWidget {
-  const PrimativeClassProviderWidget({
+/// * [PrimativeClassSelectWidget] - For optimized state selection
+/// * [PrimativeClassParamWidget] - For family parameter access
+class PrimativeClassProviderScope extends StatelessWidget {
+  const PrimativeClassProviderScope({
     super.key,
     this.child,
     this.builder,
@@ -62,9 +441,9 @@ class PrimativeClassProviderWidget extends StatelessWidget {
   }
 }
 
-/// A widget that provides direct access to the PrimativeClass state.
+/// A widget that provides direct access to the PrimativeClassProvider state.
 ///
-/// This widget requires a [PrimativeClassProviderWidget] ancestor
+/// This widget requires a [PrimativeClassProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -102,36 +481,52 @@ class PrimativeClassStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the PrimativeClass state.
+/// A widget that provides optimized access to selected state data from PrimativeClassProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeClassSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeClassProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeClassProviderScope] ancestor.
 
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeClassStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, selected, child) {
-///     return Text(selected);
+/// PrimativeClassSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeClassProviderWidget] - The required provider widget
+/// * [PrimativeClassProviderScope] - The required provider wrapper widget
 /// * [PrimativeClassStateWidget] - For direct state access
-class PrimativeClassStateSelectWidget<Selected> extends ConsumerWidget {
-  const PrimativeClassStateSelectWidget({
+class PrimativeClassSelectWidget<Selected> extends ConsumerWidget {
+  const PrimativeClassSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -154,62 +549,86 @@ class PrimativeClassStateSelectWidget<Selected> extends ConsumerWidget {
   }
 }
 
-/// A widget that provides access to the state of StringFuture.
+/// A widget that provides a scoped access point for StringFutureProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
 ///
-/// For asynchronous states, additional callbacks are available:
-/// * [loading] - Custom widget for loading state
-/// * [error] - Custom widget for error state
-/// * [data] - Custom widget for data state
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 ///
-/// This widget integrates with [KimappThemeExtension] to provide default loading
-/// and error widgets. To use this functionality:
+/// Async State Handlers (only used when [builder] is not provided):
+/// * [loading] - Custom widget for loading states
+/// * [error] - Custom widget for error states with error details
+/// * [data] - Custom widget for when data is available
 ///
-/// 1. Add kimapp_utils to your pubspec.yaml:
-/// ```yaml
-/// dependencies:
-///   kimapp_utils: ^latest_version
-/// ```
-///
-/// 2. Configure KimappThemeExtension in your app theme:
+/// Default State Handling:
+/// Uses [KimappThemeExtension] for consistent loading/error states:
 /// ```dart
-/// MaterialApp(
-///   theme: ThemeData(
+/// Theme(
+///   data: ThemeData(
 ///     extensions: [
 ///       KimappThemeExtension(
-///         defaultLoadingStateWidget: (context, ref) => const CircularProgressIndicator(),
-///         defaultErrorStateWidget: (context, ref, error) => Text(error.toString()),
+///         defaultLoadingStateWidget: (context, ref) => const LoadingSpinner(),
+///         defaultErrorStateWidget: (context, ref, error) => ErrorDisplay(error),
 ///       ),
 ///     ],
 ///   ),
+///   child: YourApp(),
 /// )
 /// ```
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// StringFutureProviderWidget(
-///   family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
-///   },    ///   loading: () => const CircularProgressIndicator(),
-///   error: (error, stack) => Text('Error: $error'),
-///   data: (data) => Text(data.toString()),
-///   child: const Text('Default Content'),
+/// StringFutureProviderScope(
+///   family: stringValue,
+/// second: stringValue,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// StringFutureProviderScope(
+///   family: stringValue,
+/// second: stringValue,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
+///   },
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// StringFutureProviderScope(
+///   family: stringValue,
+/// second: stringValue,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [StringFutureStateWidget] - For direct state access
-/// * [StringFutureStateSelectWidget] - For optimized state selection
-class StringFutureProviderWidget extends StatelessWidget {
-  const StringFutureProviderWidget({
+/// * [StringFutureSelectWidget] - For optimized state selection
+/// * [StringFutureParamWidget] - For family parameter access
+class StringFutureProviderScope extends StatelessWidget {
+  const StringFutureProviderScope({
     super.key,
     required this.family,
     required this.second,
@@ -218,7 +637,11 @@ class StringFutureProviderWidget extends StatelessWidget {
     this.error,
     this.data,
     this.builder,
-  });
+  }) : assert(
+          builder == null || (loading == null && error == null && data == null),
+          'When builder is provided, loading, error, and data callbacks are ignored. '
+          'Remove these callbacks or remove the builder to avoid confusion.',
+        );
 
   final String family;
   final String second;
@@ -229,7 +652,7 @@ class StringFutureProviderWidget extends StatelessWidget {
   final Widget Function(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<String> state,
+    AsyncValue<String> asyncValue,
     Widget? child,
   )? builder;
 
@@ -256,7 +679,7 @@ class StringFutureProviderWidget extends StatelessWidget {
                 if (result == null) {
                   Kimapp.instance.log(LoggerType.warning,
                       message:
-                          'No child provided for StringFutureProviderWidget. Empty SizedBox will be returned.');
+                          'No child provided for StringFutureProviderScope. Empty SizedBox will be returned.');
                   return const SizedBox.shrink();
                 }
                 return result;
@@ -277,15 +700,15 @@ class StringFutureProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasStringFutureProviderWidget(BuildContext context) {
+bool _debugCheckHasStringFutureProviderScope(BuildContext context) {
   assert(() {
-    if (context.widget is! StringFutureProviderWidget &&
-        context.findAncestorWidgetOfExactType<StringFutureProviderWidget>() ==
+    if (context.widget is! StringFutureProviderScope &&
+        context.findAncestorWidgetOfExactType<StringFutureProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No StringFutureProviderWidget found'),
+        ErrorSummary('No StringFutureProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a StringFutureProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a StringFutureProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -319,9 +742,43 @@ class _StringFutureParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the StringFuture state.
+/// A widget that provides access to the family parameters of StringFutureProvider.
 ///
-/// This widget requires a [StringFutureProviderWidget] ancestor
+/// This widget requires a [StringFutureProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [StringFutureProviderScope] - The required provider wrapper widget
+/// * [StringFutureStateWidget] - For state access
+class StringFutureParamWidget extends ConsumerWidget {
+  const StringFutureParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({String family, String second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasStringFutureProviderScope(context);
+
+    final params = _StringFutureParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the StringFutureProvider state.
+///
+/// This widget requires a [StringFutureProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -360,7 +817,7 @@ class StringFutureStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasStringFutureProviderWidget(context);
+    _debugCheckHasStringFutureProviderScope(context);
 
     final params = _StringFutureParamsProvider.of(context);
     final state = ref
@@ -377,37 +834,53 @@ class StringFutureStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the StringFuture state.
+/// A widget that provides optimized access to selected state data from StringFutureProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// StringFutureSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [StringFutureProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [StringFutureProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// StringFutureStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// StringFutureSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [StringFutureProviderWidget] - The required provider widget
+/// * [StringFutureProviderScope] - The required provider wrapper widget
 /// * [StringFutureStateWidget] - For direct state access
-class StringFutureStateSelectWidget<Selected> extends ConsumerWidget {
-  const StringFutureStateSelectWidget({
+class StringFutureSelectWidget<Selected> extends ConsumerWidget {
+  const StringFutureSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -425,7 +898,7 @@ class StringFutureStateSelectWidget<Selected> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasStringFutureProviderWidget(context);
+    _debugCheckHasStringFutureProviderScope(context);
 
     final params = _StringFutureParamsProvider.of(context);
     final selected = ref.watch(
@@ -443,63 +916,89 @@ class StringFutureStateSelectWidget<Selected> extends ConsumerWidget {
   }
 }
 
-/// A widget that provides access to the state of StringFutureOptional.
+/// A widget that provides a scoped access point for StringFutureOptionalProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
 ///
-/// For asynchronous states, additional callbacks are available:
-/// * [loading] - Custom widget for loading state
-/// * [error] - Custom widget for error state
-/// * [data] - Custom widget for data state
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 ///
-/// This widget integrates with [KimappThemeExtension] to provide default loading
-/// and error widgets. To use this functionality:
+/// Async State Handlers (only used when [builder] is not provided):
+/// * [loading] - Custom widget for loading states
+/// * [error] - Custom widget for error states with error details
+/// * [data] - Custom widget for when data is available
 ///
-/// 1. Add kimapp_utils to your pubspec.yaml:
-/// ```yaml
-/// dependencies:
-///   kimapp_utils: ^latest_version
-/// ```
-///
-/// 2. Configure KimappThemeExtension in your app theme:
+/// Default State Handling:
+/// Uses [KimappThemeExtension] for consistent loading/error states:
 /// ```dart
-/// MaterialApp(
-///   theme: ThemeData(
+/// Theme(
+///   data: ThemeData(
 ///     extensions: [
 ///       KimappThemeExtension(
-///         defaultLoadingStateWidget: (context, ref) => const CircularProgressIndicator(),
-///         defaultErrorStateWidget: (context, ref, error) => Text(error.toString()),
+///         defaultLoadingStateWidget: (context, ref) => const LoadingSpinner(),
+///         defaultErrorStateWidget: (context, ref, error) => ErrorDisplay(error),
 ///       ),
 ///     ],
 ///   ),
+///   child: YourApp(),
 /// )
 /// ```
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// StringFutureOptionalProviderWidget(
-///   a: a,
-/// family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
-///   },    ///   loading: () => const CircularProgressIndicator(),
-///   error: (error, stack) => Text('Error: $error'),
-///   data: (data) => Text(data.toString()),
-///   child: const Text('Default Content'),
+/// StringFutureOptionalProviderScope(
+///   a: intValue,
+/// family: stringValue,
+/// second: string?Value,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// StringFutureOptionalProviderScope(
+///   a: intValue,
+/// family: stringValue,
+/// second: string?Value,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
+///   },
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// StringFutureOptionalProviderScope(
+///   a: intValue,
+/// family: stringValue,
+/// second: string?Value,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [StringFutureOptionalStateWidget] - For direct state access
-/// * [StringFutureOptionalStateSelectWidget] - For optimized state selection
-class StringFutureOptionalProviderWidget extends StatelessWidget {
-  const StringFutureOptionalProviderWidget({
+/// * [StringFutureOptionalSelectWidget] - For optimized state selection
+/// * [StringFutureOptionalParamWidget] - For family parameter access
+class StringFutureOptionalProviderScope extends StatelessWidget {
+  const StringFutureOptionalProviderScope({
     super.key,
     required this.a,
     required this.family,
@@ -509,7 +1008,11 @@ class StringFutureOptionalProviderWidget extends StatelessWidget {
     this.error,
     this.data,
     this.builder,
-  });
+  }) : assert(
+          builder == null || (loading == null && error == null && data == null),
+          'When builder is provided, loading, error, and data callbacks are ignored. '
+          'Remove these callbacks or remove the builder to avoid confusion.',
+        );
 
   final int a;
   final String family;
@@ -521,7 +1024,7 @@ class StringFutureOptionalProviderWidget extends StatelessWidget {
   final Widget Function(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<String> state,
+    AsyncValue<String> asyncValue,
     Widget? child,
   )? builder;
 
@@ -549,7 +1052,7 @@ class StringFutureOptionalProviderWidget extends StatelessWidget {
                 if (result == null) {
                   Kimapp.instance.log(LoggerType.warning,
                       message:
-                          'No child provided for StringFutureOptionalProviderWidget. Empty SizedBox will be returned.');
+                          'No child provided for StringFutureOptionalProviderScope. Empty SizedBox will be returned.');
                   return const SizedBox.shrink();
                 }
                 return result;
@@ -570,16 +1073,16 @@ class StringFutureOptionalProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasStringFutureOptionalProviderWidget(BuildContext context) {
+bool _debugCheckHasStringFutureOptionalProviderScope(BuildContext context) {
   assert(() {
-    if (context.widget is! StringFutureOptionalProviderWidget &&
+    if (context.widget is! StringFutureOptionalProviderScope &&
         context.findAncestorWidgetOfExactType<
-                StringFutureOptionalProviderWidget>() ==
+                StringFutureOptionalProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No StringFutureOptionalProviderWidget found'),
+        ErrorSummary('No StringFutureOptionalProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a StringFutureOptionalProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a StringFutureOptionalProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -617,9 +1120,43 @@ class _StringFutureOptionalParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the StringFutureOptional state.
+/// A widget that provides access to the family parameters of StringFutureOptionalProvider.
 ///
-/// This widget requires a [StringFutureOptionalProviderWidget] ancestor
+/// This widget requires a [StringFutureOptionalProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [StringFutureOptionalProviderScope] - The required provider wrapper widget
+/// * [StringFutureOptionalStateWidget] - For state access
+class StringFutureOptionalParamWidget extends ConsumerWidget {
+  const StringFutureOptionalParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int a, String family, String? second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasStringFutureOptionalProviderScope(context);
+
+    final params = _StringFutureOptionalParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (a: params.a, family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the StringFutureOptionalProvider state.
+///
+/// This widget requires a [StringFutureOptionalProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -658,7 +1195,7 @@ class StringFutureOptionalStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasStringFutureOptionalProviderWidget(context);
+    _debugCheckHasStringFutureOptionalProviderScope(context);
 
     final params = _StringFutureOptionalParamsProvider.of(context);
     final state = ref
@@ -675,37 +1212,53 @@ class StringFutureOptionalStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the StringFutureOptional state.
+/// A widget that provides optimized access to selected state data from StringFutureOptionalProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// StringFutureOptionalSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [StringFutureOptionalProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [StringFutureOptionalProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// StringFutureOptionalStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// StringFutureOptionalSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [StringFutureOptionalProviderWidget] - The required provider widget
+/// * [StringFutureOptionalProviderScope] - The required provider wrapper widget
 /// * [StringFutureOptionalStateWidget] - For direct state access
-class StringFutureOptionalStateSelectWidget<Selected> extends ConsumerWidget {
-  const StringFutureOptionalStateSelectWidget({
+class StringFutureOptionalSelectWidget<Selected> extends ConsumerWidget {
+  const StringFutureOptionalSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -723,7 +1276,7 @@ class StringFutureOptionalStateSelectWidget<Selected> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasStringFutureOptionalProviderWidget(context);
+    _debugCheckHasStringFutureOptionalProviderScope(context);
 
     final params = _StringFutureOptionalParamsProvider.of(context);
     final selected = ref.watch(
@@ -742,32 +1295,63 @@ class StringFutureOptionalStateSelectWidget<Selected> extends ConsumerWidget {
   }
 }
 
-/// A widget that provides access to the state of primative.
+/// A widget that provides a scoped access point for primativeProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeProviderWidget(
+/// PrimativeProviderScope(
 ///
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeProviderScope(
+///
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
 ///   },
-///   child: const Text('Default Content'),
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeProviderScope(
+///
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeStateWidget] - For direct state access
-/// * [PrimativeStateSelectWidget] - For optimized state selection
-class PrimativeProviderWidget extends StatelessWidget {
-  const PrimativeProviderWidget({
+/// * [PrimativeSelectWidget] - For optimized state selection
+/// * [PrimativeParamWidget] - For family parameter access
+class PrimativeProviderScope extends StatelessWidget {
+  const PrimativeProviderScope({
     super.key,
     this.child,
     this.builder,
@@ -798,9 +1382,9 @@ class PrimativeProviderWidget extends StatelessWidget {
   }
 }
 
-/// A widget that provides direct access to the primative state.
+/// A widget that provides direct access to the primativeProvider state.
 ///
-/// This widget requires a [PrimativeProviderWidget] ancestor
+/// This widget requires a [PrimativeProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -838,36 +1422,52 @@ class PrimativeStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primative state.
+/// A widget that provides optimized access to selected state data from primativeProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeProviderScope] ancestor.
 
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, selected, child) {
-///     return Text(selected);
+/// PrimativeSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeProviderWidget] - The required provider widget
+/// * [PrimativeProviderScope] - The required provider wrapper widget
 /// * [PrimativeStateWidget] - For direct state access
-class PrimativeStateSelectWidget<Selected> extends ConsumerWidget {
-  const PrimativeStateSelectWidget({
+class PrimativeSelectWidget<Selected> extends ConsumerWidget {
+  const PrimativeSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -890,33 +1490,66 @@ class PrimativeStateSelectWidget<Selected> extends ConsumerWidget {
   }
 }
 
-/// A widget that provides access to the state of primativeFaimily.
+/// A widget that provides a scoped access point for primativeFaimilyProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeFaimilyProviderWidget(
-///   family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
+/// PrimativeFaimilyProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeFaimilyProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
 ///   },
-///   child: const Text('Default Content'),
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeFaimilyProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeFaimilyStateWidget] - For direct state access
-/// * [PrimativeFaimilyStateSelectWidget] - For optimized state selection
-class PrimativeFaimilyProviderWidget extends StatelessWidget {
-  const PrimativeFaimilyProviderWidget({
+/// * [PrimativeFaimilySelectWidget] - For optimized state selection
+/// * [PrimativeFaimilyParamWidget] - For family parameter access
+class PrimativeFaimilyProviderScope extends StatelessWidget {
+  const PrimativeFaimilyProviderScope({
     super.key,
     required this.family,
     required this.second,
@@ -954,16 +1587,16 @@ class PrimativeFaimilyProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasPrimativeFaimilyProviderWidget(BuildContext context) {
+bool _debugCheckHasPrimativeFaimilyProviderScope(BuildContext context) {
   assert(() {
-    if (context.widget is! PrimativeFaimilyProviderWidget &&
+    if (context.widget is! PrimativeFaimilyProviderScope &&
         context.findAncestorWidgetOfExactType<
-                PrimativeFaimilyProviderWidget>() ==
+                PrimativeFaimilyProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No PrimativeFaimilyProviderWidget found'),
+        ErrorSummary('No PrimativeFaimilyProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a PrimativeFaimilyProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a PrimativeFaimilyProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -997,9 +1630,43 @@ class _PrimativeFaimilyParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the primativeFaimily state.
+/// A widget that provides access to the family parameters of primativeFaimilyProvider.
 ///
-/// This widget requires a [PrimativeFaimilyProviderWidget] ancestor
+/// This widget requires a [PrimativeFaimilyProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [PrimativeFaimilyProviderScope] - The required provider wrapper widget
+/// * [PrimativeFaimilyStateWidget] - For state access
+class PrimativeFaimilyParamWidget extends ConsumerWidget {
+  const PrimativeFaimilyParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int family, int second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasPrimativeFaimilyProviderScope(context);
+
+    final params = _PrimativeFaimilyParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the primativeFaimilyProvider state.
+///
+/// This widget requires a [PrimativeFaimilyProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -1034,7 +1701,7 @@ class PrimativeFaimilyStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyProviderScope(context);
 
     final params = _PrimativeFaimilyParamsProvider.of(context);
     final state =
@@ -1049,37 +1716,53 @@ class PrimativeFaimilyStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primativeFaimily state.
+/// A widget that provides optimized access to selected state data from primativeFaimilyProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeFaimilySelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeFaimilyProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeFaimilyProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeFaimilyStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// PrimativeFaimilySelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeFaimilyProviderWidget] - The required provider widget
+/// * [PrimativeFaimilyProviderScope] - The required provider wrapper widget
 /// * [PrimativeFaimilyStateWidget] - For direct state access
-class PrimativeFaimilyStateSelectWidget<Selected> extends ConsumerWidget {
-  const PrimativeFaimilyStateSelectWidget({
+class PrimativeFaimilySelectWidget<Selected> extends ConsumerWidget {
+  const PrimativeFaimilySelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -1093,7 +1776,7 @@ class PrimativeFaimilyStateSelectWidget<Selected> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyProviderScope(context);
 
     final params = _PrimativeFaimilyParamsProvider.of(context);
     final selected = ref.watch(
@@ -1111,33 +1794,66 @@ class PrimativeFaimilyStateSelectWidget<Selected> extends ConsumerWidget {
   }
 }
 
-/// A widget that provides access to the state of primativeFaimilyRequired.
+/// A widget that provides a scoped access point for primativeFaimilyRequiredProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeFaimilyRequiredProviderWidget(
-///   family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
+/// PrimativeFaimilyRequiredProviderScope(
+///   family: intValue,
+/// second: int?Value,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeFaimilyRequiredProviderScope(
+///   family: intValue,
+/// second: int?Value,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
 ///   },
-///   child: const Text('Default Content'),
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeFaimilyRequiredProviderScope(
+///   family: intValue,
+/// second: int?Value,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeFaimilyRequiredStateWidget] - For direct state access
-/// * [PrimativeFaimilyRequiredStateSelectWidget] - For optimized state selection
-class PrimativeFaimilyRequiredProviderWidget extends StatelessWidget {
-  const PrimativeFaimilyRequiredProviderWidget({
+/// * [PrimativeFaimilyRequiredSelectWidget] - For optimized state selection
+/// * [PrimativeFaimilyRequiredParamWidget] - For family parameter access
+class PrimativeFaimilyRequiredProviderScope extends StatelessWidget {
+  const PrimativeFaimilyRequiredProviderScope({
     super.key,
     required this.family,
     this.second,
@@ -1176,17 +1892,16 @@ class PrimativeFaimilyRequiredProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasPrimativeFaimilyRequiredProviderWidget(
-    BuildContext context) {
+bool _debugCheckHasPrimativeFaimilyRequiredProviderScope(BuildContext context) {
   assert(() {
-    if (context.widget is! PrimativeFaimilyRequiredProviderWidget &&
+    if (context.widget is! PrimativeFaimilyRequiredProviderScope &&
         context.findAncestorWidgetOfExactType<
-                PrimativeFaimilyRequiredProviderWidget>() ==
+                PrimativeFaimilyRequiredProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No PrimativeFaimilyRequiredProviderWidget found'),
+        ErrorSummary('No PrimativeFaimilyRequiredProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a PrimativeFaimilyRequiredProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a PrimativeFaimilyRequiredProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -1220,9 +1935,43 @@ class _PrimativeFaimilyRequiredParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the primativeFaimilyRequired state.
+/// A widget that provides access to the family parameters of primativeFaimilyRequiredProvider.
 ///
-/// This widget requires a [PrimativeFaimilyRequiredProviderWidget] ancestor
+/// This widget requires a [PrimativeFaimilyRequiredProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [PrimativeFaimilyRequiredProviderScope] - The required provider wrapper widget
+/// * [PrimativeFaimilyRequiredStateWidget] - For state access
+class PrimativeFaimilyRequiredParamWidget extends ConsumerWidget {
+  const PrimativeFaimilyRequiredParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int family, int? second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasPrimativeFaimilyRequiredProviderScope(context);
+
+    final params = _PrimativeFaimilyRequiredParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the primativeFaimilyRequiredProvider state.
+///
+/// This widget requires a [PrimativeFaimilyRequiredProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -1257,7 +2006,7 @@ class PrimativeFaimilyRequiredStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyRequiredProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyRequiredProviderScope(context);
 
     final params = _PrimativeFaimilyRequiredParamsProvider.of(context);
     final state = ref.watch(primativeFaimilyRequiredProvider(
@@ -1272,38 +2021,53 @@ class PrimativeFaimilyRequiredStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primativeFaimilyRequired state.
+/// A widget that provides optimized access to selected state data from primativeFaimilyRequiredProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeFaimilyRequiredSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeFaimilyRequiredProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeFaimilyRequiredProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeFaimilyRequiredStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// PrimativeFaimilyRequiredSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeFaimilyRequiredProviderWidget] - The required provider widget
+/// * [PrimativeFaimilyRequiredProviderScope] - The required provider wrapper widget
 /// * [PrimativeFaimilyRequiredStateWidget] - For direct state access
-class PrimativeFaimilyRequiredStateSelectWidget<Selected>
-    extends ConsumerWidget {
-  const PrimativeFaimilyRequiredStateSelectWidget({
+class PrimativeFaimilyRequiredSelectWidget<Selected> extends ConsumerWidget {
+  const PrimativeFaimilyRequiredSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -1321,7 +2085,7 @@ class PrimativeFaimilyRequiredStateSelectWidget<Selected>
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyRequiredProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyRequiredProviderScope(context);
 
     final params = _PrimativeFaimilyRequiredParamsProvider.of(context);
     final selected = ref.watch(
@@ -1340,33 +2104,66 @@ class PrimativeFaimilyRequiredStateSelectWidget<Selected>
   }
 }
 
-/// A widget that provides access to the state of primativeFaimilyWithDefault.
+/// A widget that provides a scoped access point for primativeFaimilyWithDefaultProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeFaimilyWithDefaultProviderWidget(
-///   family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
+/// PrimativeFaimilyWithDefaultProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeFaimilyWithDefaultProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
 ///   },
-///   child: const Text('Default Content'),
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeFaimilyWithDefaultProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeFaimilyWithDefaultStateWidget] - For direct state access
-/// * [PrimativeFaimilyWithDefaultStateSelectWidget] - For optimized state selection
-class PrimativeFaimilyWithDefaultProviderWidget extends StatelessWidget {
-  const PrimativeFaimilyWithDefaultProviderWidget({
+/// * [PrimativeFaimilyWithDefaultSelectWidget] - For optimized state selection
+/// * [PrimativeFaimilyWithDefaultParamWidget] - For family parameter access
+class PrimativeFaimilyWithDefaultProviderScope extends StatelessWidget {
+  const PrimativeFaimilyWithDefaultProviderScope({
     super.key,
     required this.family,
     this.second = 1,
@@ -1405,17 +2202,17 @@ class PrimativeFaimilyWithDefaultProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasPrimativeFaimilyWithDefaultProviderWidget(
+bool _debugCheckHasPrimativeFaimilyWithDefaultProviderScope(
     BuildContext context) {
   assert(() {
-    if (context.widget is! PrimativeFaimilyWithDefaultProviderWidget &&
+    if (context.widget is! PrimativeFaimilyWithDefaultProviderScope &&
         context.findAncestorWidgetOfExactType<
-                PrimativeFaimilyWithDefaultProviderWidget>() ==
+                PrimativeFaimilyWithDefaultProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No PrimativeFaimilyWithDefaultProviderWidget found'),
+        ErrorSummary('No PrimativeFaimilyWithDefaultProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a PrimativeFaimilyWithDefaultProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a PrimativeFaimilyWithDefaultProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -1450,9 +2247,43 @@ class _PrimativeFaimilyWithDefaultParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the primativeFaimilyWithDefault state.
+/// A widget that provides access to the family parameters of primativeFaimilyWithDefaultProvider.
 ///
-/// This widget requires a [PrimativeFaimilyWithDefaultProviderWidget] ancestor
+/// This widget requires a [PrimativeFaimilyWithDefaultProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [PrimativeFaimilyWithDefaultProviderScope] - The required provider wrapper widget
+/// * [PrimativeFaimilyWithDefaultStateWidget] - For state access
+class PrimativeFaimilyWithDefaultParamWidget extends ConsumerWidget {
+  const PrimativeFaimilyWithDefaultParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int family, int second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasPrimativeFaimilyWithDefaultProviderScope(context);
+
+    final params = _PrimativeFaimilyWithDefaultParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the primativeFaimilyWithDefaultProvider state.
+///
+/// This widget requires a [PrimativeFaimilyWithDefaultProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -1487,7 +2318,7 @@ class PrimativeFaimilyWithDefaultStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyWithDefaultProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyWithDefaultProviderScope(context);
 
     final params = _PrimativeFaimilyWithDefaultParamsProvider.of(context);
     final state = ref.watch(primativeFaimilyWithDefaultProvider(
@@ -1502,38 +2333,53 @@ class PrimativeFaimilyWithDefaultStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primativeFaimilyWithDefault state.
+/// A widget that provides optimized access to selected state data from primativeFaimilyWithDefaultProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeFaimilyWithDefaultSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeFaimilyWithDefaultProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeFaimilyWithDefaultProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeFaimilyWithDefaultStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// PrimativeFaimilyWithDefaultSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeFaimilyWithDefaultProviderWidget] - The required provider widget
+/// * [PrimativeFaimilyWithDefaultProviderScope] - The required provider wrapper widget
 /// * [PrimativeFaimilyWithDefaultStateWidget] - For direct state access
-class PrimativeFaimilyWithDefaultStateSelectWidget<Selected>
-    extends ConsumerWidget {
-  const PrimativeFaimilyWithDefaultStateSelectWidget({
+class PrimativeFaimilyWithDefaultSelectWidget<Selected> extends ConsumerWidget {
+  const PrimativeFaimilyWithDefaultSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -1547,7 +2393,7 @@ class PrimativeFaimilyWithDefaultStateSelectWidget<Selected>
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyWithDefaultProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyWithDefaultProviderScope(context);
 
     final params = _PrimativeFaimilyWithDefaultParamsProvider.of(context);
     final selected = ref.watch(
@@ -1566,62 +2412,86 @@ class PrimativeFaimilyWithDefaultStateSelectWidget<Selected>
   }
 }
 
-/// A widget that provides access to the state of primativeFaimilyWithDefaultAsync.
+/// A widget that provides a scoped access point for primativeFaimilyWithDefaultAsyncProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
 ///
-/// For asynchronous states, additional callbacks are available:
-/// * [loading] - Custom widget for loading state
-/// * [error] - Custom widget for error state
-/// * [data] - Custom widget for data state
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 ///
-/// This widget integrates with [KimappThemeExtension] to provide default loading
-/// and error widgets. To use this functionality:
+/// Async State Handlers (only used when [builder] is not provided):
+/// * [loading] - Custom widget for loading states
+/// * [error] - Custom widget for error states with error details
+/// * [data] - Custom widget for when data is available
 ///
-/// 1. Add kimapp_utils to your pubspec.yaml:
-/// ```yaml
-/// dependencies:
-///   kimapp_utils: ^latest_version
-/// ```
-///
-/// 2. Configure KimappThemeExtension in your app theme:
+/// Default State Handling:
+/// Uses [KimappThemeExtension] for consistent loading/error states:
 /// ```dart
-/// MaterialApp(
-///   theme: ThemeData(
+/// Theme(
+///   data: ThemeData(
 ///     extensions: [
 ///       KimappThemeExtension(
-///         defaultLoadingStateWidget: (context, ref) => const CircularProgressIndicator(),
-///         defaultErrorStateWidget: (context, ref, error) => Text(error.toString()),
+///         defaultLoadingStateWidget: (context, ref) => const LoadingSpinner(),
+///         defaultErrorStateWidget: (context, ref, error) => ErrorDisplay(error),
 ///       ),
 ///     ],
 ///   ),
+///   child: YourApp(),
 /// )
 /// ```
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeFaimilyWithDefaultAsyncProviderWidget(
-///   family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
-///   },    ///   loading: () => const CircularProgressIndicator(),
-///   error: (error, stack) => Text('Error: $error'),
-///   data: (data) => Text(data.toString()),
-///   child: const Text('Default Content'),
+/// PrimativeFaimilyWithDefaultAsyncProviderScope(
+///   family: intValue,
+/// second: int?Value,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeFaimilyWithDefaultAsyncProviderScope(
+///   family: intValue,
+/// second: int?Value,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
+///   },
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeFaimilyWithDefaultAsyncProviderScope(
+///   family: intValue,
+/// second: int?Value,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeFaimilyWithDefaultAsyncStateWidget] - For direct state access
-/// * [PrimativeFaimilyWithDefaultAsyncStateSelectWidget] - For optimized state selection
-class PrimativeFaimilyWithDefaultAsyncProviderWidget extends StatelessWidget {
-  const PrimativeFaimilyWithDefaultAsyncProviderWidget({
+/// * [PrimativeFaimilyWithDefaultAsyncSelectWidget] - For optimized state selection
+/// * [PrimativeFaimilyWithDefaultAsyncParamWidget] - For family parameter access
+class PrimativeFaimilyWithDefaultAsyncProviderScope extends StatelessWidget {
+  const PrimativeFaimilyWithDefaultAsyncProviderScope({
     super.key,
     required this.family,
     this.second,
@@ -1630,7 +2500,11 @@ class PrimativeFaimilyWithDefaultAsyncProviderWidget extends StatelessWidget {
     this.error,
     this.data,
     this.builder,
-  });
+  }) : assert(
+          builder == null || (loading == null && error == null && data == null),
+          'When builder is provided, loading, error, and data callbacks are ignored. '
+          'Remove these callbacks or remove the builder to avoid confusion.',
+        );
 
   final int family;
   final int? second;
@@ -1641,7 +2515,7 @@ class PrimativeFaimilyWithDefaultAsyncProviderWidget extends StatelessWidget {
   final Widget Function(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<int> state,
+    AsyncValue<int> asyncValue,
     Widget? child,
   )? builder;
 
@@ -1668,7 +2542,7 @@ class PrimativeFaimilyWithDefaultAsyncProviderWidget extends StatelessWidget {
                 if (result == null) {
                   Kimapp.instance.log(LoggerType.warning,
                       message:
-                          'No child provided for primativeFaimilyWithDefaultAsyncProviderWidget. Empty SizedBox will be returned.');
+                          'No child provided for primativeFaimilyWithDefaultAsyncProviderScope. Empty SizedBox will be returned.');
                   return const SizedBox.shrink();
                 }
                 return result;
@@ -1689,17 +2563,17 @@ class PrimativeFaimilyWithDefaultAsyncProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderWidget(
+bool _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderScope(
     BuildContext context) {
   assert(() {
-    if (context.widget is! PrimativeFaimilyWithDefaultAsyncProviderWidget &&
+    if (context.widget is! PrimativeFaimilyWithDefaultAsyncProviderScope &&
         context.findAncestorWidgetOfExactType<
-                PrimativeFaimilyWithDefaultAsyncProviderWidget>() ==
+                PrimativeFaimilyWithDefaultAsyncProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No PrimativeFaimilyWithDefaultAsyncProviderWidget found'),
+        ErrorSummary('No PrimativeFaimilyWithDefaultAsyncProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a PrimativeFaimilyWithDefaultAsyncProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a PrimativeFaimilyWithDefaultAsyncProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -1735,9 +2609,43 @@ class _PrimativeFaimilyWithDefaultAsyncParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the primativeFaimilyWithDefaultAsync state.
+/// A widget that provides access to the family parameters of primativeFaimilyWithDefaultAsyncProvider.
 ///
-/// This widget requires a [PrimativeFaimilyWithDefaultAsyncProviderWidget] ancestor
+/// This widget requires a [PrimativeFaimilyWithDefaultAsyncProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [PrimativeFaimilyWithDefaultAsyncProviderScope] - The required provider wrapper widget
+/// * [PrimativeFaimilyWithDefaultAsyncStateWidget] - For state access
+class PrimativeFaimilyWithDefaultAsyncParamWidget extends ConsumerWidget {
+  const PrimativeFaimilyWithDefaultAsyncParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int family, int? second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderScope(context);
+
+    final params = _PrimativeFaimilyWithDefaultAsyncParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the primativeFaimilyWithDefaultAsyncProvider state.
+///
+/// This widget requires a [PrimativeFaimilyWithDefaultAsyncProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -1772,7 +2680,7 @@ class PrimativeFaimilyWithDefaultAsyncStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderScope(context);
 
     final params = _PrimativeFaimilyWithDefaultAsyncParamsProvider.of(context);
     final state = ref
@@ -1789,38 +2697,54 @@ class PrimativeFaimilyWithDefaultAsyncStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primativeFaimilyWithDefaultAsync state.
+/// A widget that provides optimized access to selected state data from primativeFaimilyWithDefaultAsyncProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeFaimilyWithDefaultAsyncSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeFaimilyWithDefaultAsyncProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeFaimilyWithDefaultAsyncProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeFaimilyWithDefaultAsyncStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// PrimativeFaimilyWithDefaultAsyncSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeFaimilyWithDefaultAsyncProviderWidget] - The required provider widget
+/// * [PrimativeFaimilyWithDefaultAsyncProviderScope] - The required provider wrapper widget
 /// * [PrimativeFaimilyWithDefaultAsyncStateWidget] - For direct state access
-class PrimativeFaimilyWithDefaultAsyncStateSelectWidget<Selected>
+class PrimativeFaimilyWithDefaultAsyncSelectWidget<Selected>
     extends ConsumerWidget {
-  const PrimativeFaimilyWithDefaultAsyncStateSelectWidget({
+  const PrimativeFaimilyWithDefaultAsyncSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -1838,7 +2762,7 @@ class PrimativeFaimilyWithDefaultAsyncStateSelectWidget<Selected>
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyWithDefaultAsyncProviderScope(context);
 
     final params = _PrimativeFaimilyWithDefaultAsyncParamsProvider.of(context);
     final selected = ref.watch(
@@ -1857,62 +2781,86 @@ class PrimativeFaimilyWithDefaultAsyncStateSelectWidget<Selected>
   }
 }
 
-/// A widget that provides access to the state of primativeFaimilyWithDefaultStream.
+/// A widget that provides a scoped access point for primativeFaimilyWithDefaultStreamProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
 ///
-/// For asynchronous states, additional callbacks are available:
-/// * [loading] - Custom widget for loading state
-/// * [error] - Custom widget for error state
-/// * [data] - Custom widget for data state
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 ///
-/// This widget integrates with [KimappThemeExtension] to provide default loading
-/// and error widgets. To use this functionality:
+/// Async State Handlers (only used when [builder] is not provided):
+/// * [loading] - Custom widget for loading states
+/// * [error] - Custom widget for error states with error details
+/// * [data] - Custom widget for when data is available
 ///
-/// 1. Add kimapp_utils to your pubspec.yaml:
-/// ```yaml
-/// dependencies:
-///   kimapp_utils: ^latest_version
-/// ```
-///
-/// 2. Configure KimappThemeExtension in your app theme:
+/// Default State Handling:
+/// Uses [KimappThemeExtension] for consistent loading/error states:
 /// ```dart
-/// MaterialApp(
-///   theme: ThemeData(
+/// Theme(
+///   data: ThemeData(
 ///     extensions: [
 ///       KimappThemeExtension(
-///         defaultLoadingStateWidget: (context, ref) => const CircularProgressIndicator(),
-///         defaultErrorStateWidget: (context, ref, error) => Text(error.toString()),
+///         defaultLoadingStateWidget: (context, ref) => const LoadingSpinner(),
+///         defaultErrorStateWidget: (context, ref, error) => ErrorDisplay(error),
 ///       ),
 ///     ],
 ///   ),
+///   child: YourApp(),
 /// )
 /// ```
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeFaimilyWithDefaultStreamProviderWidget(
-///   family: family,
-/// second: second,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
-///   },    ///   loading: () => const CircularProgressIndicator(),
-///   error: (error, stack) => Text('Error: $error'),
-///   data: (data) => Text(data.toString()),
-///   child: const Text('Default Content'),
+/// PrimativeFaimilyWithDefaultStreamProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeFaimilyWithDefaultStreamProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
+///   },
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeFaimilyWithDefaultStreamProviderScope(
+///   family: intValue,
+/// second: intValue,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeFaimilyWithDefaultStreamStateWidget] - For direct state access
-/// * [PrimativeFaimilyWithDefaultStreamStateSelectWidget] - For optimized state selection
-class PrimativeFaimilyWithDefaultStreamProviderWidget extends StatelessWidget {
-  const PrimativeFaimilyWithDefaultStreamProviderWidget({
+/// * [PrimativeFaimilyWithDefaultStreamSelectWidget] - For optimized state selection
+/// * [PrimativeFaimilyWithDefaultStreamParamWidget] - For family parameter access
+class PrimativeFaimilyWithDefaultStreamProviderScope extends StatelessWidget {
+  const PrimativeFaimilyWithDefaultStreamProviderScope({
     super.key,
     required this.family,
     this.second = 1,
@@ -1921,7 +2869,11 @@ class PrimativeFaimilyWithDefaultStreamProviderWidget extends StatelessWidget {
     this.error,
     this.data,
     this.builder,
-  });
+  }) : assert(
+          builder == null || (loading == null && error == null && data == null),
+          'When builder is provided, loading, error, and data callbacks are ignored. '
+          'Remove these callbacks or remove the builder to avoid confusion.',
+        );
 
   final int family;
   final int second;
@@ -1932,7 +2884,7 @@ class PrimativeFaimilyWithDefaultStreamProviderWidget extends StatelessWidget {
   final Widget Function(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<int> state,
+    AsyncValue<int> asyncValue,
     Widget? child,
   )? builder;
 
@@ -1959,7 +2911,7 @@ class PrimativeFaimilyWithDefaultStreamProviderWidget extends StatelessWidget {
                 if (result == null) {
                   Kimapp.instance.log(LoggerType.warning,
                       message:
-                          'No child provided for primativeFaimilyWithDefaultStreamProviderWidget. Empty SizedBox will be returned.');
+                          'No child provided for primativeFaimilyWithDefaultStreamProviderScope. Empty SizedBox will be returned.');
                   return const SizedBox.shrink();
                 }
                 return result;
@@ -1980,18 +2932,17 @@ class PrimativeFaimilyWithDefaultStreamProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderWidget(
+bool _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderScope(
     BuildContext context) {
   assert(() {
-    if (context.widget is! PrimativeFaimilyWithDefaultStreamProviderWidget &&
+    if (context.widget is! PrimativeFaimilyWithDefaultStreamProviderScope &&
         context.findAncestorWidgetOfExactType<
-                PrimativeFaimilyWithDefaultStreamProviderWidget>() ==
+                PrimativeFaimilyWithDefaultStreamProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary(
-            'No PrimativeFaimilyWithDefaultStreamProviderWidget found'),
+        ErrorSummary('No PrimativeFaimilyWithDefaultStreamProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a PrimativeFaimilyWithDefaultStreamProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a PrimativeFaimilyWithDefaultStreamProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -2027,9 +2978,44 @@ class _PrimativeFaimilyWithDefaultStreamParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the primativeFaimilyWithDefaultStream state.
+/// A widget that provides access to the family parameters of primativeFaimilyWithDefaultStreamProvider.
 ///
-/// This widget requires a [PrimativeFaimilyWithDefaultStreamProviderWidget] ancestor
+/// This widget requires a [PrimativeFaimilyWithDefaultStreamProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [PrimativeFaimilyWithDefaultStreamProviderScope] - The required provider wrapper widget
+/// * [PrimativeFaimilyWithDefaultStreamStateWidget] - For state access
+class PrimativeFaimilyWithDefaultStreamParamWidget extends ConsumerWidget {
+  const PrimativeFaimilyWithDefaultStreamParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(BuildContext context, WidgetRef ref,
+      ({int family, int second}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderScope(context);
+
+    final params =
+        _PrimativeFaimilyWithDefaultStreamParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family, second: params.second),
+    );
+  }
+}
+
+/// A widget that provides direct access to the primativeFaimilyWithDefaultStreamProvider state.
+///
+/// This widget requires a [PrimativeFaimilyWithDefaultStreamProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -2064,7 +3050,7 @@ class PrimativeFaimilyWithDefaultStreamStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderScope(context);
 
     final params = _PrimativeFaimilyWithDefaultStreamParamsProvider.of(context);
     final state = ref
@@ -2081,38 +3067,54 @@ class PrimativeFaimilyWithDefaultStreamStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primativeFaimilyWithDefaultStream state.
+/// A widget that provides optimized access to selected state data from primativeFaimilyWithDefaultStreamProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeFaimilyWithDefaultStreamSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeFaimilyWithDefaultStreamProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeFaimilyWithDefaultStreamProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeFaimilyWithDefaultStreamStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// PrimativeFaimilyWithDefaultStreamSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeFaimilyWithDefaultStreamProviderWidget] - The required provider widget
+/// * [PrimativeFaimilyWithDefaultStreamProviderScope] - The required provider wrapper widget
 /// * [PrimativeFaimilyWithDefaultStreamStateWidget] - For direct state access
-class PrimativeFaimilyWithDefaultStreamStateSelectWidget<Selected>
+class PrimativeFaimilyWithDefaultStreamSelectWidget<Selected>
     extends ConsumerWidget {
-  const PrimativeFaimilyWithDefaultStreamStateSelectWidget({
+  const PrimativeFaimilyWithDefaultStreamSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -2126,7 +3128,7 @@ class PrimativeFaimilyWithDefaultStreamStateSelectWidget<Selected>
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyWithDefaultStreamProviderScope(context);
 
     final params = _PrimativeFaimilyWithDefaultStreamParamsProvider.of(context);
     final selected = ref.watch(
@@ -2145,32 +3147,63 @@ class PrimativeFaimilyWithDefaultStreamStateSelectWidget<Selected>
   }
 }
 
-/// A widget that provides access to the state of primativeFaimilyOptional.
+/// A widget that provides a scoped access point for primativeFaimilyOptionalProvider state management.
 ///
-/// This widget serves as a provider for state management and must be an ancestor
-/// of any widgets that need to access the state. It offers flexible state handling
-/// through various callback options:
+/// This widget must be placed above any widgets that need to access the state. It provides
+/// multiple ways to handle state rendering through various callback options.
 ///
-/// * [builder] - A callback that provides complete control over widget building
-/// * [child] - A default widget to display when no specific builder logic is needed
+/// Key Features:
+/// * Centralized state management and dependency injection
+/// * Multiple rendering options through different callbacks
+/// * Automatic error and loading state handling for async providers
+/// * Theme-aware default loading and error states
+///
+/// Available Callbacks:
+/// * [builder] - Full control over rendering with access to context, ref, AsyncValue<T>, and child.
+///   When provided, other callbacks ([loading], [error], [data]) are ignored and you must
+///   manually handle the async states using asyncValue.when()
+/// * [child] - Simple widget to display when no complex building logic is needed
 
 ///
-/// Example usage:
+/// Simple Usage:
 /// ```dart
-/// PrimativeFaimilyOptionalProviderWidget(
-///   family: family,
-///   builder: (context, ref, state, child) {
-///     return Text(state.toString());
+/// PrimativeFaimilyOptionalProviderScope(
+///   family: int?Value,
+///   child: const YourWidget(),
+/// )
+/// ```
+///
+/// Advanced Usage with Builder:
+/// ```dart
+/// PrimativeFaimilyOptionalProviderScope(
+///   family: int?Value,
+///   builder: (context, ref, asyncValue, child) {
+///     // Manual handling of async states
+///     return asyncValue.when(
+///       data: (data) => Text(data),
+///       loading: () => const CircularProgressIndicator(),
+///       error: (error, stack) => Text('Error: $error'),
+///     );
 ///   },
-///   child: const Text('Default Content'),
+/// )
+/// ```
+///
+/// Advanced Usage with State Handlers:
+/// ```dart
+/// PrimativeFaimilyOptionalProviderScope(
+///   family: int?Value,
+///   loading: () => const CustomLoadingIndicator(),
+///   error: (error, stack) => CustomErrorWidget(error: error),
+///   data: (data) => DataDisplay(data: data),
 /// )
 /// ```
 ///
 /// See also:
 /// * [PrimativeFaimilyOptionalStateWidget] - For direct state access
-/// * [PrimativeFaimilyOptionalStateSelectWidget] - For optimized state selection
-class PrimativeFaimilyOptionalProviderWidget extends StatelessWidget {
-  const PrimativeFaimilyOptionalProviderWidget({
+/// * [PrimativeFaimilyOptionalSelectWidget] - For optimized state selection
+/// * [PrimativeFaimilyOptionalParamWidget] - For family parameter access
+class PrimativeFaimilyOptionalProviderScope extends StatelessWidget {
+  const PrimativeFaimilyOptionalProviderScope({
     super.key,
     this.family,
     this.child,
@@ -2206,17 +3239,16 @@ class PrimativeFaimilyOptionalProviderWidget extends StatelessWidget {
   }
 }
 
-bool _debugCheckHasPrimativeFaimilyOptionalProviderWidget(
-    BuildContext context) {
+bool _debugCheckHasPrimativeFaimilyOptionalProviderScope(BuildContext context) {
   assert(() {
-    if (context.widget is! PrimativeFaimilyOptionalProviderWidget &&
+    if (context.widget is! PrimativeFaimilyOptionalProviderScope &&
         context.findAncestorWidgetOfExactType<
-                PrimativeFaimilyOptionalProviderWidget>() ==
+                PrimativeFaimilyOptionalProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No PrimativeFaimilyOptionalProviderWidget found'),
+        ErrorSummary('No PrimativeFaimilyOptionalProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a PrimativeFaimilyOptionalProviderWidget widget ancestor.',
+          '${context.widget.runtimeType} widgets require a PrimativeFaimilyOptionalProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -2248,9 +3280,43 @@ class _PrimativeFaimilyOptionalParamsProvider extends InheritedWidget {
   }
 }
 
-/// A widget that provides direct access to the primativeFaimilyOptional state.
+/// A widget that provides access to the family parameters of primativeFaimilyOptionalProvider.
 ///
-/// This widget requires a [PrimativeFaimilyOptionalProviderWidget] ancestor
+/// This widget requires a [PrimativeFaimilyOptionalProviderScope] ancestor
+/// and provides access to the family parameters through a builder callback.
+///
+/// Key features:
+/// * Access to all family parameters through a single record
+/// * Type-safe parameter handling
+/// * Automatic parameter updates when the provider changes
+/// See also:
+/// * [PrimativeFaimilyOptionalProviderScope] - The required provider wrapper widget
+/// * [PrimativeFaimilyOptionalStateWidget] - For state access
+class PrimativeFaimilyOptionalParamWidget extends ConsumerWidget {
+  const PrimativeFaimilyOptionalParamWidget({
+    super.key,
+    required this.builder,
+  });
+
+  final Widget Function(
+      BuildContext context, WidgetRef ref, ({int? family}) params) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasPrimativeFaimilyOptionalProviderScope(context);
+
+    final params = _PrimativeFaimilyOptionalParamsProvider.of(context)!;
+    return builder(
+      context,
+      ref,
+      (family: params.family),
+    );
+  }
+}
+
+/// A widget that provides direct access to the primativeFaimilyOptionalProvider state.
+///
+/// This widget requires a [PrimativeFaimilyOptionalProviderScope] ancestor
 /// and provides a more streamlined way to build UI based on the current state.
 /// Unlike the provider widget, this widget assumes the state is available and
 /// ready to use.
@@ -2285,7 +3351,7 @@ class PrimativeFaimilyOptionalStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyOptionalProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyOptionalProviderScope(context);
 
     final params = _PrimativeFaimilyOptionalParamsProvider.of(context);
     final state =
@@ -2300,38 +3366,53 @@ class PrimativeFaimilyOptionalStateWidget extends ConsumerWidget {
   }
 }
 
-/// A widget that provides optimized access to a selected portion of the primativeFaimilyOptional state.
+/// A widget that provides optimized access to selected state data from primativeFaimilyOptionalProvider.
 ///
-/// This widget enables efficient state management by:
-/// * Selecting and watching specific parts of the state using [selector]
-/// * Rebuilding only when the selected value changes
-/// * Providing type-safe access to the selected state portion
+/// This widget helps improve performance by:
+/// * Only rebuilding when the selected data changes
+/// * Allowing fine-grained control over what parts of the state to watch
+/// * Providing type-safe access to selected state portions
 ///
-/// Key benefits:
-/// * Improved performance through selective rebuilds
-/// * Clean separation of state selection and UI logic
-/// * Type-safe state handling with generics support
+/// Example:
+/// ```dart
+/// // Select and watch only the user's name from a larger user state
+/// PrimativeFaimilyOptionalSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
+///   },
+/// )
+/// ```
 ///
-/// Note: Requires a [PrimativeFaimilyOptionalProviderWidget] ancestor to function.
+/// Performance Benefits:
+/// * Minimizes unnecessary rebuilds
+/// * Reduces memory usage by watching only needed data
+/// * Improves app responsiveness
+///
+/// Best Practices:
+/// * Keep selectors simple and focused
+/// * Use for frequently changing state
+/// * Consider caching complex selections
+///
+/// Note: Requires [PrimativeFaimilyOptionalProviderScope] ancestor.
 ///
 /// Family parameters are automatically inherited from the provider ancestor.
 ///
 /// Example usage:
 /// ```dart
-/// PrimativeFaimilyOptionalStateSelectWidget<String>(
-///   selector: (state) => state.specificField,
-///   builder: (context, ref, params, selected, child) {
-///     return Text(selected);
+/// PrimativeFaimilyOptionalSelectWidget<String>(
+///   selector: (state) => state.userName,
+///   builder: (context, ref, params, userName, child) {
+///     return Text(userName);
 ///   },
 /// )
 /// ```
 ///
 /// See also:
-/// * [PrimativeFaimilyOptionalProviderWidget] - The required provider widget
+/// * [PrimativeFaimilyOptionalProviderScope] - The required provider wrapper widget
 /// * [PrimativeFaimilyOptionalStateWidget] - For direct state access
-class PrimativeFaimilyOptionalStateSelectWidget<Selected>
-    extends ConsumerWidget {
-  const PrimativeFaimilyOptionalStateSelectWidget({
+class PrimativeFaimilyOptionalSelectWidget<Selected> extends ConsumerWidget {
+  const PrimativeFaimilyOptionalSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -2345,7 +3426,7 @@ class PrimativeFaimilyOptionalStateSelectWidget<Selected>
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasPrimativeFaimilyOptionalProviderWidget(context);
+    _debugCheckHasPrimativeFaimilyOptionalProviderScope(context);
 
     final params = _PrimativeFaimilyOptionalParamsProvider.of(context);
     final selected = ref.watch(
@@ -3283,6 +4364,152 @@ class _PrimativeFaimilyOptionalProviderElement
 
   @override
   int? get family => (origin as PrimativeFaimilyOptionalProvider).family;
+}
+
+String _$productDetailHash() => r'fcfe71feb116510cc34a9a7d8c27dd073ec4afc1';
+
+abstract class _$ProductDetail
+    extends BuildlessAutoDisposeAsyncNotifier<String> {
+  late final int productId;
+
+  FutureOr<String> build(
+    int productId,
+  );
+}
+
+/// See also [ProductDetail].
+@ProviderFor(ProductDetail)
+const productDetailProvider = ProductDetailFamily();
+
+/// See also [ProductDetail].
+class ProductDetailFamily extends Family<AsyncValue<String>> {
+  /// See also [ProductDetail].
+  const ProductDetailFamily();
+
+  /// See also [ProductDetail].
+  ProductDetailProvider call(
+    int productId,
+  ) {
+    return ProductDetailProvider(
+      productId,
+    );
+  }
+
+  @override
+  ProductDetailProvider getProviderOverride(
+    covariant ProductDetailProvider provider,
+  ) {
+    return call(
+      provider.productId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'productDetailProvider';
+}
+
+/// See also [ProductDetail].
+class ProductDetailProvider
+    extends AutoDisposeAsyncNotifierProviderImpl<ProductDetail, String> {
+  /// See also [ProductDetail].
+  ProductDetailProvider(
+    int productId,
+  ) : this._internal(
+          () => ProductDetail()..productId = productId,
+          from: productDetailProvider,
+          name: r'productDetailProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$productDetailHash,
+          dependencies: ProductDetailFamily._dependencies,
+          allTransitiveDependencies:
+              ProductDetailFamily._allTransitiveDependencies,
+          productId: productId,
+        );
+
+  ProductDetailProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.productId,
+  }) : super.internal();
+
+  final int productId;
+
+  @override
+  FutureOr<String> runNotifierBuild(
+    covariant ProductDetail notifier,
+  ) {
+    return notifier.build(
+      productId,
+    );
+  }
+
+  @override
+  Override overrideWith(ProductDetail Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ProductDetailProvider._internal(
+        () => create()..productId = productId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        productId: productId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeAsyncNotifierProviderElement<ProductDetail, String>
+      createElement() {
+    return _ProductDetailProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ProductDetailProvider && other.productId == productId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, productId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ProductDetailRef on AutoDisposeAsyncNotifierProviderRef<String> {
+  /// The parameter `productId` of this provider.
+  int get productId;
+}
+
+class _ProductDetailProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<ProductDetail, String>
+    with ProductDetailRef {
+  _ProductDetailProviderElement(super.provider);
+
+  @override
+  int get productId => (origin as ProductDetailProvider).productId;
 }
 
 String _$primativeClassHash() => r'e8b8bdfa63667d03d32d32daac4603361225e35e';
