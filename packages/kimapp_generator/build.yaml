@@ -13,7 +13,8 @@ builders:
       - json_serializable|json_serializable
       - riverpod_generator|riverpod_generator
       - auto_route_generator|auto_route_generator
-
+      - auto_route_generator|auto_router_generator
+      
   kimapp_table_generator:
     import: "package:kimapp_generator/builder.dart"
     builder_factories: ["kimappTableGenerator"]
@@ -27,6 +28,7 @@ builders:
       - json_serializable|json_serializable
       - riverpod_generator|riverpod_generator
       - auto_route_generator|auto_route_generator
+      - auto_route_generator|auto_router_generator
 
   kimapp_state_widget_generator:
     import: "package:kimapp_generator/builder.dart"
