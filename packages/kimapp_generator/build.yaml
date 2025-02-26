@@ -54,3 +54,11 @@ builders:
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+
+  kimapp_form_v2_generator:
+    import: "package:kimapp_generator/builder.dart"
+    builder_factories: ["kimappFormV2Generator"]
+    build_extensions: {".dart": ["kimapp_form_v2_generator.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
