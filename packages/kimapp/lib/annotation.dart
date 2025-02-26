@@ -27,7 +27,7 @@ class TableStructure {
   /// ```
   ///
   /// [DataType] specifies the data type of the column.
-  /// 
+  ///
   /// To generate additional classes, add [...] at the end with the DataType and class indices.
   ///
   /// Example:
@@ -35,7 +35,7 @@ class TableStructure {
   /// ```dart
   ///  additionalClasses: ['CreateUserParam', 'UpdateUserParam']
   /// ```
-  /// 
+  ///
   /// Then define columns:
   /// ```dart
   ///  columns: ['first_name:String[0,1]', 'last_name:String[0,1]']
@@ -55,7 +55,7 @@ class TableStructure {
   /// The values 0,1 are indices of the additional classes.
   final List<String> columns;
 
-    /// Specifies custom types to be used in the generated classes.
+  /// Specifies custom types to be used in the generated classes.
   ///
   /// This is required when you want to use custom types in the generated classes.
   /// It ensures correct imports and type usage in the generated code.
@@ -76,7 +76,7 @@ class TableStructure {
   final List<Type> customTypes;
 
   /// Whether to generate a raw class or not.
-  /// 
+  ///
   /// If true, it will generate a raw class with all columns that have a DataType specified.
   /// Default is false.
   final bool generateRawClass;
@@ -116,40 +116,40 @@ class TableStructure {
   /// ```dart
   ///  additionalClasses: ['CreateUserParam', 'UpdateUserParam']
   /// ```
-  /// 
+  ///
   /// The fields of each generated class will be affected by how you define [columns].
   /// The structure and types of the generated classes will correspond to the column definitions.
-  /// 
+  ///
   /// You can generate a [TableModel] for a class by appending `:table` to the class name.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// additionalClasses: ['UserLiteModel:table']
   /// ```
-  /// 
+  ///
   /// This generates a table class. See [TableModel] for more details.
-  /// 
+  ///
   /// To specify a custom table name, use `:table(tableName)`:
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// additionalClasses: ['UserLiteModel:table(users_tbl)']
   /// ```
-  /// 
+  ///
   /// You can also define custom columns for each additional class using square brackets [...].
   /// The format for custom columns is `ColumnName:DataType`, similar to [columns].
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// additionalClasses: [
-  ///   'CreateUserParam[firstName:String,lastName:String]', 
+  ///   'CreateUserParam[firstName:String,lastName:String]',
   ///   'UpdateUserParam:table[id:int,name:String]'
   /// ]
   /// ```
-  /// 
+  ///
   /// Note: Non-PascalCase column names will be converted to PascalCase for property names,
   /// while preserving the original name in the `@JsonKey` annotation.
-  /// 
+  ///
   /// You can define joined columns for additional classes by adding parentheses
   /// after the column's data type, specifying the foreign key.
   /// This feature is only available when using `:table` for the additional class.
@@ -200,12 +200,23 @@ class JoinedColumn {
 }
 
 /// Annotation to generate a form widget and handle state with ease.
+/// This is the old form annotation. consider using [KimappFormV2] instead. This just for backward compatibility.
 class KimappForm {
   const KimappForm();
 }
 
 /// Constant instance of KimappForm for easy use in annotations.
+/// This is just for backward compatibility. consider using [kimappFormV2] instead.
 const kimappForm = KimappForm();
+
+/// Annotation to generate a form widget and handle state with ease.
+/// This is the new form annotation.
+class KimappFormV2 {
+  const KimappFormV2();
+}
+
+/// Constant instance of KimappFormV2 for easy use in annotations.
+const kimappFormV2 = KimappFormV2();
 
 /// Annotation to generate a widget with ease.
 /// Uses Riverpod selector and generates all widgets from the given return type.
