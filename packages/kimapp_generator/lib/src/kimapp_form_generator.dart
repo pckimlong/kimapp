@@ -305,10 +305,16 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
     final notifier = ref.watch($providerNameFamily.notifier);
     final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
     ${useTextField ? """
-      final textController = controller ?? useTextEditingController(text: state);
+      final textController = controller ?? useTextEditingController(text: ${fieldType == "String?" ? "state ?? ''" : "state"});
       useEffect(
         () {
-          void listener() => $callEvent(${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"});
+          void listener() {
+            final newText = ${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"};
+            // Only update if the values actually differ to prevent loops
+            if (state != newText) {
+              $callEvent(newText);
+            }
+          }
           textController.addListener(listener);
           return () => textController.removeListener(listener);
         },
@@ -317,7 +323,12 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
 
       useEffect(() {
         if (state != textController.text) {
-          textController.text = ${fieldType == "String?" ? "state ?? ''" : "state"};
+          // Preserve cursor position when updating text
+          final selection = textController.selection;
+          textController.value = TextEditingValue(
+            text: ${fieldType == "String?" ? "state ?? ''" : "state"},
+            selection: selection,
+          );
         }
         return null;
       }, [state]);
@@ -455,11 +466,11 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
   ${callMethod.getDisplayString(withNullability: true).replaceAll(callMethod.name, 'Function')} submit,
 );
 
-/// Base form widget for [$providerClassName] provider
-/// 
-/// It required to add this as parent widget of fields widget if [$providerClassName] is a family provider 
-/// , otherwise it's optional
 class ${providerClassName}FormWidget extends HookConsumerWidget {
+  /// Base form widget for [$providerClassName] provider
+  /// 
+  /// It required to add this as parent widget of fields widget if [$providerClassName] is a family provider 
+  /// , otherwise it's optional
   const ${providerClassName}FormWidget({
     super.key,
     ${useFormWidget ? """this.formKey,
