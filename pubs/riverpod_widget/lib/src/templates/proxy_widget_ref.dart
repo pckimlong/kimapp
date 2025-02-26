@@ -1,6 +1,6 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:riverpod_widget_generator/src/templates/comment_generator.dart';
-import 'package:riverpod_widget_generator/src/utils.dart';
+import 'package:riverpod_widget/src/templates/comment_generator.dart';
+import 'package:riverpod_widget/src/utils.dart';
 
 String baseProxyWidgetRef(
   String baseName, {
@@ -10,7 +10,6 @@ String baseProxyWidgetRef(
   CommentGenerator? classComment,
 }) {
   final name = '_${baseName}ProxyWidgetRef';
-  final providerName = '${baseName}Provider';
 
   return Class(
     (b) =>

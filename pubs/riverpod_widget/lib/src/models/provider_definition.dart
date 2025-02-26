@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:analyzer/dart/element/element.dart';
-import 'package:riverpod_widget_generator/src/models/provider_return_type_definition.dart';
+import 'package:recase/recase.dart';
+import 'package:riverpod_widget/src/models/provider_return_type_definition.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'method_definition.dart';
@@ -22,6 +23,10 @@ class ProviderDefinition {
   final List<String> dependencies;
   final Map<String, List<String>> genericParameters;
 
+  bool get hasNotifier => providerType == ProviderType.classBased;
+  bool get hasFamily => familyParameters.isNotEmpty;
+  bool get isAsyncValue => ['Future', 'Stream'].contains(returnType.wrapperType);
+
   ProviderDefinition({
     required this.baseName,
     required this.providerName,
@@ -39,7 +44,7 @@ class ProviderDefinition {
     try {
       final isClass = element is ClassElement;
       final baseName = element.name!;
-      final providerName = '${baseName}Provider';
+      final providerName = '${baseName}Provider'.camelCase;
       final modifiers = _parseModifiers(element);
       final dependencies = _parseDependencies(element);
       final genericParams = _parseGenericParameters(element);
@@ -152,5 +157,19 @@ class ProviderDefinition {
       'dependencies': dependencies,
       'genericParameters': genericParameters,
     };
+  }
+
+  /// Already handle family For use by wrapped with read, watch etc
+  /// [prefix] refer to how it relate to eg param.familyField1, param.familyField2
+  String providerNameWithFamily({String prefix = ''}) {
+    if (familyParameters.isEmpty) {
+      return providerName;
+    }
+
+    return '$providerName()';
+  }
+
+  String readNotifierString({String ref = 'ref'}) {
+    return '$ref.read(${providerNameWithFamily()}.notifier)';
   }
 }
