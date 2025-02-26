@@ -1,6 +1,6 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:riverpod_widget_generator/src/templates/comment_generator.dart';
-import 'package:riverpod_widget_generator/src/utils.dart';
+import 'package:riverpod_widget/src/templates/comment_generator.dart';
+import 'package:riverpod_widget/src/utils.dart';
 
 String subProxyWidget(
   String name, {

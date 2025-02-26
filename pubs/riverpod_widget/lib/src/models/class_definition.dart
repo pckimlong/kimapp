@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
-import 'package:riverpod_widget_generator/src/models/field_definition.dart';
-import 'package:riverpod_widget_generator/src/models/method_definition.dart';
+import 'package:riverpod_widget/src/models/field_definition.dart';
+import 'package:riverpod_widget/src/models/method_definition.dart';
 
 /// Configuration options for class parsing behavior.
 class ClassParserOptions {
