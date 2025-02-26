@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:riverpod_widget_generator/riverpod_widget_generator.dart';
+import 'package:riverpod_widget/riverpod_widget.dart';
 
 part 'main.freezed.dart';
 part 'main.g.dart';
@@ -21,9 +19,7 @@ class AnimalModel with _$AnimalModel {
 @riverpod
 class Animal extends _$Animal {
   @override
-  Future<AnimalModel> build({
-    required int age,
-  }) async {
-    return AnimalModel(name: 'Dog', age: age);
+  Future<AnimalModel> build() async {
+    return const AnimalModel(name: 'Dog', age: 1);
   }
 }

@@ -2,7 +2,7 @@
 // ignore_for_file: unintended_html_in_doc_comment
 
 import 'package:analyzer/dart/element/type.dart';
-import 'package:riverpod_widget_generator/src/models/class_definition.dart';
+import 'package:riverpod_widget/src/models/class_definition.dart';
 
 class ProviderReturnTypeDefinition {
   final String rawType;
