@@ -23,6 +23,8 @@ class ProviderReturnTypeDefinition {
     required this.classInfo,
   });
 
+  String get baseTypeNonNullable => baseType.replaceAll('?', '');
+
   factory ProviderReturnTypeDefinition.parse(DartType type, {bool parseClassInfo = false}) {
     final isGeneric = type is ParameterizedType && type.typeArguments.isNotEmpty;
     String baseType = type.toString();

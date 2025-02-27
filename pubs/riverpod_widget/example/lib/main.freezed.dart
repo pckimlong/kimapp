@@ -16,8 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AnimalModel {
+  int? get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
 
   /// Create a copy of AnimalModel
   /// with the given fields replaced by the non-null parameter values.
@@ -32,7 +34,7 @@ abstract class $AnimalModelCopyWith<$Res> {
           AnimalModel value, $Res Function(AnimalModel) then) =
       _$AnimalModelCopyWithImpl<$Res, AnimalModel>;
   @useResult
-  $Res call({String name, int age});
+  $Res call({int? id, String name, int age, String? description});
 }
 
 /// @nodoc
@@ -50,10 +52,16 @@ class _$AnimalModelCopyWithImpl<$Res, $Val extends AnimalModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = freezed,
     Object? name = null,
     Object? age = null,
+    Object? description = freezed,
   }) {
     return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -62,6 +70,10 @@ class _$AnimalModelCopyWithImpl<$Res, $Val extends AnimalModel>
           ? _value.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -74,7 +86,7 @@ abstract class _$$AnimalModelImplCopyWith<$Res>
       __$$AnimalModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, int age});
+  $Res call({int? id, String name, int age, String? description});
 }
 
 /// @nodoc
@@ -90,10 +102,16 @@ class __$$AnimalModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = freezed,
     Object? name = null,
     Object? age = null,
+    Object? description = freezed,
   }) {
     return _then(_$AnimalModelImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -102,6 +120,10 @@ class __$$AnimalModelImplCopyWithImpl<$Res>
           ? _value.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -109,16 +131,22 @@ class __$$AnimalModelImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AnimalModelImpl extends _AnimalModel {
-  const _$AnimalModelImpl({required this.name, required this.age}) : super._();
+  const _$AnimalModelImpl(
+      {this.id, required this.name, required this.age, this.description})
+      : super._();
 
+  @override
+  final int? id;
   @override
   final String name;
   @override
   final int age;
+  @override
+  final String? description;
 
   @override
   String toString() {
-    return 'AnimalModel(name: $name, age: $age)';
+    return 'AnimalModel(id: $id, name: $name, age: $age, description: $description)';
   }
 
   @override
@@ -126,12 +154,15 @@ class _$AnimalModelImpl extends _AnimalModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AnimalModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.age, age) || other.age == age));
+            (identical(other.age, age) || other.age == age) &&
+            (identical(other.description, description) ||
+                other.description == description));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, age);
+  int get hashCode => Object.hash(runtimeType, id, name, age, description);
 
   /// Create a copy of AnimalModel
   /// with the given fields replaced by the non-null parameter values.
@@ -144,13 +175,20 @@ class _$AnimalModelImpl extends _AnimalModel {
 
 abstract class _AnimalModel extends AnimalModel {
   const factory _AnimalModel(
-      {required final String name, required final int age}) = _$AnimalModelImpl;
+      {final int? id,
+      required final String name,
+      required final int age,
+      final String? description}) = _$AnimalModelImpl;
   const _AnimalModel._() : super._();
 
+  @override
+  int? get id;
   @override
   String get name;
   @override
   int get age;
+  @override
+  String? get description;
 
   /// Create a copy of AnimalModel
   /// with the given fields replaced by the non-null parameter values.

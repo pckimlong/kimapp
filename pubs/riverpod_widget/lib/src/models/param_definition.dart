@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:riverpod_widget/src/templates/utils.dart';
 
 class ParamDefinition {
   final String name;
@@ -42,6 +43,17 @@ class ParamDefinition {
       defaultValue: parameter.defaultValueCode,
       annotations: parameter.metadata.map((m) => m.toSource()).toList(),
       documentation: parameter.documentationComment,
+    );
+  }
+
+  ClassField toClassField({bool isFinal = true}) {
+    return ClassField(
+      name: name,
+      type: type,
+      isRequired: isRequired,
+      defaultValue: defaultValue,
+      comment: [if (documentation != null) documentation!],
+      isFinal: isFinal,
     );
   }
 }
