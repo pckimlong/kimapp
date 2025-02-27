@@ -159,6 +159,34 @@ class ProviderDefinition {
     };
   }
 
+  String get familyAsRecordType {
+    if (familyParameters.isEmpty) {
+      return '';
+    }
+
+    return '({${familyParameters.map((p) => '${p.type} ${p.name}').join(', ')}})';
+  }
+
+  String familyAsRecordBindString({String prefix = ''}) {
+    if (familyParameters.isEmpty) {
+      return '';
+    }
+
+    return '(${familyParameters.map((p) => '${p.name} : ${prefix.isEmpty ? '' : '$prefix.'}${p.name}').join(', ')})';
+  }
+
+  /// Combine param with optional prefix, separated by comma
+  /// param1 : {[prefix].}param1, param2 : {[prefix].}param2
+  String familyBindString({String prefix = ''}) {
+    if (familyParameters.isEmpty) {
+      return '';
+    }
+
+    return familyParameters
+        .map((p) => '${p.name} : ${prefix.isEmpty ? '' : '$prefix.'}${p.name}')
+        .join(', ');
+  }
+
   /// Already handle family For use by wrapped with read, watch etc
   /// [prefix] refer to how it relate to eg param.familyField1, param.familyField2
   String providerNameWithFamily({String prefix = ''}) {
@@ -166,10 +194,32 @@ class ProviderDefinition {
       return providerName;
     }
 
-    return '$providerName()';
+    return '$providerName(${familyBindString(prefix: prefix)})';
   }
 
   String readNotifierString({String ref = 'ref'}) {
     return '$ref.read(${providerNameWithFamily()}.notifier)';
+  }
+
+  /// Returns the provider's type, handling both synchronous and asynchronous cases
+  ///
+  /// For asynchronous providers (Future/Stream), wraps the base type in AsyncValue:
+  /// - Future<int> becomes AsyncValue<int>
+  /// - Stream<String> becomes AsyncValue<String>
+  ///
+  /// For synchronous providers, returns the base type directly:
+  /// - int remains int
+  /// - String remains String
+  ///
+  /// If [name] is provided, appends it to create a type declaration:
+  /// - getProviderType(name: "value") with Future<int> returns "AsyncValue<int> value"
+  String getProviderType({String? name}) {
+    final type = isAsyncValue ? 'AsyncValue<${returnType.baseType}>' : returnType.baseType;
+
+    if (name != null) {
+      return '$type $name';
+    }
+
+    return type;
   }
 }

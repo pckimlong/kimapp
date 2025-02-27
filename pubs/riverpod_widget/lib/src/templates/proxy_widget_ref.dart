@@ -1,16 +1,11 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:riverpod_widget/src/templates/comment_generator.dart';
-import 'package:riverpod_widget/src/utils.dart';
 
-String baseProxyWidgetRef(
-  String baseName, {
-
-  bool hasNotifier = false,
+String generateBaseProxyWidgetRef(
+  String name, {
   List<Method> methods = const [],
   CommentGenerator? classComment,
 }) {
-  final name = '_${baseName}ProxyWidgetRef';
-
   return Class(
     (b) =>
         b
@@ -43,16 +38,6 @@ String baseProxyWidgetRef(
           )
           ..methods.addAll([
             ...methods,
-            if (hasNotifier)
-              Method(
-                (b) =>
-                    b
-                      ..name = 'state'
-                      ..returns = refer('State')
-                      ..annotations.add(refer('override'))
-                      ..lambda = true
-                      ..body = refer('_ref.state').code,
-              ),
             Method(
               (b) =>
                   b
@@ -241,5 +226,5 @@ String baseProxyWidgetRef(
                     ..body = refer('_ref.watch').call([refer('provider')]).code,
             ),
           ]),
-  ).toDart();
+  ).accept(DartEmitter()).toString();
 }
