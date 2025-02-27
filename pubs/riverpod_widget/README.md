@@ -11,29 +11,207 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages). 
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# Riverpod Widget
+
+A Flutter package for generating widgets with Riverpod integration.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Generate stateless widgets with Riverpod integration
+- Generate form widgets with Riverpod integration
+- Generate form update widgets with Riverpod integration
+- Extensible architecture for adding custom generators
 
-## Getting started
+## Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add the following to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  riverpod_widget: ^1.0.0
+
+dev_dependencies:
+  build_runner: ^2.4.0
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+### Basic Usage
+
+1. Add annotations to your classes:
 
 ```dart
-const like = 'sample';
+import 'package:riverpod_widget/riverpod_widget.dart';
+
+@stateWidget
+class MyState {
+  // Your state class
+}
+
+@formWidget
+class MyForm {
+  // Your form class
+}
+
+@formUpdateWidget
+class MyFormUpdate {
+  // Your form update class
+}
 ```
 
-## Additional information
+2. Run the build_runner to generate the widgets:
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+```bash
+flutter pub run build_runner build
+```
+
+3. Use the generated widgets in your app:
+
+```dart
+import 'my_state.widget.dart';
+
+// Use the generated widgets
+StateMyState();
+FormMyForm();
+FormUpdateMyFormUpdate();
+```
+
+## Creating Custom Generators
+
+The package is designed to be extensible, allowing you to create custom generators for your specific needs.
+
+### Step 1: Create a new annotation
+
+Create a new annotation class that extends `WidgetAnnotation`:
+
+```dart
+import 'package:meta/meta.dart';
+import 'package:meta/meta_meta.dart';
+import 'package:riverpod_widget/riverpod_widget.dart';
+
+@Target({TargetKind.classType, TargetKind.function})
+@sealed
+class MyCustomWidget extends WidgetAnnotation {
+  const MyCustomWidget();
+}
+
+const myCustomWidget = MyCustomWidget();
+```
+
+### Step 2: Create a new generator
+
+Create a new generator class that implements `WidgetGenerator`:
+
+```dart
+import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:riverpod_widget/riverpod_widget.dart';
+import 'package:source_gen/source_gen.dart';
+
+class MyCustomWidgetGenerator implements WidgetGenerator {
+  @override
+  final TypeChecker annotationTypeChecker = const TypeChecker.fromRuntime(MyCustomWidget);
+
+  @override
+  bool canProcess(Element element) {
+    return annotationTypeChecker.hasAnnotationOf(element);
+  }
+
+  @override
+  String generate(LibraryReader library, BuildStep buildStep) {
+    final buffer = StringBuffer();
+
+    for (var element in library.allElements) {
+      if (canProcess(element)) {
+        buffer.writeln(_generateWidget(element.displayName));
+      }
+    }
+
+    return buffer.toString();
+  }
+
+  @override
+  Future<String> generateForAnnotatedElement(
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) async {
+    if (element is! ClassElement) return '';
+    if (!canProcess(element)) return '';
+
+    return _generateWidget(element.displayName);
+  }
+
+  String _generateWidget(String baseName) {
+    final className = 'MyCustom$baseName';
+
+    final clazz = Class(
+      (b) =>
+          b
+            ..name = className
+            ..extend = refer('StatelessWidget')
+            ..methods.add(
+              Method(
+                (b) =>
+                    b
+                      ..name = 'build'
+                      ..returns = refer('Widget')
+                      ..requiredParameters.add(
+                        Parameter(
+                          (b) =>
+                              b
+                                ..name = 'context'
+                                ..type = refer('BuildContext'),
+                        ),
+                      )
+                      ..annotations.add(refer('override'))
+                      ..body = Code('return Container();'),
+              ),
+            ),
+    );
+
+    return clazz.accept(DartEmitter()).toString();
+  }
+  
+  @override
+  List<String> get requiredImports => [
+    'package:flutter/material.dart',
+  ];
+}
+```
+
+### Step 3: Register your generator
+
+Register your generator in the `builder.dart` file:
+
+```dart
+import 'package:build/build.dart';
+import 'package:riverpod_widget/src/core/generator_registry.dart';
+import 'package:riverpod_widget/src/core/unified_widget_builder.dart';
+import 'package:riverpod_widget/src/generators/form_update_widget/form_update_widget_generator.dart';
+import 'package:riverpod_widget/src/generators/form_widget/form_widget_generator.dart';
+import 'package:riverpod_widget/src/generators/state_widget/state_widget_generator.dart';
+import 'package:riverpod_widget/src/generators/my_custom_widget/my_custom_widget_generator.dart';
+
+void _initializeRegistry() {
+  final registry = GeneratorRegistry.instance;
+  
+  // Register all generators
+  registry.registerGenerator(StateWidgetGenerator());
+  registry.registerGenerator(FormWidgetGenerator());
+  registry.registerGenerator(FormUpdateWidgetGenerator());
+  
+  // Register your custom generator
+  registry.registerGenerator(MyCustomWidgetGenerator());
+}
+
+Builder riverpodWidgetGenerator(BuilderOptions options) {
+  _initializeRegistry();
+  return UnifiedWidgetBuilder();
+}
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

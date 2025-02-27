@@ -1,22 +1,22 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:riverpod_widget/src/templates/comment_generator.dart';
-import 'package:riverpod_widget/src/utils.dart';
 
-String subProxyWidget(
+String generateSubProxyWidget(
   String name, {
-  required String baseName,
-
+  required String parentName,
   List<Field> finalFields = const [],
+  List<Method> methods = const [],
   CommentGenerator? classComment,
+  String? generic,
 }) {
-  final parentName = '_${baseName}ProxyWidgetRef';
   return Class(
     (b) =>
         b
           ..docs.addAll([if (classComment != null) classComment.content])
-          ..name = name
+          ..name = name + (generic != null ? '<$generic>' : '')
           ..extend = refer(parentName)
           ..fields.addAll(finalFields)
+          ..methods.addAll(methods)
           ..constructors.add(
             Constructor(
               (b) =>
@@ -44,5 +44,5 @@ String subProxyWidget(
                     ),
             ),
           ),
-  ).toDart();
+  ).accept(DartEmitter()).toString();
 }

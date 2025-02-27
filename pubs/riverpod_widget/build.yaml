@@ -1,25 +1,11 @@
-targets:
-  $default:
-    builders:
-      freezed:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/models/**.dart
-      json_serializable:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/models/**.dart
-        options:
-          explicit_to_json: true
-
 builders:
-  riverpod_state_widget_generator:
+  riverpod_widget_generator:
     import: "package:riverpod_widget/builder.dart"
-    builder_factories: ["riverpodStateWidgetGenerator"]
-    build_extensions: {".dart": ["riverpod_state_widget_generator.g.part"]}
+    builder_factories: ["riverpodWidgetGenerator"]
+    build_extensions: {".dart": [".widget.dart"]}
     auto_apply: dependents
-    build_to: cache
-    required_inputs: [".freezed.dart"]
+    build_to: source
+    required_inputs:
+      - ".freezed.dart"
+      - ".g.dart"
     applies_builders: ["source_gen|combining_builder"]

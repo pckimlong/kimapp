@@ -28,3 +28,17 @@ class CommentGenerator {
     return '';
   }
 }
+
+extension CommentGeneratorExtension on CommentGenerator? {
+  String getContent() {
+    if (this == null) return '';
+
+    return this!.content;
+  }
+
+  String getMacroRef() {
+    if (this == null) return '';
+
+    return this!.macroRef;
+  }
+}
