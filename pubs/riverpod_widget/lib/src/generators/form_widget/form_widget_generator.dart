@@ -1,5 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+import 'package:riverpod_widget/src/models/provider_definition.dart';
+import 'package:riverpod_widget/src/templates/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../../riverpod_widget.dart';
@@ -23,12 +25,16 @@ class FormWidgetGenerator extends WidgetGenerator {
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    if (element is! ClassElement) return '';
+    final provider = ProviderDefinition.parse(element);
+    if (provider.providerType != ProviderType.classBased) {
+      throw InvalidGenerationSourceError(
+        'FormWidget annotation can only be applied to class-based providers.',
+        element: element,
+      );
+    }
 
-    return _generateWidget(element.displayName);
-  }
+    final buffer = StringBuffer();
 
-  String _generateWidget(String baseName) {
-    return '// TODO: Implement $baseName';
+    return returnContent(buffer, comment: false);
   }
 }

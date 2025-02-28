@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:code_builder/code_builder.dart';
 
 import 'param_definition.dart';
 
@@ -52,5 +53,20 @@ class MethodDefinition {
       documentation: getter.documentationComment,
       // body: getter.source.contents.data,
     );
+  }
+
+  List<Parameter> codeBuilderParams() {
+    return parameters.map((p) {
+      return Parameter(
+        (b) =>
+            b
+              ..required = p.isNamed ? p.isNamed : false
+              ..named = p.isNamed
+              ..name = p.name
+              ..docs.add(p.documentation ?? '')
+              ..type = refer(p.type)
+              ..defaultTo = p.defaultValue != null ? Code(p.defaultValue!) : null,
+      );
+    }).toList();
   }
 }
