@@ -72,7 +72,6 @@ class ClassDefinition {
     required this.fields,
     required this.methods,
     required this.constructors,
-    required this.isLibraryType,
     required this.copyWithMethod,
   });
 
@@ -97,11 +96,6 @@ class ClassDefinition {
   /// Method definition for the copyWith method
   final MethodDefinition? copyWithMethod;
 
-  /// Whether the class is a library type (e.g., List, Future, Stream)
-  ///
-  /// Library types are types that are not likely defined by the user
-  final bool isLibraryType;
-
   /// Parses a [DartType] into a [ClassDefinition] with the specified options.
   ///
   /// Returns null if the type is not a class.
@@ -110,6 +104,11 @@ class ClassDefinition {
     ClassParserOptions options = const ClassParserOptions(),
   }) {
     if (type.element is! ClassElement) {
+      return null;
+    }
+
+    // Ignore if it is a library type
+    if (_isLibraryType(type.element as ClassElement)) {
       return null;
     }
 
@@ -137,7 +136,6 @@ class ClassDefinition {
       constructors: constructors,
       parentTypes: parentTypes,
       copyWithMethod: methods['copyWith'],
-      isLibraryType: _isLibraryType(classElement),
     );
   }
 
@@ -145,7 +143,6 @@ class ClassDefinition {
     return <String, dynamic>{
       'name': name,
       'isFreezed': isFreezed,
-      'isLibraryType': isLibraryType,
       'parentTypes': parentTypes,
       'constructors': constructors,
       'fields': fields.map((x) => x.toMap()).toList(),
@@ -257,25 +254,25 @@ class ClassDefinition {
 
     final methods = <String, MethodDefinition?>{};
 
-    if (options.toParseMethods.isNotEmpty) {
-      // Get methods directly declared in the class
-      for (final method in element.methods.where((m) {
-        return (!m.isSynthetic || options.parseSyntheticFields) &&
-            (m.isPublic || options.parsePrivateFields) &&
-            (options.parseAllMethods || options.toParseMethods.contains(m.name));
-      })) {
-        methods[method.name] = MethodDefinition.parseMethod(method);
-      }
+    // Get methods directly declared in the class
+    for (final method in element.methods.where((m) {
+      return (!m.isSynthetic || options.parseSyntheticFields) &&
+              (m.isPublic || options.parsePrivateFields) &&
+              (options.parseAllMethods || options.toParseMethods.contains(m.name)) ||
+          (options.parseCopyWith && m.name == 'copyWith');
+    })) {
+      methods[method.name] = MethodDefinition.parseMethod(method);
+    }
 
-      // Get getters
-      for (final accessor in element.accessors.where((a) {
-        return a.isGetter &&
-            (!a.isSynthetic || options.parseSyntheticFields) &&
-            (a.isPublic || options.parsePrivateFields) &&
-            (options.parseAllMethods || options.toParseMethods.contains(a.name));
-      })) {
-        methods[accessor.name] = MethodDefinition.parseGetter(accessor);
-      }
+    // Get getters
+    for (final accessor in element.accessors.where((a) {
+      return a.isGetter &&
+              (!a.isSynthetic || options.parseSyntheticFields) &&
+              (a.isPublic || options.parsePrivateFields) &&
+              (options.parseAllMethods || options.toParseMethods.contains(a.name)) ||
+          (options.parseCopyWith && a.name == 'copyWith');
+    })) {
+      methods[accessor.name] = MethodDefinition.parseGetter(accessor);
     }
 
     if (_isFreezed(element as ClassElement)) {
@@ -296,7 +293,7 @@ class ClassDefinition {
       }
 
       // Also look for methods in the private mixin for completeness
-      var privateMixin =
+      final privateMixin =
           element.library.topLevelElements
               .whereType<MixinElement>()
               .where((e) => e.name.startsWith('_\$${element.name}'))
