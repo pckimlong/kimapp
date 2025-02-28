@@ -1,7 +1,5 @@
 // Example of using autoverpod package
 
-import 'package:autoverpod/autoverpod.dart';
-
 // Example of using the annotations
 void main() {
   print('Autoverpod Example');
@@ -10,9 +8,11 @@ void main() {
   // Here's how you would use them in your code:
 
   // @formWidget
+  // @riverpod
   // class UserForm { ... }
 
   // @stateWidget
+  // @riverpod
   // class UserProfile { ... }
 
   print('See the comments for usage examples');
