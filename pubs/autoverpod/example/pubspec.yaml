@@ -1,0 +1,11 @@
+name: autoverpod_example
+description: Example for the autoverpod package
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  autoverpod:
+    path: ../ 

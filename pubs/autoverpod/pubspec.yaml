@@ -1,0 +1,17 @@
+name: autoverpod
+description: Annotations for Riverpod widgets to simplify code generation and automate widget creation.
+version: 0.0.3
+repository: https://github.com/pckimlong/kimapp
+homepage: https://github.com/pckimlong/kimapp
+issue_tracker: https://github.com/pckimlong/kimapp/issues
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  meta: ^1.16.0
+  riverpod: ^2.6.1
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.24.0
