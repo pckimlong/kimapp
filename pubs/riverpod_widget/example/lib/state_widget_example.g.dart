@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'form_state_widget_example.dart';
+part of 'state_widget_example.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -22,20 +22,20 @@ final myNameProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MyNameRef = AutoDisposeProviderRef<String>;
-String _$myNameFormHash() => r'1716b6f912ed9a809236ca9415ea413f6819541e';
+String _$myNameAsyncHash() => r'bab30a25f88879e8b80825c6868b0b3cd53ca024';
 
-/// See also [MyNameForm].
-@ProviderFor(MyNameForm)
-final myNameFormProvider =
-    AutoDisposeAsyncNotifierProvider<MyNameForm, String>.internal(
-  MyNameForm.new,
-  name: r'myNameFormProvider',
+/// See also [MyNameAsync].
+@ProviderFor(MyNameAsync)
+final myNameAsyncProvider =
+    AutoDisposeAsyncNotifierProvider<MyNameAsync, String>.internal(
+  MyNameAsync.new,
+  name: r'myNameAsyncProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$myNameFormHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$myNameAsyncHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$MyNameForm = AutoDisposeAsyncNotifier<String>;
+typedef _$MyNameAsync = AutoDisposeAsyncNotifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1,10 +1,9 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
-// ignore: depend_on_referenced_packages
-import 'package:collection/collection.dart';
 import 'package:recase/recase.dart';
 import 'package:riverpod_widget/riverpod_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/form_widget_names.dart';
 import 'package:riverpod_widget/src/templates/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -36,7 +35,6 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
 
     // Generate the form provider abstraction
     buffer.writeln(_generateFormProviderAbstraction(provider));
-
     return returnContent(buffer, comment: false);
   }
 }
@@ -47,42 +45,61 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
 /// - Field update methods
 /// - Success/error handling
 String _generateFormProviderAbstraction(ProviderDefinition provider) {
-  final submitMethodInfo = _extractSubmitMethodInfo(provider);
+  final submitMethodInfo = provider.getSubmitMethodInfo();
   final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
   final updateMethods = _generateUpdateMethods(provider);
 
-  return Class(
-    (b) =>
-        b
-          ..name = '_\$${provider.baseName}Widget'
-          ..abstract = true
-          ..extend = refer('_\$${provider.baseName}')
-          ..fields.add(stateProviderInfo.statusProvider)
-          ..methods.addAll([
-            _generateOnSuccessMethod(submitMethodInfo.rawResultType),
-            _generateCallMethod(provider, submitMethodInfo, stateProviderInfo),
-            _generateInvalidateSelfMethod(),
-            _generateSubmitMethod(provider, submitMethodInfo),
-            ...updateMethods,
-          ]),
-  ).accept(DartEmitter()).toString();
-}
+  final proxyClass =
+      Class(
+        (b) =>
+            b
+              ..name = '_\$${provider.baseName}Widget'
+              ..abstract = true
+              ..extend = refer('_\$${provider.baseName}')
+              ..fields.add(stateProviderInfo.statusProvider)
+              ..methods.addAll([
+                _generateOnSuccessMethod(submitMethodInfo.rawResultType),
+                _generateCallMethod(provider, submitMethodInfo, stateProviderInfo),
+                _generateInvalidateSelfMethod(provider),
+                _generateSubmitMethod(provider, submitMethodInfo),
+                Method(
+                  (b) =>
+                      b
+                        ..name = 'updateState'
+                        ..returns = refer('void')
+                        ..docs.add(
+                          '/// Update the state of the form.\n'
+                          '/// This allow for more flexible to update specific fields.',
+                        )
+                        ..requiredParameters.add(
+                          Parameter(
+                            (b) =>
+                                b
+                                  ..name = 'update'
+                                  ..type = refer(
+                                    '${provider.returnType.baseType} Function(${provider.returnType.baseType} state)',
+                                  ),
+                          ),
+                        )
+                        ..lambda = true
+                        ..body = Code('state = state.whenData(update)'),
+                ),
+                ...updateMethods,
+              ]),
+      ).accept(DartEmitter()).toString();
 
-/// Contains information about the submit method
-class SubmitMethodInfo {
-  final String resultType;
-  final String rawResultType;
-  final String futureResultType;
-  final List<Parameter> namedParams;
-  final List<Parameter> positionalParams;
+  final callStatusDeclaration =
+      'StateProvider.autoDispose'
+      '${provider.hasFamily ? ".family" : ""}'
+      '<AsyncValue<${submitMethodInfo.rawResultType}>?'
+      '${provider.hasFamily ? ",${provider.familyAsRecordType}" : ""}>'
+      '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
 
-  SubmitMethodInfo({
-    required this.resultType,
-    required this.rawResultType,
-    required this.futureResultType,
-    required this.namedParams,
-    required this.positionalParams,
-  });
+  return '''
+final ${provider.callStatusProviderName} = $callStatusDeclaration;
+
+$proxyClass
+''';
 }
 
 /// Contains information about the state provider
@@ -99,25 +116,6 @@ class StateProviderInfo {
 }
 
 /// Extracts information about the submit method
-SubmitMethodInfo _extractSubmitMethodInfo(ProviderDefinition provider) {
-  final submitMethod = provider.methods.firstWhereOrNull((m) => m.name == 'submit');
-  final resultType = submitMethod?.returnType ?? 'Future<void>';
-
-  final rawResultType =
-      resultType.contains('Future')
-          ? resultType.replaceFirst('Future<', '').replaceFirst('>', '')
-          : resultType;
-
-  final futureResultType = resultType.contains('Future') ? resultType : 'Future<$resultType>';
-
-  return SubmitMethodInfo(
-    resultType: resultType,
-    rawResultType: rawResultType,
-    futureResultType: futureResultType,
-    namedParams: submitMethod?.codeBuilderParams().where((p) => p.named).toList() ?? [],
-    positionalParams: submitMethod?.codeBuilderParams().where((p) => !p.named).toList() ?? [],
-  );
-}
 
 /// Generates state provider information
 StateProviderInfo _generateStateProviderInfo(
@@ -132,13 +130,13 @@ StateProviderInfo _generateStateProviderInfo(
       '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
 
   final readProvider =
-      "callStateProvider"
+      "${provider.callStatusProviderName}"
       "${provider.hasFamily ? "(${provider.familyAsRecordBindString()})" : ""}";
 
   final statusProvider = Field(
     (b) =>
         b
-          ..name = 'callStateProvider'
+          ..name = provider.callStatusProviderName
           ..static = true
           ..modifier = FieldModifier.final$
           ..assignment = Code(declaration),
@@ -298,23 +296,25 @@ Method _generateCallMethod(
           ..name = 'call'
           ..annotations.addAll([refer('protected'), refer('nonVirtual')])
           ..modifier = MethodModifier.async
-          ..returns = refer('Future<AsyncValue<${submitInfo.rawResultType}>>')
-          ..requiredParameters.addAll(submitInfo.positionalParams)
+          ..returns = refer(provider.callFunctionReturnType)
+          ..requiredParameters.addAll(
+            submitInfo.positionalParams.where((e) => e.name != 'state').toList(),
+          )
           ..optionalParameters.addAll(submitInfo.namedParams)
           ..body = Code('''
 $loadingCheck
 
-final callState = ref.read(${stateInfo.readProvider});
-final updateCallState = ref.read(${stateInfo.readProvider}.notifier);
+final _callStatus = ref.read(${stateInfo.readProvider});
+final _updateCallStatus = ref.read(${stateInfo.readProvider}.notifier);
 
     // If it's already loading, return loading
-if (callState?.isLoading == true) return const AsyncValue.loading();
+if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
-if (callState?.hasValue == true) {
-  return callState!;
+if (_callStatus?.hasValue == true) {
+  return _callStatus!;
 }
 
-updateCallState.state = const AsyncValue.loading();
+_updateCallStatus.state = const AsyncValue.loading();
 final result = await AsyncValue.guard(() async => await submit(
   ${submitInfo.positionalParams.map((e) {
             if (e.name == 'state') {
@@ -329,7 +329,7 @@ final result = await AsyncValue.guard(() async => await submit(
   ${submitInfo.namedParams.isNotEmpty ? "${submitInfo.positionalParams.isNotEmpty ? ',' : ''}${submitInfo.namedParams.map((e) => "${e.name}: ${e.name}").join(', ')}" : ""}
 ));
 
-updateCallState.state = result;
+_updateCallStatus.state = result;
 
 if (result.hasValue) {
   onSuccess(result.requireValue);
@@ -341,13 +341,15 @@ return result;
 }
 
 /// Generates the invalidateSelf method
-Method _generateInvalidateSelfMethod() {
+Method _generateInvalidateSelfMethod(ProviderDefinition provider) {
   return Method(
     (b) =>
         b
           ..name = 'invalidateSelf'
           ..returns = refer('void')
-          ..body = Code('ref.invalidate(callStateProvider);\nref.invalidateSelf();'),
+          ..body = Code(
+            'ref.invalidate(${provider.callStatusProviderName});\nref.invalidateSelf();',
+          ),
   );
 }
 

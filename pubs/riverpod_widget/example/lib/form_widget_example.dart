@@ -4,6 +4,7 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:example/form_widget_example.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -23,6 +24,8 @@ class UpdateUserModel with _$UpdateUserModel {
     @Default('') String name,
     int? age,
     String? email,
+    String? address,
+    String? phone,
   }) = _UpdateUserModel;
 
   /// Converts JSON map to [UpdateUserModel] instance.
@@ -43,6 +46,7 @@ class UserRepository {
 }
 
 /// Annotated with @formWidget and @riverpod
+// @stateWidget
 @formWidget
 @riverpod
 class UpdateUser extends _$UpdateUserWidget {
@@ -106,4 +110,68 @@ class UpdateUser extends _$UpdateUserWidget {
     /// Use this over ref.invalidateSelf()
     invalidateSelf();
   }
+}
+
+void main() {
+  runApp(
+    ProviderScope(
+      child: MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: const Text('Form Widget Example')),
+          body: UpdateUserFormScope(
+            id: 1,
+            builder: (context, ref, _) {
+              return Column(
+                children: [
+                  UpdateUserNameField(builder: (context, ref) {
+                    return TextFormField(controller: ref.textController);
+                  }),
+                  const SizedBox(height: 16),
+                  UpdateUserAgeField(builder: (context, ref) {
+                    return TextFormField(
+                      onChanged: (value) {
+                        ref.updateAge(int.tryParse(value));
+                      },
+                    );
+                  }),
+                  const SizedBox(height: 16),
+                  UpdateUserEmailField(builder: (context, ref) {
+                    return TextFormField(controller: ref.textController);
+                  }),
+                  const SizedBox(height: 16),
+                  UpdateUserAddressField(
+                    builder: (context, ref) {
+                      return TextFormField(controller: ref.textController);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  UpdateUserPhoneField(builder: (context, ref) {
+                    return TextFormField(controller: ref.textController);
+                  }),
+                  const SizedBox(height: 16),
+                  UpdateUserFormStatus(
+                    builder: (context, ref, status) {
+                      return TextButton(
+                        onPressed: () async {
+                          final result = await ref.submit(photoBytes: null);
+                          if (result.hasValue && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Saved'),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(status!.isLoading ? 'Saving...' : 'Save'),
+                      );
+                    },
+                  )
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    ),
+  );
 }
