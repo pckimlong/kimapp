@@ -1,0 +1,411 @@
+// **************************************************************************
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// **************************************************************************
+// ignore_for_file: type=lint, duplicate_import, unnecessary_import, unused_import, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+// coverage:ignore-file
+
+import 'package:example/form_state_widget_example.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kimapp_utils/kimapp_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:core';
+
+class _MyNameFormProxyWidgetRef extends WidgetRef {
+  _MyNameFormProxyWidgetRef(this._ref);
+
+  final WidgetRef _ref;
+
+  MyNameForm get notifier => _ref.read(myNameFormProvider.notifier);
+
+  @override
+  BuildContext get context => _ref.context;
+
+  @override
+  bool exists(ProviderBase<Object?> provider) => _ref.exists(provider);
+
+  @override
+  void invalidate(ProviderOrFamily provider) => _ref.invalidate(provider);
+
+  @override
+  void listen<T>(
+    ProviderListenable<T> provider,
+    void Function(T?, T) listener, {
+    void Function(Object, StackTrace)? onError,
+  }) => _ref.listen(provider, listener, onError: onError);
+
+  @override
+  ProviderSubscription<T> listenManual<T>(
+    ProviderListenable<T> provider,
+    void Function(T?, T) listener, {
+    void Function(Object, StackTrace)? onError,
+    bool fireImmediately = false,
+  }) => _ref.listenManual(
+    provider,
+    listener,
+    onError: onError,
+    fireImmediately: fireImmediately,
+  );
+
+  @override
+  T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
+
+  @override
+  State refresh<State>(Refreshable<State> provider) => _ref.refresh(provider);
+
+  @override
+  T watch<T>(ProviderListenable<T> provider) => _ref.watch(provider);
+}
+
+class MyNameFormProviderScope extends ConsumerWidget {
+  const MyNameFormProviderScope({
+    super.key,
+    this.loading,
+    this.error,
+    this.data,
+    this.builder,
+    this.child,
+    this.onStateChanged,
+  });
+
+  final Widget Function()? loading;
+  final Widget Function(Object error, StackTrace? stackTrace)? error;
+  final Widget Function(String data)? data;
+  final Widget Function(
+    BuildContext context,
+    _MyNameFormProxyWidgetRef ref,
+    AsyncValue<String> asyncValue,
+    Widget? child,
+  )?
+  builder;
+  final Widget? child;
+  final void Function(AsyncValue<String>? previous, AsyncValue<String> next)?
+  onStateChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (onStateChanged != null) {
+      ref.listen(myNameFormProvider, onStateChanged!);
+    }
+
+    return Consumer(
+      builder: (context, ref, child) {
+        final state = ref.watch(myNameFormProvider);
+
+        if (builder != null) {
+          return builder!(
+            context,
+            _MyNameFormProxyWidgetRef(ref),
+            state,
+            child,
+          );
+        }
+
+        final themeExtension =
+            Theme.of(context).extension<KimappThemeExtension>();
+        return state.when(
+          data: (data) {
+            final result = this.data?.call(data) ?? child;
+            if (result == null) {
+              debugPrint(
+                'No child provided for MyNameFormProviderScope. Empty SizedBox will be returned.',
+              );
+              return const SizedBox.shrink();
+            }
+            return result;
+          },
+          error:
+              (error, stack) =>
+                  this.error?.call(error, stack) ??
+                  themeExtension?.defaultErrorStateWidget?.call(
+                    context,
+                    ref,
+                    error,
+                  ) ??
+                  const SizedBox.shrink(),
+          loading:
+              () =>
+                  loading?.call() ??
+                  themeExtension?.defaultLoadingStateWidget?.call(
+                    context,
+                    ref,
+                  ) ??
+                  const SizedBox.shrink(),
+        );
+      },
+    );
+  }
+}
+
+bool _debugCheckHasMyNameFormProviderScope(BuildContext context) {
+  assert(() {
+    if (context.widget is! MyNameFormProviderScope &&
+        context.findAncestorWidgetOfExactType<MyNameFormProviderScope>() ==
+            null) {
+      throw FlutterError.fromParts(<DiagnosticsNode>[
+        ErrorSummary('No MyNameFormProviderScope found'),
+        ErrorDescription(
+          '${context.widget.runtimeType} widgets require a MyNameFormProviderScope widget ancestor.',
+        ),
+      ]);
+    }
+    return true;
+  }());
+  return true;
+}
+
+class _MyNameFormStateProxyWidgetRef extends _MyNameFormProxyWidgetRef {
+  _MyNameFormStateProxyWidgetRef(super._ref);
+
+  String get state => _ref.watch(myNameFormProvider).requireValue;
+
+  Selected select<Selected>(Selected Function(String) selector) => _ref.watch(
+    myNameFormProvider.select((value) => selector(value.requireValue)),
+  );
+}
+
+class MyNameFormStateWidget extends ConsumerWidget {
+  const MyNameFormStateWidget({
+    super.key,
+    required this.builder,
+    this.child,
+    this.onStateChanged,
+  });
+
+  /// The builder function that constructs the widget tree.
+  /// Access the state directly via ref.state, which is equivalent to ref.watch(myNameFormProvider)
+  ///
+  /// For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)
+  /// The ref parameter provides type-safe access to the provider state and notifier
+  final Widget Function(
+    BuildContext context,
+    _MyNameFormProxyWidgetRef ref,
+    Widget? child,
+  )
+  builder;
+  final Widget? child;
+  final void Function(String? previous, String? next)? onStateChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasMyNameFormProviderScope(context);
+
+    if (onStateChanged != null) {
+      ref.listen(myNameFormProvider, (pre, next) {
+        if (pre != next) onStateChanged!(pre?.valueOrNull, next.valueOrNull);
+      });
+    }
+    return builder(context, _MyNameFormStateProxyWidgetRef(ref), child);
+  }
+}
+
+class MyNameFormSelectWidget<Selected> extends ConsumerWidget {
+  const MyNameFormSelectWidget({
+    super.key,
+    required this.selector,
+    required this.builder,
+    this.onStateChanged,
+  });
+
+  final Selected Function(String state) selector;
+  final Widget Function(
+    BuildContext context,
+    _MyNameFormStateProxyWidgetRef ref,
+    Selected value,
+  )
+  builder;
+  final void Function(Selected? previous, Selected? next)? onStateChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasMyNameFormProviderScope(context);
+
+    if (onStateChanged != null) {
+      ref.listen(
+        myNameFormProvider.select((value) => selector(value.requireValue)),
+        (pre, next) {
+          if (pre != next) onStateChanged!(pre, next);
+        },
+      );
+    }
+    final stateRef = _MyNameFormStateProxyWidgetRef(ref);
+    return builder(context, stateRef, stateRef.select(selector));
+  }
+}
+
+class _MyNameProxyWidgetRef extends WidgetRef {
+  _MyNameProxyWidgetRef(this._ref);
+
+  final WidgetRef _ref;
+
+  @override
+  BuildContext get context => _ref.context;
+
+  @override
+  bool exists(ProviderBase<Object?> provider) => _ref.exists(provider);
+
+  @override
+  void invalidate(ProviderOrFamily provider) => _ref.invalidate(provider);
+
+  @override
+  void listen<T>(
+    ProviderListenable<T> provider,
+    void Function(T?, T) listener, {
+    void Function(Object, StackTrace)? onError,
+  }) => _ref.listen(provider, listener, onError: onError);
+
+  @override
+  ProviderSubscription<T> listenManual<T>(
+    ProviderListenable<T> provider,
+    void Function(T?, T) listener, {
+    void Function(Object, StackTrace)? onError,
+    bool fireImmediately = false,
+  }) => _ref.listenManual(
+    provider,
+    listener,
+    onError: onError,
+    fireImmediately: fireImmediately,
+  );
+
+  @override
+  T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
+
+  @override
+  State refresh<State>(Refreshable<State> provider) => _ref.refresh(provider);
+
+  @override
+  T watch<T>(ProviderListenable<T> provider) => _ref.watch(provider);
+}
+
+class MyNameProviderScope extends ConsumerWidget {
+  const MyNameProviderScope({
+    super.key,
+    this.builder,
+    this.child,
+    this.onStateChanged,
+  });
+
+  final Widget Function(
+    BuildContext context,
+    _MyNameProxyWidgetRef ref,
+    String state,
+    Widget? child,
+  )?
+  builder;
+  final Widget? child;
+  final void Function(String? previous, String next)? onStateChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (onStateChanged != null) {
+      ref.listen(myNameProvider, onStateChanged!);
+    }
+
+    return Consumer(
+      builder: (context, ref, child) {
+        final state = ref.watch(myNameProvider);
+
+        if (builder != null) {
+          return builder!(context, _MyNameProxyWidgetRef(ref), state, child);
+        }
+
+        return child ?? const SizedBox.shrink();
+      },
+    );
+  }
+}
+
+bool _debugCheckHasMyNameProviderScope(BuildContext context) {
+  assert(() {
+    if (context.widget is! MyNameProviderScope &&
+        context.findAncestorWidgetOfExactType<MyNameProviderScope>() == null) {
+      throw FlutterError.fromParts(<DiagnosticsNode>[
+        ErrorSummary('No MyNameProviderScope found'),
+        ErrorDescription(
+          '${context.widget.runtimeType} widgets require a MyNameProviderScope widget ancestor.',
+        ),
+      ]);
+    }
+    return true;
+  }());
+  return true;
+}
+
+class _MyNameStateProxyWidgetRef extends _MyNameProxyWidgetRef {
+  _MyNameStateProxyWidgetRef(super._ref);
+
+  String get state => _ref.watch(myNameProvider);
+
+  Selected select<Selected>(Selected Function(String) selector) =>
+      _ref.watch(myNameProvider.select((value) => selector(value)));
+}
+
+class MyNameStateWidget extends ConsumerWidget {
+  const MyNameStateWidget({
+    super.key,
+    required this.builder,
+    this.child,
+    this.onStateChanged,
+  });
+
+  /// The builder function that constructs the widget tree.
+  /// Access the state directly via ref.state, which is equivalent to ref.watch(myNameProvider)
+  ///
+  /// For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)
+  /// The ref parameter provides type-safe access to the provider state and notifier
+  final Widget Function(
+    BuildContext context,
+    _MyNameProxyWidgetRef ref,
+    Widget? child,
+  )
+  builder;
+  final Widget? child;
+  final void Function(String? previous, String? next)? onStateChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasMyNameProviderScope(context);
+
+    if (onStateChanged != null) {
+      ref.listen(myNameProvider, (pre, next) {
+        if (pre != next) onStateChanged!(pre, next);
+      });
+    }
+    return builder(context, _MyNameStateProxyWidgetRef(ref), child);
+  }
+}
+
+class MyNameSelectWidget<Selected> extends ConsumerWidget {
+  const MyNameSelectWidget({
+    super.key,
+    required this.selector,
+    required this.builder,
+    this.onStateChanged,
+  });
+
+  final Selected Function(String state) selector;
+  final Widget Function(
+    BuildContext context,
+    _MyNameStateProxyWidgetRef ref,
+    Selected value,
+  )
+  builder;
+  final void Function(Selected? previous, Selected? next)? onStateChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    _debugCheckHasMyNameProviderScope(context);
+
+    if (onStateChanged != null) {
+      ref.listen(myNameProvider.select((value) => selector(value)), (
+        pre,
+        next,
+      ) {
+        if (pre != next) onStateChanged!(pre, next);
+      });
+    }
+    final stateRef = _MyNameStateProxyWidgetRef(ref);
+    return builder(context, stateRef, stateRef.select(selector));
+  }
+}

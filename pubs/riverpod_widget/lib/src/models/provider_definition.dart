@@ -25,7 +25,7 @@ class ProviderDefinition {
 
   bool get hasNotifier => providerType == ProviderType.classBased;
   bool get hasFamily => familyParameters.isNotEmpty;
-  bool get isAsyncValue => ['Future', 'Stream'].contains(returnType.wrapperType);
+  bool get isAsyncValue => ['Future', 'Stream', 'FutureOr'].contains(returnType.wrapperType);
 
   ProviderDefinition({
     required this.baseName,
