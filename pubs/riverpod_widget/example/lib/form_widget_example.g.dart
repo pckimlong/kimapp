@@ -6,8 +6,11 @@ part of 'form_widget_example.dart';
 // FormProviderGenerator
 // **************************************************************************
 
+final updateUserCallStatusProvider = StateProvider.autoDispose
+    .family<AsyncValue<bool>?, ({int id})>((ref, _) => null);
+
 abstract class _$UpdateUserWidget extends _$UpdateUser {
-  static final callStateProvider = StateProvider.autoDispose
+  static final updateUserCallStatusProvider = StateProvider.autoDispose
       .family<AsyncValue<bool>?, ({int id})>((ref, _) => null);
 
   /// Callback for when the form is successfully submitted.
@@ -16,30 +19,28 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   void onSuccess(bool result) {}
   @protected
   @nonVirtual
-  Future<AsyncValue<bool>> call(
-    UpdateUserModel state, {
-    required Uint8List? photoBytes,
-  }) async {
+  Future<AsyncValue<bool>> call({required Uint8List? photoBytes}) async {
     // Ignore if form is not loaded yet
     if (this.state.isLoading) return const AsyncValue.loading();
     // Cannot submit when form is not loaded yet
     if (this.state.hasValue == false) return const AsyncValue.loading();
 
-    final callState = ref.read(callStateProvider((id: id)));
-    final updateCallState = ref.read(callStateProvider((id: id)).notifier);
+    final _callStatus = ref.read(updateUserCallStatusProvider((id: id)));
+    final _updateCallStatus =
+        ref.read(updateUserCallStatusProvider((id: id)).notifier);
 
     // If it's already loading, return loading
-    if (callState?.isLoading == true) return const AsyncValue.loading();
+    if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
-    if (callState?.hasValue == true) {
-      return callState!;
+    if (_callStatus?.hasValue == true) {
+      return _callStatus!;
     }
 
-    updateCallState.state = const AsyncValue.loading();
+    _updateCallStatus.state = const AsyncValue.loading();
     final result = await AsyncValue.guard(() async =>
         await submit(this.state.requireValue, photoBytes: photoBytes));
 
-    updateCallState.state = result;
+    _updateCallStatus.state = result;
 
     if (result.hasValue) {
       onSuccess(result.requireValue);
@@ -49,7 +50,7 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   }
 
   void invalidateSelf() {
-    ref.invalidate(callStateProvider);
+    ref.invalidate(updateUserCallStatusProvider);
     ref.invalidateSelf();
   }
 
@@ -73,6 +74,11 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
     required Uint8List? photoBytes,
   });
 
+  /// Update the state of the form.
+  /// This allow for more flexible to update specific fields.
+  void updateState(UpdateUserModel Function(UpdateUserModel state) update) =>
+      state = state.whenData(update);
+
   /// Update the name field of UpdateUserModel class.
   void updateName(String newValue) =>
       state = state.whenData((state) => state.copyWith(name: newValue));
@@ -84,6 +90,14 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   /// Update the email field of UpdateUserModel class.
   void updateEmail(String? newValue) =>
       state = state.whenData((state) => state.copyWith(email: newValue));
+
+  /// Update the address field of UpdateUserModel class.
+  void updateAddress(String? newValue) =>
+      state = state.whenData((state) => state.copyWith(address: newValue));
+
+  /// Update the phone field of UpdateUserModel class.
+  void updatePhone(String? newValue) =>
+      state = state.whenData((state) => state.copyWith(phone: newValue));
 }
 
 // **************************************************************************
@@ -96,6 +110,8 @@ _$UpdateUserModelImpl _$$UpdateUserModelImplFromJson(
       name: json['name'] as String? ?? '',
       age: (json['age'] as num?)?.toInt(),
       email: json['email'] as String?,
+      address: json['address'] as String?,
+      phone: json['phone'] as String?,
     );
 
 Map<String, dynamic> _$$UpdateUserModelImplToJson(
@@ -104,6 +120,8 @@ Map<String, dynamic> _$$UpdateUserModelImplToJson(
       'name': instance.name,
       'age': instance.age,
       'email': instance.email,
+      'address': instance.address,
+      'phone': instance.phone,
     };
 
 // **************************************************************************
