@@ -9,3 +9,19 @@ builders:
       - ".freezed.dart"
       - ".g.dart"
     applies_builders: ["source_gen|combining_builder"]
+
+  form_provider_generator:
+    import: "package:riverpod_widget/builder.dart"
+    builder_factories: ["formProviderBuilder"]
+    build_extensions: {".dart": [".g.dart"]}
+    auto_apply: dependents
+    build_to: source
+    applies_builders: ["source_gen|combining_builder"]
+
+  form_update_provider_generator:
+    import: "package:riverpod_widget/builder.dart"
+    builder_factories: ["formUpdateProviderBuilder"]
+    build_extensions: {".dart": [".g.dart"]}
+    auto_apply: dependents
+    build_to: source
+    applies_builders: ["source_gen|combining_builder"]
