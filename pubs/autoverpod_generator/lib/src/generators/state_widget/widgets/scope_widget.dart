@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
 import 'package:autoverpod_generator/src/templates/consumer_widget.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
