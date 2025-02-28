@@ -1,5 +1,5 @@
-import 'package:example/main.widget.dart';
-import 'package:flutter/material.dart';
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_widget/riverpod_widget.dart';
@@ -16,24 +16,13 @@ class AnimalModel with _$AnimalModel {
     required String name,
     required int age,
     String? description,
+    @Default(false) bool isActive,
   }) = _AnimalModel;
 }
 
 @stateWidget
 @riverpod
-class Animal extends _$Animal {
-  @override
-  Future<AnimalModel> build({required String animalName, int age = 1}) async {
-    return const AnimalModel(name: 'Dog', age: 1, description: 'This is a dog');
-  }
-}
-
-void main() {
-  AnimalSelectWidget(
-    selector: (state) => state.age,
-    onStateChanged: (previous, next) {},
-    builder: (context, ref, value) {
-      return const Text('data');
-    },
-  );
+Future<IList<int>> age(Ref ref) async {
+  await Future.delayed(const Duration(seconds: 1));
+  return IList();
 }

@@ -20,6 +20,7 @@ mixin _$AnimalModel {
   String get name => throw _privateConstructorUsedError;
   int get age => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  bool get isActive => throw _privateConstructorUsedError;
 
   /// Create a copy of AnimalModel
   /// with the given fields replaced by the non-null parameter values.
@@ -34,7 +35,8 @@ abstract class $AnimalModelCopyWith<$Res> {
           AnimalModel value, $Res Function(AnimalModel) then) =
       _$AnimalModelCopyWithImpl<$Res, AnimalModel>;
   @useResult
-  $Res call({int? id, String name, int age, String? description});
+  $Res call(
+      {int? id, String name, int age, String? description, bool isActive});
 }
 
 /// @nodoc
@@ -56,6 +58,7 @@ class _$AnimalModelCopyWithImpl<$Res, $Val extends AnimalModel>
     Object? name = null,
     Object? age = null,
     Object? description = freezed,
+    Object? isActive = null,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -74,6 +77,10 @@ class _$AnimalModelCopyWithImpl<$Res, $Val extends AnimalModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -86,7 +93,8 @@ abstract class _$$AnimalModelImplCopyWith<$Res>
       __$$AnimalModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, String name, int age, String? description});
+  $Res call(
+      {int? id, String name, int age, String? description, bool isActive});
 }
 
 /// @nodoc
@@ -106,6 +114,7 @@ class __$$AnimalModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? age = null,
     Object? description = freezed,
+    Object? isActive = null,
   }) {
     return _then(_$AnimalModelImpl(
       id: freezed == id
@@ -124,6 +133,10 @@ class __$$AnimalModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -132,7 +145,11 @@ class __$$AnimalModelImplCopyWithImpl<$Res>
 
 class _$AnimalModelImpl extends _AnimalModel {
   const _$AnimalModelImpl(
-      {this.id, required this.name, required this.age, this.description})
+      {this.id,
+      required this.name,
+      required this.age,
+      this.description,
+      this.isActive = false})
       : super._();
 
   @override
@@ -143,10 +160,13 @@ class _$AnimalModelImpl extends _AnimalModel {
   final int age;
   @override
   final String? description;
+  @override
+  @JsonKey()
+  final bool isActive;
 
   @override
   String toString() {
-    return 'AnimalModel(id: $id, name: $name, age: $age, description: $description)';
+    return 'AnimalModel(id: $id, name: $name, age: $age, description: $description, isActive: $isActive)';
   }
 
   @override
@@ -158,11 +178,14 @@ class _$AnimalModelImpl extends _AnimalModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.age, age) || other.age == age) &&
             (identical(other.description, description) ||
-                other.description == description));
+                other.description == description) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, age, description);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, age, description, isActive);
 
   /// Create a copy of AnimalModel
   /// with the given fields replaced by the non-null parameter values.
@@ -178,7 +201,8 @@ abstract class _AnimalModel extends AnimalModel {
       {final int? id,
       required final String name,
       required final int age,
-      final String? description}) = _$AnimalModelImpl;
+      final String? description,
+      final bool isActive}) = _$AnimalModelImpl;
   const _AnimalModel._() : super._();
 
   @override
@@ -189,6 +213,8 @@ abstract class _AnimalModel extends AnimalModel {
   int get age;
   @override
   String? get description;
+  @override
+  bool get isActive;
 
   /// Create a copy of AnimalModel
   /// with the given fields replaced by the non-null parameter values.

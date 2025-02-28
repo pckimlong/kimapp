@@ -10,7 +10,6 @@ String generateInheritedWidget({
 ${comment.getContent()}class $name extends InheritedWidget {
   ${comment.getMacroRef()}
   const $name({
-    super.key,
     ${fields.map((e) => e.toNamedConstructorField()).join('\n')}
     required super.child,
   });

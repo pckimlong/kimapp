@@ -43,7 +43,7 @@ class ProviderDefinition {
   factory ProviderDefinition.parse(Element element) {
     try {
       final isClass = element is ClassElement;
-      final baseName = element.name!;
+      final baseName = element.name!.pascalCase;
       final providerName = '${baseName}Provider'.camelCase;
       final modifiers = _parseModifiers(element);
       final dependencies = _parseDependencies(element);
@@ -183,7 +183,12 @@ class ProviderDefinition {
     }
 
     return familyParameters
-        .map((p) => '${p.name} : ${prefix.isEmpty ? '' : '$prefix.'}${p.name}')
+        .map((p) {
+          if (!p.isNamed) {
+            return prefix.isEmpty ? p.name : '$prefix.${p.name}';
+          }
+          return '${p.name} : ${prefix.isEmpty ? '' : '$prefix.'}${p.name}';
+        })
         .join(', ');
   }
 

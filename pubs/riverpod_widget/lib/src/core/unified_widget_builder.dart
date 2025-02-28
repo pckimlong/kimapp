@@ -65,27 +65,36 @@ class UnifiedWidgetBuilder implements Builder {
 
     if (generatedCode.isEmpty) return '';
 
-    // Get all required imports from registered generators
-    final imports = _registry.getAllRequiredImports();
+    // Get imports from registry
+    final imports = Set<String>.from(_registry.getAllRequiredImports());
+
+    // Add source file's imports to ensure dependencies are available
+    final sourceImports =
+        library.element.importedLibraries
+            .map((lib) => lib.source.uri.toString())
+            .where((uri) => !uri.startsWith('dart:_'))
+            .cast<String>()
+            .toSet();
+
+    // Remove some imports
+    sourceImports.removeWhere(
+      (uri) => uri.contains('riverpod_widget') || uri.contains('annotation'),
+    );
 
     // Create a library with imports and generated code
     final generatedLib = Library((b) {
       b.comments.addAll([
-        "dart format width=80",
         "**************************************************************************",
         "GENERATED CODE - DO NOT MODIFY BY HAND",
         "**************************************************************************",
-        "ignore_for_file: type=lint",
+        "ignore_for_file: type=lint, duplicate_import, unnecessary_import, unused_import, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark",
         "coverage:ignore-file",
       ]);
 
       // Import source file
       b.directives.add(Directive.import(buildStep.inputId.uri.toString()));
-
-      // Add all imports
-      for (final import in imports) {
-        b.directives.add(Directive.import(import));
-      }
+      b.directives.addAll(imports.map((e) => Directive.import(e)));
+      b.directives.addAll(sourceImports.map((e) => Directive.import(e)));
 
       // Add the generated code
       b.body.add(Code("\n\n$generatedCode"));
