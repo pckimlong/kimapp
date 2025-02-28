@@ -6,7 +6,7 @@ part of 'form_state_widget_example.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myNameHash() => r'14a4fd0a3f409187d0a111e7da7cd1d4742fca95';
+String _$myNameHash() => r'174c92ed23138b8882929a2a813fe81c66d5c309';
 
 /// See also [myName].
 @ProviderFor(myName)
