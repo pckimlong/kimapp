@@ -8,6 +8,8 @@ abstract class WidgetAnnotation {
   const WidgetAnnotation();
 }
 
+/// Use for create form widget. This support both create and update form
+/// update form usually mean it has future in build method which fetch the data to fill the initial form state
 @Target({TargetKind.classType, TargetKind.function})
 @sealed
 class FormWidget extends WidgetAnnotation {
@@ -15,14 +17,6 @@ class FormWidget extends WidgetAnnotation {
 }
 
 const formWidget = FormWidget();
-
-@Target({TargetKind.classType, TargetKind.function})
-@sealed
-class FormUpdateWidget extends WidgetAnnotation {
-  const FormUpdateWidget();
-}
-
-const formUpdateWidget = FormUpdateWidget();
 
 @Target({TargetKind.classType, TargetKind.function})
 @sealed

@@ -45,6 +45,11 @@ dependencies:
   riverpod_widget:
     path: ../
   fpdart: ^1.1.1
+  kimapp:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      ref: master
+      path: packages/kimapp
   kimapp_utils:
       git:
         url: https://github.com/pckimlong/kimapp.git
