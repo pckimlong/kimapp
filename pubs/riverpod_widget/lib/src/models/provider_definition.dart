@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:analyzer/dart/element/element.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:collection/collection.dart';
 import 'package:recase/recase.dart';
 import 'package:riverpod_widget/src/models/provider_return_type_definition.dart';
 import 'package:source_gen/source_gen.dart';
@@ -275,5 +277,45 @@ class ProviderDefinition {
     }
 
     return type;
+  }
+
+  SubmitMethodInfo getSubmitMethodInfo() {
+    final submitMethod = methods.firstWhereOrNull((m) => m.name == 'submit');
+    final resultType = submitMethod?.returnType ?? 'Future<void>';
+
+    final rawResultType =
+        resultType.contains('Future')
+            ? resultType.replaceFirst('Future<', '').replaceFirst('>', '')
+            : resultType;
+
+    final futureResultType = resultType.contains('Future') ? resultType : 'Future<$resultType>';
+
+    return SubmitMethodInfo(
+      resultType: resultType,
+      rawResultType: rawResultType,
+      futureResultType: futureResultType,
+      namedParams: submitMethod?.codeBuilderParams().where((p) => p.named).toList() ?? [],
+      positionalParams: submitMethod?.codeBuilderParams().where((p) => !p.named).toList() ?? [],
+    );
+  }
+}
+
+class SubmitMethodInfo {
+  final String resultType;
+  final String rawResultType;
+  final String futureResultType;
+  final List<Parameter> namedParams;
+  final List<Parameter> positionalParams;
+
+  SubmitMethodInfo({
+    required this.resultType,
+    required this.rawResultType,
+    required this.futureResultType,
+    required this.namedParams,
+    required this.positionalParams,
+  });
+
+  String get asyncValueType {
+    return 'AsyncValue<$rawResultType>?';
   }
 }
