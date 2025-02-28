@@ -50,7 +50,7 @@ class WidgetGenerator {
       );
     }
 
-    return hasWidgetAnnotation && hasRiverpodAnnotation;
+    return hasWidgetAnnotation;
   }
 
   /// Generate code for a specific annotated element
