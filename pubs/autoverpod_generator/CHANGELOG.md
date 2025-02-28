@@ -1,3 +1,6 @@
-## 1.0.0
+## 0.0.1
 
-- Initial version.
+- Initial release of autoverpod_generator
+- Support for generating Riverpod-integrated widgets from annotations
+- Includes generators for state widgets, form widgets, and form update widgets
+- Compatible with autoverpod ^0.0.3
