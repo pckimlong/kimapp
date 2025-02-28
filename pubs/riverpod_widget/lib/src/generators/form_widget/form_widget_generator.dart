@@ -35,6 +35,8 @@ class FormWidgetGenerator extends WidgetGenerator {
 
     final buffer = StringBuffer();
 
+    buffer.writeln('// Test if this work');
+
     return returnContent(buffer, comment: false);
   }
 }
