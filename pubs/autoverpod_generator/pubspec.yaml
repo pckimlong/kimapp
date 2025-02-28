@@ -9,17 +9,16 @@ environment:
 
 dependencies:
   source_gen: ^2.0.0
-  test: 
   recase: ^4.1.0
   build: ^2.4.2
-  meta:
-  analyzer: 
+  meta: ^1.16.0
+  analyzer: ^7.3.0 
   riverpod_annotation: ^2.3.4
   dart_style: ^3.0.1
-  riverpod:
+  collection: ^1.19.1
+  riverpod: ^2.6.1
   code_builder: ^4.10.1
-  autoverpod:
-    path: ../autoverpod
+  autoverpod: ^0.0.3
   flutter:
     sdk: flutter
 
