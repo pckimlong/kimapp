@@ -28,14 +28,15 @@ class ProviderReturnTypeDefinition {
   factory ProviderReturnTypeDefinition.parse(DartType type, {bool parseClassInfo = false}) {
     final isGeneric = type is ParameterizedType && type.typeArguments.isNotEmpty;
     final wrapperType = type is InterfaceType ? type.element.name : null;
+    final isAsync = ['Future', 'Stream', 'FutureOr'].contains(wrapperType);
     String baseType = type.toString();
     if (isGeneric) {
       // We interest on base type and wrapper type only when the first type argument is not Future or Stream
       // this mean IList, Map etc are not included
-      if (!['Future', 'Stream', 'FutureOr'].contains(wrapperType)) {
-        baseType = type.getDisplayString();
-      } else {
+      if (isAsync) {
         baseType = type.typeArguments.first.toString();
+      } else {
+        baseType = type.getDisplayString();
       }
     }
 
@@ -44,7 +45,11 @@ class ProviderReturnTypeDefinition {
       baseType: baseType,
       wrapperType: wrapperType,
       classInfo:
-          isGeneric && parseClassInfo ? ClassDefinition.parse(type.typeArguments.first) : null,
+          parseClassInfo
+              ? isAsync
+                  ? ClassDefinition.parse((type as InterfaceType).typeArguments.first)
+                  : ClassDefinition.parse(type)
+              : null,
     );
   }
 

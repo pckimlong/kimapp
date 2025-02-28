@@ -40,7 +40,7 @@ class ProviderDefinition {
     this.genericParameters = const {},
   });
 
-  factory ProviderDefinition.parse(Element element) {
+  factory ProviderDefinition.parse(Element element, {bool parseReturnTypeClassInfo = false}) {
     try {
       final isClass = element is ClassElement;
       final baseName = element.name!.pascalCase;
@@ -66,7 +66,10 @@ class ProviderDefinition {
           baseName: baseName,
           providerName: providerName,
           providerType: ProviderType.classBased,
-          returnType: ProviderReturnTypeDefinition.parse(buildMethod.returnType),
+          returnType: ProviderReturnTypeDefinition.parse(
+            buildMethod.returnType,
+            parseClassInfo: parseReturnTypeClassInfo,
+          ),
           familyParameters: buildMethod.parameters.map((p) => ParamDefinition.parse(p)).toList(),
           methods: classElement.methods.map((m) => MethodDefinition.parseMethod(m)).toList(),
           modifiers: modifiers,
@@ -137,11 +140,57 @@ class ProviderDefinition {
     if (element is ClassElement) {
       for (final typeParam in element.typeParameters) {
         final bound = typeParam.bound;
-        final bounds = bound != null ? [bound.toString()] : <String>[];
+        final bounds = <String>[];
+
+        // Add the direct bound if it exists
+        if (bound != null) {
+          final boundStr = bound.getDisplayString();
+          bounds.add(boundStr);
+
+          // Extract any nested type arguments if present
+          if (boundStr.contains('<')) {
+            final startIndex = boundStr.indexOf('<') + 1;
+            final endIndex = boundStr.lastIndexOf('>');
+            if (startIndex < endIndex) {
+              final typeArgs = boundStr.substring(startIndex, endIndex);
+              bounds.addAll(typeArgs.split(',').map((t) => t.trim()));
+            }
+          }
+        }
+
         genericParams[typeParam.name] = bounds;
       }
     }
     return genericParams;
+  }
+
+  /// Gets the generic type parameter names defined in the class
+  List<String> get genericTypeNames => genericParameters.keys.toList();
+
+  /// Gets all bounds (constraints) for a specific generic type parameter
+  List<String> getGenericTypeBounds(String typeName) => genericParameters[typeName] ?? [];
+
+  /// Checks if a class has any generic type parameters
+  bool get hasGenericTypes => genericParameters.isNotEmpty;
+
+  /// Gets a formatted string of all generic type parameters with their bounds
+  String get genericTypeDefinition {
+    if (!hasGenericTypes) return '';
+
+    return genericParameters.entries
+        .map((entry) {
+          final typeName = entry.key;
+          final bounds = entry.value;
+          if (bounds.isEmpty) return typeName;
+          return '$typeName extends ${bounds.join(' & ')}';
+        })
+        .join(', ');
+  }
+
+  /// Gets a formatted string of generic type parameters for use in declarations
+  String get genericTypeDeclaration {
+    if (!hasGenericTypes) return '';
+    return '<${genericTypeNames.join(', ')}>';
   }
 
   Map<String, dynamic> toMap() {

@@ -1,8 +1,6 @@
 import 'package:build/build.dart';
 import 'package:riverpod_widget/src/core/generator_registry.dart';
 import 'package:riverpod_widget/src/core/unified_widget_builder.dart';
-import 'package:riverpod_widget/src/generators/form_update_widget/form_update_provider_generator.dart';
-import 'package:riverpod_widget/src/generators/form_update_widget/form_update_widget_generator.dart';
 import 'package:riverpod_widget/src/generators/form_widget/form_provider_generator.dart';
 import 'package:riverpod_widget/src/generators/form_widget/form_widget_generator.dart';
 import 'package:riverpod_widget/src/generators/state_widget/state_widget_generator.dart';
@@ -15,7 +13,6 @@ void _initializeRegistry() {
   // Register all widget generators
   registry.registerGenerator(StateWidgetGenerator());
   registry.registerGenerator(FormWidgetGenerator());
-  registry.registerGenerator(FormUpdateWidgetGenerator());
 }
 
 /// Builder factory for the riverpod_widget package
@@ -29,8 +26,4 @@ Builder riverpodWidgetGenerator(BuilderOptions options) {
 
 /// Builder factory for form provider extensions (.g.dart)
 Builder formProviderBuilder(BuilderOptions options) =>
-    SharedPartBuilder([FormProviderGenerator()], 'form_provider');
-
-/// Builder factory for form update provider extensions (.g.dart)
-Builder formUpdateProviderBuilder(BuilderOptions options) =>
-    SharedPartBuilder([FormUpdateProviderGenerator()], 'form_update_provider');
+    SharedPartBuilder([FormProviderGenerator()], 'form');
