@@ -1,5 +1,14 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/base_proxy_widget_ref.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/debug_check.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/form_field_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/form_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/param_inherited_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/param_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/select_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/state_widget.dart';
+import 'package:riverpod_widget/src/generators/form_widget/widgets/status_widget.dart';
 import 'package:riverpod_widget/src/models/provider_definition.dart';
 import 'package:riverpod_widget/src/templates/utils.dart';
 import 'package:source_gen/source_gen.dart';
@@ -25,7 +34,7 @@ class FormWidgetGenerator extends WidgetGenerator {
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    final provider = ProviderDefinition.parse(element);
+    final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
     if (provider.providerType != ProviderType.classBased) {
       throw InvalidGenerationSourceError(
         'FormWidget annotation can only be applied to class-based providers.',
@@ -35,7 +44,18 @@ class FormWidgetGenerator extends WidgetGenerator {
 
     final buffer = StringBuffer();
 
-    buffer.writeln('// Test if this work');
+    buffer.writeln(generateParamInheritedWidget(provider));
+    buffer.writeln(generateFormBaseProxyWidgetRef(provider));
+    buffer.writeln(generateFormWidget(provider));
+    buffer.writeln(generateDebugCheckFunction(provider));
+    buffer.writeln(generateParamWidget(provider));
+    buffer.writeln(generateSelectWidget(provider));
+    buffer.writeln(generateStateWidget(provider));
+    buffer.writeln(generateStatusWidget(provider));
+
+    for (final field in provider.returnType.classInfo?.fields ?? []) {
+      buffer.writeln(generateFormFieldWidget(provider, field));
+    }
 
     return returnContent(buffer, comment: false);
   }

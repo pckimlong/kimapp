@@ -4,7 +4,7 @@
 // ignore_for_file: type=lint, duplicate_import, unnecessary_import, unused_import, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 // coverage:ignore-file
 
-import 'package:example/form_state_widget_example.dart';
+import 'package:example/state_widget_example.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +12,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:core';
 
-class _MyNameFormProxyWidgetRef extends WidgetRef {
-  _MyNameFormProxyWidgetRef(this._ref);
+class _MyNameAsyncProxyWidgetRef extends WidgetRef {
+  _MyNameAsyncProxyWidgetRef(this._ref);
 
   final WidgetRef _ref;
 
-  MyNameForm get notifier => _ref.read(myNameFormProvider.notifier);
+  MyNameAsync get notifier => _ref.read(myNameAsyncProvider.notifier);
 
   @override
   BuildContext get context => _ref.context;
@@ -58,8 +58,8 @@ class _MyNameFormProxyWidgetRef extends WidgetRef {
   T watch<T>(ProviderListenable<T> provider) => _ref.watch(provider);
 }
 
-class MyNameFormProviderScope extends ConsumerWidget {
-  const MyNameFormProviderScope({
+class MyNameAsyncProviderScope extends ConsumerWidget {
+  const MyNameAsyncProviderScope({
     super.key,
     this.loading,
     this.error,
@@ -74,7 +74,7 @@ class MyNameFormProviderScope extends ConsumerWidget {
   final Widget Function(String data)? data;
   final Widget Function(
     BuildContext context,
-    _MyNameFormProxyWidgetRef ref,
+    _MyNameAsyncProxyWidgetRef ref,
     AsyncValue<String> asyncValue,
     Widget? child,
   )?
@@ -86,17 +86,17 @@ class MyNameFormProviderScope extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (onStateChanged != null) {
-      ref.listen(myNameFormProvider, onStateChanged!);
+      ref.listen(myNameAsyncProvider, onStateChanged!);
     }
 
     return Consumer(
       builder: (context, ref, child) {
-        final state = ref.watch(myNameFormProvider);
+        final state = ref.watch(myNameAsyncProvider);
 
         if (builder != null) {
           return builder!(
             context,
-            _MyNameFormProxyWidgetRef(ref),
+            _MyNameAsyncProxyWidgetRef(ref),
             state,
             child,
           );
@@ -109,7 +109,7 @@ class MyNameFormProviderScope extends ConsumerWidget {
             final result = this.data?.call(data) ?? child;
             if (result == null) {
               debugPrint(
-                'No child provided for MyNameFormProviderScope. Empty SizedBox will be returned.',
+                'No child provided for MyNameAsyncProviderScope. Empty SizedBox will be returned.',
               );
               return const SizedBox.shrink();
             }
@@ -138,15 +138,15 @@ class MyNameFormProviderScope extends ConsumerWidget {
   }
 }
 
-bool _debugCheckHasMyNameFormProviderScope(BuildContext context) {
+bool _debugCheckHasMyNameAsyncProviderScope(BuildContext context) {
   assert(() {
-    if (context.widget is! MyNameFormProviderScope &&
-        context.findAncestorWidgetOfExactType<MyNameFormProviderScope>() ==
+    if (context.widget is! MyNameAsyncProviderScope &&
+        context.findAncestorWidgetOfExactType<MyNameAsyncProviderScope>() ==
             null) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No MyNameFormProviderScope found'),
+        ErrorSummary('No MyNameAsyncProviderScope found'),
         ErrorDescription(
-          '${context.widget.runtimeType} widgets require a MyNameFormProviderScope widget ancestor.',
+          '${context.widget.runtimeType} widgets require a MyNameAsyncProviderScope widget ancestor.',
         ),
       ]);
     }
@@ -155,18 +155,18 @@ bool _debugCheckHasMyNameFormProviderScope(BuildContext context) {
   return true;
 }
 
-class _MyNameFormStateProxyWidgetRef extends _MyNameFormProxyWidgetRef {
-  _MyNameFormStateProxyWidgetRef(super._ref);
+class _MyNameAsyncStateProxyWidgetRef extends _MyNameAsyncProxyWidgetRef {
+  _MyNameAsyncStateProxyWidgetRef(super._ref);
 
-  String get state => _ref.watch(myNameFormProvider).requireValue;
+  String get state => _ref.watch(myNameAsyncProvider).requireValue;
 
   Selected select<Selected>(Selected Function(String) selector) => _ref.watch(
-    myNameFormProvider.select((value) => selector(value.requireValue)),
+    myNameAsyncProvider.select((value) => selector(value.requireValue)),
   );
 }
 
-class MyNameFormStateWidget extends ConsumerWidget {
-  const MyNameFormStateWidget({
+class MyNameAsyncStateWidget extends ConsumerWidget {
+  const MyNameAsyncStateWidget({
     super.key,
     required this.builder,
     this.child,
@@ -174,13 +174,13 @@ class MyNameFormStateWidget extends ConsumerWidget {
   });
 
   /// The builder function that constructs the widget tree.
-  /// Access the state directly via ref.state, which is equivalent to ref.watch(myNameFormProvider)
+  /// Access the state directly via ref.state, which is equivalent to ref.watch(myNameAsyncProvider)
   ///
   /// For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)
   /// The ref parameter provides type-safe access to the provider state and notifier
   final Widget Function(
     BuildContext context,
-    _MyNameFormProxyWidgetRef ref,
+    _MyNameAsyncProxyWidgetRef ref,
     Widget? child,
   )
   builder;
@@ -189,19 +189,19 @@ class MyNameFormStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasMyNameFormProviderScope(context);
+    _debugCheckHasMyNameAsyncProviderScope(context);
 
     if (onStateChanged != null) {
-      ref.listen(myNameFormProvider, (pre, next) {
+      ref.listen(myNameAsyncProvider, (pre, next) {
         if (pre != next) onStateChanged!(pre?.valueOrNull, next.valueOrNull);
       });
     }
-    return builder(context, _MyNameFormStateProxyWidgetRef(ref), child);
+    return builder(context, _MyNameAsyncStateProxyWidgetRef(ref), child);
   }
 }
 
-class MyNameFormSelectWidget<Selected> extends ConsumerWidget {
-  const MyNameFormSelectWidget({
+class MyNameAsyncSelectWidget<Selected> extends ConsumerWidget {
+  const MyNameAsyncSelectWidget({
     super.key,
     required this.selector,
     required this.builder,
@@ -211,7 +211,7 @@ class MyNameFormSelectWidget<Selected> extends ConsumerWidget {
   final Selected Function(String state) selector;
   final Widget Function(
     BuildContext context,
-    _MyNameFormStateProxyWidgetRef ref,
+    _MyNameAsyncStateProxyWidgetRef ref,
     Selected value,
   )
   builder;
@@ -219,17 +219,17 @@ class MyNameFormSelectWidget<Selected> extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _debugCheckHasMyNameFormProviderScope(context);
+    _debugCheckHasMyNameAsyncProviderScope(context);
 
     if (onStateChanged != null) {
       ref.listen(
-        myNameFormProvider.select((value) => selector(value.requireValue)),
+        myNameAsyncProvider.select((value) => selector(value.requireValue)),
         (pre, next) {
           if (pre != next) onStateChanged!(pre, next);
         },
       );
     }
-    final stateRef = _MyNameFormStateProxyWidgetRef(ref);
+    final stateRef = _MyNameAsyncStateProxyWidgetRef(ref);
     return builder(context, stateRef, stateRef.select(selector));
   }
 }
