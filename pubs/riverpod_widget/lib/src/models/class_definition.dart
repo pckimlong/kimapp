@@ -197,7 +197,8 @@ class ClassDefinition {
       final factoryConstructors = element.constructors.where((c) {
         return c.isFactory &&
             (!c.isSynthetic || options.parseSyntheticFields) &&
-            (c.isPublic || options.parsePrivateFields);
+            (c.isPublic || options.parsePrivateFields) &&
+            c.name != 'fromJson'; // ignore fromJson factory constructor
       });
 
       for (final constructor in factoryConstructors) {
