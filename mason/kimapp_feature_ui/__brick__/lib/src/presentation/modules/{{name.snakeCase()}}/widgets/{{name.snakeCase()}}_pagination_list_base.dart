@@ -8,15 +8,15 @@ import '../../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}
 import '../../../app/app_style.dart';
 import '../../../widgets/my_error_widget.dart';
 
-class  {{name.pascalCase()}}ListBaseConfig{
-  const  {{name.pascalCase()}}ListBaseConfig();
+class  {{name.pascalCase()}}PaginationListBaseConfig{
+  const  {{name.pascalCase()}}PaginationListBaseConfig();
 }
 
 final _initialParamProvider = Provider.autoDispose<{{name.pascalCase()}}ListParam>((ref) {
   throw UnimplementedError();
 });
 
-final _configProvider = Provider.autoDispose<{{name.pascalCase()}}ListBaseConfig>((ref) {
+final _configProvider = Provider.autoDispose<{{name.pascalCase()}}PaginationListBaseConfig>((ref) {
   throw UnimplementedError();
 });
 
@@ -28,15 +28,15 @@ final _paramProvider = StateProvider.autoDispose<{{name.pascalCase()}}ListParam>
   dependencies: [_initialParamProvider],
 );
 
-class {{name.pascalCase()}}ListBase extends ConsumerWidget {
-  const {{name.pascalCase()}}ListBase({
+class {{name.pascalCase()}}PaginationListBase extends ConsumerWidget {
+  const {{name.pascalCase()}}PaginationListBase({
     super.key, 
     this.initialParam,
-    this.config = const {{name.pascalCase()}}ListBaseConfig(),
+    this.config = const {{name.pascalCase()}}PaginationListBaseConfig(),
   });
 
   final {{name.pascalCase()}}ListParam? initialParam;
-  final {{name.pascalCase()}}ListBaseConfig config;
+  final {{name.pascalCase()}}PaginationListBaseConfig config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

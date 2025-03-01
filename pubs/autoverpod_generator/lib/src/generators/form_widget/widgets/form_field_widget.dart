@@ -13,7 +13,7 @@ import 'package:recase/recase.dart';
 /// Creates both the proxy reference and the actual widget implementation
 String generateFormFieldWidget(ProviderDefinition provider, FieldDefinition field) {
   final isTextField = field.type == 'String' || field.type == 'String?';
-  final proxyRefName = '_${provider.baseName}${field.name.pascalCase}ProxyWidgetRef';
+  final proxyRefName = provider.fieldProxyWidgetName(field);
 
   final proxyWidget = _generateFormFieldProxy(
     provider: provider,

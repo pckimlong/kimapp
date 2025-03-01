@@ -11,7 +11,7 @@ import '../../router/app_router.gr.dart';
 import '../../widgets/my_error_widget.dart';
 
 @RoutePage()
-class {{name.pascalCase()}}CreatePage extends HookConsumerWidget {
+class {{name.pascalCase()}}CreatePage extends ConsumerStatefulWidget {
   const {{name.pascalCase()}}CreatePage({super.key});
 
   static Future<{{name.pascalCase()}}Model?> show(BuildContext context) async {
@@ -19,7 +19,22 @@ class {{name.pascalCase()}}CreatePage extends HookConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<{{name.pascalCase()}}CreatePage> createState() => _{{name.pascalCase()}}CreatePageState();
+}
+
+class _{{name.pascalCase()}}CreatePageState extends ConsumerState<{{name.pascalCase()}}CreatePage> {
+  Future<void> _submit(BuildContext context, {{name.pascalCase()}}CreateProxyWidgetRef ref) async {
+    final result = await ref.submit();
+    if (result.hasValue) {
+      BotToast.showText(text: '{{name.pascalCase()}} Created');
+      if (context.mounted) {
+        context.maybePop(result.value);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return {{name.pascalCase()}}CreateFormScope(
       builder: (context, ref, child) {
         return Scaffold(
@@ -30,13 +45,7 @@ class {{name.pascalCase()}}CreatePage extends HookConsumerWidget {
                 onPressed: ref.status?.isLoading == true
                     ? null
                     : () async {
-                        final result = await ref.submit();
-                        if (result.hasValue) {
-                          BotToast.showText(text: '{{name.pascalCase()}} Created');
-                          if (context.mounted) {
-                            context.maybePop(result.value);
-                          }
-                        }
+                        await _submit(context, ref);
                       },
                 child: Text('Save'),
               ),
