@@ -44,12 +44,14 @@ class ProviderReturnTypeDefinition {
       rawType: type.getDisplayString(),
       baseType: baseType,
       wrapperType: wrapperType,
-      classInfo:
-          parseClassInfo
-              ? isAsync
-                  ? ClassDefinition.parse((type as InterfaceType).typeArguments.first)
-                  : ClassDefinition.parse(type)
-              : null,
+      classInfo: parseClassInfo
+          ? isAsync
+              ? ClassDefinition.parse(
+                  (type as InterfaceType).typeArguments.first,
+                  options: ClassParserOptions(),
+                )
+              : ClassDefinition.parse(type)
+          : null,
     );
   }
 

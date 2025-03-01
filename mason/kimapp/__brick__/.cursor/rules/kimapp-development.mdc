@@ -1,10 +1,13 @@
+---
+description: Kimapp Development Guide for Flutter with Supabase
+globs: 
+alwaysApply: false
+---
 # Kimapp Development Guide for Flutter with Supabase
 
 ## Overview
+
 This guide provides a comprehensive reference for developing Flutter applications using the Kimapp architecture with a Supabase backend. Kimapp emphasizes a schema-first, type-safe approach to generate models, repositories, and providers, ensuring consistency and maintainability. This document covers project setup, feature generation, schema design, repository implementation, and best practices.
-
-The current date is March 01, 2025, and all examples are up-to-date with the latest Kimapp conventions.
-
 ---
 
 ## Core Concepts
@@ -37,6 +40,8 @@ mason make kimapp
   - `project_name`: Snake_case name (used in imports and `pubspec.yaml`).
   - `sentry_dsn`: Optional Sentry DSN for error tracking.
 - This generates a scaffold project pre-integrated with Supabase.
+
+> **Note**: The Mason templates (`kimapp` and `kimapp_simple_feature`) are already installed globally on your system, so you can use them directly without additional installation steps.
 
 ### Project Structure
 ```
@@ -91,6 +96,8 @@ mason make kimapp_simple_feature --name feature_name --id_data_type int --genera
   - `id_data_type`: ID type (`int` or `String`).
   - `generate_ui`: Include UI components (default: `false`).
 - **Important**: Never create feature files manually to ensure consistency and proper integration.
+
+Note: Generate new features using Mason CLI (must run from the Flutter project root directory where pubspec.yaml is located):
 
 ---
 
@@ -283,3 +290,5 @@ query.limit(limit).range(offset, offset + limit);
 ---
 
 This unified guide provides everything needed to develop features in a Kimapp Flutter project with Supabase. Always start with Mason for consistency, define schemas carefully, and follow type safety and immutability principles for a robust application.
+
+--- 
