@@ -4,7 +4,6 @@ import 'package:autoverpod_generator/src/templates/utils.dart';
 
 import '../state_widget_names.dart';
 import 'debug_check.dart';
-import 'param_widget_wrapper.dart';
 
 String generateStateWidget(ProviderDefinition provider) {
   final builderType =
@@ -39,7 +38,7 @@ if (onStateChanged != null) {
       onStateChanged!(${provider.isAsyncValue ? 'pre?.valueOrNull' : 'pre'}, ${provider.isAsyncValue ? 'next.valueOrNull' : 'next'});
   });
 }
-return ${generateParamWidgetWrapper(provider, child: 'builder(context, ${provider.subProxyWidgetName}(ref), child)')};
+return 'builder(context, ${provider.subProxyWidgetName}(ref), child);
     ''',
   );
 }
