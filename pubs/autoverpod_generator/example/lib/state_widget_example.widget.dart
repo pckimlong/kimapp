@@ -181,7 +181,7 @@ class MyNameAsyncStateWidget extends ConsumerWidget {
   /// The ref parameter provides type-safe access to the provider state and notifier
   final Widget Function(
     BuildContext context,
-    _MyNameAsyncProxyWidgetRef ref,
+    _MyNameAsyncStateProxyWidgetRef ref,
     Widget? child,
   )
   builder;
@@ -357,7 +357,7 @@ class MyNameStateWidget extends ConsumerWidget {
   /// The ref parameter provides type-safe access to the provider state and notifier
   final Widget Function(
     BuildContext context,
-    _MyNameProxyWidgetRef ref,
+    _MyNameStateProxyWidgetRef ref,
     Widget? child,
   )
   builder;
