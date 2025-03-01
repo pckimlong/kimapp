@@ -38,7 +38,7 @@ if (onStateChanged != null) {
       onStateChanged!(${provider.isAsyncValue ? 'pre?.valueOrNull' : 'pre'}, ${provider.isAsyncValue ? 'next.valueOrNull' : 'next'});
   });
 }
-return 'builder(context, ${provider.subProxyWidgetName}(ref), child);
+return builder(context, ${provider.subProxyWidgetName}(ref), child);
     ''',
   );
 }
