@@ -51,7 +51,7 @@ class UserRepository {
 @riverpod
 class UpdateUser extends _$UpdateUserWidget {
   @override
-  Future<UpdateUserModel> build(int id) async {
+  UpdateUserModel build(int id) {
     /// Initializes the form state with existing user data.
     ///
     /// For new user creation (where id isn't needed):

@@ -1,3 +1,5 @@
+import 'package:talker_riverpod_logger/talker_riverpod_logger.dart';
+
 class Config {
   const Config._();
 

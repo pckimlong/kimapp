@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.3.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,9 +35,7 @@ dependencies:
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   autoverpod:
-    path: ../../autoverpod
-  autoverpod_generator:
-    path: ../
+    path: ./pubs/autoverpod
   hooks_riverpod: ^2.6.1
   flutter_hooks: ^0.21.2
   fast_immutable_collections: ^9.1.0
@@ -58,6 +56,8 @@ dev_dependencies:
   freezed: ^2.4.5
   json_serializable: ^6.7.1
   riverpod_generator: ^2.3.9
+  autoverpod_generator:
+    path: ./pubs/autoverpod_generator
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

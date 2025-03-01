@@ -20,11 +20,6 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   @protected
   @nonVirtual
   Future<AsyncValue<bool>> call({required Uint8List? photoBytes}) async {
-    // Ignore if form is not loaded yet
-    if (this.state.isLoading) return const AsyncValue.loading();
-    // Cannot submit when form is not loaded yet
-    if (this.state.hasValue == false) return const AsyncValue.loading();
-
     final _callStatus = ref.read(updateUserCallStatusProvider((id: id)));
     final _updateCallStatus =
         ref.read(updateUserCallStatusProvider((id: id)).notifier);
@@ -37,8 +32,8 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
     }
 
     _updateCallStatus.state = const AsyncValue.loading();
-    final result = await AsyncValue.guard(() async =>
-        await submit(this.state.requireValue, photoBytes: photoBytes));
+    final result = await AsyncValue.guard(
+        () async => await submit(this.state, photoBytes: photoBytes));
 
     _updateCallStatus.state = result;
 
@@ -77,27 +72,23 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   /// Update the state of the form.
   /// This allow for more flexible to update specific fields.
   void updateState(UpdateUserModel Function(UpdateUserModel state) update) =>
-      state = state.whenData(update);
+      state = update(state);
 
   /// Update the name field of UpdateUserModel class.
-  void updateName(String newValue) =>
-      state = state.whenData((state) => state.copyWith(name: newValue));
+  void updateName(String newValue) => state = state.copyWith(name: newValue);
 
   /// Update the age field of UpdateUserModel class.
-  void updateAge(int? newValue) =>
-      state = state.whenData((state) => state.copyWith(age: newValue));
+  void updateAge(int? newValue) => state = state.copyWith(age: newValue);
 
   /// Update the email field of UpdateUserModel class.
-  void updateEmail(String? newValue) =>
-      state = state.whenData((state) => state.copyWith(email: newValue));
+  void updateEmail(String? newValue) => state = state.copyWith(email: newValue);
 
   /// Update the address field of UpdateUserModel class.
   void updateAddress(String? newValue) =>
-      state = state.whenData((state) => state.copyWith(address: newValue));
+      state = state.copyWith(address: newValue);
 
   /// Update the phone field of UpdateUserModel class.
-  void updatePhone(String? newValue) =>
-      state = state.whenData((state) => state.copyWith(phone: newValue));
+  void updatePhone(String? newValue) => state = state.copyWith(phone: newValue);
 }
 
 // **************************************************************************
@@ -145,7 +136,7 @@ final userRepositoryProvider = AutoDisposeProvider<UserRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UserRepositoryRef = AutoDisposeProviderRef<UserRepository>;
-String _$updateUserHash() => r'9d6c1001ed4d54fb9f0fecfe604f0ae70b2ed26b';
+String _$updateUserHash() => r'4673fa08e9941ce64fa5edac0b478a4b2ed5ef80';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -169,10 +160,10 @@ class _SystemHash {
 }
 
 abstract class _$UpdateUser
-    extends BuildlessAutoDisposeAsyncNotifier<UpdateUserModel> {
+    extends BuildlessAutoDisposeNotifier<UpdateUserModel> {
   late final int id;
 
-  FutureOr<UpdateUserModel> build(
+  UpdateUserModel build(
     int id,
   );
 }
@@ -186,7 +177,7 @@ const updateUserProvider = UpdateUserFamily();
 /// Annotated with @formWidget and @riverpod
 ///
 /// Copied from [UpdateUser].
-class UpdateUserFamily extends Family<AsyncValue<UpdateUserModel>> {
+class UpdateUserFamily extends Family<UpdateUserModel> {
   /// Annotated with @formWidget and @riverpod
   ///
   /// Copied from [UpdateUser].
@@ -231,7 +222,7 @@ class UpdateUserFamily extends Family<AsyncValue<UpdateUserModel>> {
 ///
 /// Copied from [UpdateUser].
 class UpdateUserProvider
-    extends AutoDisposeAsyncNotifierProviderImpl<UpdateUser, UpdateUserModel> {
+    extends AutoDisposeNotifierProviderImpl<UpdateUser, UpdateUserModel> {
   /// Annotated with @formWidget and @riverpod
   ///
   /// Copied from [UpdateUser].
@@ -264,7 +255,7 @@ class UpdateUserProvider
   final int id;
 
   @override
-  FutureOr<UpdateUserModel> runNotifierBuild(
+  UpdateUserModel runNotifierBuild(
     covariant UpdateUser notifier,
   ) {
     return notifier.build(
@@ -289,7 +280,7 @@ class UpdateUserProvider
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<UpdateUser, UpdateUserModel>
+  AutoDisposeNotifierProviderElement<UpdateUser, UpdateUserModel>
       createElement() {
     return _UpdateUserProviderElement(this);
   }
@@ -310,13 +301,13 @@ class UpdateUserProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin UpdateUserRef on AutoDisposeAsyncNotifierProviderRef<UpdateUserModel> {
+mixin UpdateUserRef on AutoDisposeNotifierProviderRef<UpdateUserModel> {
   /// The parameter `id` of this provider.
   int get id;
 }
 
 class _UpdateUserProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<UpdateUser, UpdateUserModel>
+    extends AutoDisposeNotifierProviderElement<UpdateUser, UpdateUserModel>
     with UpdateUserRef {
   _UpdateUserProviderElement(super.provider);
 

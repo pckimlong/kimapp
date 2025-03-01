@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:analyzer/dart/element/element.dart';
 import 'package:autoverpod_generator/src/models/provider_return_type_definition.dart';
+import 'package:autoverpod_generator/src/templates/utils.dart';
 import 'package:code_builder/code_builder.dart';
 // ignore: depend_on_referenced_packages
 import 'package:collection/collection.dart';
@@ -209,6 +210,10 @@ class ProviderDefinition {
       'dependencies': dependencies,
       'genericParameters': genericParameters,
     };
+  }
+
+  List<ClassField> familyParametersAsClassFields() {
+    return familyParameters.map((p) => p.toClassField()).toList();
   }
 
   String get familyAsRecordType {
