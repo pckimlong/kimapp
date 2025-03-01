@@ -4,15 +4,17 @@
 // ignore_for_file: type=lint, duplicate_import, unnecessary_import, unused_import, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 // coverage:ignore-file
 
-import 'dart:core';
-import 'dart:typed_data';
-
-import 'package:autoverpod/autoverpod.dart';
 import 'package:autoverpod_generator_example/form_widget_example.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'dart:typed_data';
+import 'package:autoverpod/autoverpod.dart';
+import 'package:autoverpod_generator_example/form_widget_example.widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:core';
 
 class _UpdateUserFormInheritedWidget extends InheritedWidget {
   const _UpdateUserFormInheritedWidget({
@@ -25,7 +27,8 @@ class _UpdateUserFormInheritedWidget extends InheritedWidget {
   final ({int id}) params;
 
   static _UpdateUserFormInheritedWidget of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_UpdateUserFormInheritedWidget>()!;
+    return context
+        .dependOnInheritedWidgetOfExactType<_UpdateUserFormInheritedWidget>()!;
   }
 
   @override
@@ -41,9 +44,11 @@ class _UpdateUserProxyWidgetRef extends WidgetRef {
 
   ({int id}) get params => _UpdateUserFormInheritedWidget.of(context).params;
 
-  AsyncValue<bool>? get status => _ref.watch(updateUserCallStatusProvider((id: params.id)));
+  AsyncValue<bool>? get status =>
+      _ref.watch(updateUserCallStatusProvider((id: params.id)));
 
-  GlobalKey<FormState> get formKey => _UpdateUserFormInheritedWidget.of(context).formKey;
+  GlobalKey<FormState> get formKey =>
+      _UpdateUserFormInheritedWidget.of(context).formKey;
 
   UpdateUser get notifier => _ref.read(updateUserProvider(params.id).notifier);
 
@@ -60,13 +65,10 @@ class _UpdateUserProxyWidgetRef extends WidgetRef {
     return await notifier(photoBytes: photoBytes);
   }
 
-  UpdateUserModel get state => _ref.watch(updateUserProvider(params.id)).requireValue;
+  UpdateUserModel get state => _ref.watch(updateUserProvider(params.id));
 
-  Selected select<Selected>(Selected Function(UpdateUserModel) selector) => _ref.watch(
-        updateUserProvider(
-          params.id,
-        ).select((value) => selector(value.requireValue)),
-      );
+  Selected select<Selected>(Selected Function(UpdateUserModel) selector) => _ref
+      .watch(updateUserProvider(params.id).select((value) => selector(value)));
 
   @override
   BuildContext get context => _ref.context;
@@ -82,8 +84,7 @@ class _UpdateUserProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) =>
-      _ref.listen(provider, listener, onError: onError);
+  }) => _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -91,13 +92,12 @@ class _UpdateUserProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) =>
-      _ref.listenManual(
-        provider,
-        listener,
-        onError: onError,
-        fireImmediately: fireImmediately,
-      );
+  }) => _ref.listenManual(
+    provider,
+    listener,
+    onError: onError,
+    fireImmediately: fireImmediately,
+  );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -118,30 +118,27 @@ class UpdateUserFormScope extends ConsumerStatefulWidget {
     this.onPopInvokedWithResult,
     required this.builder,
     this.child,
-    this.onInitLoading,
-    this.onInitError,
     this.onSuccessed,
   }) : assert(
-          child != null || builder != null,
-          'Either child or builder must be provided',
-        );
-
+         child != null || builder != null,
+         'Either child or builder must be provided',
+       );
   final int id;
   final Widget Function(
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     Widget? child,
-  )? builder;
+  )?
+  builder;
   final Widget? child;
   final GlobalKey<FormState>? formKey;
   final AutovalidateMode? autovalidateMode;
   final void Function(bool, Object?)? onPopInvokedWithResult;
-  final Widget Function()? onInitLoading;
-  final Widget Function(Object error, StackTrace stack)? onInitError;
   final void Function(BuildContext context, bool value)? onSuccessed;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _UpdateUserFormScopeState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _UpdateUserFormScopeState();
 }
 
 class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
@@ -167,10 +164,6 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
       }
     });
 
-    final isInitializedAsync = ref.watch(
-      updateUserProvider(widget.id).select((_) => _.whenData((_) => true)),
-    );
-
     return _UpdateUserFormInheritedWidget(
       formKey: _cachedFormKey,
       params: (id: widget.id),
@@ -178,8 +171,8 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
         key: _cachedFormKey,
         autovalidateMode: widget.autovalidateMode,
         onPopInvokedWithResult: widget.onPopInvokedWithResult,
-        child: isInitializedAsync.when(
-          data: (_) {
+        child: Consumer(
+          builder: (context, ref, child) {
             if (widget.builder != null) {
               return widget.builder!(
                 context,
@@ -189,21 +182,6 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
             }
 
             return widget.child!;
-          },
-          error: (error, stack) =>
-              widget.onInitError?.call(error, stack) ??
-              Theme.of(context)
-                  .extension<KimappThemeExtension>()
-                  ?.defaultErrorStateWidget
-                  ?.call(context, ref, error) ??
-              const SizedBox.shrink(),
-          loading: () {
-            return widget.onInitLoading?.call() ??
-                Theme.of(context)
-                    .extension<KimappThemeExtension>()
-                    ?.defaultLoadingStateWidget
-                    ?.call(context, ref) ??
-                const Center(child: CircularProgressIndicator());
           },
         ),
       ),
@@ -234,7 +212,8 @@ class UpdateUserFormParams extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     ({int id}) params,
-  ) builder;
+  )
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -258,7 +237,8 @@ class UpdateUserFormSelect<Selected> extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     Selected value,
-  ) builder;
+  )
+  builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override
@@ -268,9 +248,7 @@ class UpdateUserFormSelect<Selected> extends ConsumerWidget {
     if (onStateChanged != null) {
       final params = _UpdateUserFormInheritedWidget.of(context).params;
       ref.listen(
-        updateUserProvider(
-          params.id,
-        ).select((value) => selector(value.requireValue)),
+        updateUserProvider(params.id).select((value) => selector(value)),
         (pre, next) {
           if (pre != next) onStateChanged!(pre, next);
         },
@@ -298,9 +276,11 @@ class UpdateUserFormState extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
-  final void Function(UpdateUserModel? previous, UpdateUserModel? next)? onStateChanged;
+  final void Function(UpdateUserModel? previous, UpdateUserModel? next)?
+  onStateChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -309,11 +289,13 @@ class UpdateUserFormState extends ConsumerWidget {
     if (onStateChanged != null) {
       final params = _UpdateUserFormInheritedWidget.of(context).params;
       ref.listen(updateUserProvider(params.id), (pre, next) {
-        if (pre != next) onStateChanged!(pre?.valueOrNull, next.valueOrNull);
+        if (pre != next) onStateChanged!(pre, next);
       });
     }
     return UpdateUserFormParams(
-      builder: (context, ref, params) => builder(context, _UpdateUserProxyWidgetRef(ref), child),
+      builder:
+          (context, ref, params) =>
+              builder(context, _UpdateUserProxyWidgetRef(ref), child),
     );
   }
 }
@@ -325,7 +307,8 @@ class UpdateUserFormStatus extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     AsyncValue<bool>? status,
-  ) builder;
+  )
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -359,10 +342,12 @@ class UpdateUserNameField extends ConsumerStatefulWidget {
 
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
-  final Widget Function(BuildContext context, _UpdateUserNameProxyWidgetRef ref) builder;
+  final Widget Function(BuildContext context, _UpdateUserNameProxyWidgetRef ref)
+  builder;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => UpdateUserNameFieldState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      UpdateUserNameFieldState();
 }
 
 class UpdateUserNameFieldState extends ConsumerState<UpdateUserNameField> {
@@ -372,12 +357,13 @@ class UpdateUserNameFieldState extends ConsumerState<UpdateUserNameField> {
   void initState() {
     super.initState();
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.name;
-    _textController = widget.textController ?? TextEditingController(text: initialValue);
+    final initialValue = ref.read(updateUserProvider(params.id)).name;
+    _textController =
+        widget.textController ?? TextEditingController(text: initialValue);
 
     // Setup listener for provider changes
     ref.listenManual(
-      updateUserProvider(params.id).select((value) => value.requireValue.name),
+      updateUserProvider(params.id).select((value) => value.name),
       _handleFieldValueChange,
       fireImmediately: false,
     );
@@ -402,7 +388,9 @@ class UpdateUserNameFieldState extends ConsumerState<UpdateUserNameField> {
   void _syncTextToProvider() {
     if (!mounted) return;
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    ref.read(updateUserProvider(params.id).notifier).updateName(_textController.text);
+    ref
+        .read(updateUserProvider(params.id).notifier)
+        .updateName(_textController.text);
   }
 
   @override
@@ -438,7 +426,8 @@ class _UpdateUserAgeProxyWidgetRef extends _UpdateUserProxyWidgetRef {
 class UpdateUserAgeField extends ConsumerWidget {
   const UpdateUserAgeField({super.key, required this.builder});
 
-  final Widget Function(BuildContext context, _UpdateUserAgeProxyWidgetRef ref) builder;
+  final Widget Function(BuildContext context, _UpdateUserAgeProxyWidgetRef ref)
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -475,10 +464,12 @@ class UpdateUserEmailField extends ConsumerStatefulWidget {
   final Widget Function(
     BuildContext context,
     _UpdateUserEmailProxyWidgetRef ref,
-  ) builder;
+  )
+  builder;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => UpdateUserEmailFieldState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      UpdateUserEmailFieldState();
 }
 
 class UpdateUserEmailFieldState extends ConsumerState<UpdateUserEmailField> {
@@ -488,12 +479,13 @@ class UpdateUserEmailFieldState extends ConsumerState<UpdateUserEmailField> {
   void initState() {
     super.initState();
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.email;
-    _textController = widget.textController ?? TextEditingController(text: initialValue);
+    final initialValue = ref.read(updateUserProvider(params.id)).email;
+    _textController =
+        widget.textController ?? TextEditingController(text: initialValue);
 
     // Setup listener for provider changes
     ref.listenManual(
-      updateUserProvider(params.id).select((value) => value.requireValue.email),
+      updateUserProvider(params.id).select((value) => value.email),
       _handleFieldValueChange,
       fireImmediately: false,
     );
@@ -518,7 +510,9 @@ class UpdateUserEmailFieldState extends ConsumerState<UpdateUserEmailField> {
   void _syncTextToProvider() {
     if (!mounted) return;
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    ref.read(updateUserProvider(params.id).notifier).updateEmail(_textController.text);
+    ref
+        .read(updateUserProvider(params.id).notifier)
+        .updateEmail(_textController.text);
   }
 
   @override
@@ -569,27 +563,29 @@ class UpdateUserAddressField extends ConsumerStatefulWidget {
   final Widget Function(
     BuildContext context,
     _UpdateUserAddressProxyWidgetRef ref,
-  ) builder;
+  )
+  builder;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => UpdateUserAddressFieldState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      UpdateUserAddressFieldState();
 }
 
-class UpdateUserAddressFieldState extends ConsumerState<UpdateUserAddressField> {
+class UpdateUserAddressFieldState
+    extends ConsumerState<UpdateUserAddressField> {
   late final TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.address;
-    _textController = widget.textController ?? TextEditingController(text: initialValue);
+    final initialValue = ref.read(updateUserProvider(params.id)).address;
+    _textController =
+        widget.textController ?? TextEditingController(text: initialValue);
 
     // Setup listener for provider changes
     ref.listenManual(
-      updateUserProvider(
-        params.id,
-      ).select((value) => value.requireValue.address),
+      updateUserProvider(params.id).select((value) => value.address),
       _handleFieldValueChange,
       fireImmediately: false,
     );
@@ -614,7 +610,9 @@ class UpdateUserAddressFieldState extends ConsumerState<UpdateUserAddressField> 
   void _syncTextToProvider() {
     if (!mounted) return;
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    ref.read(updateUserProvider(params.id).notifier).updateAddress(_textController.text);
+    ref
+        .read(updateUserProvider(params.id).notifier)
+        .updateAddress(_textController.text);
   }
 
   @override
@@ -665,10 +663,12 @@ class UpdateUserPhoneField extends ConsumerStatefulWidget {
   final Widget Function(
     BuildContext context,
     _UpdateUserPhoneProxyWidgetRef ref,
-  ) builder;
+  )
+  builder;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => UpdateUserPhoneFieldState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      UpdateUserPhoneFieldState();
 }
 
 class UpdateUserPhoneFieldState extends ConsumerState<UpdateUserPhoneField> {
@@ -678,12 +678,13 @@ class UpdateUserPhoneFieldState extends ConsumerState<UpdateUserPhoneField> {
   void initState() {
     super.initState();
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.phone;
-    _textController = widget.textController ?? TextEditingController(text: initialValue);
+    final initialValue = ref.read(updateUserProvider(params.id)).phone;
+    _textController =
+        widget.textController ?? TextEditingController(text: initialValue);
 
     // Setup listener for provider changes
     ref.listenManual(
-      updateUserProvider(params.id).select((value) => value.requireValue.phone),
+      updateUserProvider(params.id).select((value) => value.phone),
       _handleFieldValueChange,
       fireImmediately: false,
     );
@@ -708,7 +709,9 @@ class UpdateUserPhoneFieldState extends ConsumerState<UpdateUserPhoneField> {
   void _syncTextToProvider() {
     if (!mounted) return;
     final params = _UpdateUserFormInheritedWidget.of(context).params;
-    ref.read(updateUserProvider(params.id).notifier).updatePhone(_textController.text);
+    ref
+        .read(updateUserProvider(params.id).notifier)
+        .updatePhone(_textController.text);
   }
 
   @override

@@ -19,17 +19,13 @@ class MyErrorWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(8),
-      decoration: BoxDecorati(
+      decoration: BoxDecoration(
         color: context.colors.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline,
-            color: context.colors.error,
-            size: 18,
-          ),
+          Icon(Icons.error_outline, color: context.colors.error, size: 18),
           AS.wGap4,
           Flexible(
             child: Text(

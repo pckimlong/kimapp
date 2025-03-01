@@ -1,0 +1,37 @@
+# Configuration for pub_release tool
+# See https://pub.dev/packages/pub_release for more information
+
+# Default configuration for all packages
+default:
+  # Commands to run before release
+  before:
+    - melos format
+    - melos analyze
+    - melos test
+    - melos build_all
+  
+  # Commands to run after release
+  after:
+    - git add .
+    - git commit -m "Release {package} {version}"
+    - git tag "{package}-v{version}"
+    - git push
+    - git push --tags
+
+# Package-specific configurations
+packages:
+  autoverpod:
+    path: autoverpod
+    before:
+      - melos format --scope=autoverpod
+      - melos analyze --scope=autoverpod
+      - melos test --scope=autoverpod
+      - melos build_all --scope=autoverpod
+  
+  autoverpod_generator:
+    path: autoverpod_generator
+    before:
+      - melos format --scope=autoverpod_generator
+      - melos analyze --scope=autoverpod_generator
+      - melos test --scope=autoverpod_generator
+      - melos build_all --scope=autoverpod_generator 

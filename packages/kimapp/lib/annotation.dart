@@ -206,23 +206,5 @@ class KimappForm {
 }
 
 /// Constant instance of KimappForm for easy use in annotations.
-/// This is just for backward compatibility. consider using [kimappFormV2] instead.
+/// This is just for backward compatibility. consider using [formWidget] in autoverpod package instead.
 const kimappForm = KimappForm();
-
-/// Annotation to generate a form widget and handle state with ease.
-/// This is the new form annotation.
-class KimappFormV2 {
-  const KimappFormV2();
-}
-
-/// Constant instance of KimappFormV2 for easy use in annotations.
-const kimappFormV2 = KimappFormV2();
-
-/// Annotation to generate a widget with ease.
-/// Uses Riverpod selector and generates all widgets from the given return type.
-class StateWidget {
-  const StateWidget();
-}
-
-/// Constant instance of StateWidget for easy use in annotations.
-const stateWidget = StateWidget();
