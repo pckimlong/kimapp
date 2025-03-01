@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../i_{{name.snakeCase()}}_repo.dart';
 import '../{{name.snakeCase()}}_schema.schema.dart';
 import '{{name.snakeCase()}}_list_provider.dart';
+import '{{name.snakeCase()}}_list_pagination_provider.dart';
 
 part '{{name.snakeCase()}}_create_provider.g.dart';
 

@@ -13,6 +13,7 @@ class ClassParserOptions {
     this.parseParentTypes = false,
     this.parsePrivateFields = false,
     this.parseSyntheticFields = false,
+    this.parseStaticFields = false,
     this.toParseMethods = const [],
   });
 
@@ -36,6 +37,9 @@ class ClassParserOptions {
 
   /// List of method names to parse for detailed information, "*" for all methods
   final List<String> toParseMethods;
+
+  /// Whether to parse static fields
+  final bool parseStaticFields;
 
   bool get parseAllMethods => toParseMethods.contains('*');
 
@@ -118,10 +122,9 @@ class ClassDefinition {
     final parentTypes =
         options.parseParentTypes ? _parseParentTypes(classElement) : const <String>[];
 
-    final fields =
-        options.parseFields
-            ? _parseFields(classElement, isFreezed, options)
-            : const <FieldDefinition>[];
+    final fields = options.parseFields
+        ? _parseFields(classElement, isFreezed, options)
+        : const <FieldDefinition>[];
 
     final methods = _parseMethods(classElement, fields, options);
 
@@ -198,6 +201,7 @@ class ClassDefinition {
         return c.isFactory &&
             (!c.isSynthetic || options.parseSyntheticFields) &&
             (c.isPublic || options.parsePrivateFields) &&
+            (options.parseStaticFields || !c.isStatic) &&
             c.name != 'fromJson'; // ignore fromJson factory constructor
       });
 
@@ -222,6 +226,7 @@ class ClassDefinition {
         element.fields
             .where((f) {
               return (!f.isSynthetic || options.parseSyntheticFields) &&
+                  (options.parseStaticFields || !f.isStatic) &&
                   (f.isPublic || options.parsePrivateFields);
             })
             .map((f) => FieldDefinition.parse(f))
@@ -233,6 +238,7 @@ class ClassDefinition {
         element.fields
             .where((f) {
               return (!f.isSynthetic || options.parseSyntheticFields) &&
+                  (options.parseStaticFields || !f.isStatic) &&
                   (f.isPublic || options.parsePrivateFields);
             })
             .map((f) => FieldDefinition.parse(f))
@@ -278,11 +284,10 @@ class ClassDefinition {
 
     if (_isFreezed(element as ClassElement)) {
       // For Freezed classes, look for the generated CopyWith interface
-      final copyWithInterface =
-          element.library.topLevelElements
-              .whereType<ClassElement>()
-              .where((e) => e.name == '\$${element.name}CopyWith')
-              .firstOrNull;
+      final copyWithInterface = element.library.topLevelElements
+          .whereType<ClassElement>()
+          .where((e) => e.name == '\$${element.name}CopyWith')
+          .firstOrNull;
 
       if (copyWithInterface != null) {
         // Find the call method in the CopyWith interface which contains the parameters
@@ -294,11 +299,10 @@ class ClassDefinition {
       }
 
       // Also look for methods in the private mixin for completeness
-      final privateMixin =
-          element.library.topLevelElements
-              .whereType<MixinElement>()
-              .where((e) => e.name.startsWith('_\$${element.name}'))
-              .firstOrNull;
+      final privateMixin = element.library.topLevelElements
+          .whereType<MixinElement>()
+          .where((e) => e.name.startsWith('_\$${element.name}'))
+          .firstOrNull;
 
       if (privateMixin != null) {
         for (final method in privateMixin.methods.where(
