@@ -2,11 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:kimapp/kimapp.dart';
 
-import '../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_create_provider.dart';
+import '../../../core/helpers/provider_status_helper.dart';
+import '../../../features/{{name.snakeCase()}}/providers/{{name.snakeCase()}}_create_provider.widget.dart';
 import '../../../features/{{name.snakeCase()}}/{{name.snakeCase()}}_schema.schema.dart';
+import '../../app/app_style.dart';
 import '../../router/app_router.gr.dart';
+import '../../widgets/my_error_widget.dart';
 
 @RoutePage()
 class {{name.pascalCase()}}CreatePage extends HookConsumerWidget {
@@ -18,79 +20,46 @@ class {{name.pascalCase()}}CreatePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return _Body();
-  }
-}
-
-class _Body extends StatefulHookConsumerWidget {
-  const _Body();
-  @override
-  ConsumerState<_Body> createState() => _BodyState();
-}
-
-class _BodyState extends ConsumerState<_Body> {
-  @override
-  Widget build(BuildContext context) {
-    return {{name.pascalCase()}}CreateFormWidget(
-      builder: (ref, formKey, status, isProgressing, failure, submit) {
+    return {{name.pascalCase()}}CreateFormScope(
+      builder: (context, ref, child) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Create {{name.pascalCase()}}'),
             actions: [
               TextButton(
-                onPressed: () async {
-                  if (!formKey.currentState!.validate()) return;
-                  formKey.currentState!.save();
-                  
-                  final result = await submit();
-                  if (result.isSuccess) {
-                    BotToast.showText(text: '{{name.pascalCase()}} Created');
-                    if (context.mounted) {
-                      context.maybePop(result.successOrNull);
-                    }
-                  }
-
-                  if (result.isFailure && context.mounted) {
-                    _showFailureSnackbar(result);
-                  }
-                },
-                child: const Text('Save'),
+                onPressed: ref.status?.isLoading == true
+                    ? null
+                    : () async {
+                        final result = await ref.submit();
+                        if (result.hasValue) {
+                          BotToast.showText(text: '{{name.pascalCase()}} Created');
+                          if (context.mounted) {
+                            context.maybePop(result.value);
+                          }
+                        }
+                      },
+                child: Text('Save'),
               ),
+              AS.wGap8,
             ],
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Add your form widgets here
-              ],
-            ),
           ),
         );
       },
-    );
-  }
+      child: Column(
+        children: [
+          {{name.pascalCase()}}CreateFormStatus(
+            builder: (context, ref, status) {
+              final providerStatus = status.toProviderStatus();
+              return providerStatus.maybeWhen(
+                inProgress: () => const LinearProgressIndicator(),
+                failure: (failure) => MyErrorWidget(error: failure),
+                orElse: () => SizedBox.shrink(),
+              );
+            },
+          ),
 
-  void _showFailureSnackbar(ProviderStatus<{{name.pascalCase()}}Model> result) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          result.failure!.message(),
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.red[700],
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        duration: const Duration(seconds: 4),
-        action: SnackBarAction(
-          label: 'Dismiss',
-          textColor: Colors.white,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
+          // Add more fields here...
+        ],
       ),
     );
   }
