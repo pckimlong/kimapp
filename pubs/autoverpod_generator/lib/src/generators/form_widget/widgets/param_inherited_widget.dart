@@ -4,12 +4,12 @@ import 'package:autoverpod_generator/src/templates/inherited_widget.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 
 String generateParamInheritedWidget(ProviderDefinition provider) {
-  if (!provider.hasFamily) return '';
   return generateInheritedWidget(
     name: provider.formInheritedWidgetName,
     fields: [
       ClassField(name: 'formKey', type: 'GlobalKey<FormState>', isRequired: true),
-      ClassField(name: 'params', type: provider.familyAsRecordType, isRequired: true),
+      if (provider.hasFamily)
+        ClassField(name: 'params', type: provider.familyAsRecordType, isRequired: true),
     ],
   );
 }

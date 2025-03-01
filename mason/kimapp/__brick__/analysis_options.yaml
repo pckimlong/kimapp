@@ -4,12 +4,17 @@ analyzer:
   plugins:
     - custom_lint
   exclude:
-    # - "**/*.g.dart" // Need to keep this, since there generated code need to be linted
+    - "**/*.g.dart" 
+    - "**/*.widget.dart"
     - "**/*.freezed.dart"
     - "**/*.gr.dart"
     - "**/*.table.dart"
   errors:
     invalid_annotation_target: ignore
+
+custom_lint:
+  rules:
+    - notifier_extends: false
 
 linter:
   rules:

@@ -1,6 +1,5 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:core/core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
@@ -12,6 +11,7 @@ import 'package:kimapp_utils/kimapp_utils.dart';
 import '../../../config.dart';
 import '../widgets/my_error_widget.dart';
 import '../../core/helpers/build_context_helper.dart';
+import '../../core/helpers/flutter_talker.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
 import './app_state_provider.dart';

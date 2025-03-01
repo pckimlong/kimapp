@@ -1,43 +1,66 @@
+import 'package:book_swap/src/core/helpers/logger.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../{{name.snakeCase()}}_schema.schema.dart';
+
 import '../i_{{name.snakeCase()}}_repo.dart';
 import '../params/{{name.snakeCase()}}_list_param.dart';
+import '../{{name.snakeCase()}}_schema.schema.dart';
 
 part '{{name.snakeCase()}}_list_pagination_provider.g.dart';
 
 const int _page{{name.pascalCase()}}Limit = 25;
 
 @riverpod
-class {{name.pascalCase()}}ListPagination extends _${{name.pascalCase()}}ListPagination {
+class {{name.pascalCase()}}ListPagination extends _${{name.pascalCase()}}ListPagination with LoggerMixin {
   @override
   FutureOr<IList<{{name.pascalCase()}}Model>> build({
     required int page,
     required {{name.pascalCase()}}ListParam param,
   }) async {
-    ref.onDispose(() => {{name.pascalCase()}}PaginationTracker.instance.untrackPage(page, param));
+    _log('Building page $page with params: $param');
+
+    ref.onDispose(() {
+      _log('Disposing page $page');
+      {{name.pascalCase()}}PaginationTracker.instance.untrackPage(page, param);
+    });
+
     const limit = _page{{name.pascalCase()}}Limit;
     final offset = page * limit;
 
-    await Future.delayed(const Duration(milliseconds: 250));
-    final result = await ref
-        .watch({{name.camelCase()}}RepoProvider)
-        .findPagination(limit: limit, offset: offset, param: param);
+    try {
+      await Future.delayed(const Duration(milliseconds: 250));
+      final result = await ref
+          .watch({{name.camelCase()}}RepoProvider)
+          .findPagination(limit: limit, offset: offset, param: param);
 
-    return result.fold(
-      (_) => result.getOrThrow(),
-      (list) {
-        ref.cacheTime(const Duration(minutes: 1));
-        {{name.pascalCase()}}PaginationTracker.instance.trackMultiple{{name.pascalCase()}}s(
-          list.map((e) => e.id).toList(),
-          page,
-          param,
-        );
-        return list;
-      },
-    );
+      return result.fold(
+        (error) {
+          _log('Error loading page $page: $error');
+          return result.getOrThrow();
+        },
+        (list) {
+          ref.cacheTime(const Duration(minutes: 5));
+
+          {{name.pascalCase()}}PaginationTracker.instance.trackMultiple{{name.pascalCase()}}s(
+            list.map((e) => e.id).toList(),
+            page,
+            param,
+          );
+
+          _log('Loaded ${list.length} {{name.camelCase()}}s for page $page');
+          return list;
+        },
+      );
+    } catch (e) {
+      _log('Unexpected error loading page $page: $e');
+      throw Exception('Failed to load {{name.camelCase()}}s: $e');
+    }
+  }
+
+  void _log(String message) {
+    logDebug('[{{name.pascalCase()}}ListPagination] $message');
   }
 
   void _updateItem({{name.pascalCase()}}Model item) {
@@ -66,9 +89,13 @@ PaginatedItem<{{name.pascalCase()}}Model>? {{name.camelCase()}}PaginatedAtIndex(
   const limit = _page{{name.pascalCase()}}Limit;
   final page = index ~/ limit;
   final pageItems = ref.watch({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
-  // Likely scroll backward
   final hasNextPage = ref.exists({{name.camelCase()}}ListPaginationProvider(page: page + 1, param: param));
-  return PaginatedItem.build(pageItems: pageItems, limit: limit, index: index, showLoadingInAllItem: hasNextPage,);
+  return PaginatedItem.build(
+    pageItems: pageItems,
+    limit: limit,
+    index: index,
+    showLoadingInAllItem: hasNextPage,
+  );
 }
 
 /// Tracks paginated items, we can't use with add, because it might has issue with param filter
@@ -92,7 +119,6 @@ class {{name.pascalCase()}}PaginationTracker {
     for (final entries in _items.values) {
       entries.remove((page, param));
     }
-    // Cleanup empty entries
     _items.removeWhere((_, entries) => entries.isEmpty);
   }
 
@@ -104,9 +130,15 @@ class {{name.pascalCase()}}PaginationTracker {
     _items.clear();
   }
 
-  /// Invalidate only visible items, since we use cache, the cache pagination will be more that we need
-  /// I will use some trick to invalidate only visible items base on [{{name.camelCase()}}PaginatedAtIndex] which is not cached
-  void invalidateVisibleItems(Ref ref) {}
+  void invalidateVisibleItems(Ref ref, {required {{name.pascalCase()}}ListParam param, int visibleItemCount = 50}) {
+    final visiblePages = (visibleItemCount / _page{{name.pascalCase()}}Limit).ceil();
+
+    for (int page = 0; page < visiblePages; page++) {
+      if (ref.exists({{name.camelCase()}}ListPaginationProvider(page: page, param: param))) {
+        ref.invalidate({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
+      }
+    }
+  }
 
   void updatePaginatedItem(Ref ref, {{name.pascalCase()}}Model item) {
     for (final entry in getEntriesFor{{name.pascalCase()}}(item.id)) {
@@ -120,48 +152,99 @@ class {{name.pascalCase()}}PaginationTracker {
     final entries = getEntriesFor{{name.pascalCase()}}(id);
     if (entries.isEmpty) return;
 
-    // If there family param length is equal to the invalidate length, it will perform an invalidate instead of side-effect
     if (entries.length == invalidateOnLength) {
       ref.invalidate({{name.camelCase()}}ListPaginationProvider);
       return;
     }
 
-    // Sort entries by page to find affected pages
     final sortedEntries = entries.toList()..sort((a, b) => a.$1.compareTo(b.$1));
 
+    final entriesByParam = <{{name.pascalCase()}}ListParam, List<int>>{};
     for (final entry in sortedEntries) {
-      // Remove item from current page
-      ref
-          .read({{name.camelCase()}}ListPaginationProvider(page: entry.$1, param: entry.$2).notifier)
-          ._removeItem(id);
+      entriesByParam.putIfAbsent(entry.$2, () => []).add(entry.$1);
+    }
 
-      // Find and invalidate all subsequent pages with same param
-      final currentPage = entry.$1;
-      final param = entry.$2;
+    for (final param in entriesByParam.keys) {
+      final pages = entriesByParam[param]!..sort();
 
-      // Invalidate all higher page numbers for this param
-      for (var page = currentPage + 1;
-          ref.exists({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
-          page++) {
-        // shift item up
-        final firstItem = ref
-            .read({{name.camelCase()}}ListPaginationProvider(page: page, param: param))
-            .valueOrNull
-            ?.firstOrNull;
+      for (final page in pages) {
+        ref.read({{name.camelCase()}}ListPaginationProvider(page: page, param: param).notifier)._removeItem(id);
+      }
 
-        if (firstItem == null) continue;
+      final highestPage = pages.last;
 
+      _shiftItemsAfterDeletion(ref, highestPage, param);
+    }
+  }
+
+  void _shiftItemsAfterDeletion(Ref ref, int startPage, {{name.pascalCase()}}ListParam param) {
+    for (var page = startPage + 1;
+        ref.exists({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
+        page++) {
+      final nextPageItems =
+          ref.read({{name.camelCase()}}ListPaginationProvider(page: page, param: param)).valueOrNull;
+
+      if (nextPageItems == null || nextPageItems.isEmpty) break;
+
+      final firstItem = nextPageItems.first;
+      ref.read({{name.camelCase()}}ListPaginationProvider(page: page, param: param).notifier)._removeAt(0);
+
+      if (ref.exists({{name.camelCase()}}ListPaginationProvider(page: page - 1, param: param))) {
         ref
-            .read({{name.camelCase()}}ListPaginationProvider(page: page, param: param).notifier)
-            ._removeAt(0);
+            .read({{name.camelCase()}}ListPaginationProvider(page: page - 1, param: param).notifier)
+            ._addItem(firstItem);
+      }
 
-        if (ref.exists({{name.camelCase()}}ListPaginationProvider(page: page - 1, param: param))) {
-          ref
-              .read({{name.camelCase()}}ListPaginationProvider(page: page - 1, param: param).notifier)
-              ._addItem(firstItem);
+      if (nextPageItems.length <= 1) break;
+    }
+  }
+
+  void updateMultiplePaginatedItems(Ref ref, List<{{name.pascalCase()}}Model> items) {
+    final updatesByPage = <(int, {{name.pascalCase()}}ListParam), List<{{name.pascalCase()}}Model>>{};
+
+    for (final item in items) {
+      final entries = getEntriesFor{{name.pascalCase()}}(item.id);
+      for (final entry in entries) {
+        updatesByPage.putIfAbsent(entry, () => []).add(item);
+      }
+    }
+
+    for (final entry in updatesByPage.entries) {
+      final (page, param) = entry.key;
+      final updates = entry.value;
+
+      if (updates.length > _page{{name.pascalCase()}}Limit / 2) {
+        ref.invalidate({{name.camelCase()}}ListPaginationProvider(page: page, param: param));
+      } else {
+        for (final item in updates) {
+          ref.read({{name.camelCase()}}ListPaginationProvider(page: page, param: param).notifier)._updateItem(item);
         }
       }
     }
   }
 }
 
+@riverpod
+class {{name.pascalCase()}}PaginationState extends _${{name.pascalCase()}}PaginationState {
+  @override
+  ({bool isLoading, int totalPages, int currentPage}) build({required {{name.pascalCase()}}ListParam param}) {
+    bool isLoading = false;
+    int highestLoadedPage = 0;
+
+    for (int i = 0; i < 10; i++) {
+      final pageState = ref.watch({{name.camelCase()}}ListPaginationProvider(page: i, param: param));
+      if (pageState.isLoading) {
+        isLoading = true;
+      }
+      if (!pageState.hasError && pageState.hasValue) {
+        highestLoadedPage = i;
+      }
+    }
+
+    return (
+      isLoading: isLoading,
+      totalPages: highestLoadedPage + 1,
+      currentPage: highestLoadedPage,
+    );
+  }
+}

@@ -21,7 +21,7 @@ class {{name.pascalCase()}}Delete extends _${{name.pascalCase()}}Delete {
      final result = await ref.read({{name.camelCase()}}RepoProvider).delete(id);
      return result.getOrThrow();
 }, onSuccess: (success) {
-    ref.invalidate({{name.camelCase()}}ListProvider);
+    ref.read({{name.camelCase()}}ListProvider.notifier).removeWhere((e) => e.id == id);
     ref.invalidate({{name.camelCase()}}DetailProvider(id));
 
     /// Can set the invalidateOnLength to 0, but if it just 1, the invalidate is not expensive, it deserve to be used
