@@ -40,6 +40,24 @@ String _generateFormFieldProxy({
   required String proxyRefName,
   required bool isTextField,
 }) {
+  // Check for field name conflicts
+  final fields = provider.returnType.classInfo?.fields ?? [];
+  final hasSelectConflict = fields.any((f) => f.name == 'select');
+  final hasStateConflict = fields.any((f) => f.name == 'state');
+
+  // Check for conflicts with WidgetRef methods
+  final widgetRefMethodConflicts = [
+    'read',
+    'watch',
+    'listen',
+    'refresh',
+    'invalidate',
+    'exists',
+  ].contains(field.name);
+
+  // Determine field getter name
+  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
+
   return generateSubProxyWidget(
     proxyRefName,
     parentName: provider.formBaseProxyWidgetName,
@@ -58,15 +76,41 @@ String _generateFormFieldProxy({
     methods: [
       Method(
         (b) => b
-          ..name = field.name
+          ..name = fieldGetterName
           ..type = MethodType.getter
           ..returns = refer(field.type)
           ..lambda = true
-          ..body = Code('select((state) => state.${field.name})'),
+          ..docs.addAll([
+            '/// Access the field value directly.',
+            if (field.name == 'state')
+              '/// Note: Base state method has been renamed to formState due to this field name.',
+            if (field.name == 'select')
+              '/// Note: Base select method has been renamed to formSelect due to this field name.',
+            if (field.name == 'status')
+              '/// Note: Base status method has been renamed to formStatus due to this field name.',
+            if (field.name == 'params')
+              '/// Note: Base params method has been renamed to formParams due to this field name.',
+            if (field.name == 'formKey')
+              '/// Note: Base formKey method has been renamed to getFormKey due to this field name.',
+            if (field.name == 'notifier')
+              '/// Note: Base notifier method has been renamed to formNotifier due to this field name.',
+            if (field.name == 'submit')
+              '/// Note: Base submit method has been renamed to formSubmit due to this field name.',
+            if (widgetRefMethodConflicts)
+              '/// Note: Renamed to ${field.name}State to avoid conflict with WidgetRef.${field.name} method.',
+          ])
+          ..body = Code(
+            '${hasSelectConflict ? 'formSelect' : 'select'}((${hasStateConflict ? 'formState' : 'state'}) => ${hasStateConflict ? 'formState' : 'state'}.${field.name})',
+          ),
       ),
       Method(
         (b) => b
-          ..name = 'update${field.name.pascalCase}'
+          ..name = 'update${fieldGetterName.pascalCase}'
+          ..docs.addAll([
+            '/// Update the field value directly.',
+            if (widgetRefMethodConflicts)
+              '/// Note: Renamed to update${fieldGetterName.pascalCase} following the naming convention of $fieldGetterName.',
+          ])
           ..requiredParameters.add(
             Parameter(
               (b) => b
@@ -116,6 +160,19 @@ String _generateTextFieldWidget({
     if (!provider.hasFamily) return '';
     return 'final params = ${provider.formInheritedWidgetName}.of(context).params;';
   }
+
+  // Check for conflicts with WidgetRef methods
+  final widgetRefMethodConflicts = [
+    'read',
+    'watch',
+    'listen',
+    'refresh',
+    'invalidate',
+    'exists',
+  ].contains(field.name);
+
+  // Determine field getter name
+  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
 
   return '''
 class ${provider.fieldWidgetName(field)} extends ConsumerStatefulWidget {

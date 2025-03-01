@@ -5,7 +5,10 @@ import 'package:autoverpod_generator/src/templates/consumer_widget.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 
 String generateStatusWidget(ProviderDefinition provider) {
-  // TODO: Consider passing form key to this ref
+  // Check for field name conflicts
+  final fields = provider.returnType.classInfo?.fields ?? [];
+  final hasStatusConflict = fields.any((f) => f.name == 'status');
+
   return generateConsumerWidget(
     name: provider.formStatusWidgetName,
     fields: [
@@ -18,7 +21,7 @@ String generateStatusWidget(ProviderDefinition provider) {
     build: '''
 ${generateDebugCheckCall(provider)}
 final stateRef = ${provider.formBaseProxyWidgetName}(ref);
-return builder(context, stateRef, stateRef.status);
+return builder(context, stateRef, stateRef.${hasStatusConflict ? 'formStatus' : 'status'});
 ''',
   );
 }
