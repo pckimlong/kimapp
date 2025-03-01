@@ -61,7 +61,7 @@ dependencies:
       path: packages/kimapp_utils
 
 dev_dependencies:
-  autoverpod_generator: ^0.0.1
+  autoverpod_generator: ^0.0.2
   kimapp_generator:
     git:
       url: https://github.com/pckimlong/kimapp.git
