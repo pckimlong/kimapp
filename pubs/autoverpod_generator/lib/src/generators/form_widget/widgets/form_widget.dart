@@ -50,7 +50,7 @@ return isInitializedAsync.when(
                     ?.call(context, ref) ??
                 const Center(child: CircularProgressIndicator());
           },
-        )
+        );
 ''';
   }
 
