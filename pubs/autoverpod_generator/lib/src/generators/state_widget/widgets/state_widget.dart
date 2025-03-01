@@ -8,7 +8,7 @@ import 'param_widget_wrapper.dart';
 
 String generateStateWidget(ProviderDefinition provider) {
   final builderType =
-      'Widget Function(BuildContext context, ${provider.proxyWidgetName} ref, Widget? child,)';
+      'Widget Function(BuildContext context, ${provider.subProxyWidgetName} ref, Widget? child,)';
   return generateConsumerWidget(
     name: provider.stateWidgetName,
     fields: [
