@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import 'build_context_helper.dart';
 
 extension WidgetExtension on Widget {
   Future<T?> showDialog<T>(BuildContext context, {bool barrierDismissible = true}) async {

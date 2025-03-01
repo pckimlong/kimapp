@@ -2,19 +2,29 @@ name: kimapp_packages
 
 packages:
   - packages/**
+  - pubs/**
 
 repository: https://github.com/pckimlong/kimapp
 
-ide:
-  intellij:
-    enabled: false
-
 command:
+  bootstrap:
+    environment:
+      sdk: '>=3.3.0 <4.0.0'
+    dependencies:
+      autoverpod:
+        path: ./pubs/autoverpod
+    dev_dependencies:
+      autoverpod_generator:
+        path: ./pubs/autoverpod_generator
+    
   version:
     branch: master
     linkToCommits: true
     updateGitTagRefs: true
-    
+
+ide:
+  intellij:
+    enabled: false
 
 scripts:
   analyze:
@@ -31,3 +41,23 @@ scripts:
   build_all:
     run: melos exec --depends-on="build_runner" -- flutter pub run build_runner build --delete-conflicting-outputs
     description: Run build_runner in all packages that depend on it
+    
+  publish_dry:
+    run: melos exec -- flutter pub publish --dry-run
+    description: Run a dry-run of publishing all packages
+    
+  publish:
+    run: melos exec -- flutter pub publish
+    description: Publish all packages to pub.dev
+    
+  test:
+    run: melos exec -- flutter test
+    description: Run tests in all packages
+    
+  clean:
+    run: melos exec -- flutter clean
+    description: Clean all packages
+    
+  bootstrap:
+    run: melos bootstrap
+    description: Bootstrap the project by getting all dependencies

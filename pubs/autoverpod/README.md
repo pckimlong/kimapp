@@ -37,6 +37,24 @@ dev_dependencies:
   build_runner: ^2.4.0  # Required for code generation
 ```
 
+## Configuration
+
+To prevent lint errors related to Riverpod's `notifier_extends` rule, add the following to your `analysis_options.yaml` file:
+
+```yaml
+analyzer:
+  plugins:
+    - custom_lint
+  errors:
+    invalid_annotation_target: ignore
+
+custom_lint:
+  rules:
+    - notifier_extends: false  # Allows providers to extend custom classes instead of generated ones
+```
+
+This configuration disables the lint rule that requires providers to extend the generated Riverpod provider classes, which is necessary when using Autoverpod's custom widget extensions.
+
 ## Usage
 
 Autoverpod works together with Riverpod annotations. You must apply both a Riverpod annotation 

@@ -6,7 +6,7 @@ homepage: https://github.com/pckimlong/kimapp
 issue_tracker: https://github.com/pckimlong/kimapp/issues
 
 environment:
-  sdk: ^3.7.0
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   meta: ^1.16.0
