@@ -2,7 +2,7 @@ import 'package:autoverpod_generator/src/generators/form_widget/form_widget_name
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
 
 String generateDebugCheckFunction(ProviderDefinition provider) {
-  final widgetName = provider.formWidgetName;
+  final widgetName = provider.formScopeWidgetName;
   return '''
   bool _debugCheckHas${provider.baseName}Form(BuildContext context) {
     assert(() {

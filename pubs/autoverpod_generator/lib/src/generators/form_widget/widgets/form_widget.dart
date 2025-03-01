@@ -1,7 +1,7 @@
 import 'package:autoverpod_generator/src/generators/form_widget/form_widget_names.dart';
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
 
-String generateFormWidget(ProviderDefinition provider) {
+String generateFormScopeWidget(ProviderDefinition provider) {
   String buildReturn() {
     if (!provider.isAsyncValue) {
       return '''
@@ -55,8 +55,8 @@ return isInitializedAsync.when(
   }
 
   return '''
-class ${provider.formWidgetName} extends ConsumerStatefulWidget {
-  const ${provider.formWidgetName}({
+class ${provider.formScopeWidgetName} extends ConsumerStatefulWidget {
+  const ${provider.formScopeWidgetName}({
     super.key,${provider.familyParametersAsClassFields().map((e) => e.toNamedConstructorField()).join('\n')}
     this.formKey,
     this.autovalidateMode,
@@ -78,17 +78,17 @@ class ${provider.formWidgetName} extends ConsumerStatefulWidget {
   final GlobalKey<FormState>? formKey;
   final AutovalidateMode? autovalidateMode;
   final void Function(bool, Object?)? onPopInvokedWithResult;
-  final void Function(BuildContext context, bool value)? onSuccessed;
+  final void Function(BuildContext context, ${provider.getSubmitMethodInfo().rawResultType} value)? onSuccessed;
   ${provider.isAsyncValue ? '''
   final Widget Function()? onInitLoading;
   final Widget Function(Object error, StackTrace stack)? onInitError;
   ''' : ''}
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _${provider.formWidgetName}State();
+  ConsumerState<ConsumerStatefulWidget> createState() => _${provider.formScopeWidgetName}State();
 }
 
-class _${provider.formWidgetName}State extends ConsumerState<${provider.formWidgetName}> {
+class _${provider.formScopeWidgetName}State extends ConsumerState<${provider.formScopeWidgetName}> {
   late final GlobalKey<FormState> _cachedFormKey;
 
   @override

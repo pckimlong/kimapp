@@ -7,27 +7,47 @@ targets:
           include:
             - lib/src/features/**_model.dart
             - lib/**.schema.dart
+          exclude:
+            - lib/**.*.*.dart
+            - lib/src/presentation/widgets/**.dart
       kimapp_generator|kimapp_form_generator:
         enabled: true
         generate_for:
           include:
             - lib/src/features/**_provider.dart
+          exclude:
+            - lib/**.*.dart
+            - lib/src/presentation/widgets/**.dart
       kimapp_generator|kimapp_table_generator:
         enabled: true
         generate_for:
           include:
             - lib/src/features/**_objects.dart
             - lib/src/features/**_model.dart
-      kimapp_generator|kimapp_state_widget_generator:
-        enabled: true
-        generate_for:
-          include:
-            - lib/src/**_provider.dart
       kimapp_generator|kimapp_schema_builder_generator:
         enabled: true
         generate_for:
           include:
             - lib/src/**_schema.dart
+          exclude:
+            - lib/**.*.*.dart
+            - lib/src/presentation/widgets/**.dart
+      autoverpod_generator|autoverpod_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/features/**_provider.dart
+          exclude:
+            - lib/**.*.dart
+            - lib/src/presentation/widgets/**.dart
+      autoverpod_generator|form_provider_generator:
+        enabled: true
+        generate_for:
+          include:
+            - lib/src/features/**_provider.dart
+          exclude:
+            - lib/**.*.dart
+            - lib/src/presentation/widgets/**.dart
       json_serializable:
         enabled: true
         options:
@@ -40,27 +60,44 @@ targets:
             - lib/**.schema.dart
             - lib/**/current_account_provider.dart
             - lib/src/features/org/settings/**.dart
+          exclude:
+            - lib/**.*.*.dart
+            - lib/src/presentation/widgets/**.dart
       freezed|freezed:
         enabled: true
         generate_for:
           include:
             - lib/**.dart
+          exclude:
+            - lib/**.*.*.dart
+            - lib/src/presentation/widgets/**.dart
       auto_route_generator:auto_route_generator:
         options:
           enable_cached_builds: true
         generate_for:
-          - lib/src/presentation/modules/**_page.dart
+          include:
+            - lib/src/presentation/modules/**_page.dart
+          exclude:
+            - lib/**.*.dart
+            - lib/src/presentation/widgets/**.dart
       auto_route_generator:auto_router_generator:
         options:
           enable_cached_builds: true
         generate_for:
-          - lib/src/presentation/router/app_router.dart
+          include:
+            - lib/src/presentation/router/app_router.dart
+          exclude:
+            - lib/**.*.dart
+            - lib/src/presentation/widgets/**.dart
       riverpod_generator:
         enabled: true
         generate_for:
           include:
             - lib/**_provider.dart
             - lib/**_repo.dart
+          exclude:
+            - lib/**.*.dart
+            - lib/src/presentation/widgets/**.dart
       source_gen|combining_builder:
         options:
           ignore_for_file:

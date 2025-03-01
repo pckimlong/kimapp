@@ -46,7 +46,7 @@ class FormWidgetGenerator extends WidgetGenerator {
 
     buffer.writeln(generateParamInheritedWidget(provider));
     buffer.writeln(generateFormBaseProxyWidgetRef(provider));
-    buffer.writeln(generateFormWidget(provider));
+    buffer.writeln(generateFormScopeWidget(provider));
     buffer.writeln(generateDebugCheckFunction(provider));
     buffer.writeln(generateParamWidget(provider));
     buffer.writeln(generateSelectWidget(provider));

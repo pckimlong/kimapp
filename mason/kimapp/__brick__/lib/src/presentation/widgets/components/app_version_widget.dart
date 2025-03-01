@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../core/app/app_info_provider.dart';
+import '../../../core/app/app_info_provider.dart';
 
 class AppVersionWidget extends ConsumerWidget {
   const AppVersionWidget({super.key, this.style});

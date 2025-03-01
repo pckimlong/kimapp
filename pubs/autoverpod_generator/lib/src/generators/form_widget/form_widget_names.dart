@@ -1,16 +1,20 @@
-import 'package:recase/recase.dart';
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
+import 'package:recase/recase.dart';
 
 import '../../models/field_definition.dart';
 
 extension FormWidgetNames on ProviderDefinition {
-  String get formWidgetName => '${baseName}FormScope';
-  String get formBaseProxyWidgetName => '_${baseName}ProxyWidgetRef';
+  String get formScopeWidgetName => '${baseName}FormScope';
+  String get formBaseProxyWidgetName => '${baseName}ProxyWidgetRef';
   String get formInheritedWidgetName => '_${baseName}FormInheritedWidget';
   String get formParamWidgetName => '${baseName}FormParams';
   String get formStateWidgetName => '${baseName}FormState';
   String get formSelectWidgetName => '${baseName}FormSelect';
   String get formStatusWidgetName => '${baseName}FormStatus';
+
+  String fieldProxyWidgetName(FieldDefinition field) {
+    return '$baseName${field.name.pascalCase}ProxyWidgetRef';
+  }
 
   String fieldWidgetName(FieldDefinition field) => '$baseName${field.name.pascalCase}Field';
 
