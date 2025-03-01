@@ -1,0 +1,92 @@
+---
+description: Flutter UI Guideline
+globs: lib/src/presentation/**/*.dart
+alwaysApply: false
+---
+# Flutter UI Guidelines
+
+## Project Structure Guidelines
+
+### Style Configuration
+- Use values defined in `@app_style.dart` for spacing, colors, and other UI configurations
+- Leverage helper functions available in the `@helpers` folder
+- Maintain a single source of truth for styling to ensure UI consistency
+
+### State Management with Riverpod
+- Use Riverpod as the primary state management solution for UI components
+- Keep UI components decoupled from business logic using providers
+- Use `ref.watch` for reactive UI updates and `ref.read` for event handlers
+- Leverage Riverpod's family modifiers for UI components that need parameters
+- Use Riverpod's consumer widgets (`Consumer`, `ConsumerStatefulWidget`) to connect UI with state
+- Consider using `ref.listen` to react to state changes with UI feedback (snackbars, dialogs)
+- Prefer `flutter_hooks` with `HookConsumerWidget` over `StatefulWidget` to reduce boilerplate code
+- Use hooks for local UI state management (animations, controllers, form fields)
+
+### Theming
+- Maximize use of Flutter's default theme system for better maintainability
+- Configure theme data centrally to ensure consistency across the app
+- Use theme extensions for custom theme attributes
+- Use updated text theme notation (e.g., `Theme.of(context).textTheme.titleLarge` instead of `headline6`)
+- Prefer context extensions from `@core/helpers/build_context_helper.dart` over direct theme access:
+  - Use `context.theme` instead of `Theme.of(context)`
+  - Use `context.colors` instead of `Theme.of(context).colorScheme`
+  - Use `context.textTheme` instead of `Theme.of(context).textTheme`
+  - Use `context.primaryColor` for quick access to primary color
+
+### Widget Usage
+- Prioritize reusing widgets from the `@widgets` folder
+- Fall back to Flutter's default widgets when custom widgets aren't necessary
+- Create new reusable widgets when implementing repeating UI patterns
+- Document complex widget usage patterns with code examples
+- Create small, private widget classes instead of extraction methods like `Widget _build...`
+- Use `const` constructors for immutable widgets to optimize rebuilds
+- Configure TextFields with appropriate `textCapitalization`, `keyboardType`, and `textInputAction`
+
+### Error Handling in UI
+- Implement error handling in views using `SelectableText.rich` for copyable error messages
+- Display errors in red color for better visibility and user awareness
+- Handle empty states directly within the displaying screen
+- Use context extensions like `context.showSnackBar()` for quick feedback
+
+### Responsive Design
+- Implement responsive layouts using `LayoutBuilder` or `MediaQuery` 
+- Use relative sizing instead of fixed pixel values where appropriate
+- Test UI on multiple screen sizes and orientations
+- Create adaptive layouts that work well on both mobile and tablet
+- Utilize context extensions from `build_context_helper.dart` for responsive breakpoints:
+  - `context.isMobile` to check if on mobile screens
+  - `context.isTablet` to check if on tablet screens
+  - `context.isDesktop` to check if on desktop screens
+  - `context.screenWidth` and `context.screenHeight` for dimensions
+
+### Data Integration
+- Source widget data providers from the `@features` folder
+- Look for generated widgets in `.widget.dart` files when working with code generator packages like autoverpod
+- Maximize usage of existing data providers
+- Use Riverpod's consumer widgets (`Consumer`, `ConsumerWidget`) to connect UI with state
+- Implement `RefreshIndicator` for pull-to-refresh functionality in lists and data views
+
+### Implementation Strategy
+- For features without existing data providers, create UI with mock data or placeholders
+- Design interfaces to make real data integration straightforward later
+- Structure code to separate UI from data logic for easy replacement of mock data
+- Create testable providers with clear dependencies
+
+### Performance Considerations
+- Prioritize performance in all Flutter development
+- Avoid unnecessary rebuilds by using const constructors where appropriate
+- Implement lazy loading for lists and resource-intensive components
+- Use Riverpod's selective rebuilding capabilities to minimize widget redraws
+- Leverage Riverpod's caching and memoization features for expensive computations
+- Consider using `select` modifier to watch specific parts of state
+- Use `ListView.builder` and similar optimized list views for large collections
+- Use `AssetImage` for static images and `cached_network_image` for remote images
+- Optimize for key Flutter performance metrics (first meaningful paint, time to interactive)
+
+## Best Practices for UI Implementation
+- Follow Material Design guidelines for consistent look and feel
+- Ensure responsive layouts that work across different screen sizes
+- Implement appropriate error states and loading indicators
+- Maintain accessibility standards with proper contrast and text scaling
+- Create smooth transitions and animations without compromising performance
+- Use Riverpod's AsyncValue for clean handling of loading, error, and data states
