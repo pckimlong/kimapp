@@ -21,7 +21,8 @@ class ClassField {
 
   bool get isOptional => !isRequired;
 
-  String get typeWithNoNullable => isNullable ? type.substring(0, type.length - 1) : type;
+  String get typeWithNoNullable =>
+      isNullable ? type.substring(0, type.length - 1) : type;
 
   String toClassField() {
     final text = '${isFinal ? 'final' : ''} $type $name;';
@@ -52,10 +53,12 @@ class ClassField {
     return '$wrapper<$type>';
   }
 
-  factory ClassField.providerListenable(String name, String type, {bool bothNullable = false}) {
+  factory ClassField.providerListenable(String name, String type,
+      {bool bothNullable = false}) {
     return ClassField(
       name: name,
-      type: 'void Function($type? previous, $type${bothNullable ? '?' : ''} next)?',
+      type:
+          'void Function($type? previous, $type${bothNullable ? '?' : ''} next)?',
       isRequired: false,
     );
   }

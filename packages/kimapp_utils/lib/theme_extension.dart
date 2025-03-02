@@ -36,8 +36,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// The extension supports theme inheritance and can be customized per-theme
 /// (e.g. different implementations for light/dark modes).
 class KimappThemeExtension extends ThemeExtension<KimappThemeExtension> {
-  final Widget Function(BuildContext context, WidgetRef ref)? defaultLoadingStateWidget;
-  final Widget Function(BuildContext context, WidgetRef ref, Object error)? defaultErrorStateWidget;
+  final Widget Function(BuildContext context, WidgetRef ref)?
+      defaultLoadingStateWidget;
+  final Widget Function(BuildContext context, WidgetRef ref, Object error)?
+      defaultErrorStateWidget;
 
   const KimappThemeExtension({
     this.defaultLoadingStateWidget,
@@ -46,12 +48,16 @@ class KimappThemeExtension extends ThemeExtension<KimappThemeExtension> {
 
   @override
   ThemeExtension<KimappThemeExtension> copyWith({
-    Widget Function(BuildContext context, WidgetRef ref)? defaultLoadingStateWidget,
-    Widget Function(BuildContext context, WidgetRef ref, Object error)? defaultErrorStateWidget,
+    Widget Function(BuildContext context, WidgetRef ref)?
+        defaultLoadingStateWidget,
+    Widget Function(BuildContext context, WidgetRef ref, Object error)?
+        defaultErrorStateWidget,
   }) {
     return KimappThemeExtension(
-      defaultLoadingStateWidget: defaultLoadingStateWidget ?? this.defaultLoadingStateWidget,
-      defaultErrorStateWidget: defaultErrorStateWidget ?? this.defaultErrorStateWidget,
+      defaultLoadingStateWidget:
+          defaultLoadingStateWidget ?? this.defaultLoadingStateWidget,
+      defaultErrorStateWidget:
+          defaultErrorStateWidget ?? this.defaultErrorStateWidget,
     );
   }
 
@@ -64,7 +70,8 @@ class KimappThemeExtension extends ThemeExtension<KimappThemeExtension> {
     return KimappThemeExtension(
       defaultLoadingStateWidget:
           t < 0.5 ? defaultLoadingStateWidget : other.defaultLoadingStateWidget,
-      defaultErrorStateWidget: t < 0.5 ? defaultErrorStateWidget : other.defaultErrorStateWidget,
+      defaultErrorStateWidget:
+          t < 0.5 ? defaultErrorStateWidget : other.defaultErrorStateWidget,
     );
   }
 }

@@ -8,6 +8,9 @@ String generateParamInheritedWidget(ProviderDefinition provider) {
   if (!provider.hasFamily) return '';
   return generateInheritedWidget(
     name: provider.paramInheritedWidgetName,
-    fields: [ClassField(name: 'params', type: provider.familyAsRecordType, isRequired: true)],
+    fields: [
+      ClassField(
+          name: 'params', type: provider.familyAsRecordType, isRequired: true)
+    ],
   );
 }

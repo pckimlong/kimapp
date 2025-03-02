@@ -15,7 +15,8 @@ class FieldDefination {
 
   bool get isNullable => type.contains('?');
 
-  String get typeWithNoNullable => isNullable ? type.substring(0, type.length - 1) : type;
+  String get typeWithNoNullable =>
+      isNullable ? type.substring(0, type.length - 1) : type;
 
   String toClassField() {
     final text = 'final $type $name;';

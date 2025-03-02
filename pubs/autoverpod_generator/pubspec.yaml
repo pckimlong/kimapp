@@ -18,7 +18,8 @@ dependencies:
   collection: ^1.19.1
   riverpod: ^2.6.1
   code_builder: ^4.10.1
-  autoverpod: ^0.0.3
+  autoverpod:
+    path: ./pubs/autoverpod
   flutter:
     sdk: flutter
 

@@ -48,13 +48,15 @@ void main() {
       if (kIsWeb) {
         expect(PlatformType.web.getPlatform(), equals(PlatformType.web));
       } else if (Platform.isAndroid) {
-        expect(PlatformType.android.getPlatform(), equals(PlatformType.android));
+        expect(
+            PlatformType.android.getPlatform(), equals(PlatformType.android));
       } else if (Platform.isIOS) {
         expect(PlatformType.ios.getPlatform(), equals(PlatformType.ios));
       } else if (Platform.isMacOS) {
         expect(PlatformType.macos.getPlatform(), equals(PlatformType.macos));
       } else if (Platform.isWindows) {
-        expect(PlatformType.windows.getPlatform(), equals(PlatformType.windows));
+        expect(
+            PlatformType.windows.getPlatform(), equals(PlatformType.windows));
       } else if (Platform.isLinux) {
         expect(PlatformType.linux.getPlatform(), equals(PlatformType.linux));
       }

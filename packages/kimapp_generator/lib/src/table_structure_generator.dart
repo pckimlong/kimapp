@@ -23,7 +23,8 @@ class ColumnDefinition {
   final List<int> additionalInfo;
   final String? foreignKey;
 
-  ColumnDefinition(this.name, this.type, this.isNullable, this.additionalInfo, this.foreignKey);
+  ColumnDefinition(this.name, this.type, this.isNullable, this.additionalInfo,
+      this.foreignKey);
 
   factory ColumnDefinition.parse(String columnDef) {
     final parts = columnDef.split(':');
@@ -40,7 +41,11 @@ class ColumnDefinition {
       type = type.replaceAll('?', '');
 
       if (typeAndInfo.length > 1) {
-        additionalInfo = typeAndInfo[1].replaceAll(']', '').split(',').map(int.parse).toList();
+        additionalInfo = typeAndInfo[1]
+            .replaceAll(']', '')
+            .split(',')
+            .map(int.parse)
+            .toList();
       }
 
       final foreignKeyMatch = RegExp(r'\((.*?)\)').firstMatch(parts[1]);
@@ -70,7 +75,8 @@ class AdditionalClassDefinition {
   final List<ColumnDefinition> columns;
   final int classIndex;
 
-  AdditionalClassDefinition(this.className, this.tableName, this.columns, this.classIndex);
+  AdditionalClassDefinition(
+      this.className, this.tableName, this.columns, this.classIndex);
 
   factory AdditionalClassDefinition.parse(String additionalClass,
       List<ColumnDefinition> baseColumns, int index, String defaultTableName) {
@@ -130,7 +136,8 @@ class TableStructureGenerator extends Generator {
 
   @override
   String generate(LibraryReader library, BuildStep buildStep) {
-    final providers = library.annotatedWith(TypeChecker.fromRuntime(TableStructure));
+    final providers =
+        library.annotatedWith(TypeChecker.fromRuntime(TableStructure));
 
     if (providers.isEmpty) {
       return '';
@@ -138,7 +145,8 @@ class TableStructureGenerator extends Generator {
 
     final buffer = StringBuffer();
 
-    buffer.writeln("// ignore_for_file: invalid_annotation_target, unused_import");
+    buffer.writeln(
+        "// ignore_for_file: invalid_annotation_target, unused_import");
 
     final imports = _getSourceFileImports(library);
 
@@ -147,7 +155,8 @@ class TableStructureGenerator extends Generator {
     imports.add("import '$currentFileName';");
 
     // Add necessary imports
-    buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
+    buffer.writeln(
+        "import 'package:freezed_annotation/freezed_annotation.dart';");
     buffer.writeln("import 'package:kimapp/kimapp.dart';");
     buffer.writeln();
     buffer.writeln(imports.join('\n'));
@@ -169,9 +178,10 @@ class TableStructureGenerator extends Generator {
 
     // Add part statements if classes will be generated
     if (hasGeneratedClasses) {
-      buffer
-          .writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.freezed.dart';");
-      buffer.writeln("part '${path.basenameWithoutExtension(currentFilePath)}.table.g.dart';");
+      buffer.writeln(
+          "part '${path.basenameWithoutExtension(currentFilePath)}.table.freezed.dart';");
+      buffer.writeln(
+          "part '${path.basenameWithoutExtension(currentFilePath)}.table.g.dart';");
       buffer.writeln();
     }
 
@@ -184,8 +194,13 @@ class TableStructureGenerator extends Generator {
 
       final tableName = annotation.read('tableName').stringValue;
       final prefixName = annotation.peek('classPrefixName')?.stringValue;
-      final className = prefixName == null ? tableName.pascalCase : prefixName.pascalCase;
-      final columns = annotation.read('columns').listValue.map((e) => e.toStringValue()!).toList();
+      final className =
+          prefixName == null ? tableName.pascalCase : prefixName.pascalCase;
+      final columns = annotation
+          .read('columns')
+          .listValue
+          .map((e) => e.toStringValue()!)
+          .toList();
 
       final idColumn = annotation.peek('idColumn')?.stringValue;
 
@@ -200,7 +215,10 @@ class TableStructureGenerator extends Generator {
           .asMap()
           .entries
           .map((entry) => AdditionalClassDefinition.parse(
-              entry.value.toStringValue()!, parsedColumns, entry.key, tableName))
+              entry.value.toStringValue()!,
+              parsedColumns,
+              entry.key,
+              tableName))
           .toList();
 
       final generateRawClass = annotation.read('generateRawClass').boolValue;
@@ -229,14 +247,16 @@ class TableStructureGenerator extends Generator {
 
       // Generate table class if not already generated
       if (!generatedTableClasses.contains(className)) {
-        buffer.writeln(_generateTableClass(tableName, parsedColumns, className));
+        buffer
+            .writeln(_generateTableClass(tableName, parsedColumns, className));
         generatedTableClasses.add(className);
       }
 
       // Generate raw data class if specified and not already generated
-      if (generateRawClass && !generatedClasses.contains('${className}RawModel')) {
-        buffer
-            .writeln(_generateRawDataClass(className, parsedColumns, tableName, rawClassTableMode));
+      if (generateRawClass &&
+          !generatedClasses.contains('${className}RawModel')) {
+        buffer.writeln(_generateRawDataClass(
+            className, parsedColumns, tableName, rawClassTableMode));
         generatedClasses.add('${className}RawModel');
       }
 
@@ -254,7 +274,8 @@ class TableStructureGenerator extends Generator {
   }
 
   void _validateColumnFormats(List<String> columns, String? idColumn) {
-    final validFormat = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*(\:[a-zA-Z<>?,]+(\[\d+(,\d+)*\])?)?$');
+    final validFormat =
+        RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*(\:[a-zA-Z<>?,]+(\[\d+(,\d+)*\])?)?$');
 
     for (final column in columns) {
       final splitColumn = column.split(':');
@@ -273,8 +294,8 @@ class TableStructureGenerator extends Generator {
     }
   }
 
-  void _validateCustomTypes(
-      List<ColumnDefinition> columns, Set<String> customTypes, String? idColumn) {
+  void _validateCustomTypes(List<ColumnDefinition> columns,
+      Set<String> customTypes, String? idColumn) {
     for (final column in columns) {
       if (column.baseType == idColumn?.split(':').first) continue;
 
@@ -323,13 +344,15 @@ class TableStructureGenerator extends Generator {
   ''';
   }
 
-  String _generateTableClass(String tableName, List<ColumnDefinition> columns, String className) {
+  String _generateTableClass(
+      String tableName, List<ColumnDefinition> columns, String className) {
     final buffer = StringBuffer();
 
     buffer.writeln("class ${className}Table {");
     buffer.writeln("  const ${className}Table._();");
     buffer.writeln();
-    buffer.writeln('  static const String table = "${tableName.toLowerCase()}";');
+    buffer
+        .writeln('  static const String table = "${tableName.toLowerCase()}";');
     buffer.writeln();
 
     for (final column in columns) {
@@ -341,8 +364,8 @@ class TableStructureGenerator extends Generator {
     return buffer.toString();
   }
 
-  String _generateRawDataClass(
-      String className, List<ColumnDefinition> columns, String tableName, bool rawClassTableMode) {
+  String _generateRawDataClass(String className, List<ColumnDefinition> columns,
+      String tableName, bool rawClassTableMode) {
     final buffer = StringBuffer();
 
     buffer.writeln('@freezed');
@@ -370,7 +393,8 @@ class TableStructureGenerator extends Generator {
 
     if (rawClassTableMode) {
       buffer.writeln();
-      buffer.writeln('  static const TableBuilder table = _table${className}RawModel;');
+      buffer.writeln(
+          '  static const TableBuilder table = _table${className}RawModel;');
     }
 
     buffer.writeln('}');
@@ -384,8 +408,9 @@ class TableStructureGenerator extends Generator {
 
     final classNameParts = additionalClass.className.split('[');
     final className = classNameParts[0];
-    final additionalFields =
-        classNameParts.length > 1 ? classNameParts[1].replaceAll(']', '').split(',') : [];
+    final additionalFields = classNameParts.length > 1
+        ? classNameParts[1].replaceAll(']', '').split(',')
+        : [];
 
     buffer.writeln('@freezed');
     buffer.writeln('class $className with _\$$className {');

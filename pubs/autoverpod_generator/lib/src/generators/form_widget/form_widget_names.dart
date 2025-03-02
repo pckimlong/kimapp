@@ -16,12 +16,15 @@ extension FormWidgetNames on ProviderDefinition {
     return '$baseName${field.name.pascalCase}ProxyWidgetRef';
   }
 
-  String fieldWidgetName(FieldDefinition field) => '$baseName${field.name.pascalCase}Field';
+  String fieldWidgetName(FieldDefinition field) =>
+      '$baseName${field.name.pascalCase}Field';
 
-  String get callStatusProviderName => '${baseName.camelCase}CallStatusProvider';
+  String get callStatusProviderName =>
+      '${baseName.camelCase}CallStatusProvider';
 
   String get callFunctionReturnType {
-    return getSubmitMethodInfo().asyncValueType(isFuture: true, isNullable: false);
+    return getSubmitMethodInfo()
+        .asyncValueType(isFuture: true, isNullable: false);
   }
 
   String callStatusProviderNameWithFamily({String prefix = ''}) {

@@ -25,7 +25,8 @@ mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
   }
 
   void updateItem(T item) {
-    state = state.whenData((value) => value.updateById([item], (e) => identity(e)));
+    state =
+        state.whenData((value) => value.updateById([item], (e) => identity(e)));
   }
 
   void updateState(IList<T> Function(IList<T> value) update) {
@@ -33,6 +34,7 @@ mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
   }
 
   void updateItems(List<T> items) {
-    state = state.whenData((value) => value.updateById(items, (e) => identity(e)));
+    state =
+        state.whenData((value) => value.updateById(items, (e) => identity(e)));
   }
 }
