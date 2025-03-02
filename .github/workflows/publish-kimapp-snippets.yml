@@ -1,0 +1,49 @@
+name: Publish Kimapp Snippets Extension
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'tools/extensions/kimapp-snippets/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[publish-snippets]')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          
+      - name: Install dependencies
+        run: npm install -g @vscode/vsce
+          
+      - name: Package extension
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: vsce package
+          
+      - name: Publish to VS Code Marketplace
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
+          
+      - name: Get version from package.json
+        id: get_version
+        if: contains(github.event.head_commit.message, '[release-snippets]')
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: contains(github.event.head_commit.message, '[release-snippets]')
+        with:
+          files: tools/extensions/kimapp-snippets/*.vsix
+          name: "Kimapp Snippets v${{ steps.get_version.outputs.VERSION }}"
+          tag_name: "snippets-v${{ steps.get_version.outputs.VERSION }}"
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

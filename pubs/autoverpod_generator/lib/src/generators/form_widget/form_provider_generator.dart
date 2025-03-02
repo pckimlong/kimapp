@@ -30,51 +30,12 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
     }
 
     final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
-
     final buffer = StringBuffer();
 
     // Generate the form provider abstraction
     buffer.writeln(_generateFormProviderAbstraction(provider));
     return returnContent(buffer, comment: false);
   }
-}
-
-/// Generates the form provider abstraction code including:
-/// - State management
-/// - Submit functionality
-/// - Field update methods
-/// - Success/error handling
-String _generateFormProviderAbstraction(ProviderDefinition provider) {
-  final submitMethodInfo = provider.getSubmitMethodInfo();
-  final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
-  final updateMethods = _generateUpdateMethods(provider);
-
-  final proxyClass = Class(
-    (b) => b
-      ..name = '_\$${provider.baseName}Widget'
-      ..abstract = true
-      ..extend = refer('_\$${provider.baseName}')
-      ..fields.add(stateProviderInfo.statusProvider)
-      ..methods.addAll([
-        _generateOnSuccessMethod(submitMethodInfo.rawResultType),
-        _generateCallMethod(provider, submitMethodInfo, stateProviderInfo),
-        _generateInvalidateSelfMethod(provider),
-        _generateSubmitMethod(provider, submitMethodInfo),
-        ...updateMethods,
-      ]),
-  ).accept(DartEmitter()).toString();
-
-  final callStatusDeclaration = 'StateProvider.autoDispose'
-      '${provider.hasFamily ? ".family" : ""}'
-      '<AsyncValue<${submitMethodInfo.rawResultType}>?'
-      '${provider.hasFamily ? ",${provider.familyAsRecordType}" : ""}>'
-      '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
-
-  return '''
-final ${provider.callStatusProviderName} = $callStatusDeclaration;
-
-$proxyClass
-''';
 }
 
 /// Contains information about the state provider
@@ -90,26 +51,67 @@ class StateProviderInfo {
   });
 }
 
-/// Extracts information about the submit method
+/// Generates the form provider abstraction code including:
+/// - State management
+/// - Submit functionality
+/// - Field update methods
+/// - Success/error handling
+String _generateFormProviderAbstraction(ProviderDefinition provider) {
+  final submitMethodInfo = provider.getSubmitMethodInfo();
+  final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
+  final updateMethods = _generateUpdateMethods(provider);
+
+  // Generate the proxy class using code_builder
+  final proxyClass = Class(
+    (b) => b
+      ..name = '_\$${provider.baseName}Widget'
+      ..abstract = true
+      ..extend = refer('_\$${provider.baseName}')
+      ..methods.addAll([
+        _generateOnSuccessMethod(submitMethodInfo.rawResultType),
+        _generateCallMethod(provider, submitMethodInfo, stateProviderInfo),
+        _generateInvalidateSelfMethod(provider),
+        _generateSubmitMethod(provider, submitMethodInfo),
+        ...updateMethods,
+      ]),
+  ).accept(DartEmitter()).toString();
+
+  // Create the call status provider declaration
+  final callStatusDeclaration = 'StateProvider.autoDispose'
+      '${provider.hasFamily ? ".family" : ""}'
+      '<AsyncValue<${submitMethodInfo.rawResultType}>?'
+      '${provider.hasFamily ? ",${provider.familyAsRecordType}" : ""}>'
+      '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
+
+  // Return the complete generated code
+  return '''
+final ${provider.callStatusProviderName} = $callStatusDeclaration;
+
+$proxyClass
+''';
+}
 
 /// Generates state provider information
 StateProviderInfo _generateStateProviderInfo(
   ProviderDefinition provider,
   SubmitMethodInfo submitInfo,
 ) {
+  // Create the provider declaration
   final declaration = 'StateProvider.autoDispose'
       '${provider.hasFamily ? ".family" : ""}'
       '<AsyncValue<${submitInfo.rawResultType}>?'
       '${provider.hasFamily ? ",${provider.familyAsRecordType}" : ""}>'
       '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
 
+  // Create the provider read expression
   final readProvider = "${provider.callStatusProviderName}"
       "${provider.hasFamily ? "(${provider.familyAsRecordBindString()})" : ""}";
 
+  // Create the field definition
   final statusProvider = Field(
     (b) => b
       ..name = provider.callStatusProviderName
-      ..static = true
+      ..static = false
       ..modifier = FieldModifier.final$
       ..assignment = Code(declaration),
   );
@@ -121,19 +123,22 @@ StateProviderInfo _generateStateProviderInfo(
   );
 }
 
-/// Generates field update methods
+/// Generates field update methods for the form state
 List<Method> _generateUpdateMethods(ProviderDefinition provider) {
   final List<Method> updateMethods = [];
 
-  ///
+  // Add the general state update method
   updateMethods.add(_generateStateUpdateMethod(provider));
 
+  // Add field-specific update methods if class info is available
   if (provider.returnType.classInfo != null) {
     final returnClass = provider.returnType.classInfo!;
     final copyWithNames = returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
 
+    // Generate update methods for each field
     for (final field in returnClass.fields) {
       if (copyWithNames.contains(field.name)) {
+        // Field can be updated via copyWith
         updateMethods.add(
           _generateFieldUpdateMethod(
             provider,
@@ -143,7 +148,7 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
           ),
         );
       } else {
-        // Add but not implemented
+        // Field cannot be updated via copyWith - add stub method
         updateMethods.add(
           Method(
             (b) => b
@@ -157,7 +162,9 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
                 ),
               )
               ..docs.add(
-                '/// Update the $field.name field of $returnClass.name class. Please override this method and manually update the field. since it is not available through copyWith method.',
+                '/// Update the ${field.name} field of ${returnClass.name} class.\n'
+                '/// Please override this method and manually update the field\n'
+                '/// since it is not available through copyWith method.',
               ),
           ),
         );
@@ -175,6 +182,7 @@ Method _generateFieldUpdateMethod(
   String fieldType,
   String baseType,
 ) {
+  // Create appropriate update statement based on state type
   final updateStatement = provider.isAsyncValue
       ? 'state.whenData((state) => state.copyWith($fieldName: newValue))'
       : 'state.copyWith($fieldName: newValue)';
@@ -198,6 +206,7 @@ Method _generateFieldUpdateMethod(
 
 /// Generates a method for updating the entire state
 Method _generateStateUpdateMethod(ProviderDefinition provider) {
+  // Create appropriate update statement based on state type
   final updateStatement = provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
 
   return Method(
@@ -206,7 +215,7 @@ Method _generateStateUpdateMethod(ProviderDefinition provider) {
       ..returns = refer('void')
       ..docs.add(
         '/// Update the state of the form.\n'
-        '/// This allow for more flexible to update specific fields.',
+        '/// This allows for more flexible updates to specific fields.',
       )
       ..requiredParameters.add(
         Parameter(
@@ -250,6 +259,7 @@ Method _generateCallMethod(
   SubmitMethodInfo submitInfo,
   StateProviderInfo stateInfo,
 ) {
+  // Check if form is loaded based on state type
   final loadingCheck = provider.isAsyncValue
       ? '''
   // Ignore if form is not loaded yet
@@ -262,7 +272,7 @@ Method _generateCallMethod(
   return Method(
     (b) => b
       ..name = 'call'
-      ..annotations.addAll([refer('protected'), refer('nonVirtual')])
+      ..annotations.addAll([refer('nonVirtual')])
       ..modifier = MethodModifier.async
       ..returns = refer(provider.callFunctionReturnType)
       ..requiredParameters.addAll(
@@ -275,7 +285,7 @@ $loadingCheck
 final _callStatus = ref.read(${stateInfo.readProvider});
 final _updateCallStatus = ref.read(${stateInfo.readProvider}.notifier);
 
-    // If it's already loading, return loading
+// If it's already loading, return loading
 if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
 if (_callStatus?.hasValue == true) {
@@ -325,7 +335,7 @@ Method _generateSubmitMethod(ProviderDefinition provider, SubmitMethodInfo submi
   return Method(
     (b) => b
       ..name = 'submit'
-      ..annotations.add(refer('visibleForOverriding'))
+      ..annotations.addAll([refer('visibleForOverriding'), refer('protected')])
       ..docs.addAll([
         '/// Internal submit implementation for form submission.',
         '/// ',

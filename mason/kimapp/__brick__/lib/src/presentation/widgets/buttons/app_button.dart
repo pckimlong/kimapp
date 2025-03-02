@@ -1,24 +1,13 @@
+import 'package:book_swap/src/core/helpers/build_context_helper.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/app_style.dart';
 import '../theme/base_widget.dart';
 
-/// Button variant types to control appearance
-enum AppButtonVariant {
-  primary,
-  secondary,
-  outline,
-  text,
-}
+enum AppButtonVariant { primary, secondary, outline, text, neutral }
 
-/// Button size options
-enum AppButtonSize {
-  small,
-  medium,
-  large,
-}
+enum AppButtonSize { small, medium, large }
 
-/// A customizable button component that adapts to the application theme
-/// and provides consistent styling across the app.
 class AppButton extends AppBaseWidget {
   const AppButton({
     super.key,
@@ -26,6 +15,8 @@ class AppButton extends AppBaseWidget {
     required this.label,
     this.icon,
     this.variant = AppButtonVariant.primary,
+    this.backgroundColor,
+    this.foregroundColor,
     this.size = AppButtonSize.medium,
     this.fullWidth = false,
     this.busy = false,
@@ -34,34 +25,17 @@ class AppButton extends AppBaseWidget {
     this.leadingIcon = false,
   });
 
-  /// The callback when button is pressed
   final VoidCallback? onPressed;
-
-  /// The button label text
   final String label;
-
-  /// Optional icon to display
   final IconData? icon;
-
-  /// Button style variant
   final AppButtonVariant variant;
-
-  /// Button size
+  final Color? backgroundColor;
+  final Color? foregroundColor;
   final AppButtonSize size;
-
-  /// Whether the button should take full width
   final bool fullWidth;
-
-  /// Loading/busy state
   final bool busy;
-
-  /// Disabled state
   final bool disabled;
-
-  /// Custom border radius (uses theme default if null)
   final double? borderRadius;
-
-  /// Whether icon should appear before the label
   final bool leadingIcon;
 
   @override
@@ -69,137 +43,207 @@ class AppButton extends AppBaseWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    // Determine button colors based on variant
-    Color backgroundColor;
-    Color textColor;
-    Color borderColor;
+    final isDisabled = disabled || busy || onPressed == null;
 
+    ButtonStyle baseStyle = _getBaseButtonStyle(context);
+
+    if (backgroundColor != null || foregroundColor != null) {
+      baseStyle = baseStyle.copyWith(
+        backgroundColor: backgroundColor != null ? WidgetStateProperty.all(backgroundColor) : null,
+        foregroundColor: foregroundColor != null ? WidgetStateProperty.all(foregroundColor) : null,
+      );
+    }
+
+    if (isDisabled) {
+      baseStyle = baseStyle.copyWith(
+        backgroundColor: WidgetStateProperty.all(theme.disabledColor),
+        foregroundColor: WidgetStateProperty.all(colors.onSurface.withValues(alpha: 0.38)),
+      );
+    }
+
+    final radius = borderRadius ?? AS.buttonRadius;
+    baseStyle = baseStyle.copyWith(
+      shape: WidgetStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+          side: _getBorderSide(context),
+        ),
+      ),
+    );
+
+    baseStyle = _applySizeStyles(baseStyle, context);
+
+    final Widget buttonContent = _createButtonContent(context, isDisabled);
+
+    Widget button;
     switch (variant) {
       case AppButtonVariant.primary:
-        backgroundColor = colors.primary;
-        textColor = colors.onPrimary;
-        borderColor = Colors.transparent;
-        break;
       case AppButtonVariant.secondary:
-        backgroundColor = colors.secondary;
-        textColor = colors.onSecondary;
-        borderColor = Colors.transparent;
+        button = ElevatedButton(
+          onPressed: isDisabled ? null : onPressed,
+          style: baseStyle,
+          child: buttonContent,
+        );
+        break;
+      case AppButtonVariant.neutral:
+        button = FilledButton(
+          onPressed: isDisabled ? null : onPressed,
+          style: baseStyle,
+          child: buttonContent,
+        );
         break;
       case AppButtonVariant.outline:
-        backgroundColor = Colors.transparent;
-        textColor = colors.primary;
-        borderColor = colors.primary;
+        button = OutlinedButton(
+          onPressed: isDisabled ? null : onPressed,
+          style: baseStyle,
+          child: buttonContent,
+        );
         break;
       case AppButtonVariant.text:
-        backgroundColor = Colors.transparent;
-        textColor = colors.primary;
-        borderColor = Colors.transparent;
+        button = TextButton(
+          onPressed: isDisabled ? null : onPressed,
+          style: baseStyle,
+          child: buttonContent,
+        );
         break;
     }
 
-    // Determine padding and text style based on size
-    EdgeInsets padding;
+    if (fullWidth) {
+      button = SizedBox(width: double.infinity, child: button);
+    }
+
+    return button;
+  }
+
+  ButtonStyle _getBaseButtonStyle(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    switch (variant) {
+      case AppButtonVariant.primary:
+        return ElevatedButton.styleFrom(
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+          elevation: AS.buttonElevation,
+        );
+      case AppButtonVariant.secondary:
+        return ElevatedButton.styleFrom(
+          backgroundColor: colors.secondary,
+          foregroundColor: colors.onSecondary,
+          elevation: AS.buttonElevation,
+        );
+      case AppButtonVariant.outline:
+        return OutlinedButton.styleFrom(
+          foregroundColor: colors.primary,
+          side: BorderSide(color: colors.primary, width: 1.5),
+        );
+      case AppButtonVariant.text:
+        return TextButton.styleFrom(foregroundColor: colors.primary);
+      case AppButtonVariant.neutral:
+        return FilledButton.styleFrom(
+          backgroundColor: colors.outlineVariant.withValues(alpha: 0.05),
+          foregroundColor: context.colors.onSurfaceVariant,
+        );
+    }
+  }
+
+  BorderSide _getBorderSide(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    if (variant == AppButtonVariant.outline) {
+      return BorderSide(color: foregroundColor ?? colors.primary, width: 1.5);
+    }
+
+    return BorderSide.none;
+  }
+
+  ButtonStyle _applySizeStyles(ButtonStyle baseStyle, BuildContext context) {
+    final theme = Theme.of(context);
+
+    EdgeInsetsGeometry padding;
     TextStyle textStyle;
-    double iconSize;
+    double? height;
 
     switch (size) {
       case AppButtonSize.small:
         padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
         textStyle = theme.textTheme.labelMedium!;
-        iconSize = 16;
+        height = AS.buttonHeightS;
         break;
       case AppButtonSize.medium:
         padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
         textStyle = theme.textTheme.labelLarge!;
-        iconSize = 18;
+        height = AS.buttonHeightM;
         break;
       case AppButtonSize.large:
         padding = const EdgeInsets.symmetric(horizontal: 24, vertical: 16);
         textStyle = theme.textTheme.titleMedium!;
+        height = AS.buttonHeightL;
+        break;
+    }
+
+    return baseStyle.copyWith(
+      padding: WidgetStateProperty.all(padding),
+      textStyle: WidgetStateProperty.all(textStyle),
+      minimumSize: WidgetStateProperty.all(Size(0, height)),
+    );
+  }
+
+  Widget _createButtonContent(BuildContext context, bool isDisabled) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    final Color textIconColor =
+        isDisabled
+            ? colors.onSurface.withValues(alpha: 0.38)
+            : (foregroundColor ??
+                (variant == AppButtonVariant.primary
+                    ? colors.onPrimary
+                    : variant == AppButtonVariant.secondary
+                    ? colors.onSecondary
+                    : variant == AppButtonVariant.neutral
+                    ? context.colors.outlineVariant
+                    : colors.primary));
+
+    double iconSize;
+    switch (size) {
+      case AppButtonSize.small:
+        iconSize = 16;
+        break;
+      case AppButtonSize.medium:
+        iconSize = 18;
+        break;
+      case AppButtonSize.large:
         iconSize = 20;
         break;
     }
 
-    // Handle disabled state
-    final isDisabled = disabled || busy || onPressed == null;
-    if (isDisabled) {
-      backgroundColor = theme.disabledColor;
-      textColor = colors.onSurface.withOpacity(0.38);
-      borderColor = Colors.transparent;
-    }
-
-    // Create button content
-    Widget buttonContent;
-
     if (busy) {
-      // Show loading indicator when busy
-      buttonContent = SizedBox(
+      return SizedBox(
         height: iconSize,
         width: iconSize,
         child: CircularProgressIndicator(
           strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(textColor),
+          valueColor: AlwaysStoppedAnimation<Color>(textIconColor),
         ),
-      );
-    } else if (icon != null) {
-      // Show icon and text
-      final iconWidget = Icon(
-        icon,
-        color: textColor,
-        size: iconSize,
-      );
-
-      final textWidget = Text(
-        label,
-        style: textStyle.copyWith(color: textColor),
-      );
-
-      buttonContent = Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: leadingIcon
-            ? [
-                iconWidget,
-                const SizedBox(width: 8),
-                textWidget,
-              ]
-            : [
-                textWidget,
-                const SizedBox(width: 8),
-                iconWidget,
-              ],
-      );
-    } else {
-      // Text only
-      buttonContent = Text(
-        label,
-        style: textStyle.copyWith(color: textColor),
       );
     }
 
-    // Apply border radius
-    final radius = borderRadius ?? AppThemeConfig.radiusM;
+    final textWidget = Text(label);
 
-    // Build the button with Material
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: isDisabled ? null : onPressed,
-        borderRadius: BorderRadius.circular(radius),
-        child: Container(
-          width: fullWidth ? double.infinity : null,
-          padding: padding,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            border: Border.all(
-              color: borderColor,
-              width: variant == AppButtonVariant.outline ? 1.5 : 0,
-            ),
-            borderRadius: BorderRadius.circular(radius),
-          ),
-          child: Center(child: buttonContent),
-        ),
-      ),
-    );
+    if (icon != null) {
+      final iconWidget = Icon(icon, color: textIconColor, size: iconSize);
+
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:
+            leadingIcon
+                ? [iconWidget, const SizedBox(width: 8), textWidget]
+                : [textWidget, const SizedBox(width: 8), iconWidget],
+      );
+    }
+
+    return textWidget;
   }
 }
