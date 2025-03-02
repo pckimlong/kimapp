@@ -36,8 +36,7 @@ vars:
     values:
       - int
       - String
-  generate_ui:
-    type: boolean
-    description: Generate UI for the feature
-    prompt: Do you want to generate UI for the feature?
-    default: false
+  output_directory:
+    type: string
+    description: Output directory for the feature
+    prompt: Where do you want to generate the feature?

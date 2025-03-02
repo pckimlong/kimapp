@@ -1,7 +1,8 @@
-name: kimapp_simple_feature_hook
-
+name: hooks
+description: A sample command-line application.
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   mason: any
+  path: ^1.8.0
