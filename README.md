@@ -1,69 +1,166 @@
-# Kimapp
+# Kimapp Monorepo
 
-[![pub package](https://img.shields.io/pub/v/kimapp.svg)](https://pub.dev/packages/kimapp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Kimapp is a powerful Flutter toolkit that streamlines application development by providing a comprehensive set of utilities, code generators, and architectural patterns. It integrates seamlessly with popular packages like Riverpod, Supabase, and Freezed to reduce boilerplate and enforce consistent development practices.
+A comprehensive Flutter development toolkit that streamlines application development with Supabase integration, code generation, and architectural patterns. This monorepo contains multiple packages and tools that work together to provide a cohesive development experience.
 
-## Features
+## 📦 Repository Structure
 
-### 🏗️ Code Generation
-- **Table Structure Generator**: Type-safe database schema definitions
-- **Model Generator**: Automated Freezed models with Supabase integration
-- **Form Generator**: Streamlined form handling with state management
-- **Repository Generator**: Consistent repository pattern implementation
-
-### 📦 State Management
-- **Riverpod Extensions**: Enhanced provider utilities
-  - Pagination helpers
-  - Offline persistence
-  - Automatic cache invalidation
-  - Debounce utilities
-- **Provider Status**: Standardized async state handling
-
-### 🔧 Core Utilities
-- **Cache Manager**: Flexible caching strategies
-- **Failure Handling**: Comprehensive error management system
-- **Type Extensions**: Utility extensions for Either and Option types
-- **Supabase Helpers**: Simplified database operations
-
-## Installation
-
-Add the following to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  kimapp: ^1.0.0
-  freezed_annotation: ^2.2.0
-  fast_immutable_collections: ^9.1.5
-  fpdart: ^1.1.0
-  flutter_hooks: ^0.20.1
-  hooks_riverpod: ^2.3.10
-  supabase_flutter: ^1.0.0  # Optional - for Supabase integration
-
-dev_dependencies:
-  build_runner: ^2.3.0
-  freezed: ^2.3.0
-  kimapp_generator: ^1.0.0
+```
+kimapp/
+├── packages/               # Core packages
+│   ├── kimapp/             # Main package with core utilities
+│   ├── kimapp_generator/   # Code generation package
+│   ├── kimapp_utils/       # Utility functions and extensions
+│   └── kimapp_supabase_helper/ # Supabase integration helpers
+├── pubs/                   # Additional published packages
+│   ├── autoverpod/         # Auto-generated Riverpod providers
+│   └── autoverpod_generator/ # Generator for autoverpod
+├── mason/                  # Mason bricks for code generation
+│   ├── kimapp/             # Core Kimapp brick
+│   ├── kimapp_feature/     # Feature generation brick
+│   ├── kimapp_simple_feature/ # Simplified feature brick
+│   ├── kimapp_feature_ui/  # UI components brick
+│   └── kimapp_package/     # Package template brick
+├── tools/                  # Development tools and scripts
+└── template_generators/    # Custom code generators
 ```
 
-## Quick Start
+## 🚀 Features
 
-### 1. Initialize Kimapp
+### Core Packages
 
-```dart
-void main() async {
-  await Kimapp.initialize(
-    debugMode: true,
-    customFailureMessage: CustomFailureMessage(),
-    logger: KimappLogger(),
-  );
-  
-  runApp(ProviderScope(child: MyApp()));
-}
+- **kimapp**: Core utilities, widgets, and base classes
+- **kimapp_generator**: Code generation for models, repositories, and more
+- **kimapp_utils**: Utility functions and extensions
+- **kimapp_supabase_helper**: Helpers for Supabase integration
+
+### Code Generation
+
+- **Schema-First Approach**: Define database tables as Dart schemas
+- **Type-Safe Models**: Generate Freezed models from schemas
+- **Repository Generation**: Consistent repository pattern implementation
+- **Form Generation**: Streamlined form handling with validation
+
+### Mason Bricks
+
+- **Feature Generation**: Quickly scaffold new features with proper architecture
+- **UI Components**: Generate consistent UI components
+- **Package Templates**: Create new packages with proper structure
+
+### Development Tools
+
+- **Melos Integration**: Monorepo management with scripts for common tasks
+- **Template Generators**: Custom code generators for specific use cases
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Flutter SDK (>=3.3.0)
+- Dart SDK (>=3.3.0)
+- [Melos](https://melos.invertase.dev/) for monorepo management
+- [Mason CLI](https://pub.dev/packages/mason_cli) for code generation
+
+### Setup
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/pckimlong/kimapp.git
+cd kimapp
 ```
 
-### 2. Define Database Schema
+2. Install Melos globally:
+
+```bash
+dart pub global activate melos
+```
+
+3. Bootstrap the project:
+
+```bash
+melos bootstrap
+```
+
+This will install all dependencies and link local packages together.
+
+### Using Mason Bricks
+
+1. Install Mason CLI:
+
+```bash
+dart pub global activate mason_cli
+```
+
+2. Get the bricks:
+
+```bash
+cd mason
+mason get
+```
+
+3. Generate a new feature:
+
+```bash
+mason make kimapp_feature --name user_management --table users
+```
+
+## 📋 Development Workflow
+
+### Adding a New Feature
+
+1. Define your database schema using the schema-first approach
+2. Generate the feature using Mason:
+
+```bash
+mason make kimapp_feature --name feature_name --table table_name
+```
+
+3. Implement the repository methods
+4. Create providers for state management
+5. Build the UI components
+
+### Running Code Generation
+
+```bash
+melos run build_all
+```
+
+This will run build_runner in all packages that depend on it.
+
+### Testing
+
+```bash
+melos run test
+```
+
+### Formatting and Linting
+
+```bash
+melos run format
+melos run analyze
+```
+
+## 🧩 Melos Commands
+
+Melos provides several useful commands for managing the monorepo:
+
+- `melos bootstrap`: Set up the project
+- `melos run update_deps`: Update dependencies in all packages
+- `melos run format`: Format Dart code in all packages
+- `melos run analyze`: Run static analysis
+- `melos run build_all`: Run build_runner in all packages
+- `melos run test`: Run tests in all packages
+- `melos run clean`: Clean all packages
+- `melos run publish_dry`: Run a dry-run of publishing all packages
+- `melos run publish`: Publish all packages to pub.dev
+
+## 📚 Core Concepts
+
+### Schema-First Approach
+
+Kimapp uses a schema-first methodology where database tables are defined as Dart schemas. These schemas generate type-safe models, repositories, and providers, ensuring alignment between the database and application code.
 
 ```dart
 @TableStructure(
@@ -80,98 +177,28 @@ void main() async {
 class ProductTable {}
 ```
 
-### 3. Create Data Model
+### Type Safety
 
-```dart
-@freezed
-class ProductModel with _$ProductModel {
-  const ProductModel._();
+- Use type-safe ID classes for all ID fields
+- Foreign keys must reference the appropriate ID type
+- Leverage Freezed and `fast_immutable_collections` for immutable data structures
 
-  @TableModel("products")
-  factory ProductModel({
-    @JsonKey(name: ProductTable.id) required String id,
-    @JsonKey(name: ProductTable.name) required String name,
-    @JsonKey(name: ProductTable.price) required double price,
-    @JsonKey(name: ProductTable.categoryId) required String categoryId,
-    CategoryModel? category,
-  }) = _ProductModel;
+### Feature Structure
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) => 
-      _$ProductModelFromJson(json);
-}
-```
+Each feature includes:
+- **Schema**: Defines the database table and generates models
+- **Repository**: Manages CRUD operations and data access
+- **Providers**: Handles state management with Riverpod
+- **Params**: Specifies request parameters for operations
 
-### 4. Implement Repository
+## 📄 License
 
-```dart
-@riverpod
-class ProductRepository extends _$ProductRepository {
-  @override
-  Future<List<ProductModel>> build() async {
-    return supabase
-        .from(ProductModel.table.tableName)
-        .select(ProductModel.table.selectStatement)
-        .execute()
-        .then((response) => response.data
-            .map((json) => ProductModel.fromJson(json))
-            .toList());
-  }
-}
-```
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Advanced Usage
+## 🙏 Acknowledgements
 
-### Pagination
-
-```dart
-@riverpod
-class PaginatedProducts extends _$PaginatedProducts 
-    with PaginatedMixin<ProductModel> {
-  
-  @override
-  Future<PaginatedItem<ProductModel>> build({int limit = 20}) async {
-    return fetchPage(
-      offset: 0,
-      limit: limit,
-      fetcher: (offset, limit) => // Fetch implementation
-    );
-  }
-}
-```
-
-### Form Handling
-
-```dart
-@kimappForm
-class ProductForm with _$ProductForm {
-  factory ProductForm({
-    @FormField() required String name,
-    @FormField(validator: validatePrice) required double price,
-  }) = _ProductForm;
-}
-```
-
-## Best Practices
-
-1. **Schema Definition**
-   - Use `@TableStructure` for all database tables
-   - Define clear column types and relationships
-   - Generate models using `@TableModel`
-
-2. **State Management**
-   - Leverage Riverpod providers for state
-   - Use `PaginatedMixin` for list pagination
-   - Implement proper error handling with `Failure` class
-
-3. **Form Handling**
-   - Use `@kimappForm` for consistent form management
-   - Implement validation in form classes
-   - Leverage generated form widgets
-
-## Contributing
-
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) to get started.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- [Riverpod](https://riverpod.dev/) for state management
+- [Freezed](https://pub.dev/packages/freezed) for immutable models
+- [Supabase](https://supabase.io/) for backend services
+- [Mason](https://pub.dev/packages/mason) for code generation
+- [Melos](https://melos.invertase.dev/) for monorepo management
