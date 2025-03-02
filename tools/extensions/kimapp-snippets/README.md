@@ -1,43 +1,80 @@
 # Kimapp Snippets
 
-Code snippets for Kimapp development in Visual Studio Code.
+Code snippets for Kimapp development.
 
 ## Features
 
-This extension provides snippets for Dart/Flutter development with Kimapp:
+### Code Snippets
 
-### Autoverpod
+This extension provides a set of code snippets for Kimapp development.
 
-Prefix: `kimapp-autoverpod`
+### Feature Generation
 
-Creates an Autoverpod form widget class with the following structure:
+This extension also provides a feature generation functionality that allows you to quickly create a new feature with all the necessary files and boilerplate code.
 
-```dart
-import 'package:autoverpod/autoverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:kimapp/kimapp.dart';
+To use this functionality:
 
-part 'filename.g.dart';
+1. Right-click on a directory in the file explorer
+2. Select "Create Kimapp Feature" from the context menu
+3. Enter the feature name (in snake_case)
+4. Select the ID data type (int or String)
+5. Choose whether to generate UI for the feature
 
-@formWidget
-@riverpod
-class ClassName extends _$ClassName {
-  @override
-  ParamType build() {
-    return ParamType(
-      
-    );
-  }
+The extension will generate the following files and directories directly under the directory you right-clicked on:
 
-  @override
-  Future<ResultType> submit(ParamType state) {
-    return ref.read(provider).method(state).getOrThrow();
-  }
-
-  @override
-  void onSuccess(ResultType result) {}
-}
 ```
+{selected_directory}/{feature_name}/
+├── {feature_name}_schema.dart
+├── i_{feature_name}_repo.dart
+├── params/
+│   └── {feature_name}_list_param.dart
+└── providers/
+    ├── {feature_name}_list_provider.dart
+    ├── {feature_name}_detail_provider.dart
+    ├── {feature_name}_create_provider.dart
+    ├── {feature_name}_update_provider.dart
+    ├── {feature_name}_delete_provider.dart
+    └── {feature_name}_list_pagination_provider.dart
+```
+
+## Requirements
+
+- Visual Studio Code 1.60.0 or higher
+
+## Extension Settings
+
+This extension contributes the following settings:
+
+* None
+
+## Known Issues
+
+* None
+
+## Release Notes
+
+### 1.0.0
+
+Initial release of Kimapp Snippets
+
+### 1.1.0
+
+Added feature generation functionality
+
+## Working with Markdown
+
+**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+
+* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
+* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
+* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
+
+### For more information
+
+* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+
+**Enjoy!**
 
 ## Installation
 
@@ -84,19 +121,16 @@ For more details, see [GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md).
 
 ## Development
 
-To package the extension locally without publishing:
-```bash
-cd tools/extensions/kimapp-snippets
-./package-extension.sh
-```
+### Building the Extension
 
-This will create a .vsix file that you can install locally in VS Code.
+This extension depends on the `kimapp_feature` JavaScript code located at `/template_generators/kimapp_feature` in the repository root. When packaging or publishing the extension, the `copy-kimapp-feature.js` script automatically copies this code to the extension's `src/kimapp_feature` directory.
 
-## Release Notes
+To build the extension:
 
-### 1.0.0
+1. Make sure the `kimapp_feature` code is up to date
+2. Run `npm run package` to create the VSIX file
 
-Initial release with Autoverpod snippet.
+The copied code is not committed to source control as it's considered a build artifact.
 
 ## License
 
