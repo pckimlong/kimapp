@@ -10,6 +10,10 @@ class AS {
   static const double sidePadding = 16;
   static const double dialogSideInsetPadding = 24;
 
+  static const double buttonHeightS = 32.0;
+  static const double buttonHeightM = 42.0;
+  static const double buttonHeightL = 48.0;
+
   static const wGap12 = SizedBox(width: 12, height: 0);
   static const wGap16 = SizedBox(width: 16, height: 0);
   static const wGap20 = SizedBox(width: 20, height: 0);

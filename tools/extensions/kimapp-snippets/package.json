@@ -1,0 +1,42 @@
+{
+  "name": "kimapp-snippets",
+  "displayName": "Kimapp Snippets",
+  "description": "Code snippets for Kimapp development",
+  "version": "1.0.0",
+  "publisher": "pckimlong",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Snippets"
+  ],
+  "keywords": [
+    "dart",
+    "flutter",
+    "kimapp",
+    "snippets",
+    "autoverpod"
+  ],
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#C80000",
+    "theme": "dark"
+  },
+  "contributes": {
+    "snippets": [
+      {
+        "language": "dart",
+        "path": "./snippets/dart.json"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pckimlong/kimapp"
+  },
+  "bugs": {
+    "url": "https://github.com/pckimlong/kimapp/issues"
+  },
+  "homepage": "https://github.com/pckimlong/kimapp#readme",
+  "license": "MIT"
+} 

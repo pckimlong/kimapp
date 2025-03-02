@@ -74,6 +74,7 @@ if (onStateChanged != null) {
 
 return ${inheritedWidget(child: '''
  Consumer(
+  child: child,
   builder: (context, ref, child) {
     final state = ref.watch(${provider.providerNameWithFamily()});
 

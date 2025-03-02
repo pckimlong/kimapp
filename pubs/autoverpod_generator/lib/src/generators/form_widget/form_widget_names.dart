@@ -21,7 +21,7 @@ extension FormWidgetNames on ProviderDefinition {
   String get callStatusProviderName => '${baseName.camelCase}CallStatusProvider';
 
   String get callFunctionReturnType {
-    return 'Future<AsyncValue<${getSubmitMethodInfo().rawResultType}>>';
+    return getSubmitMethodInfo().asyncValueType(isFuture: true, isNullable: false);
   }
 
   String callStatusProviderNameWithFamily({String prefix = ''}) {

@@ -1,0 +1,12 @@
+.vscode/**
+.vscode-test/**
+.gitignore
+vsc-extension-quickstart.md
+images/icon.png.txt
+package-extension.sh
+publish-extension.sh
+**/*.vsix
+.git
+.github
+node_modules
+.DS_Store 
