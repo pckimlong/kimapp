@@ -206,4 +206,7 @@ This extension is licensed under the [MIT License](LICENSE).
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!** 
+**Enjoy!**
+
+## Updated
+This file was updated to trigger the GitHub workflow. 
