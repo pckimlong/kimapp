@@ -2,7 +2,7 @@
   "name": "kimapp-snippets",
   "displayName": "Kimapp Snippets",
   "description": "Code snippets for Kimapp development",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publisher": "pckimlong",
   "engines": {
     "vscode": "^1.60.0"
