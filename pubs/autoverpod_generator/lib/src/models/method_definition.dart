@@ -36,7 +36,8 @@ class MethodDefinition {
     return MethodDefinition(
       name: method.name,
       returnType: method.returnType.getDisplayString(),
-      parameters: method.parameters.map((p) => ParamDefinition.parse(p)).toList(),
+      parameters:
+          method.parameters.map((p) => ParamDefinition.parse(p)).toList(),
       isStatic: method.isStatic,
       annotations: method.metadata.map((m) => m.toSource()).toList(),
       documentation: method.documentationComment,
@@ -47,7 +48,8 @@ class MethodDefinition {
     return MethodDefinition(
       name: getter.name,
       returnType: getter.returnType.getDisplayString(),
-      parameters: getter.parameters.map((p) => ParamDefinition.parse(p)).toList(),
+      parameters:
+          getter.parameters.map((p) => ParamDefinition.parse(p)).toList(),
       isStatic: getter.isStatic,
       annotations: getter.metadata.map((m) => m.toSource()).toList(),
       documentation: getter.documentationComment,
@@ -58,14 +60,13 @@ class MethodDefinition {
   List<Parameter> codeBuilderParams() {
     return parameters.map((p) {
       return Parameter(
-        (b) =>
-            b
-              ..required = p.isNamed ? p.isNamed : false
-              ..named = p.isNamed
-              ..name = p.name
-              ..docs.add(p.documentation ?? '')
-              ..type = refer(p.type)
-              ..defaultTo = p.defaultValue != null ? Code(p.defaultValue!) : null,
+        (b) => b
+          ..required = p.isNamed ? p.isNamed : false
+          ..named = p.isNamed
+          ..name = p.name
+          ..docs.add(p.documentation ?? '')
+          ..type = refer(p.type)
+          ..defaultTo = p.defaultValue != null ? Code(p.defaultValue!) : null,
       );
     }).toList();
   }

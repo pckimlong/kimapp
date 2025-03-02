@@ -9,12 +9,12 @@ class UnifiedWidgetBuilder implements Builder {
   final GeneratorRegistry _registry;
 
   UnifiedWidgetBuilder({GeneratorRegistry? registry})
-    : _registry = registry ?? GeneratorRegistry.instance;
+      : _registry = registry ?? GeneratorRegistry.instance;
 
   @override
   Map<String, List<String>> get buildExtensions => {
-    '.dart': ['.widget.dart'],
-  };
+        '.dart': ['.widget.dart'],
+      };
 
   @override
   Future<void> build(BuildStep buildStep) async {
@@ -60,8 +60,10 @@ class UnifiedWidgetBuilder implements Builder {
     }
   }
 
-  Future<String> _generateOutput(LibraryReader library, BuildStep buildStep) async {
-    final generatedCode = await _registry.generateForLibrary(library, buildStep);
+  Future<String> _generateOutput(
+      LibraryReader library, BuildStep buildStep) async {
+    final generatedCode =
+        await _registry.generateForLibrary(library, buildStep);
 
     if (generatedCode.isEmpty) return '';
 
@@ -69,12 +71,11 @@ class UnifiedWidgetBuilder implements Builder {
     final imports = Set<String>.from(_registry.getAllRequiredImports());
 
     // Add source file's imports to ensure dependencies are available
-    final sourceImports =
-        library.element.importedLibraries
-            .map((lib) => lib.source.uri.toString())
-            .where((uri) => !uri.startsWith('dart:_'))
-            .cast<String>()
-            .toSet();
+    final sourceImports = library.element.importedLibraries
+        .map((lib) => lib.source.uri.toString())
+        .where((uri) => !uri.startsWith('dart:_'))
+        .cast<String>()
+        .toSet();
 
     // Remove some imports
     sourceImports.removeWhere(
@@ -103,5 +104,6 @@ class UnifiedWidgetBuilder implements Builder {
     return _dartfmt.format(generatedLib.accept(DartEmitter()).toString());
   }
 
-  static final _dartfmt = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
+  static final _dartfmt =
+      DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
 }

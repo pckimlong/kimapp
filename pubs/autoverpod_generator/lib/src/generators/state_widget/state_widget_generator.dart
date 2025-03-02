@@ -17,7 +17,8 @@ import 'widgets/state_widget_proxy.dart';
 /// Generator for creating state-based widgets from providers
 class StateWidgetGenerator extends WidgetGenerator {
   @override
-  final TypeChecker annotationTypeChecker = const TypeChecker.fromRuntime(StateWidget);
+  final TypeChecker annotationTypeChecker =
+      const TypeChecker.fromRuntime(StateWidget);
 
   @override
   bool canProcess(Element element) {

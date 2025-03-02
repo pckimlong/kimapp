@@ -217,8 +217,10 @@ void main() {
   group('StorageManager Tests', () {
     test('default config has expected values', () {
       expect(StorageManager.config.maxFileSizeBytes, equals(10 * 1024 * 1024));
-      expect(StorageManager.config.bucketFileTypes.containsKey('test-bucket'), isTrue);
-      expect(StorageManager.config.typeSpecificMaxSizes[FileType.image], equals(5 * 1024 * 1024));
+      expect(StorageManager.config.bucketFileTypes.containsKey('test-bucket'),
+          isTrue);
+      expect(StorageManager.config.typeSpecificMaxSizes[FileType.image],
+          equals(5 * 1024 * 1024));
     });
 
     test('validateUpload succeeds for valid file', () {
@@ -267,7 +269,8 @@ void main() {
 
     test('getUrl returns correct URL', () {
       const expectedUrl = 'https://example.com/test-bucket/test/path/file.txt';
-      when(() => mockFileApi.getPublicUrl('test/path/file.txt')).thenReturn(expectedUrl);
+      when(() => mockFileApi.getPublicUrl('test/path/file.txt'))
+          .thenReturn(expectedUrl);
 
       final url = storageObject.getUrl(client: mockClient);
       expect(url, equals(expectedUrl));
@@ -294,7 +297,8 @@ void main() {
       final result = await storageObject.upload(testBytes, client: mockClient);
       expect(result.isLeft(), isTrue);
       result.fold(
-        (failure) => expect(failure.message(), contains('maximum allowed size')),
+        (failure) =>
+            expect(failure.message(), contains('maximum allowed size')),
         (_) => fail('Should return left'),
       );
     });
@@ -302,7 +306,8 @@ void main() {
     test('upload handles storage API error', () async {
       final testBytes = Uint8List.fromList([1, 2, 3]);
       storageObject.path = 'test/path/image.jpg'; // Set to valid image type
-      when(() => mockFileApi.uploadBinary(any(), any(), fileOptions: any(named: 'fileOptions')))
+      when(() => mockFileApi.uploadBinary(any(), any(),
+              fileOptions: any(named: 'fileOptions')))
           .thenThrow(const StorageException('Storage API error'));
 
       final result = await storageObject.upload(testBytes, client: mockClient);
@@ -314,7 +319,8 @@ void main() {
     });
 
     test('getBytes handles storage API error', () async {
-      when(() => mockFileApi.download(any())).thenThrow(const StorageException('Download failed'));
+      when(() => mockFileApi.download(any()))
+          .thenThrow(const StorageException('Download failed'));
 
       final result = await storageObject.getBytes(client: mockClient);
       expect(result.isLeft(), isTrue);
@@ -325,7 +331,8 @@ void main() {
     });
 
     test('delete handles storage API error', () async {
-      when(() => mockFileApi.remove(any())).thenThrow(const StorageException('Delete failed'));
+      when(() => mockFileApi.remove(any()))
+          .thenThrow(const StorageException('Delete failed'));
 
       final result = await storageObject.delete(client: mockClient);
       expect(result.isLeft(), isTrue);

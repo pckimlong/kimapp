@@ -206,7 +206,8 @@ abstract class BaseStorageObject {
   });
 
   /// Get the file bytes
-  Future<Either<Failure, Uint8List>> getBytes({SupabaseStorageClient? client}) async {
+  Future<Either<Failure, Uint8List>> getBytes(
+      {SupabaseStorageClient? client}) async {
     return await errorHandler(() async {
       final storage = client ?? Supabase.instance.client.storage;
       final bytes = await storage.from(bucket).download(path);

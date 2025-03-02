@@ -89,7 +89,8 @@ class _UpdateUserProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) => _ref.listen(provider, listener, onError: onError);
+  }) =>
+      _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -97,12 +98,13 @@ class _UpdateUserProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) => _ref.listenManual(
-    provider,
-    listener,
-    onError: onError,
-    fireImmediately: fireImmediately,
-  );
+  }) =>
+      _ref.listenManual(
+        provider,
+        listener,
+        onError: onError,
+        fireImmediately: fireImmediately,
+      );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -127,16 +129,15 @@ class UpdateUserFormScope extends ConsumerStatefulWidget {
     this.onInitLoading,
     this.onInitError,
   }) : assert(
-         child != null || builder != null,
-         'Either child or builder must be provided',
-       );
+          child != null || builder != null,
+          'Either child or builder must be provided',
+        );
   final int id;
   final Widget Function(
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     Widget? child,
-  )?
-  builder;
+  )? builder;
   final Widget? child;
   final GlobalKey<FormState>? formKey;
   final AutovalidateMode? autovalidateMode;
@@ -200,14 +201,13 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
 
                 return widget.child!;
               },
-              error:
-                  (error, stack) =>
-                      widget.onInitError?.call(error, stack) ??
-                      Theme.of(context)
-                          .extension<KimappThemeExtension>()
-                          ?.defaultErrorStateWidget
-                          ?.call(context, ref, error) ??
-                      const SizedBox.shrink(),
+              error: (error, stack) =>
+                  widget.onInitError?.call(error, stack) ??
+                  Theme.of(context)
+                      .extension<KimappThemeExtension>()
+                      ?.defaultErrorStateWidget
+                      ?.call(context, ref, error) ??
+                  const SizedBox.shrink(),
               loading: () {
                 return widget.onInitLoading?.call() ??
                     Theme.of(context)
@@ -247,8 +247,7 @@ class UpdateUserFormParams extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     ({int id}) params,
-  )
-  builder;
+  ) builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -272,8 +271,7 @@ class UpdateUserFormSelect<Selected> extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     Selected value,
-  )
-  builder;
+  ) builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override
@@ -313,11 +311,10 @@ class UpdateUserFormState extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     Widget? child,
-  )
-  builder;
+  ) builder;
   final Widget? child;
   final void Function(UpdateUserModel? previous, UpdateUserModel? next)?
-  onStateChanged;
+      onStateChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -330,9 +327,8 @@ class UpdateUserFormState extends ConsumerWidget {
       });
     }
     return UpdateUserFormParams(
-      builder:
-          (context, ref, params) =>
-              builder(context, _UpdateUserProxyWidgetRef(ref), child),
+      builder: (context, ref, params) =>
+          builder(context, _UpdateUserProxyWidgetRef(ref), child),
     );
   }
 }
@@ -344,8 +340,7 @@ class UpdateUserFormStatus extends ConsumerWidget {
     BuildContext context,
     _UpdateUserProxyWidgetRef ref,
     AsyncValue<bool>? status,
-  )
-  builder;
+  ) builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -380,7 +375,7 @@ class UpdateUserNameField extends ConsumerStatefulWidget {
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
   final Widget Function(BuildContext context, _UpdateUserNameProxyWidgetRef ref)
-  builder;
+      builder;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -465,7 +460,7 @@ class UpdateUserAgeField extends ConsumerWidget {
   const UpdateUserAgeField({super.key, required this.builder});
 
   final Widget Function(BuildContext context, _UpdateUserAgeProxyWidgetRef ref)
-  builder;
+      builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -502,8 +497,7 @@ class UpdateUserEmailField extends ConsumerStatefulWidget {
   final Widget Function(
     BuildContext context,
     _UpdateUserEmailProxyWidgetRef ref,
-  )
-  builder;
+  ) builder;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -602,8 +596,7 @@ class UpdateUserAddressField extends ConsumerStatefulWidget {
   final Widget Function(
     BuildContext context,
     _UpdateUserAddressProxyWidgetRef ref,
-  )
-  builder;
+  ) builder;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -705,8 +698,7 @@ class UpdateUserPhoneField extends ConsumerStatefulWidget {
   final Widget Function(
     BuildContext context,
     _UpdateUserPhoneProxyWidgetRef ref,
-  )
-  builder;
+  ) builder;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

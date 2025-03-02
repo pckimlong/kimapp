@@ -10,25 +10,24 @@ String generateProxyWidgetRef(ProviderDefinition provider) {
     methods: [
       if (provider.hasNotifier)
         Method(
-          (b) =>
-              b
-                ..name = 'notifier'
-                ..type = MethodType.getter
-                ..returns = refer(provider.baseName)
-                ..lambda = true
-                ..body = Code('''
+          (b) => b
+            ..name = 'notifier'
+            ..type = MethodType.getter
+            ..returns = refer(provider.baseName)
+            ..lambda = true
+            ..body = Code('''
                   _ref.read(${provider.providerNameWithFamily(prefix: 'params')}.notifier)
                 '''),
         ),
       if (provider.hasFamily)
         Method(
-          (b) =>
-              b
-                ..returns = refer(provider.familyAsRecordType)
-                ..name = 'params'
-                ..type = MethodType.getter
-                ..lambda = true
-                ..body = Code('${provider.paramInheritedWidgetName}.of(context).params'),
+          (b) => b
+            ..returns = refer(provider.familyAsRecordType)
+            ..name = 'params'
+            ..type = MethodType.getter
+            ..lambda = true
+            ..body =
+                Code('${provider.paramInheritedWidgetName}.of(context).params'),
         ),
     ],
   );

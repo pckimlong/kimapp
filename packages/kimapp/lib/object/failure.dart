@@ -89,37 +89,53 @@ extension FailureX on Failure {
     final useDebugMessage = kimapp.debugMode && debugMessageEnable;
 
     return when(
-      (info) => useDebugMessage ? info.debugMessage : info.message ?? "Something when wrong!",
+      (info) => useDebugMessage
+          ? info.debugMessage
+          : info.message ?? "Something when wrong!",
       exception: (info) {
         if (info.errorObject is String) {
           return info.errorObject as String;
         }
 
-        return useDebugMessage ? info.debugMessage : info.message ?? mgs.exception;
+        return useDebugMessage
+            ? info.debugMessage
+            : info.message ?? mgs.exception;
       },
       networkFailure: (info) {
-        return useDebugMessage ? info.debugMessage : info.message ?? mgs.networkFailure;
+        return useDebugMessage
+            ? info.debugMessage
+            : info.message ?? mgs.networkFailure;
       },
       serverError: (info) {
-        return useDebugMessage ? info.debugMessage : info.message ?? mgs.serverError;
+        return useDebugMessage
+            ? info.debugMessage
+            : info.message ?? mgs.serverError;
       },
       databaseFailure: (info) {
         return info.when(
           (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.databaseError;
+            return useDebugMessage
+                ? info.debugMessage
+                : info.message ?? mgs.databaseError;
           },
           uniqueConstraint: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.uniqueConstraintError;
+            return useDebugMessage
+                ? info.debugMessage
+                : info.message ?? mgs.uniqueConstraintError;
           },
           notFound: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.notFoundError;
+            return useDebugMessage
+                ? info.debugMessage
+                : info.message ?? mgs.notFoundError;
           },
         );
       },
       authFailure: (info) {
         return info.when(
           (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.authError;
+            return useDebugMessage
+                ? info.debugMessage
+                : info.message ?? mgs.authError;
           },
           incorrectLoginCredential: (info) {
             return useDebugMessage
@@ -127,10 +143,14 @@ extension FailureX on Failure {
                 : info.message ?? mgs.incorrectLoginCredential;
           },
           forbidden: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.forbidden;
+            return useDebugMessage
+                ? info.debugMessage
+                : info.message ?? mgs.forbidden;
           },
           alreadyRegistered: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.alreadyRegistered;
+            return useDebugMessage
+                ? info.debugMessage
+                : info.message ?? mgs.alreadyRegistered;
           },
         );
       },
@@ -179,7 +199,8 @@ class Failure with _$Failure {
   const factory Failure.serverError(FailureInfo info) = ServerError;
 
   /// Error throw from database
-  const factory Failure.databaseFailure(DatabaseFailures failures) = DatabaseFailure;
+  const factory Failure.databaseFailure(DatabaseFailures failures) =
+      DatabaseFailure;
 
   /// Error relate to authentication or security staffs
   const factory Failure.authFailure(AuthFailures failures) = AuthFailure;
@@ -191,7 +212,8 @@ class Failure with _$Failure {
       exception: (info) => "ExceptionFailure: ${info.debugMessage}",
       networkFailure: (info) => "NetworkFailure: ${info.debugMessage}",
       serverError: (info) => "ServerError: ${info.debugMessage}",
-      databaseFailure: (failure) => "DatabaseFailure -> ${failure.logMessage()}",
+      databaseFailure: (failure) =>
+          "DatabaseFailure -> ${failure.logMessage()}",
       authFailure: (failure) => "AuthFailure -> ${failure.logMessage()}",
     );
   }
@@ -205,7 +227,8 @@ class DatabaseFailures with _$DatabaseFailures {
   const factory DatabaseFailures(FailureInfo info) = _DatabaseFailures;
 
   /// Throw from database that the input is not follow constraint rule in database
-  const factory DatabaseFailures.uniqueConstraint(FailureInfo info) = _UniqueConstraint;
+  const factory DatabaseFailures.uniqueConstraint(FailureInfo info) =
+      _UniqueConstraint;
 
   /// Cannot find any data in database with given argument
   const factory DatabaseFailures.notFound(FailureInfo info) = _NotFound;
@@ -227,20 +250,24 @@ class AuthFailures with _$AuthFailures {
   const factory AuthFailures(FailureInfo info) = _AuthFailures;
 
   /// Any provider use for authentication is incorrect, eg username or password
-  const factory AuthFailures.incorrectLoginCredential(FailureInfo info) = _IncorrectLoginCredential;
+  const factory AuthFailures.incorrectLoginCredential(FailureInfo info) =
+      _IncorrectLoginCredential;
 
   /// Tried to access something that has protected
   const factory AuthFailures.forbidden(FailureInfo info) = _Forbidden;
 
   /// Information use to register or signed up might have been use by other user
-  const factory AuthFailures.alreadyRegistered(FailureInfo info) = _UserAlreadyRegistered;
+  const factory AuthFailures.alreadyRegistered(FailureInfo info) =
+      _UserAlreadyRegistered;
 
   String logMessage() {
     return when(
       (info) => "AuthFailures: ${info.debugMessage}",
-      incorrectLoginCredential: (info) => "IncorrectLoginCredential: ${info.debugMessage}",
+      incorrectLoginCredential: (info) =>
+          "IncorrectLoginCredential: ${info.debugMessage}",
       forbidden: (info) => "Forbidden: ${info.debugMessage}",
-      alreadyRegistered: (info) => "UserAlreadyRegistered: ${info.debugMessage}",
+      alreadyRegistered: (info) =>
+          "UserAlreadyRegistered: ${info.debugMessage}",
     );
   }
 }

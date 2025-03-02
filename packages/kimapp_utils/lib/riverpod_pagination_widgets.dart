@@ -139,7 +139,8 @@ class RiverpodPaginationListView<T> extends ConsumerWidget {
   /// Calculate the actual data index considering external items
   int _getDataIndex(int viewIndex) {
     if (!adjustDataIndex) return viewIndex;
-    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+    return viewIndex -
+        externalItems.keys.where((position) => position <= viewIndex).length;
   }
 
   @override
@@ -216,7 +217,8 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
   /// Calculate the actual data index considering external items
   int _getDataIndex(int viewIndex) {
     if (!adjustDataIndex) return viewIndex;
-    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+    return viewIndex -
+        externalItems.keys.where((position) => position <= viewIndex).length;
   }
 
   @override
@@ -250,7 +252,8 @@ class RiverpodPaginationSliverList<T> extends ConsumerWidget {
           final paginated = getData(ref, dataIndex);
 
           return paginated?.whenOrNull(
-            loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
+            loading: (isFirstItem) =>
+                loadingItemBuilder(dataIndex, isFirstItem),
             data: (data) => itemBuilder(index, data),
           );
         },
@@ -320,7 +323,8 @@ class RiverpodPaginationGrid<T> extends ConsumerWidget {
   /// Calculate the actual data index considering external items
   int _getDataIndex(int viewIndex) {
     if (!adjustDataIndex) return viewIndex;
-    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+    return viewIndex -
+        externalItems.keys.where((position) => position <= viewIndex).length;
   }
 
   @override
@@ -400,7 +404,8 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
   /// Calculate the actual data index considering external items
   int _getDataIndex(int viewIndex) {
     if (!adjustDataIndex) return viewIndex;
-    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+    return viewIndex -
+        externalItems.keys.where((position) => position <= viewIndex).length;
   }
 
   @override
@@ -436,7 +441,8 @@ class RiverpodPaginationSliverGrid<T> extends ConsumerWidget {
           final paginated = getData(ref, dataIndex);
 
           return paginated?.whenOrNull(
-            loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
+            loading: (isFirstItem) =>
+                loadingItemBuilder(dataIndex, isFirstItem),
             data: (data) => itemBuilder(index, data),
           );
         },
@@ -500,7 +506,8 @@ class RiverpodPaginationCustomGrid<T> extends ConsumerWidget {
   /// Calculate the actual data index considering external items
   int _getDataIndex(int viewIndex) {
     if (!adjustDataIndex) return viewIndex;
-    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+    return viewIndex -
+        externalItems.keys.where((position) => position <= viewIndex).length;
   }
 
   @override
@@ -537,7 +544,8 @@ class RiverpodPaginationCustomGrid<T> extends ConsumerWidget {
           final paginated = getData(ref, dataIndex);
 
           return paginated?.whenOrNull(
-            loading: (isFirstItem) => loadingItemBuilder(dataIndex, isFirstItem),
+            loading: (isFirstItem) =>
+                loadingItemBuilder(dataIndex, isFirstItem),
             data: (data) => itemBuilder(index, data),
           );
         },
@@ -581,7 +589,8 @@ class RiverpodPaginationCustom<T> extends ConsumerWidget {
   /// Calculate the actual data index considering external items
   int _getDataIndex(int viewIndex) {
     if (!adjustDataIndex) return viewIndex;
-    return viewIndex - externalItems.keys.where((position) => position <= viewIndex).length;
+    return viewIndex -
+        externalItems.keys.where((position) => position <= viewIndex).length;
   }
 
   final Widget Function(
