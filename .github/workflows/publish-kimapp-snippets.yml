@@ -35,6 +35,10 @@ jobs:
             exit 1
           fi
           
+      - name: Copy kimapp_feature to extension
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: node ./copy-kimapp-feature.js
+          
       - name: Package extension
         working-directory: ./tools/extensions/kimapp-snippets
         run: npm run package

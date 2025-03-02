@@ -20,7 +20,10 @@ part '${snakeCaseName}_list_param.freezed.dart';
 class ${pascalCaseName}ListParam with _$${pascalCaseName}ListParam {
   const ${pascalCaseName}ListParam._();
 
-  const factory ${pascalCaseName}ListParam() = _${pascalCaseName}ListParam;
+  @JsonSerializable(explicitToJson: true)
+  const factory ${pascalCaseName}ListParam({
+    String? search,
+  }) = _${pascalCaseName}ListParam;
 }`;
 
   await fs.writeFile(path.join(paramsPath, `${snakeCaseName}_list_param.dart`), content);
