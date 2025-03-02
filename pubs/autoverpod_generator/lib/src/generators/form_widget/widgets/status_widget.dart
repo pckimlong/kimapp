@@ -15,11 +15,27 @@ String generateStatusWidget(ProviderDefinition provider) {
       ClassField(
         name: 'builder',
         type:
-            'Widget Function(BuildContext context, ${provider.formBaseProxyWidgetName} ref, ${provider.getSubmitMethodInfo().asyncValueType} status)',
+            'Widget Function(BuildContext context, ${provider.formBaseProxyWidgetName} ref, ${provider.getSubmitMethodInfo().asyncValueType()} status)',
+      ),
+      ClassField(
+        name: 'onChanged',
+        type:
+            'void Function(${provider.getSubmitMethodInfo().asyncValueType()} previous, ${provider.getSubmitMethodInfo().asyncValueType()} next)?',
+        isRequired: false,
       ),
     ],
     build: '''
 ${generateDebugCheckCall(provider)}
+if (onChanged != null) {${provider.hasFamily ? 'final params = ${provider.formInheritedWidgetName}.of(context).params;' : ''}
+    ref.listen(
+      ${provider.callStatusProviderNameWithFamily(prefix: 'params')},
+      (previous, next) {
+        if (previous != next) {
+          onChanged!(previous, next);
+        }
+      },
+    );
+}
 final stateRef = ${provider.formBaseProxyWidgetName}(ref);
 return builder(context, stateRef, stateRef.${hasStatusConflict ? 'formStatus' : 'status'});
 ''',

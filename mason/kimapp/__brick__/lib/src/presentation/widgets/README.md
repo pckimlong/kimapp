@@ -7,7 +7,6 @@ This directory contains all reusable UI components used throughout the BookTrade
 ```
 widgets/
 ├── README.md                    # This documentation file
-├── index.dart                   # Main entry point that exports all widgets
 ├── app_widgets.dart             # Common widget utilities and extensions
 ├── buttons/                     # Button components
 ├── components/                  # Miscellaneous UI components
@@ -25,20 +24,20 @@ widgets/
 
 ### Importing Widgets
 
-Always import widgets through the main index.dart file:
+Import widgets directly from their source files:
 
 ```dart
-import 'package:book_swap/src/presentation/widgets/index.dart';
+import 'package:book_swap/src/presentation/widgets/buttons/app_button.dart';
+import 'package:book_swap/src/presentation/widgets/feedback/app_toast.dart';
 ```
 
-This ensures that all widget exports are centralized and makes refactoring easier.
+Direct imports improve Dart analyzer performance and make dependencies more explicit.
 
 ### Creating New Widgets
 
 1. **Determine the appropriate category** for your widget
 2. **Create a new file** in the corresponding directory
-3. **Add an export statement** in the directory's index.dart file
-4. **Follow naming conventions**:
+3. **Follow naming conventions**:
    - Use descriptive names that indicate the widget's purpose
    - Suffix with `Widget` for clarity (e.g., `CustomButtonWidget`)
 

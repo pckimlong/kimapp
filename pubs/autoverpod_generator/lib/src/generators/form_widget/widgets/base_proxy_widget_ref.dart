@@ -34,7 +34,7 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
         (b) => b
           ..name = hasStatusConflict ? 'formStatus' : 'status'
           ..type = MethodType.getter
-          ..returns = refer(provider.getSubmitMethodInfo().asyncValueType)
+          ..returns = refer(provider.getSubmitMethodInfo().asyncValueType())
           ..lambda = true
           ..docs.addAll([
             if (hasStatusConflict)
@@ -112,20 +112,21 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
     return await ${hasNotifierConflict ? 'formNotifier' : 'notifier'}($callParams);
 ''');
       }),
-      Method(
-        (b) => b
-          ..name = hasStateConflict ? 'formState' : 'state'
-          ..type = MethodType.getter
-          ..lambda = true
-          ..returns = refer(provider.returnType.baseType)
-          ..docs.addAll([
-            if (hasStateConflict)
-              '/// Access the form state. Using formState to avoid conflict with field named "state".',
-          ])
-          ..body = Code(
-            '_ref.watch(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.requireValue' : ''}',
-          ),
-      ),
+      // To force user to use select instead of state, I disabled this method, select will able to access full state too
+      // Method(
+      //   (b) => b
+      //     ..name = hasStateConflict ? 'formState' : 'state'
+      //     ..type = MethodType.getter
+      //     ..lambda = true
+      //     ..returns = refer(provider.returnType.baseType)
+      //     ..docs.addAll([
+      //       if (hasStateConflict)
+      //         '/// Access the form state. Using formState to avoid conflict with field named "state".',
+      //     ])
+      //     ..body = Code(
+      //       '_ref.watch(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.requireValue' : ''}',
+      //     ),
+      // ),
       Method(
         (b) => b
           ..name = hasSelectConflict ? 'formSelect' : 'select'

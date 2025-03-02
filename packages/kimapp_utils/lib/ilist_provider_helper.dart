@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages, implementation_imports
 import 'package:riverpod/src/async_notifier.dart';
 

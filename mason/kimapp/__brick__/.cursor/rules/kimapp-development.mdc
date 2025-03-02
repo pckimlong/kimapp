@@ -110,6 +110,7 @@ Note: Generate new features using Mason CLI (must run from the Flutter project r
   ```
 - Annotate schema classes with `@Schema()` and extend `KimappSchema`.
 - Define fields and models within the schema.
+- No need to specify part file since it will generate into seperate file.
 
 ### Schema Definition Example
 ```dart
@@ -216,7 +217,8 @@ Future<Either<Failure, IList<BookModel>>> findPagination({
 ```
 
 ### Step 5: Adjust Providers
-Customize `lib/src/features/book/providers/book_provider.dart` as needed for state management.
+- Customize `lib/src/features/book/providers/book_provider.dart` as needed for state management.
+- If made changes to create or update param, please also update create and update provider by set the default param value in build function since all field defined in model are required.
 
 ### Step 6: Generate Code
 ```bash
