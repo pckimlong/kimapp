@@ -6,6 +6,7 @@ on:
     paths:
       - 'tools/extensions/kimapp-snippets/**'
       - 'template_generators/kimapp_feature/**'  # Also trigger when the source code changes
+      - '.github/workflows/publish-kimapp-snippets.yml'  # Also trigger when the workflow itself changes
 
 jobs:
   publish:
