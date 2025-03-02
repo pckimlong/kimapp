@@ -55,23 +55,12 @@ function activate(context) {
 
         if (!idDataType) return; // User cancelled
 
-        // Ask if UI should be generated
-        const generateUI = await vscode.window.showQuickPick(
-            ['Yes', 'No'],
-            {
-                placeHolder: 'Do you want to generate UI for the feature?',
-                canPickMany: false
-            }
-        );
-
-        if (!generateUI) return; // User cancelled
-
         try {
             // Use the bundled code generator
             const success = await kimappFeatureGenerator.generateFeature({
                 name: featureName,
                 idDataType: idDataType,
-                generateUI: generateUI === 'Yes',
+                generateUI: false,
                 outputDir: targetDir
             });
             

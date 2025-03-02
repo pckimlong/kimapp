@@ -59,7 +59,7 @@ async function generateFeature(options) {
 
     // Generate UI if requested
     if (generateUI) {
-      await generateUI(name, outputDir);
+      await generateFeatureUI(name, outputDir);
     }
 
     return true;
@@ -75,7 +75,7 @@ async function generateFeature(options) {
  * @param {string} outputDir - The directory where the feature should be generated
  * @returns {Promise<boolean>} - Whether the generation was successful
  */
-async function generateUI(name, outputDir) {
+async function generateFeatureUI(name, outputDir) {
   try {
     // Call the mason make command to generate UI
     execSync(`mason make kimapp_feature_ui --name ${name}`, {

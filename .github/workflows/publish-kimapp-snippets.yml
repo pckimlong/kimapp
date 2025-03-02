@@ -5,6 +5,7 @@ on:
     branches: [ main, master ]
     paths:
       - 'tools/extensions/kimapp-snippets/**'
+      - 'template_generators/kimapp_feature/**'  # Also trigger when the source code changes
 
 jobs:
   publish:
@@ -20,12 +21,23 @@ jobs:
         with:
           node-version: '16'
           
-      - name: Install dependencies
+      - name: Install global dependencies
         run: npm install -g @vscode/vsce
+          
+      - name: Install extension dependencies
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: npm install
+        
+      - name: Verify kimapp_feature source exists
+        run: |
+          if [ ! -d "./template_generators/kimapp_feature" ]; then
+            echo "Error: kimapp_feature source directory not found!"
+            exit 1
+          fi
           
       - name: Package extension
         working-directory: ./tools/extensions/kimapp-snippets
-        run: vsce package
+        run: npm run package
           
       - name: Publish to VS Code Marketplace
         working-directory: ./tools/extensions/kimapp-snippets
