@@ -123,7 +123,7 @@ For more details, see [GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md).
 
 ### Building the Extension
 
-This extension depends on the `kimapp_feature` JavaScript code located at `/template_generators/kimapp_feature` in the repository root. When packaging or publishing the extension, the `copy-kimapp-feature.js` script automatically copies this code to the extension's `src/kimapp_feature` directory.
+This extension depends on the `kimapp_feature` JavaScript code located at `/template_generators/kimapp_feature` in the repository root. When packaging or publishing the extension, the `copy-kimapp-feature.js` script automatically copies this code to the extension's `src/kimapp_feature` directory
 
 To build the extension:
 
