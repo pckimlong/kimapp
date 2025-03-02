@@ -42,4 +42,13 @@ The workflow is defined in `.github/workflows/publish-kimapp-snippets.yml`. It r
 
 ## Monorepo Considerations
 
-This workflow is designed to work in a monorepo where the extension is located in the `tools/extensions/kimapp-snippets` directory. The workflow will only trigger when files in this directory are changed. 
+This workflow is designed to work in a monorepo where the extension is located in the `tools/extensions/kimapp-snippets` directory. The workflow will only trigger when files in this directory are changed.
+
+## Build Process
+
+The extension depends on the `kimapp_feature` JavaScript code located at `/template_generators/kimapp_feature` in the repository root. When packaging or publishing the extension, the `copy-kimapp-feature.js` script automatically copies this code to the extension's `src/kimapp_feature` directory.
+
+Make sure your CI/CD workflow:
+
+1. Has access to the `kimapp_feature` code
+2. Runs `npm run package` which will automatically run the copy script before packaging 

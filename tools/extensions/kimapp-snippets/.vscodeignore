@@ -9,4 +9,7 @@ publish-extension.sh
 .git
 .github
 node_modules
-.DS_Store 
+.DS_Store
+
+# Don't exclude the bundled JavaScript code
+!src/kimapp_feature/** 
