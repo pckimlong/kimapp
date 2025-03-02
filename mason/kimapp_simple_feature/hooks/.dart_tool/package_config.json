@@ -158,13 +158,13 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "kimapp_simple_feature_hook",
+      "name": "hooks",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2025-02-20T07:21:49.685468Z",
+  "generated": "2025-03-02T09:22:41.513716Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///Users/kim/Development/flutter",
