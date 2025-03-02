@@ -50,11 +50,16 @@ jobs:
       - name: Verify packaged extension
         working-directory: ./tools/extensions/kimapp-snippets
         run: |
-          if [ ! -f "kimapp-snippets-*.vsix" ]; then
-            echo "Error: VSIX package not created!"
+          # Get version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          VSIX_FILE="kimapp-snippets-${VERSION}.vsix"
+          
+          if [ ! -f "$VSIX_FILE" ]; then
+            echo "Error: VSIX package not created! Expected file: $VSIX_FILE"
+            ls -la
             exit 1
           fi
-          echo "Successfully packaged extension"
+          echo "Successfully packaged extension: $VSIX_FILE"
           
       - name: Publish to VS Code Marketplace
         working-directory: ./tools/extensions/kimapp-snippets
