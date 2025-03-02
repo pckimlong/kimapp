@@ -17,8 +17,7 @@ When adding new components to this directory:
 1. Ensure the component doesn't fit better in one of the specialized directories
 2. Follow the naming convention: `app_[component_name].dart`
 3. Extend `AppBaseWidget` when appropriate for consistent theming
-4. Add exports to `index.dart` and `app_widgets.dart`
-5. Document the component with proper dartdoc comments
+4. Document the component with proper dartdoc comments
 
 ## Current Components
 

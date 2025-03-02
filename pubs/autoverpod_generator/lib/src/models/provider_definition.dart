@@ -58,12 +58,10 @@ class ProviderDefinition {
         final classElement = element;
         final buildMethod = classElement.methods.firstWhere(
           (m) => m.name == 'build',
-          orElse:
-              () =>
-                  throw InvalidGenerationSourceError(
-                    'Provider class must have a build method',
-                    element: element,
-                  ),
+          orElse: () => throw InvalidGenerationSourceError(
+            'Provider class must have a build method',
+            element: element,
+          ),
         );
 
         return ProviderDefinition(
@@ -90,11 +88,10 @@ class ProviderDefinition {
           providerName: providerName,
           providerType: ProviderType.functionBased,
           returnType: ProviderReturnTypeDefinition.parse(functionElement.returnType),
-          familyParameters:
-              functionElement.parameters
-                  .skip(1) // Skip first param (Ref)
-                  .map((p) => ParamDefinition.parse(p))
-                  .toList(),
+          familyParameters: functionElement.parameters
+              .skip(1) // Skip first param (Ref)
+              .map((p) => ParamDefinition.parse(p))
+              .toList(),
           modifiers: modifiers,
           documentation: documentation,
           dependencies: dependencies,
@@ -181,14 +178,12 @@ class ProviderDefinition {
   String get genericTypeDefinition {
     if (!hasGenericTypes) return '';
 
-    return genericParameters.entries
-        .map((entry) {
-          final typeName = entry.key;
-          final bounds = entry.value;
-          if (bounds.isEmpty) return typeName;
-          return '$typeName extends ${bounds.join(' & ')}';
-        })
-        .join(', ');
+    return genericParameters.entries.map((entry) {
+      final typeName = entry.key;
+      final bounds = entry.value;
+      if (bounds.isEmpty) return typeName;
+      return '$typeName extends ${bounds.join(' & ')}';
+    }).join(', ');
   }
 
   /// Gets a formatted string of generic type parameters for use in declarations
@@ -239,14 +234,12 @@ class ProviderDefinition {
       return '';
     }
 
-    return familyParameters
-        .map((p) {
-          if (!p.isNamed) {
-            return prefix.isEmpty ? p.name : '$prefix.${p.name}';
-          }
-          return '${p.name} : ${prefix.isEmpty ? '' : '$prefix.'}${p.name}';
-        })
-        .join(', ');
+    return familyParameters.map((p) {
+      if (!p.isNamed) {
+        return prefix.isEmpty ? p.name : '$prefix.${p.name}';
+      }
+      return '${p.name} : ${prefix.isEmpty ? '' : '$prefix.'}${p.name}';
+    }).join(', ');
   }
 
   /// Already handle family For use by wrapped with read, watch etc
@@ -289,10 +282,9 @@ class ProviderDefinition {
     final submitMethod = methods.firstWhereOrNull((m) => m.name == 'submit');
     final resultType = submitMethod?.returnType ?? 'Future<void>';
 
-    final rawResultType =
-        resultType.contains('Future')
-            ? resultType.replaceFirst('Future<', '').replaceFirst('>', '')
-            : resultType;
+    final rawResultType = resultType.contains('Future')
+        ? resultType.replaceFirst('Future<', '').replaceFirst('>', '')
+        : resultType;
 
     final futureResultType = resultType.contains('Future') ? resultType : 'Future<$resultType>';
 
@@ -321,7 +313,11 @@ class SubmitMethodInfo {
     required this.positionalParams,
   });
 
-  String get asyncValueType {
-    return 'AsyncValue<$rawResultType>?';
+  String asyncValueType({bool isNullable = true, bool isFuture = false}) {
+    final async = 'AsyncValue<$rawResultType>${isNullable ? '?' : ''}';
+    if (isFuture) {
+      return 'Future<$async>';
+    }
+    return async;
   }
 }

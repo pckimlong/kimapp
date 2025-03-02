@@ -27,6 +27,7 @@ alwaysApply: false
 - Configure theme data centrally to ensure consistency across the app
 - Use theme extensions for custom theme attributes
 - Use updated text theme notation (e.g., `Theme.of(context).textTheme.titleLarge` instead of `headline6`)
+- Use color.withValues(alpha: 0.1) instead of color.withOpacity(0.1)
 - Prefer context extensions from `@core/helpers/build_context_helper.dart` over direct theme access:
   - Use `context.theme` instead of `Theme.of(context)`
   - Use `context.colors` instead of `Theme.of(context).colorScheme`
@@ -85,6 +86,7 @@ alwaysApply: false
 
 ## Best Practices for UI Implementation
 - Follow Material Design guidelines for consistent look and feel
+- Only add comment on complex widget
 - Ensure responsive layouts that work across different screen sizes
 - Implement appropriate error states and loading indicators
 - Maintain accessibility standards with proper contrast and text scaling
