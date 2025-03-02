@@ -28,8 +28,27 @@
         "language": "dart",
         "path": "./snippets/dart.json"
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "kimapp-snippets.createFeature",
+        "title": "Create Kimapp Feature"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "kimapp-snippets.createFeature",
+          "group": "2_workspace@1"
+        }
+      ]
+    }
   },
+  "activationEvents": [
+    "onCommand:kimapp-snippets.createFeature"
+  ],
+  "main": "./extension.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/pckimlong/kimapp"
@@ -38,5 +57,18 @@
     "url": "https://github.com/pckimlong/kimapp/issues"
   },
   "homepage": "https://github.com/pckimlong/kimapp#readme",
-  "license": "MIT"
-} 
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^11.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "@types/vscode": "^1.60.0",
+    "vscode": "^1.1.37"
+  },
+  "scripts": {
+    "package": "vsce package",
+    "prepackage": "node ./copy-kimapp-feature.js",
+    "prepublish": "node ./copy-kimapp-feature.js"
+  }
+}
