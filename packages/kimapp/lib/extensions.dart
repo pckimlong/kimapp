@@ -3,7 +3,8 @@ import 'package:fpdart/fpdart.dart';
 import 'kimapp.dart';
 
 extension EitherX<T> on Either<Failure, T> {
-  T getOrThrow() => getOrElse((l) => Error.throwWithStackTrace(l, l.stackTrace));
+  T getOrThrow() =>
+      getOrElse((l) => Error.throwWithStackTrace(l, l.stackTrace));
   T? getOrNull() => fold((l) => null, (r) => r);
   N mapOrThrow<N>(N Function(T r) map) =>
       fold((l) => Error.throwWithStackTrace(l, l.stackTrace), map);
@@ -27,5 +28,6 @@ extension FutureEitherX<T> on Future<Either<Failure, T>> {
 
   Future<T?> getOrNull() async => (await this).getOrNull();
 
-  Future<N> mapOrThrow<N>(N Function(T r) map) async => (await this).mapOrThrow(map);
+  Future<N> mapOrThrow<N>(N Function(T r) map) async =>
+      (await this).mapOrThrow(map);
 }

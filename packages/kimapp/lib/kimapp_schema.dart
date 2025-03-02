@@ -135,7 +135,8 @@ class Model {
   /// Note: This method creates a new Model instance and does not modify the original.
   /// The new fields are added to the end of the existing field list.
   Model addFields(Map<String, BaseField> fields) {
-    return Model._(_name, [..._fields, ...fields.values], _inherited, _tableName);
+    return Model._(
+        _name, [..._fields, ...fields.values], _inherited, _tableName);
   }
 
   /// Specifies a custom table name for the model, useful for Supabase integration.
@@ -349,7 +350,8 @@ class IdField<DataType> extends BaseField<DataType> {
   ///
   /// Note: It's important to choose a unique and meaningful name for your custom ID class
   /// to prevent naming conflicts and maintain code readability.
-  IdField<DataType> generateAs(String idClassName) => IdField._(key!, idClassName);
+  IdField<DataType> generateAs(String idClassName) =>
+      IdField._(key!, idClassName);
 }
 
 /// Represents a field as a join field. This mostly design for supabase select statement

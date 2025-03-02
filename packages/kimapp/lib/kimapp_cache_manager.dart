@@ -17,7 +17,8 @@ abstract class KimappCacheManager {
   Future<Map<String, dynamic>?> readMap(String key);
 
   Future<void> saveEnum<T extends Enum>(String key, T? value);
-  Future<T?> readEnum<T extends Enum>(String key, T Function(String name) parser);
+  Future<T?> readEnum<T extends Enum>(
+      String key, T Function(String name) parser);
 
   Future<void> saveObject<T extends Object>(
     String key, {
