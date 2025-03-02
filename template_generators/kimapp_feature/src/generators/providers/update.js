@@ -12,49 +12,46 @@ async function generateUpdateProviderFile(providersPath, name) {
   const pascalCaseName = toPascalCase(name);
   const camelCaseName = toCamelCase(name);
   const snakeCaseName = name; // Already in snake case
-  
   const content = `import 'package:autoverpod/autoverpod.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
 
 import '../i_${snakeCaseName}_repo.dart';
 import '../${snakeCaseName}_schema.schema.dart';
 import '${snakeCaseName}_detail_provider.dart';
+import '${snakeCaseName}_list_pagination_provider.dart';
+import '${snakeCaseName}_list_provider.dart';
 
 part '${snakeCaseName}_update_provider.g.dart';
 
-@stateWidget
+@formWidget
 @riverpod
-class ${pascalCaseName}Update extends _$${pascalCaseName}Update {
+class ${pascalCaseName}Update extends _$${pascalCaseName}UpdateWidget {
   @override
-  FutureOr<void> build() {}
+  Future<${pascalCaseName}UpdateParam> build(${pascalCaseName}Id ${camelCaseName}Id) async {
+    final result = await ref.read(${camelCaseName}RepoProvider).findOne(${camelCaseName}Id).getOrThrow();
+    return ${pascalCaseName}UpdateParam(
+        // TODO: Initialize form fields with the ${camelCaseName} data
+    );
+  }
 
-  Future<${pascalCaseName}Model> update(
-    ${pascalCaseName}Id id, {
-    required ${pascalCaseName}UpdateParam param,
-  }) async {
-    state = const AsyncLoading();
+  @override
+  Future<${pascalCaseName}Model> submit(${pascalCaseName}UpdateParam state) async {
+    return await ref.read(${camelCaseName}RepoProvider).update(${camelCaseName}Id, data: state).getOrThrow();
+  }
+
+  @override
+  void onSuccess(${pascalCaseName}Model result) {
+    ref.read(${camelCaseName}ListProvider.notifier).updateItem(result);
+    ref.read(${camelCaseName}DetailProvider(${camelCaseName}Id).notifier).updateState((_) => result);
+
+    //! Use with caution
+    /// this update might lead to data inconsistency, for example, if we have update the item to not meet the param filter
+    /// in this case, the item should be removed from the paginated list, but using this method will just update the item
+    /// other case is if we update sort order, the item might need to change position
+    ${pascalCaseName}PaginationTracker.instance.updatePaginatedItem(ref, result);
     
-    final result = await ref.read(${camelCaseName}RepoProvider).update(
-      id,
-      data: param,
-    );
-    
-    return result.fold(
-      (failure) {
-        state = AsyncError(failure, StackTrace.current);
-        throw failure;
-      },
-      (data) {
-        state = const AsyncData(null);
-        
-        // Refresh detail
-        ref.invalidate(${pascalCaseName}DetailProvider(id));
-        
-        return data;
-      },
-    );
+    super.onSuccess(result);
   }
 }`;
 

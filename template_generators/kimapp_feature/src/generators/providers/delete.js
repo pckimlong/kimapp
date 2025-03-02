@@ -13,40 +13,35 @@ async function generateDeleteProviderFile(providersPath, name) {
   const camelCaseName = toCamelCase(name);
   const snakeCaseName = name; // Already in snake case
   
-  const content = `import 'package:autoverpod/autoverpod.dart';
+  const content = `import 'package:fpdart/fpdart.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
 
-import '../i_${snakeCaseName}_repo.dart';
 import '../${snakeCaseName}_schema.schema.dart';
+import '../i_${snakeCaseName}_repo.dart';
+import '${snakeCaseName}_detail_provider.dart';
+import '${snakeCaseName}_list_pagination_provider.dart';
 import '${snakeCaseName}_list_provider.dart';
 
 part '${snakeCaseName}_delete_provider.g.dart';
 
-@stateWidget
 @riverpod
 class ${pascalCaseName}Delete extends _$${pascalCaseName}Delete {
   @override
-  FutureOr<void> build() {}
+  ProviderStatus<Unit> build(${pascalCaseName}Id id) => const ProviderStatus.initial();
 
-  Future<void> delete(${pascalCaseName}Id id) async {
-    state = const AsyncLoading();
-    
-    final result = await ref.read(${camelCaseName}RepoProvider).delete(id);
-    
-    return result.fold(
-      (failure) {
-        state = AsyncError(failure, StackTrace.current);
-        throw failure;
-      },
-      (_) {
-        state = const AsyncData(null);
-        
-        // Refresh list
-        ref.invalidate(${pascalCaseName}ListProvider);
-      },
-    );
+  Future<ProviderStatus<Unit>> call() async {
+    return await perform((state) async {
+     final result = await ref.read(${camelCaseName}RepoProvider).delete(id);
+     return result.getOrThrow();
+    }, onSuccess: (success) {
+      ref.read(${camelCaseName}ListProvider.notifier).removeWhere((e) => e.id == id);
+      ref.invalidate(${camelCaseName}DetailProvider(id));
+
+      /// Can set the invalidateOnLength to 0, but if it just 1, the invalidate is not expensive, it deserve to be used
+      /// since it will help accurate the data consistency
+      ${pascalCaseName}PaginationTracker.instance.deletePaginatedItem(ref, id, invalidateOnLength: 1);
+    },);
   }
 }`;
 
