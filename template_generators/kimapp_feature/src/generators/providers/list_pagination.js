@@ -13,13 +13,11 @@ async function generateListPaginationProviderFile(providersPath, name) {
   const camelCaseName = toCamelCase(name);
   const snakeCaseName = name; // Already in snake case
   
-  const content = `import 'package:autoverpod/autoverpod.dart';
+  const content = `import 'package:book_swap/src/core/helpers/logger.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
 
 import '../i_${snakeCaseName}_repo.dart';
 import '../params/${snakeCaseName}_list_param.dart';
@@ -27,200 +25,241 @@ import '../${snakeCaseName}_schema.schema.dart';
 
 part '${snakeCaseName}_list_pagination_provider.g.dart';
 
-@stateWidget
+const int _page${pascalCaseName}Limit = 25;
+
 @riverpod
-class ${pascalCaseName}ListPagination extends _$${pascalCaseName}ListPagination {
-  static const int _limit = 20;
-
+class ${pascalCaseName}ListPagination extends _$${pascalCaseName}ListPagination with LoggerMixin {
   @override
-  FutureOr<PaginationState<${pascalCaseName}Model>> build(${pascalCaseName}ListParam param) {
-    return _fetchPage(0, param);
-  }
+  FutureOr<IList<${pascalCaseName}Model>> build({
+    required int page,
+    required ${pascalCaseName}ListParam param,
+  }) async {
+    _log('Building page $page with params: $param');
 
-  Future<void> refresh() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _fetchPage(0, param));
-  }
-
-  Future<void> fetchNextPage() async {
-    final currentState = state.valueOrNull;
-    if (currentState == null || !currentState.canLoadMore) return;
-
-    state = AsyncData(currentState.copyWith(isLoadingMore: true));
-
-    final nextPageState = await _fetchPage(currentState.items.length, param);
-
-    state = AsyncData(
-      currentState.copyWith(
-        items: currentState.items.addAll(nextPageState.items),
-        isLoadingMore: false,
-        canLoadMore: nextPageState.canLoadMore,
-      ),
-    );
-  }
-
-  Future<PaginationState<${pascalCaseName}Model>> _fetchPage(
-    int offset,
-    ${pascalCaseName}ListParam param,
-  ) async {
-    final result = await ref.read(${camelCaseName}RepoProvider).findPagination(
-          limit: _limit,
-          offset: offset,
-          param: param,
-        );
-
-    return result.fold(
-      (failure) => throw failure,
-      (items) => PaginationState(
-        items: items,
-        canLoadMore: items.length >= _limit,
-        isLoadingMore: false,
-      ),
-    );
-  }
-}
-
-@stateWidget
-@riverpod
-class ${pascalCaseName}ListPaginationController extends _$${pascalCaseName}ListPaginationController {
-  @override
-  ${pascalCaseName}ListParam build() {
-    return const ${pascalCaseName}ListParam();
-  }
-
-  void updateParam(${pascalCaseName}ListParam param) {
-    state = param;
-  }
-}
-
-class ${pascalCaseName}PaginationListView extends HookConsumerWidget {
-  const ${pascalCaseName}PaginationListView({
-    super.key,
-    this.controller,
-    this.emptyBuilder,
-    this.errorBuilder,
-    this.loadingBuilder,
-    this.itemBuilder,
-    this.separatorBuilder,
-    this.param = const ${pascalCaseName}ListParam(),
-    this.onRefresh,
-    this.physics,
-    this.padding,
-    this.shrinkWrap = false,
-  });
-
-  final ScrollController? controller;
-  final Widget Function(BuildContext context)? emptyBuilder;
-  final Widget Function(BuildContext context, Object error, StackTrace stackTrace)?
-      errorBuilder;
-  final Widget Function(BuildContext context)? loadingBuilder;
-  final Widget Function(BuildContext context, ${pascalCaseName}Model item, int index)? itemBuilder;
-  final Widget Function(BuildContext context, int index)? separatorBuilder;
-  final ${pascalCaseName}ListParam param;
-  final Future<void> Function()? onRefresh;
-  final ScrollPhysics? physics;
-  final EdgeInsetsGeometry? padding;
-  final bool shrinkWrap;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Update param
-    ref.read(${pascalCaseName}ListPaginationControllerProvider.notifier).updateParam(param);
-
-    final paramState = ref.watch(${pascalCaseName}ListPaginationControllerProvider);
-    final paginationState = ref.watch(${pascalCaseName}ListPaginationProvider(paramState));
-
-    ref.listen(${pascalCaseName}ListPaginationProvider(paramState), (previous, next) {
-      if (previous?.valueOrNull != null &&
-          next.valueOrNull != null &&
-          previous!.valueOrNull!.items.length != next.valueOrNull!.items.length) {
-        // Items changed, scroll to top
-        controller?.animateTo(
-          0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
+    ref.onDispose(() {
+      _log('Disposing page $page');
+      ${pascalCaseName}PaginationTracker.instance.untrackPage(page, param);
     });
 
-    return paginationState.when(
-      data: (data) {
-        if (data.items.isEmpty) {
-          return emptyBuilder?.call(context) ??
-              const Center(child: Text('No items found'));
-        }
+    const limit = _page${pascalCaseName}Limit;
+    final offset = page * limit;
 
-        return NotificationListener<ScrollNotification>(
-          onNotification: (notification) {
-            if (notification is ScrollEndNotification) {
-              if (notification.metrics.pixels >= notification.metrics.maxScrollExtent - 200) {
-                ref
-                    .read(${pascalCaseName}ListPaginationProvider(paramState).notifier)
-                    .fetchNextPage();
-              }
-            }
-            return false;
-          },
-          child: RefreshIndicator.adaptive(
-            onRefresh: () async {
-              await ref
-                  .read(${pascalCaseName}ListPaginationProvider(paramState).notifier)
-                  .refresh();
-              await onRefresh?.call();
-            },
-            child: ListView.separated(
-              controller: controller,
-              physics: physics,
-              padding: padding,
-              shrinkWrap: shrinkWrap,
-              itemCount: data.items.length + (data.isLoadingMore ? 1 : 0),
-              separatorBuilder: separatorBuilder ?? (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                if (index >= data.items.length) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator.adaptive(),
-                    ),
-                  );
-                }
+    try {
+      await Future.delayed(const Duration(milliseconds: 250));
+      final result = await ref
+          .watch(${camelCaseName}RepoProvider)
+          .findPagination(limit: limit, offset: offset, param: param);
 
-                final item = data.items[index];
-                return itemBuilder?.call(context, item, index) ??
-                    ListTile(title: Text(item.toString()));
-              },
-            ),
-          ),
-        );
-      },
-      loading: () => loadingBuilder?.call(context) ??
-          const Center(child: CircularProgressIndicator.adaptive()),
-      error: (error, stack) => errorBuilder?.call(context, error, stack) ??
-          Center(child: Text(\`Error: \${error}\`)),
-    );
+      return result.fold(
+        (error) {
+          _log('Error loading page $page: $error');
+          return result.getOrThrow();
+        },
+        (list) {
+          ref.cacheTime(const Duration(minutes: 5));
+
+          ${pascalCaseName}PaginationTracker.instance.trackMultiple${pascalCaseName}s(
+            list.map((e) => e.id).toList(),
+            page,
+            param,
+          );
+
+          _log('Loaded ${list.length} ${camelCaseName}s for page $page');
+          return list;
+        },
+      );
+    } catch (e) {
+      _log('Unexpected error loading page $page: $e');
+      throw Exception('Failed to load ${camelCaseName}s: $e');
+    }
+  }
+
+  void _log(String message) {
+    logDebug('[${pascalCaseName}ListPagination] $message');
+  }
+
+  void _updateItem(${pascalCaseName}Model item) {
+    state = state.whenData((value) => value.updateById([item], (e) => e.id == item.id));
+  }
+
+  void _addItem(${pascalCaseName}Model item) {
+    state = state.whenData((value) => value.add(item));
+  }
+
+  void _removeItem(${pascalCaseName}Id id) {
+    state = state.whenData((value) => value.removeWhere((e) => e.id == id));
+  }
+
+  void _removeAt(int index) {
+    state = state.whenData((value) => value.removeAt(index));
   }
 }
 
-class PaginationState<T> {
-  final IList<T> items;
-  final bool canLoadMore;
-  final bool isLoadingMore;
+@riverpod
+PaginatedItem<${pascalCaseName}Model>? ${camelCaseName}PaginatedAtIndex(
+  Ref ref,
+  int index, {
+  required ${pascalCaseName}ListParam param,
+}) {
+  const limit = _page${pascalCaseName}Limit;
+  final page = index ~/ limit;
+  final pageItems = ref.watch(${camelCaseName}ListPaginationProvider(page: page, param: param));
+  final hasNextPage = ref.exists(${camelCaseName}ListPaginationProvider(page: page + 1, param: param));
+  return PaginatedItem.build(
+    pageItems: pageItems,
+    limit: limit,
+    index: index,
+    showLoadingInAllItem: hasNextPage,
+  );
+}
 
-  const PaginationState({
-    required this.items,
-    required this.canLoadMore,
-    required this.isLoadingMore,
-  });
+/// Tracks paginated items, we can't use with add, because it might has issue with param filter
+class ${pascalCaseName}PaginationTracker {
+  static final ${pascalCaseName}PaginationTracker instance = ${pascalCaseName}PaginationTracker._();
+  ${pascalCaseName}PaginationTracker._();
 
-  PaginationState<T> copyWith({
-    IList<T>? items,
-    bool? canLoadMore,
-    bool? isLoadingMore,
-  }) {
-    return PaginationState<T>(
-      items: items ?? this.items,
-      canLoadMore: canLoadMore ?? this.canLoadMore,
-      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+  final _items = <${pascalCaseName}Id, Set<(int page, ${pascalCaseName}ListParam param)>>{};
+
+  void track${pascalCaseName}(${pascalCaseName}Id id, int page, ${pascalCaseName}ListParam param) {
+    _items.putIfAbsent(id, () => {}).add((page, param));
+  }
+
+  void trackMultiple${pascalCaseName}s(List<${pascalCaseName}Id> ids, int page, ${pascalCaseName}ListParam param) {
+    for (final id in ids) {
+      track${pascalCaseName}(id, page, param);
+    }
+  }
+
+  void untrackPage(int page, ${pascalCaseName}ListParam param) {
+    for (final entries in _items.values) {
+      entries.remove((page, param));
+    }
+    _items.removeWhere((_, entries) => entries.isEmpty);
+  }
+
+  List<(int page, ${pascalCaseName}ListParam param)> getEntriesFor${pascalCaseName}(${pascalCaseName}Id id) {
+    return _items[id]?.toList() ?? [];
+  }
+
+  void clear() {
+    _items.clear();
+  }
+
+  void invalidateVisibleItems(Ref ref, {required ${pascalCaseName}ListParam param, int visibleItemCount = 50}) {
+    final visiblePages = (visibleItemCount / _page${pascalCaseName}Limit).ceil();
+
+    for (int page = 0; page < visiblePages; page++) {
+      if (ref.exists(${camelCaseName}ListPaginationProvider(page: page, param: param))) {
+        ref.invalidate(${camelCaseName}ListPaginationProvider(page: page, param: param));
+      }
+    }
+  }
+
+  void updatePaginatedItem(Ref ref, ${pascalCaseName}Model item) {
+    for (final entry in getEntriesFor${pascalCaseName}(item.id)) {
+      ref
+          .read(${camelCaseName}ListPaginationProvider(page: entry.$1, param: entry.$2).notifier)
+          ._updateItem(item);
+    }
+  }
+
+  void deletePaginatedItem(Ref ref, ${pascalCaseName}Id id, {int invalidateOnLength = 1}) {
+    final entries = getEntriesFor${pascalCaseName}(id);
+    if (entries.isEmpty) return;
+
+    if (entries.length == invalidateOnLength) {
+      ref.invalidate(${camelCaseName}ListPaginationProvider);
+      return;
+    }
+
+    final sortedEntries = entries.toList()..sort((a, b) => a.$1.compareTo(b.$1));
+
+    final entriesByParam = <${pascalCaseName}ListParam, List<int>>{};
+    for (final entry in sortedEntries) {
+      entriesByParam.putIfAbsent(entry.$2, () => []).add(entry.$1);
+    }
+
+    for (final param in entriesByParam.keys) {
+      final pages = entriesByParam[param]!..sort();
+
+      for (final page in pages) {
+        ref.read(${camelCaseName}ListPaginationProvider(page: page, param: param).notifier)._removeItem(id);
+      }
+
+      final highestPage = pages.last;
+
+      _shiftItemsAfterDeletion(ref, highestPage, param);
+    }
+  }
+
+  void _shiftItemsAfterDeletion(Ref ref, int startPage, ${pascalCaseName}ListParam param) {
+    for (var page = startPage + 1;
+        ref.exists(${camelCaseName}ListPaginationProvider(page: page, param: param));
+        page++) {
+      final nextPageItems =
+          ref.read(${camelCaseName}ListPaginationProvider(page: page, param: param)).valueOrNull;
+
+      if (nextPageItems == null || nextPageItems.isEmpty) break;
+
+      final firstItem = nextPageItems.first;
+      ref.read(${camelCaseName}ListPaginationProvider(page: page, param: param).notifier)._removeAt(0);
+
+      if (ref.exists(${camelCaseName}ListPaginationProvider(page: page - 1, param: param))) {
+        ref
+            .read(${camelCaseName}ListPaginationProvider(page: page - 1, param: param).notifier)
+            ._addItem(firstItem);
+      }
+
+      if (nextPageItems.length <= 1) break;
+    }
+  }
+
+  void updateMultiplePaginatedItems(Ref ref, List<${pascalCaseName}Model> items) {
+    final updatesByPage = <(int, ${pascalCaseName}ListParam), List<${pascalCaseName}Model>>{};
+
+    for (final item in items) {
+      final entries = getEntriesFor${pascalCaseName}(item.id);
+      for (final entry in entries) {
+        updatesByPage.putIfAbsent(entry, () => []).add(item);
+      }
+    }
+
+    for (final entry in updatesByPage.entries) {
+      final (page, param) = entry.key;
+      final updates = entry.value;
+
+      if (updates.length > _page${pascalCaseName}Limit / 2) {
+        ref.invalidate(${camelCaseName}ListPaginationProvider(page: page, param: param));
+      } else {
+        for (final item in updates) {
+          ref.read(${camelCaseName}ListPaginationProvider(page: page, param: param).notifier)._updateItem(item);
+        }
+      }
+    }
+  }
+}
+
+@riverpod
+class ${pascalCaseName}PaginationState extends _$${pascalCaseName}PaginationState {
+  @override
+  ({bool isLoading, int totalPages, int currentPage}) build({required ${pascalCaseName}ListParam param}) {
+    bool isLoading = false;
+    int highestLoadedPage = 0;
+
+    for (int i = 0; i < 10; i++) {
+      final pageState = ref.watch(${camelCaseName}ListPaginationProvider(page: i, param: param));
+      if (pageState.isLoading) {
+        isLoading = true;
+      }
+      if (!pageState.hasError && pageState.hasValue) {
+        highestLoadedPage = i;
+      }
+    }
+
+    return (
+      isLoading: isLoading,
+      totalPages: highestLoadedPage + 1,
+      currentPage: highestLoadedPage,
     );
   }
 }`;

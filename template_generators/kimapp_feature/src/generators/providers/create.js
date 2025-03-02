@@ -14,36 +14,33 @@ async function generateCreateProviderFile(providersPath, name) {
   const snakeCaseName = name; // Already in snake case
   
   const content = `import 'package:autoverpod/autoverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
 
 import '../i_${snakeCaseName}_repo.dart';
 import '../${snakeCaseName}_schema.schema.dart';
+import '${snakeCaseName}_list_provider.dart';
+import '${snakeCaseName}_list_pagination_provider.dart';
 
 part '${snakeCaseName}_create_provider.g.dart';
 
-@stateWidget
+@formWidget
 @riverpod
-class ${pascalCaseName}Create extends _$${pascalCaseName}Create {
+class ${pascalCaseName}Create extends _$${pascalCaseName}CreateWidget {
   @override
-  FutureOr<void> build() {}
+  ${pascalCaseName}CreateParam build() => const ${pascalCaseName}CreateParam();
 
-  Future<${pascalCaseName}Model> create(${pascalCaseName}CreateParam param) async {
-    state = const AsyncLoading();
-    
-    final result = await ref.read(${camelCaseName}RepoProvider).create(param);
-    
-    return result.fold(
-      (failure) {
-        state = AsyncError(failure, StackTrace.current);
-        throw failure;
-      },
-      (data) {
-        state = const AsyncData(null);
-        return data;
-      },
-    );
+  @override
+  Future<${pascalCaseName}Model> submit(${pascalCaseName}CreateParam state) async {
+    return await ref.read(${camelCaseName}RepoProvider).create(state).getOrThrow();
+  }
+
+  @override
+  void onSuccess(${pascalCaseName}Model result) {
+    ref.read(${camelCaseName}ListProvider.notifier).insertItem(result);
+    ref.invalidate(${camelCaseName}ListPaginationProvider);
   }
 }`;
 

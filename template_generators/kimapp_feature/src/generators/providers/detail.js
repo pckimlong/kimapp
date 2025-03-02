@@ -13,13 +13,15 @@ async function generateDetailProviderFile(providersPath, name) {
   const camelCaseName = toCamelCase(name);
   const snakeCaseName = name; // Already in snake case
   
-  const content = `import 'package:autoverpod/autoverpod.dart';
+  const content = `import 'package:flutter/material.dart';
+import 'package:autoverpod/autoverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../i_${snakeCaseName}_repo.dart';
 import '../${snakeCaseName}_schema.schema.dart';
+import '../i_${snakeCaseName}_repo.dart';
 
 part '${snakeCaseName}_detail_provider.g.dart';
 
@@ -28,12 +30,11 @@ part '${snakeCaseName}_detail_provider.g.dart';
 class ${pascalCaseName}Detail extends _$${pascalCaseName}Detail {
   @override
   FutureOr<${pascalCaseName}Model> build(${pascalCaseName}Id id) {
-    return ref.watch(${camelCaseName}RepoProvider).findOne(id).getOrThrow();
+    return ref.watch(${camelCaseName}RepoProvider).findOne(id).then((value) => value.getOrThrow());
   }
 
-  Future<void> refresh() async {
-    ref.invalidateSelf();
-    await future;
+  void updateState(${pascalCaseName}Model Function(${pascalCaseName}Model oldState) newState) {
+    state = state.whenData(newState);
   }
 }`;
 

@@ -32,7 +32,7 @@ I${pascalCaseName}Repo ${camelCaseName}Repo(Ref ref) => _Impl(ref);
 
 
 abstract class I${pascalCaseName}Repo {
-  Future<Either<Failure, IList<${pascalCaseName}Model>>> findAll();
+  Future<Either<Failure, IList<${pascalCaseName}Model>>> findAll(${pascalCaseName}ListParam param);
 
   Future<Either<Failure, ${pascalCaseName}Model>> findOne(${pascalCaseName}Id id);
 
@@ -81,7 +81,7 @@ class _Impl implements I${pascalCaseName}Repo {
   }
 
   @override
-  Future<Either<Failure, IList<${pascalCaseName}Model>>> findAll() async{
+  Future<Either<Failure, IList<${pascalCaseName}Model>>> findAll(${pascalCaseName}ListParam param) async{
     return await errorHandler(() async {
     var query = _ref.supabaseClient.from(${pascalCaseName}Model.table.tableName).select(${pascalCaseName}Model.table.selectStatement);
     
