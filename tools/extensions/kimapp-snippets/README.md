@@ -46,6 +46,18 @@ The extension will generate the following files and directories directly under t
     └── {feature_name}_list_pagination_provider.dart
 ```
 
+#### List Pagination Provider
+
+The list pagination provider (`{feature_name}_list_pagination_provider.dart`) is a powerful component that helps you implement efficient pagination for your feature's list view. It includes:
+
+- A state notifier for managing paginated data
+- Automatic tracking of items across pages
+- Methods for updating, adding, and removing items while maintaining pagination consistency
+- Utilities for invalidating visible items when needed
+- Support for filtering with query parameters
+
+This provider works seamlessly with the Kimapp architecture and follows best practices for efficient list management in Flutter applications.
+
 ## Installation
 
 ### From VS Code Marketplace
@@ -88,7 +100,8 @@ kimapp-snippets/
 │           └── index.js    # Main entry point for feature generation
 ├── extension.js            # Extension activation and command registration
 ├── package.json            # Extension metadata and configuration
-└── copy-kimapp-feature.js  # Script to copy feature generator code
+├── copy-kimapp-feature.js  # Script to copy feature generator code
+└── test-feature-generator.js # Test script for feature generator
 ```
 
 ### Building the Extension
@@ -101,6 +114,16 @@ To build the extension:
 2. Run `npm run package` to create the VSIX file
 
 The copied code is not committed to source control as it's considered a build artifact.
+
+### Testing
+
+To test the feature generator functionality:
+
+```bash
+npm run test
+```
+
+This will run the test script that verifies the feature generator can correctly generate all the necessary files for a test feature.
 
 ### Publishing
 
@@ -129,16 +152,27 @@ This extension includes a GitHub Actions workflow that automates the publishing 
 
 2. Trigger the workflow with specific commit messages:
    ```bash
-   # Publish to VS Code Marketplace
+   # Publish to VS Code Marketplace and create a GitHub Release
    git commit -m "Updated snippets [publish-snippets]"
-   
-   # Publish and create a GitHub Release
-   git commit -m "Updated snippets [publish-snippets] [release-snippets]"
    ```
 
 For more details, see [GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md).
 
 ## Release Notes
+
+### 1.2.1
+
+- Fixed issue with Kimapp feature generator not being available
+- Added list_pagination provider to feature generation
+- Improved error handling in feature generator
+- Added automated tests to ensure feature generator works correctly
+- Fixed variable reference in list_pagination template
+
+### 1.2.0
+
+- Updated the update provider template with improved handling of item updates
+- Enhanced documentation in the update provider template
+- Fixed potential data inconsistency issues in paginated lists
 
 ### 1.1.0
 
