@@ -38,10 +38,23 @@ jobs:
       - name: Copy kimapp_feature to extension
         working-directory: ./tools/extensions/kimapp-snippets
         run: node ./copy-kimapp-feature.js
+        
+      - name: Run tests
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: npm run test
           
       - name: Package extension
         working-directory: ./tools/extensions/kimapp-snippets
         run: npm run package
+        
+      - name: Verify packaged extension
+        working-directory: ./tools/extensions/kimapp-snippets
+        run: |
+          if [ ! -f "kimapp-snippets-*.vsix" ]; then
+            echo "Error: VSIX package not created!"
+            exit 1
+          fi
+          echo "Successfully packaged extension"
           
       - name: Publish to VS Code Marketplace
         working-directory: ./tools/extensions/kimapp-snippets
@@ -49,13 +62,11 @@ jobs:
           
       - name: Get version from package.json
         id: get_version
-        if: contains(github.event.head_commit.message, '[release-snippets]')
         working-directory: ./tools/extensions/kimapp-snippets
         run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
           
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
-        if: contains(github.event.head_commit.message, '[release-snippets]')
         with:
           files: tools/extensions/kimapp-snippets/*.vsix
           name: "Kimapp Snippets v${{ steps.get_version.outputs.VERSION }}"

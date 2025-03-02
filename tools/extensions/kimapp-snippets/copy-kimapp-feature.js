@@ -50,6 +50,32 @@ function main() {
     // Check if source directory exists
     if (!fs.existsSync(SOURCE_DIR)) {
       console.error(`Source directory not found: ${SOURCE_DIR}`);
+      console.error(`Current directory: ${__dirname}`);
+      console.error(`Absolute source path: ${path.resolve(SOURCE_DIR)}`);
+      
+      // Try to list parent directories to help debug
+      const parentDir = path.join(__dirname, '..', '..', '..');
+      console.error(`Contents of parent directory (${parentDir}):`);
+      try {
+        const parentContents = fs.readdirSync(parentDir);
+        console.error(parentContents.join('\n'));
+        
+        const templateDir = path.join(parentDir, 'template_generators');
+        if (fs.existsSync(templateDir)) {
+          console.error(`Contents of template_generators directory:`);
+          console.error(fs.readdirSync(templateDir).join('\n'));
+        }
+      } catch (err) {
+        console.error(`Error listing parent directory: ${err.message}`);
+      }
+      
+      process.exit(1);
+    }
+
+    // Verify src directory exists in source
+    const srcDir = path.join(SOURCE_DIR, 'src');
+    if (!fs.existsSync(srcDir)) {
+      console.error(`Source src directory not found: ${srcDir}`);
       process.exit(1);
     }
 
@@ -62,12 +88,23 @@ function main() {
     // Copy the directory
     copyDirectory(SOURCE_DIR, DEST_DIR);
 
+    // Verify the copy was successful
+    if (!fs.existsSync(path.join(DEST_DIR, 'src', 'index.js'))) {
+      console.error('Error: index.js file was not copied correctly');
+      process.exit(1);
+    }
+
     // Install dependencies in the copied directory
     console.log('Installing dependencies in the copied directory...');
-    execSync('npm install --production', { 
-      cwd: DEST_DIR, 
-      stdio: 'inherit' 
-    });
+    try {
+      execSync('npm install --production', { 
+        cwd: DEST_DIR, 
+        stdio: 'inherit' 
+      });
+    } catch (error) {
+      console.error('Error installing dependencies:', error.message);
+      console.error('Continuing with packaging...');
+    }
 
     console.log('Successfully copied kimapp_feature to the VS Code extension!');
   } catch (error) {

@@ -13,12 +13,12 @@ async function generateListPaginationProviderFile(providersPath, name) {
   const camelCaseName = toCamelCase(name);
   const snakeCaseName = name; // Already in snake case
   
-  const content = `import 'package:book_swap/src/core/helpers/logger.dart';
-import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+  const content = `import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/helpers/logger.dart';
 import '../i_${snakeCaseName}_repo.dart';
 import '../params/${snakeCaseName}_list_param.dart';
 import '../${snakeCaseName}_schema.schema.dart';
@@ -55,17 +55,17 @@ class ${pascalCaseName}ListPagination extends _$${pascalCaseName}ListPagination 
           _log('Error loading page $page: $error');
           return result.getOrThrow();
         },
-        (list) {
+        (items) {
           ref.cacheTime(const Duration(minutes: 5));
 
           ${pascalCaseName}PaginationTracker.instance.trackMultiple${pascalCaseName}s(
-            list.map((e) => e.id).toList(),
+            items.map((e) => e.id).toList(),
             page,
             param,
           );
 
-          _log('Loaded ${list.length} ${camelCaseName}s for page $page');
-          return list;
+          _log('Loaded \${items.length} ${camelCaseName}s for page $page');
+          return items;
         },
       );
     } catch (e) {

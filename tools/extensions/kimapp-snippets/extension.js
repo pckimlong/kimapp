@@ -5,7 +5,16 @@ const path = require('path');
 // Import the kimapp_feature generator
 let kimappFeatureGenerator;
 try {
-    kimappFeatureGenerator = require('./src/kimapp_feature/src/index.js');
+    const kimappFeaturePath = path.join(__dirname, 'src', 'kimapp_feature', 'src', 'index.js');
+    
+    // Check if the file exists before requiring it
+    if (!fs.existsSync(kimappFeaturePath)) {
+        console.error(`Kimapp feature generator file not found at: ${kimappFeaturePath}`);
+        throw new Error(`File not found: ${kimappFeaturePath}`);
+    }
+    
+    kimappFeatureGenerator = require(kimappFeaturePath);
+    console.log('Successfully loaded kimapp_feature generator');
 } catch (error) {
     console.error('Failed to load kimapp_feature generator:', error);
 }
@@ -23,7 +32,9 @@ function activate(context) {
         }
 
         if (!kimappFeatureGenerator) {
-            vscode.window.showErrorMessage('Kimapp feature generator not available');
+            const errorMessage = 'Kimapp feature generator not available. The extension may not be installed correctly.';
+            console.error(errorMessage);
+            vscode.window.showErrorMessage(errorMessage + ' Please reinstall the extension or check the logs for more details.');
             return;
         }
 
@@ -70,6 +81,7 @@ function activate(context) {
                 vscode.window.showErrorMessage(`Error creating feature '${featureName}'.`);
             }
         } catch (error) {
+            console.error('Error creating feature:', error);
             vscode.window.showErrorMessage(`Error creating feature: ${error.message}`);
         }
     });
