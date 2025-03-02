@@ -11,7 +11,8 @@ import 'package:recase/recase.dart';
 /// Generates a form field widget for a specific provider field
 ///
 /// Creates both the proxy reference and the actual widget implementation
-String generateFormFieldWidget(ProviderDefinition provider, FieldDefinition field) {
+String generateFormFieldWidget(
+    ProviderDefinition provider, FieldDefinition field) {
   final isTextField = field.type == 'String' || field.type == 'String?';
   final proxyRefName = provider.fieldProxyWidgetName(field);
 
@@ -23,7 +24,8 @@ String generateFormFieldWidget(ProviderDefinition provider, FieldDefinition fiel
   );
 
   final formFieldWidget = isTextField
-      ? _generateTextFieldWidget(provider: provider, field: field, proxyRefName: proxyRefName)
+      ? _generateTextFieldWidget(
+          provider: provider, field: field, proxyRefName: proxyRefName)
       : _generateStandardFieldWidget(
           provider: provider,
           field: field,
@@ -56,7 +58,8 @@ String _generateFormFieldProxy({
   ].contains(field.name);
 
   // Determine field getter name
-  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
+  final fieldGetterName =
+      widgetRefMethodConflicts ? '${field.name}State' : field.name;
 
   return generateSubProxyWidget(
     proxyRefName,
@@ -127,7 +130,8 @@ String _generateFormFieldProxy({
 }
 
 /// Generates the proxy instantiation code with proper parameters
-String _createProxyInstance({required String proxyRefName, required bool isTextField}) {
+String _createProxyInstance(
+    {required String proxyRefName, required bool isTextField}) {
   return '$proxyRefName(ref${isTextField ? ', textController: _textController' : ''})';
 }
 
@@ -140,7 +144,9 @@ String _generateStandardFieldWidget({
   return generateConsumerWidget(
     name: provider.fieldWidgetName(field),
     fields: [
-      ClassField(name: 'builder', type: 'Widget Function(BuildContext context, $proxyRefName ref)'),
+      ClassField(
+          name: 'builder',
+          type: 'Widget Function(BuildContext context, $proxyRefName ref)'),
     ],
     build: '''
 ${generateDebugCheckCall(provider)}
@@ -172,7 +178,8 @@ String _generateTextFieldWidget({
   ].contains(field.name);
 
   // Determine field getter name
-  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
+  final fieldGetterName =
+      widgetRefMethodConflicts ? '${field.name}State' : field.name;
 
   return '''
 class ${provider.fieldWidgetName(field)} extends ConsumerStatefulWidget {

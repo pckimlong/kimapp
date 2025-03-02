@@ -48,7 +48,8 @@ extension PersistRiverpodAsyncNotifier<T> on AsyncNotifierBase<T> {
         final persistedData = await fetchPersistedData();
         // Check if should get fresh data instead
         // if not, use the persistedData
-        if (persistedData != null && await shouldFetchFreshData(persistedData) == false) {
+        if (persistedData != null &&
+            await shouldFetchFreshData(persistedData) == false) {
           if (silentlyFetchFreshForLaterUse) {
             // Get fresh data and persist it silently
             unawaited(

@@ -5,7 +5,8 @@ import 'package:kimapp/kimapp.dart';
 import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 
-const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
+const providerStatusClassType =
+    TypeChecker.fromRuntime(ProviderStatusClassMixin);
 const formUpdateMixin = TypeChecker.fromRuntime(UpdateFormMixin);
 
 class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
@@ -17,7 +18,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
   ) {
     if (element is! ClassElement) return;
 
-    final buildMethod = element.methods.firstWhereOrNull((method) => method.name == "build");
+    final buildMethod =
+        element.methods.firstWhereOrNull((method) => method.name == "build");
     if (buildMethod == null) {
       // Only stateful provider contain build method can generate form
       return;
@@ -46,7 +48,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
         : classElement.name;
 
     // Generate call method detail
-    final callMethod = element.methods.firstWhereOrNull((method) => method.name == "call");
+    final callMethod =
+        element.methods.firstWhereOrNull((method) => method.name == "call");
     if (callMethod == null) {
       print('[FORM GENERATOR FAILED] $classElement required [call] method');
       return;
@@ -70,7 +73,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       familyParams[name] = type.toString();
     }
 
-    final classConstructor = classElement.constructors.firstWhereOrNull((c) => !c.isPrivate);
+    final classConstructor =
+        classElement.constructors.firstWhereOrNull((c) => !c.isPrivate);
 
     if (classConstructor == null) {
       print('[FORM GENERATOR FAILED] $classElement has no constructor');
@@ -92,7 +96,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       // Don't generate status field because it from provider status mixin class
       if (param.name != "status") {
         // Also initialLoaded field
-        if (!isFormUpdateType || (isFormUpdateType && param.name != "initialLoaded")) {
+        if (!isFormUpdateType ||
+            (isFormUpdateType && param.name != "initialLoaded")) {
           final name = param.name;
           final type = param.type.toString();
           fields[name] = type;
@@ -103,8 +108,9 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
     }
 
     // Generate form if there any string field
-    final useFormWidget =
-        fields.values.where((type) => type == "String" || type == "String?").isNotEmpty;
+    final useFormWidget = fields.values
+        .where((type) => type == "String" || type == "String?")
+        .isNotEmpty;
 
     final buffer = StringBuffer();
 
@@ -199,7 +205,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
         fieldType: fieldType,
         providerNameFamily: providerNameWithFamily,
         familyParams: familyParams,
-        useTextField: useFormWidget && fieldType == "String" || fieldType == "String?",
+        useTextField:
+            useFormWidget && fieldType == "String" || fieldType == "String?",
       );
       buffer.write(fieldWidget);
     }
@@ -212,7 +219,8 @@ String _dataType(String name, Map<String, String> source) {
   return source[name] as String;
 }
 
-String _providerFamilyParamBuilder(String providerClassName, List<ParameterElement> params) {
+String _providerFamilyParamBuilder(
+    String providerClassName, List<ParameterElement> params) {
   final providerName = "${providerClassName.camelCase}Provider";
 
   if (params.isEmpty) return providerName;
@@ -347,7 +355,8 @@ String _familyParamClassName(String providerName) {
   return "_${providerName}FamilyParam";
 }
 
-String _generateFamilyParamsClass(String providerName, Map<String, String> params) {
+String _generateFamilyParamsClass(
+    String providerName, Map<String, String> params) {
   if (params.isEmpty) return '';
 
   final name = _familyParamClassName(providerName);
@@ -376,7 +385,8 @@ class $name {
   return result;
 }
 
-String _defineLocalFamilyOrEmpty(String providerName, Map<String, String> param) {
+String _defineLocalFamilyOrEmpty(
+    String providerName, Map<String, String> param) {
   final props = param.keys;
   if (props.isEmpty) return "";
   return '''

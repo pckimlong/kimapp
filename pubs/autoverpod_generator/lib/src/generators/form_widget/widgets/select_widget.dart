@@ -19,7 +19,8 @@ String generateSelectWidget(ProviderDefinition provider) {
         isRequired: true,
       ),
       ClassField(name: 'builder', type: builderType, isRequired: true),
-      ClassField.providerListenable('onStateChanged', 'Selected', bothNullable: true),
+      ClassField.providerListenable('onStateChanged', 'Selected',
+          bothNullable: true),
     ],
     build: '''
 ${generateDebugCheckCall(provider)}

@@ -6,7 +6,8 @@ extension AsyncValueNullableExtension<T> on AsyncValue<T>? {
 
   /// Indicates if the form is currently processing (submitting, saving, etc.)
   bool get isProcessing =>
-      this != null && (this!.isLoading || this!.isRefreshing || this!.isReloading);
+      this != null &&
+      (this!.isLoading || this!.isRefreshing || this!.isReloading);
 
   /// Alias for isProcessing to maintain backward compatibility
   bool get isLoading => isProcessing;

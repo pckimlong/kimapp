@@ -15,7 +15,8 @@ class GeneratorRegistry {
   final List<WidgetGenerator> _generators = [];
 
   /// Register a new generator
-  void registerGenerator(WidgetGenerator generator) => _generators.add(generator);
+  void registerGenerator(WidgetGenerator generator) =>
+      _generators.add(generator);
 
   /// Get all registered generators
   List<WidgetGenerator> get generators => List.unmodifiable(_generators);
@@ -32,7 +33,8 @@ class GeneratorRegistry {
   }
 
   /// Generate code for all registered generators
-  Future<String> generateForLibrary(LibraryReader library, BuildStep buildStep) async {
+  Future<String> generateForLibrary(
+      LibraryReader library, BuildStep buildStep) async {
     final buffer = StringBuffer();
 
     for (final generator in _generators) {

@@ -8,7 +8,8 @@ import '../state_widget_names.dart';
 
 String generateScopeWidget(ProviderDefinition provider) {
   final isAsyncValue = provider.isAsyncValue;
-  final stateType = provider.getProviderType(name: isAsyncValue ? 'asyncValue' : 'state');
+  final stateType =
+      provider.getProviderType(name: isAsyncValue ? 'asyncValue' : 'state');
   final baseReturnType = provider.returnType.baseType;
   final builderType =
       "Widget Function(BuildContext context, ${provider.proxyWidgetName} ref, $stateType, Widget? child,)?";
@@ -55,17 +56,22 @@ String generateScopeWidget(ProviderDefinition provider) {
     fields: [
       ...provider.familyParameters.map((p) => p.toClassField()),
       if (isAsyncValue) ...[
-        ClassField(name: 'loading', type: 'Widget Function()?', isRequired: false),
+        ClassField(
+            name: 'loading', type: 'Widget Function()?', isRequired: false),
         ClassField(
           name: 'error',
           type: 'Widget Function(Object error, StackTrace? stackTrace)?',
           isRequired: false,
         ),
-        ClassField(name: 'data', type: 'Widget Function($baseReturnType data)?', isRequired: false),
+        ClassField(
+            name: 'data',
+            type: 'Widget Function($baseReturnType data)?',
+            isRequired: false),
       ],
       ClassField(name: 'builder', type: builderType, isRequired: false),
       ClassField(name: 'child', type: 'Widget?', isRequired: false),
-      ClassField.providerListenable('onStateChanged', provider.getProviderType()),
+      ClassField.providerListenable(
+          'onStateChanged', provider.getProviderType()),
     ],
     build: '''
 if (onStateChanged != null) {

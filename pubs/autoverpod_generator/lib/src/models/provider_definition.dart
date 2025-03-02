@@ -29,7 +29,8 @@ class ProviderDefinition {
 
   bool get hasNotifier => providerType == ProviderType.classBased;
   bool get hasFamily => familyParameters.isNotEmpty;
-  bool get isAsyncValue => ['Future', 'Stream', 'FutureOr'].contains(returnType.wrapperType);
+  bool get isAsyncValue =>
+      ['Future', 'Stream', 'FutureOr'].contains(returnType.wrapperType);
 
   ProviderDefinition({
     required this.baseName,
@@ -44,7 +45,8 @@ class ProviderDefinition {
     this.genericParameters = const {},
   });
 
-  factory ProviderDefinition.parse(Element element, {bool parseReturnTypeClassInfo = false}) {
+  factory ProviderDefinition.parse(Element element,
+      {bool parseReturnTypeClassInfo = false}) {
     try {
       final isClass = element is ClassElement;
       final baseName = element.name!.pascalCase;
@@ -72,8 +74,12 @@ class ProviderDefinition {
             buildMethod.returnType,
             parseClassInfo: parseReturnTypeClassInfo,
           ),
-          familyParameters: buildMethod.parameters.map((p) => ParamDefinition.parse(p)).toList(),
-          methods: classElement.methods.map((m) => MethodDefinition.parseMethod(m)).toList(),
+          familyParameters: buildMethod.parameters
+              .map((p) => ParamDefinition.parse(p))
+              .toList(),
+          methods: classElement.methods
+              .map((m) => MethodDefinition.parseMethod(m))
+              .toList(),
           modifiers: modifiers,
           documentation: documentation,
           dependencies: dependencies,
@@ -87,7 +93,8 @@ class ProviderDefinition {
           baseName: baseName,
           providerName: providerName,
           providerType: ProviderType.functionBased,
-          returnType: ProviderReturnTypeDefinition.parse(functionElement.returnType),
+          returnType:
+              ProviderReturnTypeDefinition.parse(functionElement.returnType),
           familyParameters: functionElement.parameters
               .skip(1) // Skip first param (Ref)
               .map((p) => ParamDefinition.parse(p))
@@ -169,7 +176,8 @@ class ProviderDefinition {
   List<String> get genericTypeNames => genericParameters.keys.toList();
 
   /// Gets all bounds (constraints) for a specific generic type parameter
-  List<String> getGenericTypeBounds(String typeName) => genericParameters[typeName] ?? [];
+  List<String> getGenericTypeBounds(String typeName) =>
+      genericParameters[typeName] ?? [];
 
   /// Checks if a class has any generic type parameters
   bool get hasGenericTypes => genericParameters.isNotEmpty;
@@ -269,7 +277,9 @@ class ProviderDefinition {
   /// If [name] is provided, appends it to create a type declaration:
   /// - getProviderType(name: "value") with Future<int> returns "AsyncValue<int> value"
   String getProviderType({String? name}) {
-    final type = isAsyncValue ? 'AsyncValue<${returnType.baseType}>' : returnType.baseType;
+    final type = isAsyncValue
+        ? 'AsyncValue<${returnType.baseType}>'
+        : returnType.baseType;
 
     if (name != null) {
       return '$type $name';
@@ -286,14 +296,19 @@ class ProviderDefinition {
         ? resultType.replaceFirst('Future<', '').replaceFirst('>', '')
         : resultType;
 
-    final futureResultType = resultType.contains('Future') ? resultType : 'Future<$resultType>';
+    final futureResultType =
+        resultType.contains('Future') ? resultType : 'Future<$resultType>';
 
     return SubmitMethodInfo(
       resultType: resultType,
       rawResultType: rawResultType,
       futureResultType: futureResultType,
-      namedParams: submitMethod?.codeBuilderParams().where((p) => p.named).toList() ?? [],
-      positionalParams: submitMethod?.codeBuilderParams().where((p) => !p.named).toList() ?? [],
+      namedParams:
+          submitMethod?.codeBuilderParams().where((p) => p.named).toList() ??
+              [],
+      positionalParams:
+          submitMethod?.codeBuilderParams().where((p) => !p.named).toList() ??
+              [],
     );
   }
 }

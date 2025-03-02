@@ -34,7 +34,8 @@ class _MyNameAsyncProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) => _ref.listen(provider, listener, onError: onError);
+  }) =>
+      _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -42,12 +43,13 @@ class _MyNameAsyncProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) => _ref.listenManual(
-    provider,
-    listener,
-    onError: onError,
-    fireImmediately: fireImmediately,
-  );
+  }) =>
+      _ref.listenManual(
+        provider,
+        listener,
+        onError: onError,
+        fireImmediately: fireImmediately,
+      );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -78,11 +80,10 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
     _MyNameAsyncProxyWidgetRef ref,
     AsyncValue<String> asyncValue,
     Widget? child,
-  )?
-  builder;
+  )? builder;
   final Widget? child;
   final void Function(AsyncValue<String>? previous, AsyncValue<String> next)?
-  onStateChanged;
+      onStateChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -116,23 +117,21 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
             }
             return result;
           },
-          error:
-              (error, stack) =>
-                  this.error?.call(error, stack) ??
-                  themeExtension?.defaultErrorStateWidget?.call(
-                    context,
-                    ref,
-                    error,
-                  ) ??
-                  const SizedBox.shrink(),
-          loading:
-              () =>
-                  loading?.call() ??
-                  themeExtension?.defaultLoadingStateWidget?.call(
-                    context,
-                    ref,
-                  ) ??
-                  const SizedBox.shrink(),
+          error: (error, stack) =>
+              this.error?.call(error, stack) ??
+              themeExtension?.defaultErrorStateWidget?.call(
+                context,
+                ref,
+                error,
+              ) ??
+              const SizedBox.shrink(),
+          loading: () =>
+              loading?.call() ??
+              themeExtension?.defaultLoadingStateWidget?.call(
+                context,
+                ref,
+              ) ??
+              const SizedBox.shrink(),
         );
       },
     );
@@ -162,8 +161,8 @@ class _MyNameAsyncStateProxyWidgetRef extends _MyNameAsyncProxyWidgetRef {
   String get state => _ref.watch(myNameAsyncProvider).requireValue;
 
   Selected select<Selected>(Selected Function(String) selector) => _ref.watch(
-    myNameAsyncProvider.select((value) => selector(value.requireValue)),
-  );
+        myNameAsyncProvider.select((value) => selector(value.requireValue)),
+      );
 }
 
 class MyNameAsyncStateWidget extends ConsumerWidget {
@@ -183,8 +182,7 @@ class MyNameAsyncStateWidget extends ConsumerWidget {
     BuildContext context,
     _MyNameAsyncStateProxyWidgetRef ref,
     Widget? child,
-  )
-  builder;
+  ) builder;
   final Widget? child;
   final void Function(String? previous, String? next)? onStateChanged;
 
@@ -214,8 +212,7 @@ class MyNameAsyncSelectWidget<Selected> extends ConsumerWidget {
     BuildContext context,
     _MyNameAsyncStateProxyWidgetRef ref,
     Selected value,
-  )
-  builder;
+  ) builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override
@@ -254,7 +251,8 @@ class _MyNameProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) => _ref.listen(provider, listener, onError: onError);
+  }) =>
+      _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -262,12 +260,13 @@ class _MyNameProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) => _ref.listenManual(
-    provider,
-    listener,
-    onError: onError,
-    fireImmediately: fireImmediately,
-  );
+  }) =>
+      _ref.listenManual(
+        provider,
+        listener,
+        onError: onError,
+        fireImmediately: fireImmediately,
+      );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -292,8 +291,7 @@ class MyNameProviderScope extends ConsumerWidget {
     _MyNameProxyWidgetRef ref,
     String state,
     Widget? child,
-  )?
-  builder;
+  )? builder;
   final Widget? child;
   final void Function(String? previous, String next)? onStateChanged;
 
@@ -359,8 +357,7 @@ class MyNameStateWidget extends ConsumerWidget {
     BuildContext context,
     _MyNameStateProxyWidgetRef ref,
     Widget? child,
-  )
-  builder;
+  ) builder;
   final Widget? child;
   final void Function(String? previous, String? next)? onStateChanged;
 
@@ -390,8 +387,7 @@ class MyNameSelectWidget<Selected> extends ConsumerWidget {
     BuildContext context,
     _MyNameStateProxyWidgetRef ref,
     Selected value,
-  )
-  builder;
+  ) builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override

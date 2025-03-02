@@ -34,7 +34,6 @@ class FormUpdateWidget {
 
 const formUpdateWidget = FormUpdateWidget();
 
-
 /// Check for formWidget or formUpdateWidget annotation
 /// Check for return type, if it is freezed class, implement all update field in mixin directly call copyWith method
 /// if it it not freezed, generate all field in mixin to ask for override in riverpod class

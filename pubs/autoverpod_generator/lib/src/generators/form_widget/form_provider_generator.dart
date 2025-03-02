@@ -29,7 +29,8 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
       );
     }
 
-    final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
+    final provider =
+        ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
     final buffer = StringBuffer();
 
     // Generate the form provider abstraction
@@ -58,7 +59,8 @@ class StateProviderInfo {
 /// - Success/error handling
 String _generateFormProviderAbstraction(ProviderDefinition provider) {
   final submitMethodInfo = provider.getSubmitMethodInfo();
-  final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
+  final stateProviderInfo =
+      _generateStateProviderInfo(provider, submitMethodInfo);
   final updateMethods = _generateUpdateMethods(provider);
 
   // Generate the proxy class using code_builder
@@ -133,7 +135,8 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
   // Add field-specific update methods if class info is available
   if (provider.returnType.classInfo != null) {
     final returnClass = provider.returnType.classInfo!;
-    final copyWithNames = returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
+    final copyWithNames =
+        returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
 
     // Generate update methods for each field
     for (final field in returnClass.fields) {
@@ -207,7 +210,8 @@ Method _generateFieldUpdateMethod(
 /// Generates a method for updating the entire state
 Method _generateStateUpdateMethod(ProviderDefinition provider) {
   // Create appropriate update statement based on state type
-  final updateStatement = provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
+  final updateStatement =
+      provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
 
   return Method(
     (b) => b
@@ -331,7 +335,8 @@ Method _generateInvalidateSelfMethod(ProviderDefinition provider) {
 }
 
 /// Generates the submit method signature
-Method _generateSubmitMethod(ProviderDefinition provider, SubmitMethodInfo submitInfo) {
+Method _generateSubmitMethod(
+    ProviderDefinition provider, SubmitMethodInfo submitInfo) {
   return Method(
     (b) => b
       ..name = 'submit'

@@ -121,7 +121,8 @@ void main() {
           comment: ['Number of items'],
         );
 
-        expect(field.toClassField(), equals('/// Number of items\nfinal int count;'));
+        expect(field.toClassField(),
+            equals('/// Number of items\nfinal int count;'));
       });
 
       test('generates correct field declaration with multi-line comments', () {
@@ -150,7 +151,10 @@ void main() {
           type: 'List<Map<String, dynamic>>',
           defaultValue: null,
           isOptional: false,
-          comment: ['List of dynamic items', 'Each item is a map of string to dynamic'],
+          comment: [
+            'List of dynamic items',
+            'Each item is a map of string to dynamic'
+          ],
         );
 
         expect(
