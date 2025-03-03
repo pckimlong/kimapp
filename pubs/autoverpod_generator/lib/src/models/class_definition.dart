@@ -119,9 +119,8 @@ class ClassDefinition {
     final classElement = type.element as ClassElement;
     final isFreezed = _isFreezed(classElement);
 
-    final parentTypes = options.parseParentTypes
-        ? _parseParentTypes(classElement)
-        : const <String>[];
+    final parentTypes =
+        options.parseParentTypes ? _parseParentTypes(classElement) : const <String>[];
 
     final fields = options.parseFields
         ? _parseFields(classElement, isFreezed, options)
@@ -129,9 +128,8 @@ class ClassDefinition {
 
     final methods = _parseMethods(classElement, fields, options);
 
-    final constructors = options.parseConstructors
-        ? _parseConstructors(classElement, options)
-        : const <String>[];
+    final constructors =
+        options.parseConstructors ? _parseConstructors(classElement, options) : const <String>[];
 
     return ClassDefinition(
       name: classElement.name,
@@ -160,12 +158,10 @@ class ClassDefinition {
   /// and the _$ mixin
   static bool _isFreezed(ClassElement element) {
     // Check for @freezed annotation
-    final hasFreezedAnnotation =
-        element.metadata.any((m) => m.element?.displayName == 'freezed');
+    final hasFreezedAnnotation = element.metadata.any((m) => m.element?.displayName == 'freezed');
 
     // Check for the _$ mixin which is characteristic of freezed classes
-    final hasMixin =
-        element.mixins.any((m) => m.getDisplayString().startsWith('_\$'));
+    final hasMixin = element.mixins.any((m) => m.getDisplayString().startsWith('_\$'));
 
     return hasFreezedAnnotation || hasMixin;
   }
@@ -173,8 +169,7 @@ class ClassDefinition {
   /// Parse parent types (superclass, interfaces, and mixins)
   static List<String> _parseParentTypes(ClassElement element) {
     return [
-      if (element.supertype != null &&
-          element.supertype!.element.name != 'Object')
+      if (element.supertype != null && element.supertype!.element.name != 'Object')
         element.supertype!.getDisplayString(),
       ...element.interfaces.map((i) => i.getDisplayString()),
       ...element.mixins.map((m) => m.getDisplayString()),
@@ -270,8 +265,7 @@ class ClassDefinition {
     for (final method in element.methods.where((m) {
       return (!m.isSynthetic || options.parseSyntheticFields) &&
               (m.isPublic || options.parsePrivateFields) &&
-              (options.parseAllMethods ||
-                  options.toParseMethods.contains(m.name)) ||
+              (options.parseAllMethods || options.toParseMethods.contains(m.name)) ||
           (options.parseCopyWith && m.name == 'copyWith');
     })) {
       methods[method.name] = MethodDefinition.parseMethod(method);
@@ -282,8 +276,7 @@ class ClassDefinition {
       return a.isGetter &&
               (!a.isSynthetic || options.parseSyntheticFields) &&
               (a.isPublic || options.parsePrivateFields) &&
-              (options.parseAllMethods ||
-                  options.toParseMethods.contains(a.name)) ||
+              (options.parseAllMethods || options.toParseMethods.contains(a.name)) ||
           (options.parseCopyWith && a.name == 'copyWith');
     })) {
       methods[accessor.name] = MethodDefinition.parseGetter(accessor);
@@ -298,9 +291,7 @@ class ClassDefinition {
 
       if (copyWithInterface != null) {
         // Find the call method in the CopyWith interface which contains the parameters
-        final callMethod = copyWithInterface.methods
-            .where((m) => m.name == 'call')
-            .firstOrNull;
+        final callMethod = copyWithInterface.methods.where((m) => m.name == 'call').firstOrNull;
 
         if (callMethod != null) {
           methods['copyWith'] = MethodDefinition.parseMethod(callMethod);
@@ -321,8 +312,7 @@ class ClassDefinition {
               !m.name.startsWith('_') &&
               // Skip methods that are already defined as fields
               !fields.any((f) => f.name == m.name) &&
-              (options.parseAllMethods ||
-                  options.toParseMethods.contains(m.name)),
+              (options.parseAllMethods || options.toParseMethods.contains(m.name)),
         )) {
           methods[method.name] = MethodDefinition.parseMethod(method);
         }
@@ -335,8 +325,7 @@ class ClassDefinition {
               (a.isPublic || options.parsePrivateFields) &&
               !a.name.startsWith('_') &&
               !fields.any((f) => f.name == a.name) &&
-              (options.parseAllMethods ||
-                  options.toParseMethods.contains(a.name)),
+              (options.parseAllMethods || options.toParseMethods.contains(a.name)),
         )) {
           methods[accessor.name] = MethodDefinition.parseGetter(accessor);
         }
@@ -348,7 +337,9 @@ class ClassDefinition {
 
   /// Parse constructor names from a class element
   static List<String> _parseConstructors(
-      InterfaceElement element, ClassParserOptions options) {
+    InterfaceElement element,
+    ClassParserOptions options,
+  ) {
     return element.constructors
         .where((c) {
           return (!c.isSynthetic || options.parseSyntheticFields) &&

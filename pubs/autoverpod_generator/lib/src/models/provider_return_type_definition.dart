@@ -25,10 +25,11 @@ class ProviderReturnTypeDefinition {
 
   String get baseTypeNonNullable => baseType.replaceAll('?', '');
 
-  factory ProviderReturnTypeDefinition.parse(DartType type,
-      {bool parseClassInfo = false}) {
-    final isGeneric =
-        type is ParameterizedType && type.typeArguments.isNotEmpty;
+  factory ProviderReturnTypeDefinition.parse(
+    DartType type, {
+    bool parseClassInfo = false,
+  }) {
+    final isGeneric = type is ParameterizedType && type.typeArguments.isNotEmpty;
     final wrapperType = type is InterfaceType ? type.element.name : null;
     final isAsync = ['Future', 'Stream', 'FutureOr'].contains(wrapperType);
     String baseType = type.toString();
