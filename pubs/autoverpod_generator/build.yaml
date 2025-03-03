@@ -7,7 +7,6 @@ builders:
     build_to: source
     required_inputs:
       - ".freezed.dart"
-      - ".g.dart"
     applies_builders: ["source_gen|combining_builder"]
 
   form_provider_generator:

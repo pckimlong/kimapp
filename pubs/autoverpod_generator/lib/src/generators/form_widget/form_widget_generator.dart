@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/base_proxy_widget_ref.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/debug_check.dart';
+import 'package:autoverpod_generator/src/generators/form_widget/widgets/field_updater.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/form_field_widget.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/form_widget.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/param_inherited_widget.dart';
@@ -45,6 +46,7 @@ class FormWidgetGenerator extends WidgetGenerator {
 
     final buffer = StringBuffer();
 
+    buffer.writeln(generateFieldUpdaterExtension(provider));
     buffer.writeln(generateParamInheritedWidget(provider));
     buffer.writeln(generateFormBaseProxyWidgetRef(provider));
     buffer.writeln(generateFormScopeWidget(provider));

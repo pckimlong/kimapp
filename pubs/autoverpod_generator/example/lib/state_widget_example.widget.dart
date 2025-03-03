@@ -1,7 +1,7 @@
 // **************************************************************************
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // **************************************************************************
-// ignore_for_file: type=lint, duplicate_import, unnecessary_import, unused_import, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+// ignore_for_file: type=lint, duplicate_import, unnecessary_import, unused_import, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 // coverage:ignore-file
 
 import 'package:autoverpod_generator_example/state_widget_example.dart';
@@ -9,8 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:autoverpod/autoverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:core';
 
 class _MyNameAsyncProxyWidgetRef extends WidgetRef {
@@ -34,8 +35,7 @@ class _MyNameAsyncProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) =>
-      _ref.listen(provider, listener, onError: onError);
+  }) => _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -43,13 +43,12 @@ class _MyNameAsyncProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) =>
-      _ref.listenManual(
-        provider,
-        listener,
-        onError: onError,
-        fireImmediately: fireImmediately,
-      );
+  }) => _ref.listenManual(
+    provider,
+    listener,
+    onError: onError,
+    fireImmediately: fireImmediately,
+  );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -67,6 +66,8 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
     this.loading,
     this.error,
     this.data,
+    this.skipLoadingOnReload = true,
+    this.skipLoadingOnRefresh = true,
     this.builder,
     this.child,
     this.onStateChanged,
@@ -75,15 +76,18 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
   final Widget Function()? loading;
   final Widget Function(Object error, StackTrace? stackTrace)? error;
   final Widget Function(String data)? data;
+  final bool skipLoadingOnReload;
+  final bool skipLoadingOnRefresh;
   final Widget Function(
     BuildContext context,
     _MyNameAsyncProxyWidgetRef ref,
     AsyncValue<String> asyncValue,
     Widget? child,
-  )? builder;
+  )?
+  builder;
   final Widget? child;
   final void Function(AsyncValue<String>? previous, AsyncValue<String> next)?
-      onStateChanged;
+  onStateChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,6 +96,7 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
     }
 
     return Consumer(
+      child: child,
       builder: (context, ref, child) {
         final state = ref.watch(myNameAsyncProvider);
 
@@ -107,6 +112,8 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
         final themeExtension =
             Theme.of(context).extension<KimappThemeExtension>();
         return state.when(
+          skipLoadingOnReload: skipLoadingOnReload,
+          skipLoadingOnRefresh: skipLoadingOnRefresh,
           data: (data) {
             final result = this.data?.call(data) ?? child;
             if (result == null) {
@@ -117,21 +124,23 @@ class MyNameAsyncProviderScope extends ConsumerWidget {
             }
             return result;
           },
-          error: (error, stack) =>
-              this.error?.call(error, stack) ??
-              themeExtension?.defaultErrorStateWidget?.call(
-                context,
-                ref,
-                error,
-              ) ??
-              const SizedBox.shrink(),
-          loading: () =>
-              loading?.call() ??
-              themeExtension?.defaultLoadingStateWidget?.call(
-                context,
-                ref,
-              ) ??
-              const SizedBox.shrink(),
+          error:
+              (error, stack) =>
+                  this.error?.call(error, stack) ??
+                  themeExtension?.defaultErrorStateWidget?.call(
+                    context,
+                    ref,
+                    error,
+                  ) ??
+                  const SizedBox.shrink(),
+          loading:
+              () =>
+                  loading?.call() ??
+                  themeExtension?.defaultLoadingStateWidget?.call(
+                    context,
+                    ref,
+                  ) ??
+                  const SizedBox.shrink(),
         );
       },
     );
@@ -143,12 +152,22 @@ bool _debugCheckHasMyNameAsyncProviderScope(BuildContext context) {
     if (context.widget is! MyNameAsyncProviderScope &&
         context.findAncestorWidgetOfExactType<MyNameAsyncProviderScope>() ==
             null) {
-      throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No MyNameAsyncProviderScope found'),
-        ErrorDescription(
-          '${context.widget.runtimeType} widgets require a MyNameAsyncProviderScope widget ancestor.',
-        ),
-      ]);
+      // Check if we're in a navigation context (dialog or pushed screen)
+      final isInNavigation = ModalRoute.of(context) != null;
+
+      if (!isInNavigation) {
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary('No MyNameAsyncProviderScope found'),
+          ErrorDescription(
+            '${context.widget.runtimeType} widgets require a MyNameAsyncProviderScope widget ancestor '
+            'or to be used in a navigation context with proper state management.',
+          ),
+        ]);
+      }
+      // If in navigation context, we'll return true but log a warning
+      debugPrint(
+        'Widget ${context.widget.runtimeType} used in navigation without direct MyNameAsyncProviderScope',
+      );
     }
     return true;
   }());
@@ -161,8 +180,8 @@ class _MyNameAsyncStateProxyWidgetRef extends _MyNameAsyncProxyWidgetRef {
   String get state => _ref.watch(myNameAsyncProvider).requireValue;
 
   Selected select<Selected>(Selected Function(String) selector) => _ref.watch(
-        myNameAsyncProvider.select((value) => selector(value.requireValue)),
-      );
+    myNameAsyncProvider.select((value) => selector(value.requireValue)),
+  );
 }
 
 class MyNameAsyncStateWidget extends ConsumerWidget {
@@ -182,7 +201,8 @@ class MyNameAsyncStateWidget extends ConsumerWidget {
     BuildContext context,
     _MyNameAsyncStateProxyWidgetRef ref,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
   final void Function(String? previous, String? next)? onStateChanged;
 
@@ -212,7 +232,8 @@ class MyNameAsyncSelectWidget<Selected> extends ConsumerWidget {
     BuildContext context,
     _MyNameAsyncStateProxyWidgetRef ref,
     Selected value,
-  ) builder;
+  )
+  builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override
@@ -251,8 +272,7 @@ class _MyNameProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) =>
-      _ref.listen(provider, listener, onError: onError);
+  }) => _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -260,13 +280,12 @@ class _MyNameProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) =>
-      _ref.listenManual(
-        provider,
-        listener,
-        onError: onError,
-        fireImmediately: fireImmediately,
-      );
+  }) => _ref.listenManual(
+    provider,
+    listener,
+    onError: onError,
+    fireImmediately: fireImmediately,
+  );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -291,7 +310,8 @@ class MyNameProviderScope extends ConsumerWidget {
     _MyNameProxyWidgetRef ref,
     String state,
     Widget? child,
-  )? builder;
+  )?
+  builder;
   final Widget? child;
   final void Function(String? previous, String next)? onStateChanged;
 
@@ -302,6 +322,7 @@ class MyNameProviderScope extends ConsumerWidget {
     }
 
     return Consumer(
+      child: child,
       builder: (context, ref, child) {
         final state = ref.watch(myNameProvider);
 
@@ -319,12 +340,22 @@ bool _debugCheckHasMyNameProviderScope(BuildContext context) {
   assert(() {
     if (context.widget is! MyNameProviderScope &&
         context.findAncestorWidgetOfExactType<MyNameProviderScope>() == null) {
-      throw FlutterError.fromParts(<DiagnosticsNode>[
-        ErrorSummary('No MyNameProviderScope found'),
-        ErrorDescription(
-          '${context.widget.runtimeType} widgets require a MyNameProviderScope widget ancestor.',
-        ),
-      ]);
+      // Check if we're in a navigation context (dialog or pushed screen)
+      final isInNavigation = ModalRoute.of(context) != null;
+
+      if (!isInNavigation) {
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary('No MyNameProviderScope found'),
+          ErrorDescription(
+            '${context.widget.runtimeType} widgets require a MyNameProviderScope widget ancestor '
+            'or to be used in a navigation context with proper state management.',
+          ),
+        ]);
+      }
+      // If in navigation context, we'll return true but log a warning
+      debugPrint(
+        'Widget ${context.widget.runtimeType} used in navigation without direct MyNameProviderScope',
+      );
     }
     return true;
   }());
@@ -357,7 +388,8 @@ class MyNameStateWidget extends ConsumerWidget {
     BuildContext context,
     _MyNameStateProxyWidgetRef ref,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
   final void Function(String? previous, String? next)? onStateChanged;
 
@@ -387,7 +419,8 @@ class MyNameSelectWidget<Selected> extends ConsumerWidget {
     BuildContext context,
     _MyNameStateProxyWidgetRef ref,
     Selected value,
-  ) builder;
+  )
+  builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override
