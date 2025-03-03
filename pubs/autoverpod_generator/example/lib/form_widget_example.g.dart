@@ -10,14 +10,10 @@ final updateUserCallStatusProvider = StateProvider.autoDispose
     .family<AsyncValue<bool>?, ({int id})>((ref, _) => null);
 
 abstract class _$UpdateUserWidget extends _$UpdateUser {
-  static final updateUserCallStatusProvider = StateProvider.autoDispose
-      .family<AsyncValue<bool>?, ({int id})>((ref, _) => null);
-
   /// Callback for when the form is successfully submitted.
-  /// Override this method to handle the result or perform side effects.
+  /// Override this method and run "dart pub run build_runner build" to make it work. otherwise error will be thrown.
   @protected
-  void onSuccess(bool result) {}
-  @protected
+  void onSuccess(bool result);
   @nonVirtual
   Future<AsyncValue<bool>> call({required Uint8List? photoBytes}) async {
     // Ignore if form is not loaded yet
@@ -29,7 +25,6 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
     final _updateCallStatus =
         ref.read(updateUserCallStatusProvider((id: id)).notifier);
 
-    // If it's already loading, return loading
     if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
     if (_callStatus?.hasValue == true) {
@@ -69,35 +64,16 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   /// 3. Call API/repository methods
   /// 4. Return success/failure result
   @visibleForOverriding
+  @protected
   Future<bool> submit(
     UpdateUserModel state, {
     required Uint8List? photoBytes,
   });
 
   /// Update the state of the form.
-  /// This allow for more flexible to update specific fields.
+  /// This allows for more flexible updates to specific fields.
   void updateState(UpdateUserModel Function(UpdateUserModel state) update) =>
       state = state.whenData(update);
-
-  /// Update the name field of UpdateUserModel class.
-  void updateName(String newValue) =>
-      state = state.whenData((state) => state.copyWith(name: newValue));
-
-  /// Update the age field of UpdateUserModel class.
-  void updateAge(int? newValue) =>
-      state = state.whenData((state) => state.copyWith(age: newValue));
-
-  /// Update the email field of UpdateUserModel class.
-  void updateEmail(String? newValue) =>
-      state = state.whenData((state) => state.copyWith(email: newValue));
-
-  /// Update the address field of UpdateUserModel class.
-  void updateAddress(String? newValue) =>
-      state = state.whenData((state) => state.copyWith(address: newValue));
-
-  /// Update the phone field of UpdateUserModel class.
-  void updatePhone(String? newValue) =>
-      state = state.whenData((state) => state.copyWith(phone: newValue));
 }
 
 // **************************************************************************

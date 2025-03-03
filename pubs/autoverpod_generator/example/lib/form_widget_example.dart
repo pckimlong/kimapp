@@ -30,8 +30,7 @@ class UpdateUserModel with _$UpdateUserModel {
 
   /// Converts JSON map to [UpdateUserModel] instance.
   /// Used for serialization/deserialization of form data.
-  factory UpdateUserModel.fromJson(Map<String, dynamic> json) =>
-      _$UpdateUserModelFromJson(json);
+  factory UpdateUserModel.fromJson(Map<String, dynamic> json) => _$UpdateUserModelFromJson(json);
 }
 
 @riverpod
@@ -101,6 +100,8 @@ class UpdateUser extends _$UpdateUserWidget {
   /// - Navigate to different screens
   /// - Update other providers
   /// - Perform any post-submission cleanup
+  ///
+  /// Must override this method and run "dart pub run build_runner build" to make it work. otherwise error will be thrown.
   @override
   void onSuccess(bool result) {
     /// Example:
