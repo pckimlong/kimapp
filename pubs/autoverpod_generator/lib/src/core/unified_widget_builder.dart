@@ -72,6 +72,7 @@ class UnifiedWidgetBuilder implements Builder {
     // Get imports from registry
     final imports = Set<String>.from(_registry.getAllRequiredImports());
 
+    // TODO: Improve imports handling later...
     // Add source file's imports to ensure dependencies are available
     final sourceImports = library.element.importedLibraries
         .map((lib) => lib.source.uri.toString())
@@ -105,7 +106,7 @@ class UnifiedWidgetBuilder implements Builder {
         "coverage:ignore-file",
       ]);
 
-      // Import source file
+      // // Import source file
       b.directives.add(Directive.import(buildStep.inputId.uri.toString()));
 
       // Add all imports, removing duplicates

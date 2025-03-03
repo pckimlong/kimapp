@@ -30,6 +30,22 @@ class FormWidgetGenerator extends WidgetGenerator {
     ];
   }
 
+  /// Get imports for all field types in the return type class
+  List<String> _getFieldTypeImports(ProviderDefinition provider) {
+    final imports = <String>{};
+    final classInfo = provider.returnType.classInfo;
+
+    if (classInfo != null) {
+      for (final field in classInfo.fields) {
+        if (field.importPath != null) {
+          imports.add(field.importPath!);
+        }
+      }
+    }
+
+    return imports.toList();
+  }
+
   @override
   Future<String> generateForAnnotatedElement(
     Element element,
@@ -42,6 +58,14 @@ class FormWidgetGenerator extends WidgetGenerator {
         'FormWidget annotation can only be applied to class-based providers.',
         element: element,
       );
+    }
+
+    // Get field type imports
+    final fieldImports = _getFieldTypeImports(provider);
+
+    // Add field type imports to registry
+    for (final import in fieldImports) {
+      GeneratorRegistry.instance.addImport(import);
     }
 
     final buffer = StringBuffer();
