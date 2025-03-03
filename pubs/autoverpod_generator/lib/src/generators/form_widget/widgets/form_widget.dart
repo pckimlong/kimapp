@@ -23,6 +23,8 @@ final isInitializedAsync = ref.watch(
 );
 
 return isInitializedAsync.when(
+          skipLoadingOnReload: true,
+          skipLoadingOnRefresh: true,
           data: (_) {
             if (widget.builder != null) {
               return widget.builder!(
