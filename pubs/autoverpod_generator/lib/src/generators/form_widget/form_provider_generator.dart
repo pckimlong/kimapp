@@ -1,5 +1,4 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:autoverpod/autoverpod.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/form_widget_names.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
@@ -17,30 +16,6 @@ import '../../models/provider_definition.dart';
 /// - Success/error handling
 /// - Field updates
 class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
-  /// Set of imports needed for the generated code
-  final Set<String> requiredImports = {};
-
-  /// Collects required imports for a given DartType
-  void _collectImports(DartType type) {
-    if (type is! InterfaceType) return;
-
-    final element = type.element;
-    final libraryUri = element.library.source.uri.toString();
-
-    // Skip dart:core and dart:async types
-    if (!libraryUri.startsWith('dart:core') && !libraryUri.startsWith('dart:async')) {
-      requiredImports.add(libraryUri);
-    }
-
-    // Collect imports for type arguments (generics)
-    for (final typeArg in type.typeArguments) {
-      _collectImports(typeArg);
-    }
-  }
-
-  /// Gets all imports required for this generator
-  Set<String> getRequiredImports() => requiredImports;
-
   @override
   Future<String> generateForAnnotatedElement(
     Element element,
@@ -52,35 +27,6 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
         'FormWidget annotation can only be applied to classes.',
         element: element,
       );
-    }
-
-    // Clear imports from previous generation
-    requiredImports.clear();
-
-    // Collect imports from the class and its fields
-    for (final field in element.fields) {
-      _collectImports(field.type);
-    }
-
-    // Collect imports from method return types and parameters
-    for (final method in element.methods) {
-      _collectImports(method.returnType);
-      for (final param in method.parameters) {
-        _collectImports(param.type);
-      }
-    }
-
-    // Collect imports from superclass and interfaces
-    if (element.supertype != null) {
-      _collectImports(element.supertype!);
-    }
-    for (final interface in element.interfaces) {
-      _collectImports(interface);
-    }
-
-    // Collect imports from mixins
-    for (final mixin in element.mixins) {
-      _collectImports(mixin);
     }
 
     final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
@@ -122,7 +68,7 @@ String _generateFormProviderAbstraction(ProviderDefinition provider) {
       ..abstract = true
       ..extend = refer('_\$${provider.baseName}')
       ..methods.addAll([
-        _generateOnSuccessMethod(submitMethodInfo.rawResultType),
+        _generateOnSuccessMethod(provider, submitMethodInfo.rawResultType),
         _generateCallMethod(provider, submitMethodInfo, stateProviderInfo),
         _generateInvalidateSelfMethod(provider),
         _generateSubmitMethod(provider, submitMethodInfo),
@@ -189,20 +135,10 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
     final returnClass = provider.returnType.classInfo!;
     final copyWithNames = returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
 
-    // Generate update methods for each field
+    // Generate update methods for each field where not in copyWith method
+    // this allow developer to override it
     for (final field in returnClass.fields) {
-      if (copyWithNames.contains(field.name)) {
-        // Field can be updated via copyWith
-        updateMethods.add(
-          _generateFieldUpdateMethod(
-            provider,
-            field.name,
-            field.type,
-            provider.returnType.baseType,
-          ),
-        );
-      } else {
-        // Field cannot be updated via copyWith - add stub method
+      if (!copyWithNames.contains(field.name)) {
         updateMethods.add(
           Method(
             (b) => b
@@ -227,35 +163,6 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
   }
 
   return updateMethods;
-}
-
-/// Generates a method for updating a specific field
-Method _generateFieldUpdateMethod(
-  ProviderDefinition provider,
-  String fieldName,
-  String fieldType,
-  String baseType,
-) {
-  // Create appropriate update statement based on state type
-  final updateStatement = provider.isAsyncValue
-      ? 'state.whenData((state) => state.copyWith($fieldName: newValue))'
-      : 'state.copyWith($fieldName: newValue)';
-
-  return Method(
-    (b) => b
-      ..name = 'update${fieldName.pascalCase}'
-      ..docs.add('/// Update the $fieldName field of $baseType class.')
-      ..returns = refer('void')
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = 'newValue'
-            ..type = refer(fieldType),
-        ),
-      )
-      ..lambda = true
-      ..body = Code('state = $updateStatement'),
-  );
 }
 
 /// Generates a method for updating the entire state
@@ -286,16 +193,15 @@ Method _generateStateUpdateMethod(ProviderDefinition provider) {
 }
 
 /// Generates the onSuccess callback method
-Method _generateOnSuccessMethod(String rawResultType) {
+Method _generateOnSuccessMethod(ProviderDefinition provider, String rawResultType) {
+  final hasOverride = provider.methods.any((e) => e.name == 'onSuccess');
   return Method(
     (b) => b
       ..name = 'onSuccess'
       ..annotations.add(refer('protected'))
       ..returns = refer('void')
-      ..docs.add(
-        '/// Callback for when the form is successfully submitted.\n'
-        '/// Override this method to handle the result or perform side effects.',
-      )
+      ..docs.add('/// Callback for when the form is successfully submitted.\n'
+          '/// Override this method and run "dart pub run build_runner build" to make it work. otherwise error will be thrown.')
       ..requiredParameters.add(
         Parameter(
           (b) => b
@@ -303,7 +209,12 @@ Method _generateOnSuccessMethod(String rawResultType) {
             ..type = refer(rawResultType),
         ),
       )
-      ..body = Code(''),
+      ..lambda = !hasOverride
+      ..body = hasOverride
+          ? null
+          : Code(
+              "throw UnimplementedError('This error occurred because you overrode the method without running build_runner. Please run [dart pub run build_runner build] to generate the necessary code.')",
+            ),
   );
 }
 
@@ -313,6 +224,7 @@ Method _generateCallMethod(
   SubmitMethodInfo submitInfo,
   StateProviderInfo stateInfo,
 ) {
+  final hasOverrideOnSuccess = provider.methods.any((e) => e.name == 'onSuccess');
   // Check if form is loaded based on state type
   final loadingCheck = provider.isAsyncValue
       ? '''
@@ -339,7 +251,6 @@ $loadingCheck
 final _callStatus = ref.read(${stateInfo.readProvider});
 final _updateCallStatus = ref.read(${stateInfo.readProvider}.notifier);
 
-// If it's already loading, return loading
 if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
 if (_callStatus?.hasValue == true) {
@@ -363,9 +274,9 @@ final result = await AsyncValue.guard(() async => await submit(
 
 _updateCallStatus.state = result;
 
-if (result.hasValue) {
+${hasOverrideOnSuccess ? '''if (result.hasValue) {
   onSuccess(result.requireValue);
-}
+}''' : ''}
 
 return result;
 '''),

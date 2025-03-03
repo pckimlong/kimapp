@@ -199,20 +199,20 @@ class ${provider.fieldWidgetName(field)} extends HookConsumerWidget {
     final controller = textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
-    ref.listenManual(
+    ref.listen(
       ${provider.providerNameWithFamily(prefix: 'params')}.select((value) => value${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name}),
       (previous, next) {
         if (previous != next && controller.text != next) {
-          controller.text = ${field.isNullable ? 'next ?? ""' : 'next'};
+          controller.text = ${(provider.isAsyncValue || field.isNullable) ? 'next ?? ""' : 'next'};
         }
-        onChanged?.call(previous, next);
+        onChanged?.call(previous, ${provider.isAsyncValue ? 'next ?? ""' : 'next'});
       },
     );
 
     // Initialize external controller if provided
     useEffect(() {
       if (textController != null ${field.isNullable ? "&& initialValue != null" : ""} && textController!.text.isEmpty) {
-        textController!.text = initialValue;
+        textController!.text = ${provider.isAsyncValue ? 'initialValue ?? ""' : 'initialValue'};
       }
       return null;
     }, []);
