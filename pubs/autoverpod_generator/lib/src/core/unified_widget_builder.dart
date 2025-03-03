@@ -1,7 +1,8 @@
+import 'package:autoverpod_generator/src/core/generator_registry.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:autoverpod_generator/src/core/generator_registry.dart';
+import 'package:path/path.dart' as path;
 import 'package:source_gen/source_gen.dart';
 
 /// A unified builder that uses all registered generators
@@ -61,9 +62,10 @@ class UnifiedWidgetBuilder implements Builder {
   }
 
   Future<String> _generateOutput(
-      LibraryReader library, BuildStep buildStep) async {
-    final generatedCode =
-        await _registry.generateForLibrary(library, buildStep);
+    LibraryReader library,
+    BuildStep buildStep,
+  ) async {
+    final generatedCode = await _registry.generateForLibrary(library, buildStep);
 
     if (generatedCode.isEmpty) return '';
 
@@ -82,6 +84,17 @@ class UnifiedWidgetBuilder implements Builder {
       (uri) => uri.contains('riverpod_widget') || uri.contains('annotation'),
     );
 
+    // Handle relative imports
+    final currentDir = path.dirname(buildStep.inputId.path);
+    final resolvedImports = imports.map((import) {
+      if (import.startsWith('package:') || import.startsWith('dart:')) {
+        return import;
+      }
+      // Convert relative imports to be relative to the output file
+      final relativePath = path.relative(import, from: currentDir);
+      return relativePath.startsWith('.') ? relativePath : './$relativePath';
+    }).toSet();
+
     // Create a library with imports and generated code
     final generatedLib = Library((b) {
       b.comments.addAll([
@@ -94,8 +107,10 @@ class UnifiedWidgetBuilder implements Builder {
 
       // Import source file
       b.directives.add(Directive.import(buildStep.inputId.uri.toString()));
-      b.directives.addAll(imports.map((e) => Directive.import(e)));
-      b.directives.addAll(sourceImports.map((e) => Directive.import(e)));
+
+      // Add all imports, removing duplicates
+      final allImports = {...resolvedImports, ...sourceImports};
+      b.directives.addAll(allImports.map((e) => Directive.import(e)));
 
       // Add the generated code
       b.body.add(Code("\n\n$generatedCode"));
@@ -104,6 +119,5 @@ class UnifiedWidgetBuilder implements Builder {
     return _dartfmt.format(generatedLib.accept(DartEmitter()).toString());
   }
 
-  static final _dartfmt =
-      DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
+  static final _dartfmt = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
 }

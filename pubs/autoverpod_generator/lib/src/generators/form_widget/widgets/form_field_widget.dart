@@ -12,7 +12,9 @@ import 'package:recase/recase.dart';
 ///
 /// Creates both the proxy reference and the actual widget implementation
 String generateFormFieldWidget(
-    ProviderDefinition provider, FieldDefinition field) {
+  ProviderDefinition provider,
+  FieldDefinition field,
+) {
   final isTextField = field.type == 'String' || field.type == 'String?';
   final proxyRefName = provider.fieldProxyWidgetName(field);
 
@@ -25,7 +27,10 @@ String generateFormFieldWidget(
 
   final formFieldWidget = isTextField
       ? _generateTextFieldWidget(
-          provider: provider, field: field, proxyRefName: proxyRefName)
+          provider: provider,
+          field: field,
+          proxyRefName: proxyRefName,
+        )
       : _generateStandardFieldWidget(
           provider: provider,
           field: field,
@@ -58,8 +63,7 @@ String _generateFormFieldProxy({
   ].contains(field.name);
 
   // Determine field getter name
-  final fieldGetterName =
-      widgetRefMethodConflicts ? '${field.name}State' : field.name;
+  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
 
   return generateSubProxyWidget(
     proxyRefName,
@@ -130,8 +134,10 @@ String _generateFormFieldProxy({
 }
 
 /// Generates the proxy instantiation code with proper parameters
-String _createProxyInstance(
-    {required String proxyRefName, required bool isTextField}) {
+String _createProxyInstance({
+  required String proxyRefName,
+  required bool isTextField,
+}) {
   return '$proxyRefName(ref${isTextField ? ', textController: _textController' : ''})';
 }
 
@@ -145,8 +151,9 @@ String _generateStandardFieldWidget({
     name: provider.fieldWidgetName(field),
     fields: [
       ClassField(
-          name: 'builder',
-          type: 'Widget Function(BuildContext context, $proxyRefName ref)'),
+        name: 'builder',
+        type: 'Widget Function(BuildContext context, $proxyRefName ref)',
+      ),
     ],
     build: '''
 ${generateDebugCheckCall(provider)}
@@ -162,30 +169,12 @@ String _generateTextFieldWidget({
   required FieldDefinition field,
   required String proxyRefName,
 }) {
-  String paramDeclaration() {
-    if (!provider.hasFamily) return '';
-    return 'final params = ${provider.formInheritedWidgetName}.of(context).params;';
-  }
-
-  // Check for conflicts with WidgetRef methods
-  final widgetRefMethodConflicts = [
-    'read',
-    'watch',
-    'listen',
-    'refresh',
-    'invalidate',
-    'exists',
-  ].contains(field.name);
-
-  // Determine field getter name
-  final fieldGetterName =
-      widgetRefMethodConflicts ? '${field.name}State' : field.name;
-
   return '''
-class ${provider.fieldWidgetName(field)} extends ConsumerStatefulWidget {
+class ${provider.fieldWidgetName(field)} extends HookConsumerWidget {
   const ${provider.fieldWidgetName(field)}({
     super.key,
     this.textController,
+    this.onChanged,
     required this.builder,
   });
 
@@ -196,67 +185,58 @@ class ${provider.fieldWidgetName(field)} extends ConsumerStatefulWidget {
   /// Field utilities are accessible via [ref]
   final Widget Function(BuildContext context, $proxyRefName ref) builder;
 
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => ${provider.fieldWidgetName(field)}State();
-}
-
-class ${provider.fieldWidgetName(field)}State extends ConsumerState<${provider.fieldWidgetName(field)}> {
-  late final TextEditingController _textController;
+  /// Optional callback that will be called when the field value changes
+  final void Function(${!field.isNullable ? '${field.type}?' : field.type} previous, ${field.type} next)? onChanged;
 
   @override
-  void initState() {
-    super.initState();${paramDeclaration()}
+  Widget build(BuildContext context, WidgetRef ref) {
+    ${generateDebugCheckCall(provider)}
+    ${provider.paramsDeclaration}
+
+    // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
     final initialValue = ref.read(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name};
-    _textController = widget.textController ?? TextEditingController(text: initialValue);
+    
+    final controller = textController ?? useTextEditingController(text: initialValue);
 
-    // Setup listener for provider changes
+    // Listen for provider changes
     ref.listenManual(
-      ${provider.providerNameWithFamily(prefix: 'params')}.select(
-        (value) => value${provider.isAsyncValue ? '.requireValue' : ''}.${field.name}
-      ),
-      _handleFieldValueChange,
-      fireImmediately: false,
+      ${provider.providerNameWithFamily(prefix: 'params')}.select((value) => value${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name}),
+      (previous, next) {
+        if (previous != next && controller.text != next) {
+          controller.text = ${field.isNullable ? 'next ?? ""' : 'next'};
+        }
+        onChanged?.call(previous, next);
+      },
     );
 
-    _textController.addListener(_syncTextToProvider);
-  }
-
-  /// Handles when the provider value changes and updates the text controller
-  void _handleFieldValueChange(dynamic previous, dynamic next) {
-    if (previous == next) return;
-    if (_textController.text == next) return;
-
-    // Ensure we're not updating a disposed controller
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _textController.text = ${field.isNullable ? 'next ?? ""' : 'next'};
+    // Initialize external controller if provided
+    useEffect(() {
+      if (textController != null ${field.isNullable ? "&& initialValue != null" : ""} && textController!.text.isEmpty) {
+        textController!.text = initialValue;
       }
-    });
-  }
+      return null;
+    }, []);
 
-  /// Syncs text field changes to the provider
-  void _syncTextToProvider() {
-    if (!mounted) return;
-    ${paramDeclaration()}
-    ref.read(${provider.providerNameWithFamily(prefix: 'params')}.notifier)
-       .update${field.name.pascalCase}(_textController.text);
-  }
+    // Setup text listener
+    useEffect(() {
+      void listener() {
+        final currentValue = ref.read(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name};
+        if (currentValue != controller.text) {
+          ref.read(${provider.providerNameWithFamily(prefix: 'params')}.notifier)
+             .update${field.name.pascalCase}(controller.text);
+        }
+      }
 
-  @override
-  void dispose() {
-    _textController.removeListener(_syncTextToProvider);
-    // Only dispose if we created the controller
-    if (widget.textController == null) {
-      _textController.dispose();
-    }
-    super.dispose();
-  }
+      controller.addListener(listener);
+      return () => controller.removeListener(listener);
+    }, [controller]);
 
-  @override
-  Widget build(BuildContext context) {
-    ${generateDebugCheckCall(provider)}
-    final proxy = ${_createProxyInstance(proxyRefName: proxyRefName, isTextField: true)};
-    return widget.builder(context, proxy);
+    final proxy = $proxyRefName(
+      ref,
+      textController: controller,
+    );
+
+    return builder(context, proxy);
   }
 }
 ''';

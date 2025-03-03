@@ -17,15 +17,15 @@ import '../../../autoverpod_generator.dart';
 
 class FormWidgetGenerator extends WidgetGenerator {
   @override
-  final TypeChecker annotationTypeChecker =
-      const TypeChecker.fromRuntime(FormWidget);
+  final TypeChecker annotationTypeChecker = const TypeChecker.fromRuntime(FormWidget);
 
   @override
   List<String> getRequiredImports() {
     return [
       'package:flutter/widgets.dart',
       'package:flutter/material.dart',
-      'package:flutter_riverpod/flutter_riverpod.dart',
+      'package:flutter_hooks/flutter_hooks.dart',
+      'package:hooks_riverpod/hooks_riverpod.dart',
     ];
   }
 
@@ -35,8 +35,7 @@ class FormWidgetGenerator extends WidgetGenerator {
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    final provider =
-        ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
+    final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
     if (provider.providerType != ProviderType.classBased) {
       throw InvalidGenerationSourceError(
         'FormWidget annotation can only be applied to class-based providers.',
