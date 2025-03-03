@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:autoverpod/autoverpod.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/form_widget_names.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
@@ -16,6 +17,30 @@ import '../../models/provider_definition.dart';
 /// - Success/error handling
 /// - Field updates
 class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
+  /// Set of imports needed for the generated code
+  final Set<String> requiredImports = {};
+
+  /// Collects required imports for a given DartType
+  void _collectImports(DartType type) {
+    if (type is! InterfaceType) return;
+
+    final element = type.element;
+    final libraryUri = element.library.source.uri.toString();
+
+    // Skip dart:core and dart:async types
+    if (!libraryUri.startsWith('dart:core') && !libraryUri.startsWith('dart:async')) {
+      requiredImports.add(libraryUri);
+    }
+
+    // Collect imports for type arguments (generics)
+    for (final typeArg in type.typeArguments) {
+      _collectImports(typeArg);
+    }
+  }
+
+  /// Gets all imports required for this generator
+  Set<String> getRequiredImports() => requiredImports;
+
   @override
   Future<String> generateForAnnotatedElement(
     Element element,
@@ -29,8 +54,36 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
       );
     }
 
-    final provider =
-        ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
+    // Clear imports from previous generation
+    requiredImports.clear();
+
+    // Collect imports from the class and its fields
+    for (final field in element.fields) {
+      _collectImports(field.type);
+    }
+
+    // Collect imports from method return types and parameters
+    for (final method in element.methods) {
+      _collectImports(method.returnType);
+      for (final param in method.parameters) {
+        _collectImports(param.type);
+      }
+    }
+
+    // Collect imports from superclass and interfaces
+    if (element.supertype != null) {
+      _collectImports(element.supertype!);
+    }
+    for (final interface in element.interfaces) {
+      _collectImports(interface);
+    }
+
+    // Collect imports from mixins
+    for (final mixin in element.mixins) {
+      _collectImports(mixin);
+    }
+
+    final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
     final buffer = StringBuffer();
 
     // Generate the form provider abstraction
@@ -59,8 +112,7 @@ class StateProviderInfo {
 /// - Success/error handling
 String _generateFormProviderAbstraction(ProviderDefinition provider) {
   final submitMethodInfo = provider.getSubmitMethodInfo();
-  final stateProviderInfo =
-      _generateStateProviderInfo(provider, submitMethodInfo);
+  final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
   final updateMethods = _generateUpdateMethods(provider);
 
   // Generate the proxy class using code_builder
@@ -135,8 +187,7 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
   // Add field-specific update methods if class info is available
   if (provider.returnType.classInfo != null) {
     final returnClass = provider.returnType.classInfo!;
-    final copyWithNames =
-        returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
+    final copyWithNames = returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
 
     // Generate update methods for each field
     for (final field in returnClass.fields) {
@@ -210,8 +261,7 @@ Method _generateFieldUpdateMethod(
 /// Generates a method for updating the entire state
 Method _generateStateUpdateMethod(ProviderDefinition provider) {
   // Create appropriate update statement based on state type
-  final updateStatement =
-      provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
+  final updateStatement = provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
 
   return Method(
     (b) => b
@@ -336,7 +386,9 @@ Method _generateInvalidateSelfMethod(ProviderDefinition provider) {
 
 /// Generates the submit method signature
 Method _generateSubmitMethod(
-    ProviderDefinition provider, SubmitMethodInfo submitInfo) {
+  ProviderDefinition provider,
+  SubmitMethodInfo submitInfo,
+) {
   return Method(
     (b) => b
       ..name = 'submit'

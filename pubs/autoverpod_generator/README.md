@@ -29,6 +29,8 @@ Add the following to your `pubspec.yaml`:
 ```yaml
 dependencies:
   autoverpod: ^0.0.3
+  hooks_riverpod: <latest-version> # state management
+  flutter_hooks: <latest-version> # required for handle generated form field
 
 dev_dependencies:
   autoverpod_generator: ^0.0.1
