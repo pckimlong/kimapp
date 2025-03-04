@@ -10,7 +10,7 @@
       "",
       "@formWidget",
       "@riverpod",
-      "class ${TM_FILENAME_BASE/(.*?)(?:_provider|Provider)?$/${1:/pascalcase}/g} extends _$${TM_FILENAME_BASE/(.*?)(?:_provider|Provider)?$/${1:/pascalcase}/g} {",
+      "class ${TM_FILENAME_BASE/(.*?)(?:_provider|Provider)?$/${1:/pascalcase}/g} extends _$${TM_FILENAME_BASE/(.*?)(?:_provider|Provider)?$/${1:/pascalcase}/g}Widget {",
       "\t@override",
       "\t${1:paramType} build() {",
       "\t\treturn ${1:paramType}();",
