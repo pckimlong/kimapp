@@ -74,4 +74,15 @@ extension BuildContextX on BuildContext {
       enableDrag: enableDrag,
     );
   }
+
+  /// Function to wrap a function with a loading indicator
+  /// This can help later use to change other loading mechanism with less effort
+  Future<T?> loadingWrapper<T>(Future<T> Function() function) async {
+    final closeLoading = BotToast.showLoading();
+    try {
+      return await function();
+    } finally {
+      closeLoading();
+    }
+  }
 }
