@@ -11,10 +11,30 @@ abstract class Identity<T> {
   @override
   int get hashCode => value.hashCode;
 
-  T toJson() => value;
+  T toJson() {
+    if (value is num && (value as num).isNegative) {
+      throw ArgumentError('Identity value cannot be negative: $value');
+    }
+
+    if (value is String && (value as String).isEmpty) {
+      throw ArgumentError('Identity value cannot be empty: $value');
+    }
+
+    return value;
+  }
 
   @override
   String toString() => '$value';
 
-  T call() => value;
+  T call() {
+    if (value is num && (value as num).isNegative) {
+      throw ArgumentError('Identity value cannot be negative: $value');
+    }
+
+    if (value is String && (value as String).isEmpty) {
+      throw ArgumentError('Identity value cannot be empty: $value');
+    }
+
+    return value;
+  }
 }
