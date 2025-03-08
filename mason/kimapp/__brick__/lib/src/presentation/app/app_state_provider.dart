@@ -48,10 +48,12 @@ class AppState extends _$AppState with LoggerMixin {
 
     // Handle auth-dependent initialization
     final authState = ref.read(authStateProvider);
-    authState.when(
-      authenticated: _handleAuthenticatedState,
-      unauthenticated: _handleUnauthenticatedState,
-    );
+    switch (authState) {
+      case _Authenticated(:final userId):
+        _handleAuthenticatedState(userId);
+      case _Unauthenticated():
+        _handleUnauthenticatedState();
+    }
 
     state = ApplicationState.initialized;
     logInfo('Application initialized');
@@ -60,9 +62,7 @@ class AppState extends _$AppState with LoggerMixin {
   /// Handle authenticated state initialization
   Future<void> _handleAuthenticatedState(UserId uuid) async {
     logInfo('Authenticated, initializing user data');
-    await Future.wait([
-      ref.refresh(currentAccountProvider.future),
-    ]);
+    await Future.wait([ref.refresh(currentAccountProvider.future)]);
   }
 
   /// Handle unauthenticated state
@@ -108,16 +108,13 @@ class AppState extends _$AppState with LoggerMixin {
 
   /// Watch auth state changes and handle navigation
   void _watchAuthState() {
-    ref.listen(
-      authStateProvider,
-      (previous, next) {
-        // We just only replace the route to splash page, to allow it automatically handle where it should navigate to
-        // I use to reinitialize the appstate, but I think by just replace it with splash, it will automatically reinitialize
-        if (previous?.isAuthenticated == true && next.isUnauthenticated) {
-          ref.read(appRouterProvider).replace(SplashRoute());
-        }
-      },
-    );
+    ref.listen(authStateProvider, (previous, next) {
+      // We just only replace the route to splash page, to allow it automatically handle where it should navigate to
+      // I use to reinitialize the appstate, but I think by just replace it with splash, it will automatically reinitialize
+      if (previous?.isAuthenticated == true && next.isUnauthenticated) {
+        ref.read(appRouterProvider).replace(SplashRoute());
+      }
+    });
   }
 
   @override

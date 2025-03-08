@@ -32,17 +32,17 @@ I${pascalCaseName}Repo ${camelCaseName}Repo(Ref ref) => _Impl(ref);
 
 
 abstract class I${pascalCaseName}Repo {
-  Future<Either<Failure, IList<${pascalCaseName}Model>>> findAll(${pascalCaseName}ListParam param);
+  AsyncFailureOr<IList<${pascalCaseName}Model>> findAll(${pascalCaseName}ListParam param);
 
-  Future<Either<Failure, ${pascalCaseName}Model>> findOne(${pascalCaseName}Id id);
+  AsyncFailureOr<${pascalCaseName}Model> findOne(${pascalCaseName}Id id);
 
-  Future<Either<Failure, ${pascalCaseName}Model>> create(${pascalCaseName}CreateParam data);
+  AsyncFailureOr<${pascalCaseName}Model> create(${pascalCaseName}CreateParam data);
 
-  Future<Either<Failure, ${pascalCaseName}Model>> update(${pascalCaseName}Id ${camelCaseName}Id ,{required ${pascalCaseName}UpdateParam data});
+  AsyncFailureOr<${pascalCaseName}Model> update(${pascalCaseName}Id ${camelCaseName}Id ,{required ${pascalCaseName}UpdateParam data});
 
-  Future<Either<Failure, Unit>> delete(${pascalCaseName}Id id);
+  AsyncFailureOr<Unit> delete(${pascalCaseName}Id id);
 
-  Future<Either<Failure, IList<${pascalCaseName}Model>>> findPagination({
+  AsyncFailureOr<IList<${pascalCaseName}Model>> findPagination({
     required int limit,
     required int offset,
     required ${pascalCaseName}ListParam param,
@@ -57,7 +57,7 @@ class _Impl implements I${pascalCaseName}Repo {
   final Ref _ref;
 
   @override
-  Future<Either<Failure,  ${pascalCaseName}Model>> create(${pascalCaseName}CreateParam data) async{
+  AsyncFailureOr<${pascalCaseName}Model> create(${pascalCaseName}CreateParam data) async{
    return await errorHandler(() async {
    return await _ref.supabaseClient
     .from(${pascalCaseName}Model.table.tableName)
@@ -69,7 +69,7 @@ class _Impl implements I${pascalCaseName}Repo {
   }
 
   @override
-  Future<Either<Failure, Unit>> delete(${pascalCaseName}Id id) async{
+  AsyncFailureOr<Unit> delete(${pascalCaseName}Id id) async{
     return await errorHandler(() async {
     await _ref.supabaseClient
     .from(${pascalCaseName}Table.table)
@@ -81,7 +81,7 @@ class _Impl implements I${pascalCaseName}Repo {
   }
 
   @override
-  Future<Either<Failure, IList<${pascalCaseName}Model>>> findAll(${pascalCaseName}ListParam param) async{
+  AsyncFailureOr<IList<${pascalCaseName}Model>> findAll(${pascalCaseName}ListParam param) async{
     return await errorHandler(() async {
     var query = _ref.supabaseClient.from(${pascalCaseName}Model.table.tableName).select(${pascalCaseName}Model.table.selectStatement);
     
@@ -98,7 +98,7 @@ class _Impl implements I${pascalCaseName}Repo {
   }
 
   @override
-  Future<Either<Failure,  ${pascalCaseName}Model>> findOne(${pascalCaseName}Id id) async{
+  AsyncFailureOr<${pascalCaseName}Model> findOne(${pascalCaseName}Id id) async{
    return await errorHandler(() async {
    final query = _ref.supabaseClient
    .from(${pascalCaseName}Model.table.tableName)
@@ -111,7 +111,7 @@ class _Impl implements I${pascalCaseName}Repo {
   }
 
   @override
-  Future<Either<Failure, IList<${pascalCaseName}Model>>> findPagination({
+  AsyncFailureOr<IList<${pascalCaseName}Model>> findPagination({
     required int limit,
     required int offset,
     required ${pascalCaseName}ListParam param,
@@ -135,7 +135,7 @@ class _Impl implements I${pascalCaseName}Repo {
   }
 
   @override
-  Future<Either<Failure,  ${pascalCaseName}Model>> update(${pascalCaseName}Id ${camelCaseName}Id ,{required ${pascalCaseName}UpdateParam data}) async{
+  AsyncFailureOr<${pascalCaseName}Model> update(${pascalCaseName}Id ${camelCaseName}Id ,{required ${pascalCaseName}UpdateParam data}) async{
     return await errorHandler(() async {
     return await _ref.supabaseClient
     .from(${pascalCaseName}Model.table.tableName)
