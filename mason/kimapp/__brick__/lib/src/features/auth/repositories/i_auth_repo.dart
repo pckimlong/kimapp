@@ -12,9 +12,9 @@ part 'i_auth_repo.g.dart';
 IAuthRepo authRepo(Ref ref) => _Impl(ref);
 
 abstract class IAuthRepo {
-  Future<Either<Failure, Option<UserId>>> currentId();
-  Future<Either<Failure, UserId>> signIn(SignInParam param);
-  Future<Either<Failure, Unit>> signOut();
+  AsyncFailureOr<Option<UserId>> currentId();
+  AsyncFailureOr<UserId> signIn(SignInParam param);
+  AsyncFailureOr<Unit> signOut();
 }
 
 class _Impl implements IAuthRepo {
@@ -23,7 +23,7 @@ class _Impl implements IAuthRepo {
   final Ref _ref;
 
   @override
-  Future<Either<Failure, Option<UserId>>> currentId() async {
+  AsyncFailureOr<Option<UserId>> currentId() async {
     return await errorHandler(() async {
       final user = _ref.supabaseClient.auth.currentSession?.user;
       if (user == null) return right(Option.none());
@@ -32,7 +32,7 @@ class _Impl implements IAuthRepo {
   }
 
   @override
-  Future<Either<Failure, UserId>> signIn(SignInParam param) async {
+  AsyncFailureOr<UserId> signIn(SignInParam param) async {
     return await errorHandler(() async {
       final result = await _ref.supabaseClient.auth.signInWithPassword(
         email: param.email,
@@ -44,7 +44,7 @@ class _Impl implements IAuthRepo {
   }
 
   @override
-  Future<Either<Failure, Unit>> signOut() async {
+  AsyncFailureOr<Unit> signOut() async {
     return await errorHandler(() async {
       await _ref.supabaseClient.auth.signOut();
       return right(unit);
