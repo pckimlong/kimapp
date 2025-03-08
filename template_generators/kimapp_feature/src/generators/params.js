@@ -17,7 +17,7 @@ async function generateListParamFile(paramsPath, name) {
 part '${snakeCaseName}_list_param.freezed.dart';
 
 @freezed
-class ${pascalCaseName}ListParam with _$${pascalCaseName}ListParam {
+abstractclass ${pascalCaseName}ListParam with _$${pascalCaseName}ListParam {
   const ${pascalCaseName}ListParam._();
 
   @JsonSerializable(explicitToJson: true)
