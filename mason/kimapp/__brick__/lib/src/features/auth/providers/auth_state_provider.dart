@@ -16,9 +16,15 @@ class AuthenticationState with _$AuthenticationState {
 
   const factory AuthenticationState.unauthenticated() = _Unauthenticated;
 
-  bool get isAuthenticated => whenOrNull(authenticated: (id) => id) != null;
+  bool get isAuthenticated => switch (this) {
+    _Authenticated() => true,
+    _ => false,
+  };
 
-  bool get isUnauthenticated => whenOrNull(unauthenticated: () => true) == true;
+  bool get isUnauthenticated => switch (this) {
+    _Unauthenticated() => true,
+    _ => false,
+  };
 }
 
 @Riverpod(keepAlive: true)
