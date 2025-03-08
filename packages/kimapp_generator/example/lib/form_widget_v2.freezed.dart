@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,75 +10,49 @@ part of 'form_widget_v2.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
 
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
 /// @nodoc
-mixin _$ProductParam {}
+mixin _$ProductParam {
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is ProductParam);
+  }
 
-/// @nodoc
-abstract class $ProductParamCopyWith<$Res> {
-  factory $ProductParamCopyWith(
-          ProductParam value, $Res Function(ProductParam) then) =
-      _$ProductParamCopyWithImpl<$Res, ProductParam>;
-}
-
-/// @nodoc
-class _$ProductParamCopyWithImpl<$Res, $Val extends ProductParam>
-    implements $ProductParamCopyWith<$Res> {
-  _$ProductParamCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of ProductParam
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-abstract class _$$ProductParamImplCopyWith<$Res> {
-  factory _$$ProductParamImplCopyWith(
-          _$ProductParamImpl value, $Res Function(_$ProductParamImpl) then) =
-      __$$ProductParamImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$ProductParamImplCopyWithImpl<$Res>
-    extends _$ProductParamCopyWithImpl<$Res, _$ProductParamImpl>
-    implements _$$ProductParamImplCopyWith<$Res> {
-  __$$ProductParamImplCopyWithImpl(
-      _$ProductParamImpl _value, $Res Function(_$ProductParamImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ProductParam
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$ProductParamImpl extends _ProductParam {
-  const _$ProductParamImpl() : super._();
+  @override
+  int get hashCode => runtimeType.hashCode;
 
   @override
   String toString() {
     return 'ProductParam()';
   }
+}
+
+/// @nodoc
+class $ProductParamCopyWith<$Res> {
+  $ProductParamCopyWith(ProductParam _, $Res Function(ProductParam) __);
+}
+
+/// @nodoc
+
+class _ProductParam extends ProductParam {
+  const _ProductParam() : super._();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ProductParamImpl);
+        (other.runtimeType == runtimeType && other is _ProductParam);
   }
 
   @override
   int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ProductParam()';
+  }
 }
 
-abstract class _ProductParam extends ProductParam {
-  const factory _ProductParam() = _$ProductParamImpl;
-  const _ProductParam._() : super._();
-}
+// dart format on

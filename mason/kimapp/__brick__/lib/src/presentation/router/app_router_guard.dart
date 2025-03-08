@@ -17,29 +17,28 @@ class AuthGuard extends _AppStateRouteGuard with LoggerMixin {
   void onAppStateInitialized(NavigationResolver resolver, StackRouter router) {
     final authState = _ref.read(authStateProvider);
 
-    authState.when(
-      authenticated: (_) => resolver.next(true),
-      unauthenticated: () {
-        logInfo('Unauthenticated. Redirecting to sign page...');
-        resolver.redirect(
-          SignInRoute(
-            onSuccess: () {
-              // We need to navigate to splash page again to initialize state base on auth
-              // if not doing this, it might cause issue
-              logInfo('Redirecting to splash page after sign in initialization...');
-              resolver.redirect(
-                SplashRoute(
-                  onInitialized: () {
-                    logInfo('AuthGuard checked');
-                    resolver.next(true);
-                  },
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
+    if (authState.isAuthenticated) {
+      resolver.next(true);
+    } else if (authState.isUnauthenticated) {
+      logInfo('Unauthenticated. Redirecting to sign page...');
+      resolver.redirect(
+        SignInRoute(
+          onSuccess: () {
+            // We need to navigate to splash page again to initialize state base on auth
+            // if not doing this, it might cause issue
+            logInfo('Redirecting to splash page after sign in initialization...');
+            resolver.redirect(
+              SplashRoute(
+                onInitialized: () {
+                  logInfo('AuthGuard checked');
+                  resolver.next(true);
+                },
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 }
 
@@ -53,10 +52,11 @@ class LoginGuard extends _AppStateRouteGuard with LoggerMixin {
   void onAppStateInitialized(NavigationResolver resolver, StackRouter router) {
     final authState = _ref.read(authStateProvider);
 
-    authState.when(
-      authenticated: (_) => router.replace(const RootRoute()),
-      unauthenticated: () => resolver.next(true),
-    );
+    if (authState.isAuthenticated) {
+      router.replace(const RootRoute());
+    } else if (authState.isUnauthenticated) {
+      resolver.next(true);
+    }
   }
 }
 

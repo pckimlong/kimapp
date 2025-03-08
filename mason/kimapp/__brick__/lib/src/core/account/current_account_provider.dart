@@ -16,12 +16,16 @@ UserId? currentUserId(Ref ref) =>
 class CurrentAccountState with _$CurrentAccountState {
   const CurrentAccountState._();
 
-  /// None mean no data attach to, might be in unauthenticated state
   const factory CurrentAccountState.none() = _None;
 
   const factory CurrentAccountState() = CurrentAccountStateData;
 
-  CurrentAccountStateData? get account => mapOrNull((v) => v);
+  CurrentAccountStateData? get account {
+    return switch (this) {
+      final CurrentAccountStateData data => data,
+      _ => null,
+    };
+  }
 }
 
 extension CurrentAccountStateDataX on CurrentAccountStateData {}

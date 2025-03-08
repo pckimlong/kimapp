@@ -21,8 +21,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
   const PaginatedItem._();
 
   const factory PaginatedItem.data(T item) = _Data;
-  const factory PaginatedItem.loading({@Default(true) bool isFirstItem}) =
-      _Loading;
+  const factory PaginatedItem.loading({@Default(true) bool isFirstItem}) = _Loading;
   const factory PaginatedItem.error(Failure failure) = _Error;
 
   /// Build pagination item
@@ -52,8 +51,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
     bool showLoadingInAllItem = false,
   }) {
     final itemIndexInPage = index % limit;
-    final itemOfIndexAsync =
-        pageItems.whenData((value) => value.getOrNull(itemIndexInPage));
+    final itemOfIndexAsync = pageItems.whenData((value) => value.getOrNull(itemIndexInPage));
     return itemOfIndexAsync.when(
       data: (data) {
         if (data != null) return PaginatedItem.data(data);
@@ -62,10 +60,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
       error: (err, str) {
         if (itemIndexInPage == 0) {
           return PaginatedItem.error(
-            Failure(FailureInfo(
-                stackTrace: str,
-                debugMessage: err.toString(),
-                errorObject: err)),
+            Failure(FailureInfo(stackTrace: str, debugMessage: err.toString(), errorObject: err)),
           );
         }
         return null;
@@ -75,8 +70,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
           return const PaginatedItem.loading(isFirstItem: true);
         }
 
-        if (showLoadingInAllItem)
-          return const PaginatedItem.loading(isFirstItem: false);
+        if (showLoadingInAllItem) return const PaginatedItem.loading(isFirstItem: false);
 
         return null;
       },
@@ -92,8 +86,7 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
   const factory ProviderStatus.failure(Failure failure) = _Failure<T>;
   const factory ProviderStatus.success(T success) = _Success<T>;
 
-  factory ProviderStatus.fromAsyncValue(AsyncValue<T> asyncValue,
-      {bool initial = false}) {
+  factory ProviderStatus.fromAsyncValue(AsyncValue<T> asyncValue, {bool initial = false}) {
     return asyncValue.when(
       data: (value) => ProviderStatus.success(value),
       error: (err, str) {
@@ -113,8 +106,7 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
 
   /// Safety run callback inside provider status, handle try-cache
   /// return appropriate state.
-  static Future<ProviderStatus<T>> guard<T>(
-      Future<T> Function() callback) async {
+  static Future<ProviderStatus<T>> guard<T>(Future<T> Function() callback) async {
     try {
       return ProviderStatus.success(await callback());
     } catch (err, stack) {
@@ -123,8 +115,7 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
             ? err
             : err is String
                 ? Failure.fromString(err)
-                : Failure(FailureInfo(
-                    stackTrace: stack, debugMessage: err.toString())),
+                : Failure(FailureInfo(stackTrace: stack, debugMessage: err.toString())),
       );
     }
   }
@@ -138,9 +129,7 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
 
   AsyncValue<T> toAsyncValue({T Function()? onInitial}) {
     return when(
-      initial: () => onInitial == null
-          ? const AsyncValue.loading()
-          : AsyncValue.data(onInitial()),
+      initial: () => onInitial == null ? const AsyncValue.loading() : AsyncValue.data(onInitial()),
       inProgress: () => const AsyncValue.loading(),
       failure: (failure) => failure.toAsyncError(),
       success: (value) => AsyncValue.data(value),
@@ -276,10 +265,8 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
         final isEqual = Eq.instance(comparer);
 
         // Calculate differences
-        final removedItems =
-            previousItems.difference(isEqual, currentItems).toIList();
-        final addedItems =
-            currentItems.difference(isEqual, previousItems).toIList();
+        final removedItems = previousItems.difference(isEqual, currentItems).toIList();
+        final addedItems = currentItems.difference(isEqual, previousItems).toIList();
 
         // Optimize update detection by creating a map of previous items
         final previousItemsMap = previousItems.asMap().map(
@@ -292,9 +279,7 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
         }).toIList();
 
         // Only trigger callback if there are actual changes
-        if (removedItems.isNotEmpty ||
-            addedItems.isNotEmpty ||
-            updatedItems.isNotEmpty) {
+        if (removedItems.isNotEmpty || addedItems.isNotEmpty || updatedItems.isNotEmpty) {
           onChange(removedItems, addedItems, updatedItems);
         }
 
@@ -329,8 +314,7 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
   }
 }
 
-extension ProviderStatusClassProviderX<B, T>
-    on Ref<ProviderStatusClassMixin<B, T>> {
+extension ProviderStatusClassProviderX<B, T> on Ref<ProviderStatusClassMixin<B, T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
     listenSelf(
       (previous, next) {
@@ -342,8 +326,7 @@ extension ProviderStatusClassProviderX<B, T>
   }
 }
 
-extension ProviderStatusFamilyNotifierX<T>
-    on BuildlessAutoDisposeNotifier<ProviderStatus<T>> {
+extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<ProviderStatus<T>> {
   /// Perform call function of provider with continuously update the status and catch error
   ///
   /// If status is currently in progress or already success, no action will be perform and return current status
@@ -368,12 +351,13 @@ extension ProviderStatusFamilyNotifierX<T>
     void Function(Failure failure)? onFailure,
     void Function(R success)? onSuccess,
   }) async {
-    if (state.isInProgress || state.isSuccess)
-      return state as ProviderStatus<R>;
+    if (state.isInProgress || state.isSuccess) return state as ProviderStatus<R>;
 
     state = ProviderStatus<T>.inProgress();
-    final result =
-        await ProviderStatus.guard<R>(() async => await callback(state));
+    final result = await ProviderStatus.guard<R>(() async => await callback(state));
+
+    // Update the state with the result
+    state = result as ProviderStatus<T>;
 
     // Store result before callbacks to prevent state updates from affecting return value
     final updatedState = result;
@@ -391,8 +375,7 @@ extension ProviderStatusFamilyNotifierX<T>
 }
 
 /// Make family provider(provider with params in builds) work
-extension ProviderStatusClassFamilyNotifierX<A,
-        Base extends ProviderStatusClassMixin<Base, A>>
+extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
     on BuildlessAutoDisposeNotifier<Base> {
   bool get isInProgress => state.status.isInProgress;
   bool get isFailure => state.status.isFailure;
@@ -413,8 +396,7 @@ extension ProviderStatusClassFamilyNotifierX<A,
     bool ignoreInSuccessState = true,
   }) async {
     if (isInProgress) return state.status as ProviderStatus<T>;
-    if (ignoreInSuccessState && isSuccess)
-      return state.status as ProviderStatus<T>;
+    if (ignoreInSuccessState && isSuccess) return state.status as ProviderStatus<T>;
 
     /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
     if (state is UpdateFormMixin) {
@@ -436,8 +418,7 @@ extension ProviderStatusClassFamilyNotifierX<A,
     // state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
 
     //* New approach is to await for the progress first before update the state.
-    final result =
-        await ProviderStatus.guard(() async => await callback(state));
+    final result = await ProviderStatus.guard(() async => await callback(state));
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
     if (isFailure && onFailure != null) {
@@ -480,20 +461,18 @@ extension ProviderStatusFamilyNotifierXX<T> on Notifier<ProviderStatus<T>> {
     if (state.isInProgress || state.isSuccess) return state;
     state = ProviderStatus<T>.inProgress();
     state = await ProviderStatus.guard<T>(() async => await callback(state));
-    final updatedState =
-        state; // prevent if onsuccess or failure update current state
+    final updatedState = state; // prevent if onsuccess or failure update current state
     if (state.isFailure && onFailure != null) {
       onFailure(state.whenOrNull(failure: (failure) => failure)!);
     }
-    if (state.isSuccess && onSuccess != null)
-      onSuccess(state.successOrNull as T);
+    if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
     return updatedState;
   }
 }
 
 /// Make family provider(provider with params in builds) work
-extension ProviderStatusClassFamilyNotifierXX<A,
-    Base extends ProviderStatusClassMixin<Base, A>> on Notifier<Base> {
+extension ProviderStatusClassFamilyNotifierXX<A, Base extends ProviderStatusClassMixin<Base, A>>
+    on Notifier<Base> {
   bool get isInProgress => state.status.isInProgress;
   bool get isFailure => state.status.isFailure;
   bool get isInitial => state.status.isInitial;
@@ -513,8 +492,7 @@ extension ProviderStatusClassFamilyNotifierXX<A,
     bool ignoreInSuccessState = true,
   }) async {
     if (isInProgress) return state.status as ProviderStatus<T>;
-    if (ignoreInSuccessState && isSuccess)
-      return state.status as ProviderStatus<T>;
+    if (ignoreInSuccessState && isSuccess) return state.status as ProviderStatus<T>;
 
     /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
     if (state is UpdateFormMixin) {
@@ -536,8 +514,7 @@ extension ProviderStatusClassFamilyNotifierXX<A,
     // state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
 
     //* New approach is to await for the progress first before update the state.
-    final result =
-        await ProviderStatus.guard(() async => await callback(state));
+    final result = await ProviderStatus.guard(() async => await callback(state));
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
     if (isFailure && onFailure != null) {

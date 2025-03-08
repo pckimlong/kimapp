@@ -6,8 +6,7 @@ part of 'demo_schema.schema.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DemoModelImpl _$$DemoModelImplFromJson(Map<String, dynamic> json) =>
-    _$DemoModelImpl(
+_DemoModel _$DemoModelFromJson(Map<String, dynamic> json) => _DemoModel(
       name: json['name'] as String?,
       description: json['description'] as String?,
       age: (json['age'] as num).toInt(),
@@ -20,7 +19,7 @@ _$DemoModelImpl _$$DemoModelImplFromJson(Map<String, dynamic> json) =>
           : OtherModel.fromJson(json['other'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$DemoModelImplToJson(_$DemoModelImpl instance) =>
+Map<String, dynamic> _$DemoModelToJson(_DemoModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
@@ -30,9 +29,8 @@ Map<String, dynamic> _$$DemoModelImplToJson(_$DemoModelImpl instance) =>
       'other': instance.other?.toJson(),
     };
 
-_$DemoDetailModelImpl _$$DemoDetailModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DemoDetailModelImpl(
+_DemoDetailModel _$DemoDetailModelFromJson(Map<String, dynamic> json) =>
+    _DemoDetailModel(
       name: json['name'] as String?,
       description: json['description'] as String?,
       age: (json['age'] as num).toInt(),
@@ -45,8 +43,7 @@ _$DemoDetailModelImpl _$$DemoDetailModelImplFromJson(
           : OtherModel.fromJson(json['other'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$DemoDetailModelImplToJson(
-        _$DemoDetailModelImpl instance) =>
+Map<String, dynamic> _$DemoDetailModelToJson(_DemoDetailModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
@@ -56,8 +53,8 @@ Map<String, dynamic> _$$DemoDetailModelImplToJson(
       'other': instance.other?.toJson(),
     };
 
-_$DemoLiteModelImpl _$$DemoLiteModelImplFromJson(Map<String, dynamic> json) =>
-    _$DemoLiteModelImpl(
+_DemoLiteModel _$DemoLiteModelFromJson(Map<String, dynamic> json) =>
+    _DemoLiteModel(
       name: json['name'] as String?,
       age: (json['age'] as num).toInt(),
       birthdate: json['birthdate'] == null
@@ -69,7 +66,7 @@ _$DemoLiteModelImpl _$$DemoLiteModelImplFromJson(Map<String, dynamic> json) =>
           : OtherModel.fromJson(json['other'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$DemoLiteModelImplToJson(_$DemoLiteModelImpl instance) =>
+Map<String, dynamic> _$DemoLiteModelToJson(_DemoLiteModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'age': instance.age,
