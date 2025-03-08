@@ -7,5 +7,6 @@ environment:
   sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
-  autoverpod: ^0.0.3
+  autoverpod:
+    path: ../
     path: ./pubs/autoverpod

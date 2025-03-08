@@ -58,9 +58,13 @@ Method _generateFieldUpdateMethod(
   String baseType,
 ) {
   // Create appropriate update statement based on state type
+  final newValue = fieldType == 'String?'
+      ? 'newValue == null || newValue.isEmpty ? null : newValue'
+      : 'newValue';
+
   final updateStatement = provider.isAsyncValue
-      ? 'state.whenData((state) => state.copyWith($fieldName: newValue))'
-      : 'state.copyWith($fieldName: newValue)';
+      ? 'state.whenData((state) => state.copyWith($fieldName: $newValue))'
+      : 'state.copyWith($fieldName: $newValue)';
 
   return Method(
     (b) => b
