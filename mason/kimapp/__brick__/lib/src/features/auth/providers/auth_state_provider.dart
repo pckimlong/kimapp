@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kimapp/extensions.dart';
 import 'package:kimapp_supabase_helper/kimapp_supabase_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../auth.dart';
 
@@ -16,9 +17,17 @@ class AuthenticationState with _$AuthenticationState {
 
   const factory AuthenticationState.unauthenticated() = _Unauthenticated;
 
-  bool get isAuthenticated => whenOrNull(authenticated: (id) => id) != null;
+  bool get isAuthenticated => this is Authenticated;
 
-  bool get isUnauthenticated => whenOrNull(unauthenticated: () => true) == true;
+  bool get isUnauthenticated => this is Unauthenticated;
+}
+
+@Riverpod(keepAlive: true)
+UserId? currentUserId(Ref ref) {
+  return switch (ref.watch(authStateProvider)) {
+    _Authenticated(:final userId) => userId,
+    _ => null,
+  };
 }
 
 @Riverpod(keepAlive: true)

@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,81 +10,50 @@ part of 'other_schema.schema.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-OtherModel _$OtherModelFromJson(Map<String, dynamic> json) {
-  return _OtherModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$OtherModel {
   @JsonKey(name: OtherModel.idKey)
-  OtherId get id => throw _privateConstructorUsedError;
+  OtherId get id;
   @JsonKey(name: OtherModel.nameKey)
-  String get name => throw _privateConstructorUsedError;
-
-  /// Serializes this OtherModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String get name;
 
   /// Create a copy of OtherModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $OtherModelCopyWith<OtherModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OtherModelCopyWith<$Res> {
-  factory $OtherModelCopyWith(
-          OtherModel value, $Res Function(OtherModel) then) =
-      _$OtherModelCopyWithImpl<$Res, OtherModel>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: OtherModel.idKey) OtherId id,
-      @JsonKey(name: OtherModel.nameKey) String name});
-}
-
-/// @nodoc
-class _$OtherModelCopyWithImpl<$Res, $Val extends OtherModel>
-    implements $OtherModelCopyWith<$Res> {
-  _$OtherModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of OtherModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $OtherModelCopyWith<OtherModel> get copyWith =>
+      _$OtherModelCopyWithImpl<OtherModel>(this as OtherModel, _$identity);
+
+  /// Serializes this OtherModel to a JSON map.
+  Map<String, dynamic> toJson();
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? name = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as OtherId,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is OtherModel &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name);
+
+  @override
+  String toString() {
+    return 'OtherModel(id: $id, name: $name)';
   }
 }
 
 /// @nodoc
-abstract class _$$OtherModelImplCopyWith<$Res>
-    implements $OtherModelCopyWith<$Res> {
-  factory _$$OtherModelImplCopyWith(
-          _$OtherModelImpl value, $Res Function(_$OtherModelImpl) then) =
-      __$$OtherModelImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $OtherModelCopyWith<$Res> {
+  factory $OtherModelCopyWith(
+          OtherModel value, $Res Function(OtherModel) _then) =
+      _$OtherModelCopyWithImpl;
   @useResult
   $Res call(
       {@JsonKey(name: OtherModel.idKey) OtherId id,
@@ -91,12 +61,11 @@ abstract class _$$OtherModelImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$OtherModelImplCopyWithImpl<$Res>
-    extends _$OtherModelCopyWithImpl<$Res, _$OtherModelImpl>
-    implements _$$OtherModelImplCopyWith<$Res> {
-  __$$OtherModelImplCopyWithImpl(
-      _$OtherModelImpl _value, $Res Function(_$OtherModelImpl) _then)
-      : super(_value, _then);
+class _$OtherModelCopyWithImpl<$Res> implements $OtherModelCopyWith<$Res> {
+  _$OtherModelCopyWithImpl(this._self, this._then);
+
+  final OtherModel _self;
+  final $Res Function(OtherModel) _then;
 
   /// Create a copy of OtherModel
   /// with the given fields replaced by the non-null parameter values.
@@ -106,13 +75,13 @@ class __$$OtherModelImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
   }) {
-    return _then(_$OtherModelImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as OtherId,
       name: null == name
-          ? _value.name
+          ? _self.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
     ));
@@ -123,14 +92,13 @@ class __$$OtherModelImplCopyWithImpl<$Res>
 
 @TableModel(OtherModel.tableName)
 @JsonSerializable(explicitToJson: true)
-class _$OtherModelImpl extends _OtherModel {
-  const _$OtherModelImpl(
+class _OtherModel extends OtherModel {
+  const _OtherModel(
       {@JsonKey(name: OtherModel.idKey) required this.id,
       @JsonKey(name: OtherModel.nameKey) required this.name})
       : super._();
-
-  factory _$OtherModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OtherModelImplFromJson(json);
+  factory _OtherModel.fromJson(Map<String, dynamic> json) =>
+      _$OtherModelFromJson(json);
 
   @override
   @JsonKey(name: OtherModel.idKey)
@@ -139,16 +107,26 @@ class _$OtherModelImpl extends _OtherModel {
   @JsonKey(name: OtherModel.nameKey)
   final String name;
 
+  /// Create a copy of OtherModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'OtherModel(id: $id, name: $name)';
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$OtherModelCopyWith<_OtherModel> get copyWith =>
+      __$OtherModelCopyWithImpl<_OtherModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$OtherModelToJson(
+      this,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$OtherModelImpl &&
+            other is _OtherModel &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name));
   }
@@ -157,43 +135,51 @@ class _$OtherModelImpl extends _OtherModel {
   @override
   int get hashCode => Object.hash(runtimeType, id, name);
 
-  /// Create a copy of OtherModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$OtherModelImplCopyWith<_$OtherModelImpl> get copyWith =>
-      __$$OtherModelImplCopyWithImpl<_$OtherModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OtherModelImplToJson(
-      this,
-    );
+  String toString() {
+    return 'OtherModel(id: $id, name: $name)';
   }
 }
 
-abstract class _OtherModel extends OtherModel {
-  const factory _OtherModel(
-          {@JsonKey(name: OtherModel.idKey) required final OtherId id,
-          @JsonKey(name: OtherModel.nameKey) required final String name}) =
-      _$OtherModelImpl;
-  const _OtherModel._() : super._();
-
-  factory _OtherModel.fromJson(Map<String, dynamic> json) =
-      _$OtherModelImpl.fromJson;
-
+/// @nodoc
+abstract mixin class _$OtherModelCopyWith<$Res>
+    implements $OtherModelCopyWith<$Res> {
+  factory _$OtherModelCopyWith(
+          _OtherModel value, $Res Function(_OtherModel) _then) =
+      __$OtherModelCopyWithImpl;
   @override
-  @JsonKey(name: OtherModel.idKey)
-  OtherId get id;
-  @override
-  @JsonKey(name: OtherModel.nameKey)
-  String get name;
+  @useResult
+  $Res call(
+      {@JsonKey(name: OtherModel.idKey) OtherId id,
+      @JsonKey(name: OtherModel.nameKey) String name});
+}
+
+/// @nodoc
+class __$OtherModelCopyWithImpl<$Res> implements _$OtherModelCopyWith<$Res> {
+  __$OtherModelCopyWithImpl(this._self, this._then);
+
+  final _OtherModel _self;
+  final $Res Function(_OtherModel) _then;
 
   /// Create a copy of OtherModel
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OtherModelImplCopyWith<_$OtherModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+  }) {
+    return _then(_OtherModel(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as OtherId,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
+
+// dart format on

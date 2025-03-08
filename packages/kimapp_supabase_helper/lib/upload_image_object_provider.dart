@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_internal_member, invalid_use_of_protected_member
+
 import 'dart:ui';
 
 import 'package:cross_file/cross_file.dart';
@@ -8,6 +10,8 @@ import 'package:image/image.dart' as img;
 import 'package:kimapp/kimapp.dart';
 import 'package:kimapp_supabase_helper/helper.dart';
 import 'package:path/path.dart' as p;
+import 'package:riverpod/src/async_notifier.dart';
+import 'package:riverpod/src/notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:slugify/slugify.dart';
 import 'package:uuid/uuid.dart';
@@ -54,8 +58,7 @@ class ImageDimensions {
     final pathWithoutExtension = p.withoutExtension(filePath);
 
     // Check if path already contains dimensions
-    final hasDimensions =
-        RegExp(r'\d+\.?\d*x\d+\.?\d*$').hasMatch(pathWithoutExtension);
+    final hasDimensions = RegExp(r'\d+\.?\d*x\d+\.?\d*$').hasMatch(pathWithoutExtension);
 
     if (hasDimensions) {
       // Replace existing dimensions
@@ -179,8 +182,7 @@ class UploadImageObject extends _$UploadImageObject {
             ].join('-') +
             p.extension(validFilename);
 
-        final storagePath =
-            directory.isNotEmpty ? p.join(directory, imagePath) : imagePath;
+        final storagePath = directory.isNotEmpty ? p.join(directory, imagePath) : imagePath;
 
         // Create and upload storage object
         final storageObject = object(storagePath);
@@ -201,7 +203,7 @@ class UploadImageObject extends _$UploadImageObject {
   }
 }
 
-extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
+extension UploadImageObjectNotifierX on NotifierBase {
   /// Wrapper function to handle image upload and callback execution
   /// This can be use to make sure if the upload is successful, the callback will be executed
   /// but failed upload will be handled and deleted
@@ -227,9 +229,7 @@ extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
 
     ProviderStatus<BaseStorageObject>? uploadResult;
     try {
-      uploadResult = await ref
-          .read(uploadImageObjectProvider.notifier)
-          .call<BaseStorageObject>(
+      uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
             image,
             object: object,
             customPrefix: customPrefix,
@@ -263,8 +263,72 @@ extension ProviderStatusClassFamilyNotifierX on BuildlessAutoDisposeNotifier {
     }
   }
 
-  Future<void> _deleteImage(
-      ProviderStatus<BaseStorageObject> uploadResult) async {
+  Future<void> _deleteImage(ProviderStatus<BaseStorageObject> uploadResult) async {
+    await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
+  }
+}
+
+extension UploadImageObjectAsyncNotifierX on AsyncNotifierBase {
+  /// Wrapper function to handle image upload and callback execution
+  /// This can be use to make sure if the upload is successful, the callback will be executed
+  /// but failed upload will be handled and deleted
+  ///
+  ///
+  /// [T] The return type of the callback function
+  /// [M] The type of storage object to be created, must extend BaseStorageObject
+  /// [image] The image file to upload
+  /// [object] Function to create the storage object
+  /// [callback] Function to execute after successful upload
+  /// [customPrefix] Optional prefix for the generated filename
+  /// [directory] Optional directory path
+  /// [upsert] Whether to overwrite existing files
+  Future<T> uploadImageWrapper<T, M extends BaseStorageObject>(
+    XFile? image,
+    M Function(String generatedPath) object, {
+    required FutureOr<T> Function(M? image) callback,
+    String? customPrefix,
+    String directory = '',
+    bool upsert = false,
+  }) async {
+    if (image == null) return callback(null);
+
+    ProviderStatus<BaseStorageObject>? uploadResult;
+    try {
+      uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
+            image,
+            object: object,
+            customPrefix: customPrefix,
+            directory: directory,
+            upsert: upsert,
+          );
+
+      if (uploadResult.isFailure) {
+        throw uploadResult.failure!;
+      }
+
+      if (uploadResult.isSuccess) {
+        try {
+          return callback(uploadResult.successOrNull as M);
+        } catch (_) {
+          if (uploadResult.successOrNull != null) {
+            await _deleteImage(uploadResult);
+            uploadResult = null;
+          }
+          rethrow;
+        }
+      }
+
+      throw 'Something went wrong';
+    } catch (_) {
+      // If the upload succeeded, but the delete file failed, we delete it again
+      if (uploadResult != null && uploadResult.successOrNull != null) {
+        await _deleteImage(uploadResult);
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> _deleteImage(ProviderStatus<BaseStorageObject> uploadResult) async {
     await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
   }
 }

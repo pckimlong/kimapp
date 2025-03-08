@@ -62,6 +62,11 @@ class OtherId extends Identity<int> {
   factory OtherId.fromValue(int value) {
     return OtherId._(value);
   }
+
+  /// Creates an instance of OtherId with a value of -1.
+  /// This is used to represent an empty or invalid OtherId for placeholder or default values of form fields.
+  /// WARNING: This is not a valid OtherId access it value through [value] or [call] will throw an error.
+  factory OtherId.empty() => OtherId._(-1);
 }
 
 /// Base class of this schema, this is the parent of all generated models in this schema
@@ -75,7 +80,9 @@ abstract class IOtherModel {
 
 /// Base model class for OtherModel.
 @freezed
-class OtherModel with _$OtherModel implements BaseOtherSchema, IOtherModel {
+sealed class OtherModel
+    with _$OtherModel
+    implements BaseOtherSchema, IOtherModel {
   const OtherModel._();
 
   /// Constructor for OtherModel.

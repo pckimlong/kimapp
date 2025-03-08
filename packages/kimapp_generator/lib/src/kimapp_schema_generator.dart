@@ -882,7 +882,7 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
 
   // Empty only work for number and string
   if (idField.isNumber || idField.isString) {
-    final emptyValue = idField.isNumber ? -1 : '';
+    final emptyValue = idField.isNumber ? -1 : '""';
 
     buffer.writeln('  /// Creates an instance of $idClassName with a value of $emptyValue.');
     buffer.writeln(
@@ -942,7 +942,7 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   buffer.writeln('/// Base model class for $baseModelName.');
   buffer.writeln('@freezed');
   buffer.writeln(
-      'class $baseModelName with _\$$baseModelName implements $baseClass, ${_baseModelBaseClassName(schema)} {');
+      'sealed class $baseModelName with _\$$baseModelName implements $baseClass, ${_baseModelBaseClassName(schema)} {');
   buffer.writeln('  const $baseModelName._();');
   buffer.writeln();
 
@@ -1025,7 +1025,7 @@ String _generateModelClass(
           ? "," + _baseModelBaseClassName(schema)
           : '';
   buffer.writeln(
-    'class ${model.modelName} with _\$${model.modelName} implements $baseClass $additionalImplements {',
+    'sealed class ${model.modelName} with _\$${model.modelName} implements $baseClass $additionalImplements {',
   );
   buffer.writeln('  const ${model.modelName}._();');
   buffer.writeln();
