@@ -1,4 +1,5 @@
 import 'package:kimapp/object/failure.dart';
+import 'package:stack_trace/stack_trace.dart';
 
 class Kimapp {
   Kimapp._();
@@ -68,7 +69,6 @@ class Kimapp {
   FailureMessage _failureMessage = FailureMessage();
 
   LoggerCallback? _logger;
-  LoggerCallback? get logger => _logger;
 
   late bool _debugMode;
   bool get debugMode => _debugMode;
@@ -80,12 +80,12 @@ class Kimapp {
     Object? object,
     StackTrace? stackTrace,
   }) {
-    if (logger != null) {
-      logger!(
+    if (_logger != null) {
+      _logger!(
         type,
         message,
         title,
-        stackTrace,
+        stackTrace == null ? null : Trace.from(stackTrace).terse,
         object,
       );
     }
@@ -96,7 +96,7 @@ typedef LoggerCallback = void Function(
   LoggerType type,
   String message, [
   String? title,
-  StackTrace? stackTrace,
+  Trace? trace,
   Object? errorObject,
 ]);
 
