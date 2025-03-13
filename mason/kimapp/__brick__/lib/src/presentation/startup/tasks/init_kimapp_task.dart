@@ -40,9 +40,7 @@ class InitKimappTask extends StartUpTask {
           'files': [FileType.image],
         },
         maxFileSizeBytes: 10 * 1024 * 1024,
-        typeSpecificMaxSizes: {
-          FileType.image: 5 * 1024 * 1024,
-        },
+        typeSpecificMaxSizes: {FileType.image: 5 * 1024 * 1024},
       ),
     );
   }
