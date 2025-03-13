@@ -14,3 +14,7 @@
 - Fix missing imports for custom field types in generated form widgets
 - Add support for proper import path resolution in generated code
 - Improve import handling in UnifiedWidgetBuilder
+
+## 0.0.4
+
+- Fix bugs
