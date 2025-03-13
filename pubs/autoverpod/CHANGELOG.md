@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Fix bugs
+
 ## 0.0.3
 
 - Added annotations for form and state widgets

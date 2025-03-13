@@ -260,10 +260,10 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2025-02-25T14:12:01.330490Z",
+  "generated": "2025-03-13T17:28:50.143085Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///Users/kim/Development/flutter",
-  "flutterVersion": "3.29.0",
+  "flutterVersion": "3.29.1",
   "pubCache": "file:///Users/kim/.pub-cache"
 }
