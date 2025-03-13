@@ -93,10 +93,11 @@ extension FailureX on Failure {
   /// By default in release mode default failure message or custom message provided in [Kimapp] service
   /// will be use, but in the debug mode the debug message will be use, you can use the release mode message
   /// even in debug mode by make [debugMessageEnable] to false
-  String message([bool debugMessageEnable = true]) {
+  /// If [alwaysUseDebugMessage] is true, the debug message will be use regardless of the debug mode
+  String message([bool debugMessageEnable = true, bool alwaysUseDebugMessage = false]) {
     final kimapp = Kimapp.instance;
     final mgs = kimapp.failureMessage;
-    final useDebugMessage = kimapp.debugMode && debugMessageEnable;
+    final useDebugMessage = (kimapp.debugMode && debugMessageEnable) || alwaysUseDebugMessage;
 
     return when(
       (info) => useDebugMessage ? info.debugMessage : info.message ?? "Something when wrong!",
