@@ -14,5 +14,8 @@ class Config {
     printProviderUpdated: true,
   );
 
+  /// Weather to print only fews item of [Iterable] in [Riverpod] logs.
+  static const bool printShortRiverpodLogIterable = true;
+
   static const int minSplashDurationInMs = 800;
 }

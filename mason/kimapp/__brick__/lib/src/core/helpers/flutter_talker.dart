@@ -5,7 +5,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 Talker initFlutterTalker(IntegrationMode env) {
   return TalkerFlutter.init(
     settings: TalkerSettings(
-      enabled: !env.isRelease,
+      enabled: kDebugMode || kProfileMode, // enable even env is release, but actual mode is debug
       useHistory: true,
       useConsoleLogs: true,
     ),
