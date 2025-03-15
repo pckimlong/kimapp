@@ -86,7 +86,7 @@ class _$TableBuilderCopyWithImpl<$Res> implements $TableBuilderCopyWith<$Res> {
 /// @nodoc
 
 class _TableBuilder extends TableBuilder {
-  _TableBuilder(
+  const _TableBuilder(
       {required this.tableName, required final List<ColumnBuilder> columns})
       : _columns = columns,
         super._();
