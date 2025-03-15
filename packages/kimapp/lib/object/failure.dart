@@ -32,55 +32,44 @@ extension FailureX on Failure {
   AsyncError<T> toAsyncError<T>() => AsyncError<T>(message(), stackTrace);
 
   StackTrace get stackTrace {
-    return when(
-      (info) => info.stackTrace,
-      exception: (info) => info.stackTrace,
-      networkFailure: (info) => info.stackTrace,
-      serverError: (info) => info.stackTrace,
-      databaseFailure: (info) => info.when(
-        (info) => info.stackTrace,
-        uniqueConstraint: (info) => info.stackTrace,
-        notFound: (info) => info.stackTrace,
-      ),
-      authFailure: (info) => info.when(
-        (info) => info.stackTrace,
-        incorrectLoginCredential: (info) => info.stackTrace,
-        forbidden: (info) => info.stackTrace,
-        alreadyRegistered: (info) => info.stackTrace,
-      ),
-    );
+    return switch (this) {
+      _Failure(:final info) => info.stackTrace,
+      ExceptionFailure(:final info) => info.stackTrace,
+      NetworkFailure(:final info) => info.stackTrace,
+      ServerError(:final info) => info.stackTrace,
+      DatabaseFailure(failures: final f) => switch (f) {
+          _DatabaseFailures(:final info) => info.stackTrace,
+          _UniqueConstraint(:final info) => info.stackTrace,
+          _NotFound(:final info) => info.stackTrace,
+        },
+      AuthFailure(failures: final f) => switch (f) {
+          _AuthFailures(:final info) => info.stackTrace,
+          _IncorrectLoginCredential(:final info) => info.stackTrace,
+          _Forbidden(:final info) => info.stackTrace,
+          _UserAlreadyRegistered(:final info) => info.stackTrace,
+        },
+    };
   }
 
   bool get isNotFoundFailure {
-    return maybeWhen(
-      (_) => false,
-      orElse: () => false,
-      databaseFailure: (info) => info.maybeWhen(
-        (_) => false,
-        orElse: () => false,
-        notFound: (info) => true,
-      ),
-    );
+    return switch (this) {
+      DatabaseFailure(failures: _NotFound()) => true,
+      _ => false,
+    };
   }
 
   bool get isUniqueConstraintFailure {
-    return maybeWhen(
-      (_) => false,
-      orElse: () => false,
-      databaseFailure: (info) => info.maybeWhen(
-        (_) => false,
-        orElse: () => false,
-        uniqueConstraint: (_) => true,
-      ),
-    );
+    return switch (this) {
+      DatabaseFailure(failures: _UniqueConstraint()) => true,
+      _ => false,
+    };
   }
 
   bool get isNetworkFailure {
-    return maybeWhen(
-      (_) => false,
-      orElse: () => false,
-      networkFailure: (info) => true,
-    );
+    return switch (this) {
+      NetworkFailure() => true,
+      _ => false,
+    };
   }
 
   /// Message from failure object This function required to initialize [Kimapp] instance before use. should initialized in main like
@@ -99,58 +88,40 @@ extension FailureX on Failure {
     final mgs = kimapp.failureMessage;
     final useDebugMessage = (kimapp.debugMode && debugMessageEnable) || alwaysUseDebugMessage;
 
-    return when(
-      (info) => useDebugMessage ? info.debugMessage : info.message ?? "Something when wrong!",
-      exception: (info) {
-        if (info.errorObject is String) {
-          return info.errorObject as String;
-        }
-
-        return useDebugMessage ? info.debugMessage : info.message ?? mgs.exception;
-      },
-      networkFailure: (info) {
-        return useDebugMessage ? info.debugMessage : info.message ?? mgs.networkFailure;
-      },
-      serverError: (info) {
-        return useDebugMessage ? info.debugMessage : info.message ?? mgs.serverError;
-      },
-      databaseFailure: (info) {
-        return info.when(
-          (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.databaseError;
-          },
-          uniqueConstraint: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.uniqueConstraintError;
-          },
-          notFound: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.notFoundError;
-          },
-        );
-      },
-      authFailure: (info) {
-        return info.when(
-          (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.authError;
-          },
-          incorrectLoginCredential: (info) {
-            return useDebugMessage
-                ? info.debugMessage
-                : info.message ?? mgs.incorrectLoginCredential;
-          },
-          forbidden: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.forbidden;
-          },
-          alreadyRegistered: (info) {
-            return useDebugMessage ? info.debugMessage : info.message ?? mgs.alreadyRegistered;
-          },
-        );
-      },
-    );
+    return switch (this) {
+      _Failure(:final info) =>
+        useDebugMessage ? info.debugMessage : info.message ?? "Something went wrong!",
+      ExceptionFailure(:final info) => info.errorObject is String
+          ? info.errorObject as String
+          : (useDebugMessage ? info.debugMessage : info.message ?? mgs.exception),
+      NetworkFailure(:final info) =>
+        useDebugMessage ? info.debugMessage : info.message ?? mgs.networkFailure,
+      ServerError(:final info) =>
+        useDebugMessage ? info.debugMessage : info.message ?? mgs.serverError,
+      DatabaseFailure(failures: final f) => switch (f) {
+          _DatabaseFailures(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.databaseError,
+          _UniqueConstraint(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.uniqueConstraintError,
+          _NotFound(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.notFoundError,
+        },
+      AuthFailure(failures: final f) => switch (f) {
+          _AuthFailures(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.authError,
+          _IncorrectLoginCredential(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.incorrectLoginCredential,
+          _Forbidden(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.forbidden,
+          _UserAlreadyRegistered(:final info) =>
+            useDebugMessage ? info.debugMessage : info.message ?? mgs.alreadyRegistered,
+        },
+    };
   }
 }
 
 @freezed
-class FailureInfo with _$FailureInfo {
+sealed class FailureInfo with _$FailureInfo {
   factory FailureInfo({
     required StackTrace stackTrace,
     required String debugMessage,
@@ -163,7 +134,7 @@ class FailureInfo with _$FailureInfo {
 }
 
 @freezed
-class Failure with _$Failure {
+sealed class Failure with _$Failure {
   const Failure._();
 
   /// Create custom failure, both message and debug message will be the same
@@ -197,19 +168,19 @@ class Failure with _$Failure {
 
   // Override toString to make it easier to read when used in error logs.
   String logMessage() {
-    return when(
-      (info) => "Failure: ${info.debugMessage}",
-      exception: (info) => "ExceptionFailure: ${info.debugMessage}",
-      networkFailure: (info) => "NetworkFailure: ${info.debugMessage}",
-      serverError: (info) => "ServerError: ${info.debugMessage}",
-      databaseFailure: (failure) => "DatabaseFailure -> ${failure.logMessage()}",
-      authFailure: (failure) => "AuthFailure -> ${failure.logMessage()}",
-    );
+    return switch (this) {
+      _Failure(:final info) => "Failure: ${info.debugMessage}",
+      ExceptionFailure(:final info) => "ExceptionFailure: ${info.debugMessage}",
+      NetworkFailure(:final info) => "NetworkFailure: ${info.debugMessage}",
+      ServerError(:final info) => "ServerError: ${info.debugMessage}",
+      DatabaseFailure(:final failures) => "DatabaseFailure -> ${failures.logMessage()}",
+      AuthFailure(:final failures) => "AuthFailure -> ${failures.logMessage()}",
+    };
   }
 }
 
 @freezed
-class DatabaseFailures with _$DatabaseFailures {
+sealed class DatabaseFailures with _$DatabaseFailures {
   const DatabaseFailures._();
 
   /// Not specific, just a failure from database
@@ -222,16 +193,16 @@ class DatabaseFailures with _$DatabaseFailures {
   const factory DatabaseFailures.notFound(FailureInfo info) = _NotFound;
 
   String logMessage() {
-    return when(
-      (info) => "DatabaseFailures: ${info.debugMessage}",
-      uniqueConstraint: (info) => "UniqueConstraint: ${info.debugMessage}",
-      notFound: (info) => "NotFound: ${info.debugMessage}",
-    );
+    return switch (this) {
+      _DatabaseFailures(:final info) => "DatabaseFailures: ${info.debugMessage}",
+      _UniqueConstraint(:final info) => "UniqueConstraint: ${info.debugMessage}",
+      _NotFound(:final info) => "NotFound: ${info.debugMessage}",
+    };
   }
 }
 
 @freezed
-class AuthFailures with _$AuthFailures {
+sealed class AuthFailures with _$AuthFailures {
   const AuthFailures._();
 
   /// Not specific, just a failure from auth
@@ -247,11 +218,11 @@ class AuthFailures with _$AuthFailures {
   const factory AuthFailures.alreadyRegistered(FailureInfo info) = _UserAlreadyRegistered;
 
   String logMessage() {
-    return when(
-      (info) => "AuthFailures: ${info.debugMessage}",
-      incorrectLoginCredential: (info) => "IncorrectLoginCredential: ${info.debugMessage}",
-      forbidden: (info) => "Forbidden: ${info.debugMessage}",
-      alreadyRegistered: (info) => "UserAlreadyRegistered: ${info.debugMessage}",
-    );
+    return switch (this) {
+      _AuthFailures(:final info) => "AuthFailures: ${info.debugMessage}",
+      _IncorrectLoginCredential(:final info) => "IncorrectLoginCredential: ${info.debugMessage}",
+      _Forbidden(:final info) => "Forbidden: ${info.debugMessage}",
+      _UserAlreadyRegistered(:final info) => "UserAlreadyRegistered: ${info.debugMessage}",
+    };
   }
 }
