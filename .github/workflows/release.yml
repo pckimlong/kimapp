@@ -80,7 +80,9 @@ jobs:
           # Function to check if there are changes in specific directory
           check_dir_changes() {
             local dir=$1
-            echo "${{ steps.check_changes.outputs.changes }}" | grep -q "^$dir/"
+            # Use awk to properly match directory paths and exclude .vscode and other non-package files
+            echo "${{ steps.check_changes.outputs.changes }}" | \
+              awk -v dir="$dir/" '$0 ~ "^"dir && !/\/(\.vscode|\.git)\// {found=1} END{exit !found}'
             return $?
           }
           
@@ -94,14 +96,29 @@ jobs:
             melos version --yes --exact "${{ github.event.inputs.force_version }}"
           else
             # Handle automatic versioning based on changes
+            PACKAGES_CHANGED=false
+            
+            # Check for actual package changes (excluding .vscode and other config files)
             if check_dir_changes "packages"; then
-              echo "Versioning kimapp packages..."
-              melos version --scope="kimapp*" --yes --graduate
+              echo "Found changes in kimapp packages..."
+              if echo "${{ steps.check_changes.outputs.changes }}" | grep -qE "^packages/[^/]+/(lib|pubspec\.yaml)"; then
+                echo "Versioning kimapp packages..."
+                melos version --scope="kimapp*" --yes --graduate
+                PACKAGES_CHANGED=true
+              else
+                echo "Only non-package files changed in packages directory, skipping version bump"
+              fi
             fi
             
             if check_dir_changes "pubs"; then
-              echo "Versioning autoverpod packages..."
-              melos version --scope="autoverpod*" --yes --graduate
+              echo "Found changes in autoverpod packages..."
+              if echo "${{ steps.check_changes.outputs.changes }}" | grep -qE "^pubs/[^/]+/(lib|pubspec\.yaml)"; then
+                echo "Versioning autoverpod packages..."
+                melos version --scope="autoverpod*" --yes --graduate
+                PACKAGES_CHANGED=true
+              else
+                echo "Only non-package files changed in pubs directory, skipping version bump"
+              fi
             fi
           fi
           
