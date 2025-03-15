@@ -80,29 +80,11 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
 
 // Use for perform action with different status state
 @freezed
-class ProviderStatus<T> with _$ProviderStatus<T> {
+sealed class ProviderStatus<T> with _$ProviderStatus<T> {
   const factory ProviderStatus.initial() = _Initial<T>;
   const factory ProviderStatus.inProgress() = _InProgress<T>;
   const factory ProviderStatus.failure(Failure failure) = _Failure<T>;
   const factory ProviderStatus.success(T success) = _Success<T>;
-
-  factory ProviderStatus.fromAsyncValue(AsyncValue<T> asyncValue, {bool initial = false}) {
-    return asyncValue.when(
-      data: (value) => ProviderStatus.success(value),
-      error: (err, str) {
-        if (err is Failure) return ProviderStatus.failure(err);
-        return ProviderStatus.failure(
-          Failure.exception(
-            FailureInfo(
-              stackTrace: str,
-              debugMessage: err.toString(),
-            ),
-          ),
-        );
-      },
-      loading: () => const ProviderStatus.inProgress(),
-    );
-  }
 
   /// Safety run callback inside provider status, handle try-cache
   /// return appropriate state.
@@ -122,24 +104,40 @@ class ProviderStatus<T> with _$ProviderStatus<T> {
 }
 
 extension ProviderStatusX<T> on ProviderStatus<T> {
-  bool get isInitial => whenOrNull(initial: () => true) == true;
-  bool get isInProgress => whenOrNull(inProgress: () => true) == true;
-  bool get isSuccess => whenOrNull(success: (_) => true) == true;
-  bool get isFailure => whenOrNull(failure: (_) => true) == true;
+  bool get isInitial => switch (this) {
+        _Initial<T>() => true,
+        _ => false,
+      };
+
+  bool get isInProgress => switch (this) {
+        _InProgress<T>() => true,
+        _ => false,
+      };
+
+  bool get isSuccess => this is _Success<T>;
+
+  bool get isFailure => this is _Failure<T>;
 
   AsyncValue<T> toAsyncValue({T Function()? onInitial}) {
-    return when(
-      initial: () => onInitial == null ? const AsyncValue.loading() : AsyncValue.data(onInitial()),
-      inProgress: () => const AsyncValue.loading(),
-      failure: (failure) => failure.toAsyncError(),
-      success: (value) => AsyncValue.data(value),
-    );
+    return switch (this) {
+      _Initial<T>() =>
+        onInitial == null ? const AsyncValue.loading() : AsyncValue.data(onInitial()),
+      _InProgress<T>() => const AsyncValue.loading(),
+      _Failure<T>(:final failure) => failure.toAsyncError(),
+      _Success<T>(:final success) => AsyncValue.data(success),
+    };
   }
 
   /// Retrieve success value, return null if state is not [ProviderStatus.success]
-  T? get successOrNull => whenOrNull<T>(success: (value) => value);
+  T? get successOrNull => switch (this) {
+        _Success<T>(:final success) => success,
+        _ => null,
+      };
 
-  Failure? get failure => whenOrNull(failure: (value) => value);
+  Failure? get failure => switch (this) {
+        _Failure<T>(:final failure) => failure,
+        _ => null,
+      };
 }
 
 extension ProviderStatusProviderX<T> on Ref<ProviderStatus<T>> {
@@ -356,18 +354,17 @@ extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<Provi
     state = ProviderStatus<T>.inProgress();
     final result = await ProviderStatus.guard<R>(() async => await callback(state));
 
-    // Update the state with the result
     state = result as ProviderStatus<T>;
-
-    // Store result before callbacks to prevent state updates from affecting return value
     final updatedState = result;
 
     if (result.isFailure && onFailure != null) {
-      onFailure(result.whenOrNull(failure: (failure) => failure)!);
+      final failure = result.failure;
+      if (failure != null) onFailure(failure);
     }
 
     if (result.isSuccess && onSuccess != null) {
-      onSuccess(result.successOrNull as R);
+      final success = result.successOrNull;
+      if (success != null) onSuccess(success as R);
     }
 
     return updatedState;
@@ -403,30 +400,26 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
       final updateForm = state as UpdateFormMixin;
       if (!updateForm.initialLoaded) {
         log('${state.runtimeType}.initialLoaded is false. So this call back will be ignore');
-
-        /// TODO - Should I expose failure status instead of keep it silence like this?
-        /// Actually error message should be handle in form widget.
-        /// Keep it silent for now
         return state.status as ProviderStatus<T>;
       }
     }
 
     state = state.updateStatus(ProviderStatus<T>.inProgress());
 
-    //! This approach cause problem, because state is outdate, when we use await on callback() we might update
-    //! the provider, but use an outdate state
-    // state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
-
-    //* New approach is to await for the progress first before update the state.
     final result = await ProviderStatus.guard(() async => await callback(state));
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
+
     if (isFailure && onFailure != null) {
-      onFailure(state.status.whenOrNull(failure: (failure) => failure)!);
+      final failure = state.status.failure;
+      if (failure != null) onFailure(failure);
     }
+
     if (isSuccess && onSuccess != null) {
-      onSuccess(state.status.successOrNull as T);
+      final success = state.status.successOrNull;
+      if (success != null) onSuccess(success as T);
     }
+
     return updatedStatus;
   }
 }
@@ -461,11 +454,18 @@ extension ProviderStatusFamilyNotifierXX<T> on Notifier<ProviderStatus<T>> {
     if (state.isInProgress || state.isSuccess) return state;
     state = ProviderStatus<T>.inProgress();
     state = await ProviderStatus.guard<T>(() async => await callback(state));
-    final updatedState = state; // prevent if onsuccess or failure update current state
+    final updatedState = state;
+
     if (state.isFailure && onFailure != null) {
-      onFailure(state.whenOrNull(failure: (failure) => failure)!);
+      final failure = state.failure;
+      if (failure != null) onFailure(failure);
     }
-    if (state.isSuccess && onSuccess != null) onSuccess(state.successOrNull as T);
+
+    if (state.isSuccess && onSuccess != null) {
+      final success = state.successOrNull;
+      if (success != null) onSuccess(success);
+    }
+
     return updatedState;
   }
 }
@@ -499,30 +499,26 @@ extension ProviderStatusClassFamilyNotifierXX<A, Base extends ProviderStatusClas
       final updateForm = state as UpdateFormMixin;
       if (!updateForm.initialLoaded) {
         log('${state.runtimeType}.initialLoaded is false. So this call back will be ignore');
-
-        /// TODO - Should I expose failure status instead of keep it silence like this?
-        /// Actually error message should be handle in form widget.
-        /// Keep it silent for now
         return state.status as ProviderStatus<T>;
       }
     }
 
     state = state.updateStatus(ProviderStatus<T>.inProgress());
 
-    //! This approach cause problem, because state is outdate, when we use await on callback() we might update
-    //! the provider, but use an outdate state
-    // state = state.updateStatus(await ProviderStatus.guard<T>(() async => await callback(state)));
-
-    //* New approach is to await for the progress first before update the state.
     final result = await ProviderStatus.guard(() async => await callback(state));
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
+
     if (isFailure && onFailure != null) {
-      onFailure(state.status.whenOrNull(failure: (failure) => failure)!);
+      final failure = state.status.failure;
+      if (failure != null) onFailure(failure);
     }
+
     if (isSuccess && onSuccess != null) {
-      onSuccess(state.status.successOrNull as T);
+      final success = state.status.successOrNull;
+      if (success != null) onSuccess(success as T);
     }
+
     return updatedStatus;
   }
 }

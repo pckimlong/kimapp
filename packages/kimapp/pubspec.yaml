@@ -21,7 +21,6 @@ dependencies:
 dev_dependencies:
   freezed: 
   mockito:
-  build_runner: null
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter

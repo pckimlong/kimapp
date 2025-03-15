@@ -4,9 +4,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part "table_builder.freezed.dart";
 
 @freezed
-class TableBuilder with _$TableBuilder {
+sealed class TableBuilder with _$TableBuilder {
   const TableBuilder._();
-  const factory TableBuilder({
+
+  factory TableBuilder({
     required String tableName,
     required List<ColumnBuilder> columns,
   }) = _TableBuilder;
@@ -15,7 +16,7 @@ class TableBuilder with _$TableBuilder {
 }
 
 @freezed
-class ColumnBuilder with _$ColumnBuilder {
+sealed class ColumnBuilder with _$ColumnBuilder {
   const ColumnBuilder._();
 
   const factory ColumnBuilder(String column) = _ColumnBuilder;
@@ -28,16 +29,21 @@ class ColumnBuilder with _$ColumnBuilder {
   }) = _Join;
 
   String get value {
-    return map(
-      (value) => value.column,
-      join: (value) {
-        final selectStatement = '(${value.table.selectStatement})';
-        final tableName = value.table.tableName;
+    return switch (this) {
+      _ColumnBuilder(:final column) => column,
+      _Join(:final table, :final key, :final foreignKey, :final candidateKey) => () {
+          final selectStatement = '(${table.selectStatement})';
+          final tableName = table.tableName;
+          final effectiveKey = key ?? tableName;
 
-        final key = value.key ?? tableName;
-
-        return '$key${value.candidateKey.isNullOrBlank ? ":${value.foreignKey ?? tableName}" : ""}${value.candidateKey.isNotNullOrEmpty ? ":${value.table.tableName}!${value.candidateKey}" : ""}$selectStatement';
-      },
-    );
+          if (candidateKey.isNullOrBlank) {
+            return '$effectiveKey:${foreignKey ?? tableName}$selectStatement';
+          } else if (candidateKey.isNotNullOrEmpty) {
+            return '$effectiveKey:${table.tableName}!$candidateKey$selectStatement';
+          } else {
+            return '$effectiveKey$selectStatement';
+          }
+        }(),
+    };
   }
 }
