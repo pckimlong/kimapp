@@ -58,7 +58,8 @@ class ImageDimensions {
     final pathWithoutExtension = p.withoutExtension(filePath);
 
     // Check if path already contains dimensions
-    final hasDimensions = RegExp(r'\d+\.?\d*x\d+\.?\d*$').hasMatch(pathWithoutExtension);
+    final hasDimensions =
+        RegExp(r'\d+\.?\d*x\d+\.?\d*$').hasMatch(pathWithoutExtension);
 
     if (hasDimensions) {
       // Replace existing dimensions
@@ -182,7 +183,8 @@ class UploadImageObject extends _$UploadImageObject {
             ].join('-') +
             p.extension(validFilename);
 
-        final storagePath = directory.isNotEmpty ? p.join(directory, imagePath) : imagePath;
+        final storagePath =
+            directory.isNotEmpty ? p.join(directory, imagePath) : imagePath;
 
         // Create and upload storage object
         final storageObject = object(storagePath);
@@ -229,7 +231,9 @@ extension UploadImageObjectNotifierX on NotifierBase {
 
     ProviderStatus<BaseStorageObject>? uploadResult;
     try {
-      uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
+      uploadResult = await ref
+          .read(uploadImageObjectProvider.notifier)
+          .call<BaseStorageObject>(
             image,
             object: object,
             customPrefix: customPrefix,
@@ -263,7 +267,8 @@ extension UploadImageObjectNotifierX on NotifierBase {
     }
   }
 
-  Future<void> _deleteImage(ProviderStatus<BaseStorageObject> uploadResult) async {
+  Future<void> _deleteImage(
+      ProviderStatus<BaseStorageObject> uploadResult) async {
     await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
   }
 }
@@ -294,7 +299,9 @@ extension UploadImageObjectAsyncNotifierX on AsyncNotifierBase {
 
     ProviderStatus<BaseStorageObject>? uploadResult;
     try {
-      uploadResult = await ref.read(uploadImageObjectProvider.notifier).call<BaseStorageObject>(
+      uploadResult = await ref
+          .read(uploadImageObjectProvider.notifier)
+          .call<BaseStorageObject>(
             image,
             object: object,
             customPrefix: customPrefix,
@@ -328,7 +335,8 @@ extension UploadImageObjectAsyncNotifierX on AsyncNotifierBase {
     }
   }
 
-  Future<void> _deleteImage(ProviderStatus<BaseStorageObject> uploadResult) async {
+  Future<void> _deleteImage(
+      ProviderStatus<BaseStorageObject> uploadResult) async {
     await uploadResult.successOrNull!.delete(client: ref.supabaseStorage);
   }
 }

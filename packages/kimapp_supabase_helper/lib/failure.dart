@@ -33,7 +33,8 @@ final List<String> internetErrorPatterns = [
 
 /// Logger utility class
 class ErrorLogger {
-  void logError(String title, String message, StackTrace stackTrace, Object error) {
+  void logError(
+      String title, String message, StackTrace stackTrace, Object error) {
     final kimapp = Kimapp.instance;
     kimapp.log(
       LoggerType.error,
@@ -63,7 +64,8 @@ Future<Either<Failure, T>> errorHandler<T>(
     errorLogger.logError('Supabase.StorageException', e.message, stackTrace, e);
     return _handleStorageException(e, stackTrace);
   } on PostgrestException catch (e, stackTrace) {
-    errorLogger.logError('Supabase.PostgrestException', e.message, stackTrace, e);
+    errorLogger.logError(
+        'Supabase.PostgrestException', e.message, stackTrace, e);
     return _handlePostgrestException(e, stackTrace);
   } on Exception catch (e, stackTrace) {
     errorLogger.logError('Exception', e.toString(), stackTrace, e);
@@ -188,7 +190,8 @@ Either<Failure, T> _handleGeneralException<T>(
   );
 
   // Check for internet connectivity issues
-  if (e is SocketException || internetErrorPatterns.any((pattern) => message.contains(pattern))) {
+  if (e is SocketException ||
+      internetErrorPatterns.any((pattern) => message.contains(pattern))) {
     return left(Failure.networkFailure(info));
   }
 

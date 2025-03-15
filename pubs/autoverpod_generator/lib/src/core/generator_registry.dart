@@ -18,7 +18,8 @@ class GeneratorRegistry {
   final Set<String> _additionalImports = {};
 
   /// Register a new generator
-  void registerGenerator(WidgetGenerator generator) => _generators.add(generator);
+  void registerGenerator(WidgetGenerator generator) =>
+      _generators.add(generator);
 
   /// Get all registered generators
   List<WidgetGenerator> get generators => List.unmodifiable(_generators);

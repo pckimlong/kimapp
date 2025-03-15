@@ -32,12 +32,16 @@ melos:
       releaseUrl: true
       includeCommitId: true
       linkToCommits: true
+      message: "chore(release): publish packages"
+      workspaceChangelog: true
 
-    bootstrap:
-      environment:
-        sdk: ">=3.6.0 <4.0.0"
-        flutter: ">=3.27.1"
-
+  version:
+    # Define versioning strategy for different package groups
+    packageFilters:
+      scope:
+        - "kimapp*"
+        - "autoverpod*"
+    
   scripts:
     lint:all:
       steps:
@@ -86,3 +90,43 @@ melos:
     bootstrap:
       run: melos bootstrap
       description: Bootstrap the project by getting all dependencies
+
+    # New scripts for versioning and releasing
+    version_kimapp:
+      description: Version kimapp packages only
+      run: melos version --scope="kimapp*" --graduate
+
+    version_autoverpod:
+      description: Version autoverpod packages only
+      run: melos version --scope="autoverpod*" --graduate
+
+    prerelease:
+      description: Create a prerelease version
+      run: melos version --prerelease
+
+    version_check:
+      description: Check which packages would be versioned
+      run: melos version --dry-run
+
+    changelog:
+      description: Generate changelog for all packages
+      run: melos changelog
+
+    release:
+      description: Create GitHub releases
+      run: |
+        if [ -z "$MELOS_VERSION" ]; then
+          echo "Error: MELOS_VERSION is not set"
+          exit 1
+        fi
+        gh release create "v$MELOS_VERSION" \
+          --title "Release v$MELOS_VERSION" \
+          --notes-file CHANGELOG.md
+
+    verify:
+      description: Verify all packages
+      steps:
+        - analyze
+        - test
+        - format-check
+        - build_all
