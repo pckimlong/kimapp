@@ -4,8 +4,9 @@ version: 0.0.2
 publish_to: none
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
-  flutter: ">=1.17.0"
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: ">=3.27.1"
+resolution: workspace
 
 dependencies:
   dartx: null
@@ -21,7 +22,7 @@ dev_dependencies:
   freezed: 
   mockito:
   build_runner: null
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
 
