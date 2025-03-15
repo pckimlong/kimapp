@@ -1,5 +1,4 @@
 # Dart/Flutter specific
-.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
@@ -7,7 +6,6 @@
 .pub/
 build/
 coverage/
-.dart_tool/
 pubspec.lock
 .aider.tags.cache.v3/
 
@@ -174,7 +172,6 @@ migrate_working_dir/
 # Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
 /pubspec.lock
 **/doc/api/
-.dart_tool/
 .packages
 build/
 
