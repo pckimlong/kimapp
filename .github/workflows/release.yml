@@ -9,6 +9,11 @@ on:
       - "pubs/**"
       - "pubspec.yaml"
   workflow_dispatch:  # Allow manual triggering
+    inputs:
+      force_version:
+        description: 'Force version (leave empty for automatic)'
+        required: false
+        type: string
 
 jobs:
   release:
@@ -23,7 +28,6 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.27.1'
           channel: 'stable'
           cache: true
 
@@ -41,18 +45,35 @@ jobs:
       - name: Verify packages
         run: melos run verify
 
-      - name: Version packages
-        if: success()
+      - name: Check for changes
+        id: check_changes
         run: |
-          melos version --yes
+          CHANGES=$(git diff --name-only HEAD~1 HEAD | grep -E "^(packages|pubs)/" || true)
+          if [ -n "$CHANGES" ] || [ -n "${{ github.event.inputs.force_version }}" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Version packages
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          if [ -n "${{ github.event.inputs.force_version }}" ]; then
+            melos version --yes --exact "${{ github.event.inputs.force_version }}"
+          else
+            melos version --yes
+          fi
           git push --follow-tags
 
       - name: Generate changelog
-        if: success()
-        run: melos run changelog
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          melos run changelog
+          # Ensure CHANGELOG.md exists
+          touch CHANGELOG.md
 
       - name: Create GitHub Release
-        if: success()
+        if: steps.check_changes.outputs.has_changes == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: melos run release 
