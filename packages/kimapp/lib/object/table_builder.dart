@@ -7,7 +7,7 @@ part "table_builder.freezed.dart";
 sealed class TableBuilder with _$TableBuilder {
   const TableBuilder._();
 
-  factory TableBuilder({
+  const factory TableBuilder({
     required String tableName,
     required List<ColumnBuilder> columns,
   }) = _TableBuilder;
