@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Important for detecting all changes
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Flutter
@@ -48,11 +48,25 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          CHANGES=$(git diff --name-only HEAD~1 HEAD | grep -E "^(packages|pubs)/" || true)
+          # Get the last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            # If no tags exist, compare with initial commit
+            COMPARE_WITH=$(git rev-list --max-parents=0 HEAD)
+          else
+            COMPARE_WITH=$LAST_TAG
+          fi
+          
+          # Check for changes since last tag/initial commit
+          CHANGES=$(git diff --name-only $COMPARE_WITH HEAD | grep -E "^(packages/|pubs/|pubspec\.yaml)" || true)
+          
           if [ -n "$CHANGES" ] || [ -n "${{ github.event.inputs.force_version }}" ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Found changes in monitored paths since $COMPARE_WITH"
+            echo "$CHANGES"
           else
             echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes found in monitored paths since $COMPARE_WITH"
           fi
 
       - name: Version packages
