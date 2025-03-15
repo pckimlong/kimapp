@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-03-15
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`autoverpod` - `v0.0.4+1`](#autoverpod---v0041)
+ - [`autoverpod_generator` - `v0.0.4+1`](#autoverpod_generator---v0041)
+
+---
+
+#### `autoverpod` - `v0.0.4+1`
+
+ - **REFACTOR**: improve form widget generation and debug handling. ([68f4f173](https://github.com/pckimlong/kimapp/commit/68f4f173c56e42fbd96d596bef6601a0af354035))
+
+#### `autoverpod_generator` - `v0.0.4+1`
+
+ - **REFACTOR**: improve form widget generation and debug handling. ([68f4f173](https://github.com/pckimlong/kimapp/commit/68f4f173c56e42fbd96d596bef6601a0af354035))
+ - **FIX**: prepare autoverpod_generator 0.0.3 for publishing. ([9083e34a](https://github.com/pckimlong/kimapp/commit/9083e34a7d0ad5a3c2a323dc18fa7992e4240969))
+ - **FIX**: Add support for custom field type imports in form widget generator. ([d3366d55](https://github.com/pckimlong/kimapp/commit/d3366d559f0c53437f06585148e10b1baf42232f))
+
+
 ## 2024-08-05
 
 ### Changes
