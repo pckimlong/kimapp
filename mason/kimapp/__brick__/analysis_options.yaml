@@ -18,6 +18,10 @@ custom_lint:
   rules:
     - notifier_extends: false
 
+custom_lint:
+  rules:
+    - notifier_extends: false
+
 linter:
   rules:
     - require_trailing_commas
