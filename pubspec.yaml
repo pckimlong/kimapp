@@ -72,10 +72,14 @@ melos:
       run: melos exec -- dart fix --apply .
       description: Fix all Dart code in all packages
 
+    build_kimapp:
+      run: melos exec --scope="kimapp" -- dart run build_runner build --delete-conflicting-outputs
+      description: Run build_runner in kimapp packages
+
     build_all:
-      run: >
+      run: |
         melos exec -c 1 --depends-on="build_runner" -- "dart run build_runner build --delete-conflicting-outputs"
-      description: Run build_runner in all packages that depend on it with concurrency 1 to handle dependencies
+      description: Run build_runner in all packages with concurrency 1 to handle dependencies
       
     publish_dry:
       run: melos exec -- flutter pub publish --dry-run
