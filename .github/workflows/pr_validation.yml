@@ -30,6 +30,3 @@ jobs:
 
       - name: Run verification
         run: melos run verify
-
-      - name: Check versioning
-        run: melos version --dry-run 

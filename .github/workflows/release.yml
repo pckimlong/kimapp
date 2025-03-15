@@ -80,39 +80,39 @@ jobs:
           # Function to check if there are changes in specific directory
           check_dir_changes() {
             local dir=$1
-            echo "$CHANGES" | grep -q "^$dir/"
+            echo "${{ steps.check_changes.outputs.changes }}" | grep -q "^$dir/"
             return $?
           }
           
-          # Get the changes from the previous step
-          CHANGES="${{ steps.check_changes.outputs.changes }}"
-          
           # Version packages based on changes
-          if check_dir_changes "packages" || check_dir_changes "pubs"; then
+          if [ -n "${{ github.event.inputs.force_version }}" ]; then
+            # Handle manual version override
+            echo "Applying forced version: ${{ github.event.inputs.force_version }}"
+            melos version --yes --exact "${{ github.event.inputs.force_version }}"
+          else
+            # Handle automatic versioning based on changes
             if check_dir_changes "packages"; then
               echo "Versioning kimapp packages..."
-              melos version --scope="kimapp*" --yes
+              melos run version_kimapp --yes
             fi
             
             if check_dir_changes "pubs"; then
               echo "Versioning autoverpod packages..."
-              melos version --scope="autoverpod*" --yes
+              melos run version_autoverpod --yes
             fi
-            
-            # Push changes and tags
-            git push --follow-tags
-          elif [ -n "${{ github.event.inputs.force_version }}" ]; then
-            # Handle manual version override
-            melos version --yes --exact "${{ github.event.inputs.force_version }}"
+          fi
+          
+          # Push changes and tags if any versioning occurred
+          if [ -n "$(git diff --name-only)" ]; then
             git push --follow-tags
           fi
 
       - name: Generate changelog
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
+          # Ensure CHANGELOG.md exists and is empty
+          echo "" > CHANGELOG.md
           melos run changelog
-          # Ensure CHANGELOG.md exists
-          touch CHANGELOG.md
 
       - name: Create GitHub Release
         if: steps.check_changes.outputs.has_changes == 'true'
