@@ -1,5 +1,6 @@
 name: kimapp_packages
 repository: https://github.com/pckimlong/kimapp
+publish_to: none
 environment:
   sdk: ">=3.6.0 <4.0.0"
 
