@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,82 +10,55 @@ part of 'failure.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$FailureInfo {
-  StackTrace get stackTrace => throw _privateConstructorUsedError;
-  String get debugMessage => throw _privateConstructorUsedError;
+  StackTrace get stackTrace;
+  String get debugMessage;
 
   /// Readable message which will be display to user, If [message] is not provided or null
   /// The default message define in [Kimapp] service will be use instead when calling it from [Failure.message()] function
-  String? get message => throw _privateConstructorUsedError;
-  Object? get errorObject => throw _privateConstructorUsedError;
+  String? get message;
+  Object? get errorObject;
 
-  @JsonKey(ignore: true)
-  $FailureInfoCopyWith<FailureInfo> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $FailureInfoCopyWith<$Res> {
-  factory $FailureInfoCopyWith(
-          FailureInfo value, $Res Function(FailureInfo) then) =
-      _$FailureInfoCopyWithImpl<$Res, FailureInfo>;
-  @useResult
-  $Res call(
-      {StackTrace stackTrace,
-      String debugMessage,
-      String? message,
-      Object? errorObject});
-}
-
-/// @nodoc
-class _$FailureInfoCopyWithImpl<$Res, $Val extends FailureInfo>
-    implements $FailureInfoCopyWith<$Res> {
-  _$FailureInfoCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of FailureInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<FailureInfo> get copyWith =>
+      _$FailureInfoCopyWithImpl<FailureInfo>(this as FailureInfo, _$identity);
+
   @override
-  $Res call({
-    Object? stackTrace = null,
-    Object? debugMessage = null,
-    Object? message = freezed,
-    Object? errorObject = freezed,
-  }) {
-    return _then(_value.copyWith(
-      stackTrace: null == stackTrace
-          ? _value.stackTrace
-          : stackTrace // ignore: cast_nullable_to_non_nullable
-              as StackTrace,
-      debugMessage: null == debugMessage
-          ? _value.debugMessage
-          : debugMessage // ignore: cast_nullable_to_non_nullable
-              as String,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      errorObject: freezed == errorObject ? _value.errorObject : errorObject,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is FailureInfo &&
+            (identical(other.stackTrace, stackTrace) ||
+                other.stackTrace == stackTrace) &&
+            (identical(other.debugMessage, debugMessage) ||
+                other.debugMessage == debugMessage) &&
+            (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality()
+                .equals(other.errorObject, errorObject));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, stackTrace, debugMessage,
+      message, const DeepCollectionEquality().hash(errorObject));
+
+  @override
+  String toString() {
+    return 'FailureInfo(stackTrace: $stackTrace, debugMessage: $debugMessage, message: $message, errorObject: $errorObject)';
   }
 }
 
 /// @nodoc
-abstract class _$$_FailureInfoCopyWith<$Res>
-    implements $FailureInfoCopyWith<$Res> {
-  factory _$$_FailureInfoCopyWith(
-          _$_FailureInfo value, $Res Function(_$_FailureInfo) then) =
-      __$$_FailureInfoCopyWithImpl<$Res>;
-  @override
+abstract mixin class $FailureInfoCopyWith<$Res> {
+  factory $FailureInfoCopyWith(
+          FailureInfo value, $Res Function(FailureInfo) _then) =
+      _$FailureInfoCopyWithImpl;
   @useResult
   $Res call(
       {StackTrace stackTrace,
@@ -94,13 +68,14 @@ abstract class _$$_FailureInfoCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_FailureInfoCopyWithImpl<$Res>
-    extends _$FailureInfoCopyWithImpl<$Res, _$_FailureInfo>
-    implements _$$_FailureInfoCopyWith<$Res> {
-  __$$_FailureInfoCopyWithImpl(
-      _$_FailureInfo _value, $Res Function(_$_FailureInfo) _then)
-      : super(_value, _then);
+class _$FailureInfoCopyWithImpl<$Res> implements $FailureInfoCopyWith<$Res> {
+  _$FailureInfoCopyWithImpl(this._self, this._then);
 
+  final FailureInfo _self;
+  final $Res Function(FailureInfo) _then;
+
+  /// Create a copy of FailureInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -109,28 +84,28 @@ class __$$_FailureInfoCopyWithImpl<$Res>
     Object? message = freezed,
     Object? errorObject = freezed,
   }) {
-    return _then(_$_FailureInfo(
+    return _then(_self.copyWith(
       stackTrace: null == stackTrace
-          ? _value.stackTrace
+          ? _self.stackTrace
           : stackTrace // ignore: cast_nullable_to_non_nullable
               as StackTrace,
       debugMessage: null == debugMessage
-          ? _value.debugMessage
+          ? _self.debugMessage
           : debugMessage // ignore: cast_nullable_to_non_nullable
               as String,
       message: freezed == message
-          ? _value.message
+          ? _self.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      errorObject: freezed == errorObject ? _value.errorObject : errorObject,
+      errorObject: freezed == errorObject ? _self.errorObject : errorObject,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_FailureInfo implements _FailureInfo {
-  _$_FailureInfo(
+class _FailureInfo implements FailureInfo {
+  _FailureInfo(
       {required this.stackTrace,
       required this.debugMessage,
       this.message,
@@ -148,16 +123,19 @@ class _$_FailureInfo implements _FailureInfo {
   @override
   final Object? errorObject;
 
+  /// Create a copy of FailureInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'FailureInfo(stackTrace: $stackTrace, debugMessage: $debugMessage, message: $message, errorObject: $errorObject)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$FailureInfoCopyWith<_FailureInfo> get copyWith =>
+      __$FailureInfoCopyWithImpl<_FailureInfo>(this, _$identity);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_FailureInfo &&
+            other is _FailureInfo &&
             (identical(other.stackTrace, stackTrace) ||
                 other.stackTrace == stackTrace) &&
             (identical(other.debugMessage, debugMessage) ||
@@ -171,292 +149,119 @@ class _$_FailureInfo implements _FailureInfo {
   int get hashCode => Object.hash(runtimeType, stackTrace, debugMessage,
       message, const DeepCollectionEquality().hash(errorObject));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$_FailureInfoCopyWith<_$_FailureInfo> get copyWith =>
-      __$$_FailureInfoCopyWithImpl<_$_FailureInfo>(this, _$identity);
+  String toString() {
+    return 'FailureInfo(stackTrace: $stackTrace, debugMessage: $debugMessage, message: $message, errorObject: $errorObject)';
+  }
 }
 
-abstract class _FailureInfo implements FailureInfo {
-  factory _FailureInfo(
-      {required final StackTrace stackTrace,
-      required final String debugMessage,
-      final String? message,
-      final Object? errorObject}) = _$_FailureInfo;
+/// @nodoc
+abstract mixin class _$FailureInfoCopyWith<$Res>
+    implements $FailureInfoCopyWith<$Res> {
+  factory _$FailureInfoCopyWith(
+          _FailureInfo value, $Res Function(_FailureInfo) _then) =
+      __$FailureInfoCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {StackTrace stackTrace,
+      String debugMessage,
+      String? message,
+      Object? errorObject});
+}
 
-  @override
-  StackTrace get stackTrace;
-  @override
-  String get debugMessage;
-  @override
+/// @nodoc
+class __$FailureInfoCopyWithImpl<$Res> implements _$FailureInfoCopyWith<$Res> {
+  __$FailureInfoCopyWithImpl(this._self, this._then);
 
-  /// Readable message which will be display to user, If [message] is not provided or null
-  /// The default message define in [Kimapp] service will be use instead when calling it from [Failure.message()] function
-  String? get message;
+  final _FailureInfo _self;
+  final $Res Function(_FailureInfo) _then;
+
+  /// Create a copy of FailureInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  Object? get errorObject;
-  @override
-  @JsonKey(ignore: true)
-  _$$_FailureInfoCopyWith<_$_FailureInfo> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? stackTrace = null,
+    Object? debugMessage = null,
+    Object? message = freezed,
+    Object? errorObject = freezed,
+  }) {
+    return _then(_FailureInfo(
+      stackTrace: null == stackTrace
+          ? _self.stackTrace
+          : stackTrace // ignore: cast_nullable_to_non_nullable
+              as StackTrace,
+      debugMessage: null == debugMessage
+          ? _self.debugMessage
+          : debugMessage // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: freezed == message
+          ? _self.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      errorObject: freezed == errorObject ? _self.errorObject : errorObject,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$Failure {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $FailureCopyWith<$Res> {
-  factory $FailureCopyWith(Failure value, $Res Function(Failure) then) =
-      _$FailureCopyWithImpl<$Res, Failure>;
-}
-
-/// @nodoc
-class _$FailureCopyWithImpl<$Res, $Val extends Failure>
-    implements $FailureCopyWith<$Res> {
-  _$FailureCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-}
-
-/// @nodoc
-abstract class _$$_FailureCopyWith<$Res> {
-  factory _$$_FailureCopyWith(
-          _$_Failure value, $Res Function(_$_Failure) then) =
-      __$$_FailureCopyWithImpl<$Res>;
-  @useResult
-  $Res call({FailureInfo info});
-
-  $FailureInfoCopyWith<$Res> get info;
-}
-
-/// @nodoc
-class __$$_FailureCopyWithImpl<$Res>
-    extends _$FailureCopyWithImpl<$Res, _$_Failure>
-    implements _$$_FailureCopyWith<$Res> {
-  __$$_FailureCopyWithImpl(_$_Failure _value, $Res Function(_$_Failure) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? info = null,
-  }) {
-    return _then(_$_Failure(
-      null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as FailureInfo,
-    ));
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is Failure);
   }
 
   @override
-  @pragma('vm:prefer-inline')
-  $FailureInfoCopyWith<$Res> get info {
-    return $FailureInfoCopyWith<$Res>(_value.info, (value) {
-      return _then(_value.copyWith(info: value));
-    });
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'Failure()';
   }
 }
 
 /// @nodoc
+class $FailureCopyWith<$Res> {
+  $FailureCopyWith(Failure _, $Res Function(Failure) __);
+}
 
-class _$_Failure extends _Failure {
-  const _$_Failure(this.info) : super._();
+/// @nodoc
 
-  @override
+class _Failure extends Failure {
+  const _Failure(this.info) : super._();
+
   final FailureInfo info;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$FailureCopyWith<_Failure> get copyWith =>
+      __$FailureCopyWithImpl<_Failure>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Failure &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'Failure(info: $info)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_Failure &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_FailureCopyWith<_$_Failure> get copyWith =>
-      __$$_FailureCopyWithImpl<_$_Failure>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) {
-    return $default(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) {
-    return $default?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) {
-    return $default(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) {
-    return $default?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Failure extends Failure {
-  const factory _Failure(final FailureInfo info) = _$_Failure;
-  const _Failure._() : super._();
-
-  FailureInfo get info;
-  @JsonKey(ignore: true)
-  _$$_FailureCopyWith<_$_Failure> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$ExceptionFailureCopyWith<$Res> {
-  factory _$$ExceptionFailureCopyWith(
-          _$ExceptionFailure value, $Res Function(_$ExceptionFailure) then) =
-      __$$ExceptionFailureCopyWithImpl<$Res>;
+abstract mixin class _$FailureCopyWith<$Res> implements $FailureCopyWith<$Res> {
+  factory _$FailureCopyWith(_Failure value, $Res Function(_Failure) _then) =
+      __$FailureCopyWithImpl;
   @useResult
   $Res call({FailureInfo info});
 
@@ -464,167 +269,74 @@ abstract class _$$ExceptionFailureCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$ExceptionFailureCopyWithImpl<$Res>
-    extends _$FailureCopyWithImpl<$Res, _$ExceptionFailure>
-    implements _$$ExceptionFailureCopyWith<$Res> {
-  __$$ExceptionFailureCopyWithImpl(
-      _$ExceptionFailure _value, $Res Function(_$ExceptionFailure) _then)
-      : super(_value, _then);
+class __$FailureCopyWithImpl<$Res> implements _$FailureCopyWith<$Res> {
+  __$FailureCopyWithImpl(this._self, this._then);
 
+  final _Failure _self;
+  final $Res Function(_Failure) _then;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$ExceptionFailure(
+    return _then(_Failure(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
   }
 
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $FailureInfoCopyWith<$Res> get info {
-    return $FailureInfoCopyWith<$Res>(_value.info, (value) {
-      return _then(_value.copyWith(info: value));
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
     });
   }
 }
 
 /// @nodoc
 
-class _$ExceptionFailure extends ExceptionFailure {
-  const _$ExceptionFailure(this.info) : super._();
+class ExceptionFailure extends Failure {
+  const ExceptionFailure(this.info) : super._();
+
+  final FailureInfo info;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ExceptionFailureCopyWith<ExceptionFailure> get copyWith =>
+      _$ExceptionFailureCopyWithImpl<ExceptionFailure>(this, _$identity);
 
   @override
-  final FailureInfo info;
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ExceptionFailure &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'Failure.exception(info: $info)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ExceptionFailure &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$ExceptionFailureCopyWith<_$ExceptionFailure> get copyWith =>
-      __$$ExceptionFailureCopyWithImpl<_$ExceptionFailure>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) {
-    return exception(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) {
-    return exception?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (exception != null) {
-      return exception(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) {
-    return exception(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) {
-    return exception?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (exception != null) {
-      return exception(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class ExceptionFailure extends Failure {
-  const factory ExceptionFailure(final FailureInfo info) = _$ExceptionFailure;
-  const ExceptionFailure._() : super._();
-
-  FailureInfo get info;
-  @JsonKey(ignore: true)
-  _$$ExceptionFailureCopyWith<_$ExceptionFailure> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$NetworkFailureCopyWith<$Res> {
-  factory _$$NetworkFailureCopyWith(
-          _$NetworkFailure value, $Res Function(_$NetworkFailure) then) =
-      __$$NetworkFailureCopyWithImpl<$Res>;
+abstract mixin class $ExceptionFailureCopyWith<$Res>
+    implements $FailureCopyWith<$Res> {
+  factory $ExceptionFailureCopyWith(
+          ExceptionFailure value, $Res Function(ExceptionFailure) _then) =
+      _$ExceptionFailureCopyWithImpl;
   @useResult
   $Res call({FailureInfo info});
 
@@ -632,167 +344,75 @@ abstract class _$$NetworkFailureCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$NetworkFailureCopyWithImpl<$Res>
-    extends _$FailureCopyWithImpl<$Res, _$NetworkFailure>
-    implements _$$NetworkFailureCopyWith<$Res> {
-  __$$NetworkFailureCopyWithImpl(
-      _$NetworkFailure _value, $Res Function(_$NetworkFailure) _then)
-      : super(_value, _then);
+class _$ExceptionFailureCopyWithImpl<$Res>
+    implements $ExceptionFailureCopyWith<$Res> {
+  _$ExceptionFailureCopyWithImpl(this._self, this._then);
 
+  final ExceptionFailure _self;
+  final $Res Function(ExceptionFailure) _then;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$NetworkFailure(
+    return _then(ExceptionFailure(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
   }
 
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $FailureInfoCopyWith<$Res> get info {
-    return $FailureInfoCopyWith<$Res>(_value.info, (value) {
-      return _then(_value.copyWith(info: value));
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
     });
   }
 }
 
 /// @nodoc
 
-class _$NetworkFailure extends NetworkFailure {
-  const _$NetworkFailure(this.info) : super._();
+class NetworkFailure extends Failure {
+  const NetworkFailure(this.info) : super._();
+
+  final FailureInfo info;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $NetworkFailureCopyWith<NetworkFailure> get copyWith =>
+      _$NetworkFailureCopyWithImpl<NetworkFailure>(this, _$identity);
 
   @override
-  final FailureInfo info;
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is NetworkFailure &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'Failure.networkFailure(info: $info)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$NetworkFailure &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$NetworkFailureCopyWith<_$NetworkFailure> get copyWith =>
-      __$$NetworkFailureCopyWithImpl<_$NetworkFailure>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) {
-    return networkFailure(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) {
-    return networkFailure?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (networkFailure != null) {
-      return networkFailure(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) {
-    return networkFailure(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) {
-    return networkFailure?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (networkFailure != null) {
-      return networkFailure(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class NetworkFailure extends Failure {
-  const factory NetworkFailure(final FailureInfo info) = _$NetworkFailure;
-  const NetworkFailure._() : super._();
-
-  FailureInfo get info;
-  @JsonKey(ignore: true)
-  _$$NetworkFailureCopyWith<_$NetworkFailure> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$ServerErrorCopyWith<$Res> {
-  factory _$$ServerErrorCopyWith(
-          _$ServerError value, $Res Function(_$ServerError) then) =
-      __$$ServerErrorCopyWithImpl<$Res>;
+abstract mixin class $NetworkFailureCopyWith<$Res>
+    implements $FailureCopyWith<$Res> {
+  factory $NetworkFailureCopyWith(
+          NetworkFailure value, $Res Function(NetworkFailure) _then) =
+      _$NetworkFailureCopyWithImpl;
   @useResult
   $Res call({FailureInfo info});
 
@@ -800,167 +420,151 @@ abstract class _$$ServerErrorCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$ServerErrorCopyWithImpl<$Res>
-    extends _$FailureCopyWithImpl<$Res, _$ServerError>
-    implements _$$ServerErrorCopyWith<$Res> {
-  __$$ServerErrorCopyWithImpl(
-      _$ServerError _value, $Res Function(_$ServerError) _then)
-      : super(_value, _then);
+class _$NetworkFailureCopyWithImpl<$Res>
+    implements $NetworkFailureCopyWith<$Res> {
+  _$NetworkFailureCopyWithImpl(this._self, this._then);
 
+  final NetworkFailure _self;
+  final $Res Function(NetworkFailure) _then;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$ServerError(
+    return _then(NetworkFailure(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
   }
 
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $FailureInfoCopyWith<$Res> get info {
-    return $FailureInfoCopyWith<$Res>(_value.info, (value) {
-      return _then(_value.copyWith(info: value));
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
     });
   }
 }
 
 /// @nodoc
 
-class _$ServerError extends ServerError {
-  const _$ServerError(this.info) : super._();
+class ServerError extends Failure {
+  const ServerError(this.info) : super._();
 
-  @override
   final FailureInfo info;
 
-  @override
-  String toString() {
-    return 'Failure.serverError(info: $info)';
-  }
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ServerErrorCopyWith<ServerError> get copyWith =>
+      _$ServerErrorCopyWithImpl<ServerError>(this, _$identity);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ServerError &&
+            other is ServerError &&
             (identical(other.info, info) || other.info == info));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, info);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$ServerErrorCopyWith<_$ServerError> get copyWith =>
-      __$$ServerErrorCopyWithImpl<_$ServerError>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) {
-    return serverError(info);
+  String toString() {
+    return 'Failure.serverError(info: $info)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) {
-    return serverError?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (serverError != null) {
-      return serverError(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) {
-    return serverError(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) {
-    return serverError?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (serverError != null) {
-      return serverError(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class ServerError extends Failure {
-  const factory ServerError(final FailureInfo info) = _$ServerError;
-  const ServerError._() : super._();
-
-  FailureInfo get info;
-  @JsonKey(ignore: true)
-  _$$ServerErrorCopyWith<_$ServerError> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$DatabaseFailureCopyWith<$Res> {
-  factory _$$DatabaseFailureCopyWith(
-          _$DatabaseFailure value, $Res Function(_$DatabaseFailure) then) =
-      __$$DatabaseFailureCopyWithImpl<$Res>;
+abstract mixin class $ServerErrorCopyWith<$Res>
+    implements $FailureCopyWith<$Res> {
+  factory $ServerErrorCopyWith(
+          ServerError value, $Res Function(ServerError) _then) =
+      _$ServerErrorCopyWithImpl;
+  @useResult
+  $Res call({FailureInfo info});
+
+  $FailureInfoCopyWith<$Res> get info;
+}
+
+/// @nodoc
+class _$ServerErrorCopyWithImpl<$Res> implements $ServerErrorCopyWith<$Res> {
+  _$ServerErrorCopyWithImpl(this._self, this._then);
+
+  final ServerError _self;
+  final $Res Function(ServerError) _then;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? info = null,
+  }) {
+    return _then(ServerError(
+      null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as FailureInfo,
+    ));
+  }
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class DatabaseFailure extends Failure {
+  const DatabaseFailure(this.failures) : super._();
+
+  final DatabaseFailures failures;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $DatabaseFailureCopyWith<DatabaseFailure> get copyWith =>
+      _$DatabaseFailureCopyWithImpl<DatabaseFailure>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is DatabaseFailure &&
+            (identical(other.failures, failures) ||
+                other.failures == failures));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, failures);
+
+  @override
+  String toString() {
+    return 'Failure.databaseFailure(failures: $failures)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $DatabaseFailureCopyWith<$Res>
+    implements $FailureCopyWith<$Res> {
+  factory $DatabaseFailureCopyWith(
+          DatabaseFailure value, $Res Function(DatabaseFailure) _then) =
+      _$DatabaseFailureCopyWithImpl;
   @useResult
   $Res call({DatabaseFailures failures});
 
@@ -968,53 +572,57 @@ abstract class _$$DatabaseFailureCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$DatabaseFailureCopyWithImpl<$Res>
-    extends _$FailureCopyWithImpl<$Res, _$DatabaseFailure>
-    implements _$$DatabaseFailureCopyWith<$Res> {
-  __$$DatabaseFailureCopyWithImpl(
-      _$DatabaseFailure _value, $Res Function(_$DatabaseFailure) _then)
-      : super(_value, _then);
+class _$DatabaseFailureCopyWithImpl<$Res>
+    implements $DatabaseFailureCopyWith<$Res> {
+  _$DatabaseFailureCopyWithImpl(this._self, this._then);
 
+  final DatabaseFailure _self;
+  final $Res Function(DatabaseFailure) _then;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? failures = null,
   }) {
-    return _then(_$DatabaseFailure(
+    return _then(DatabaseFailure(
       null == failures
-          ? _value.failures
+          ? _self.failures
           : failures // ignore: cast_nullable_to_non_nullable
               as DatabaseFailures,
     ));
   }
 
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DatabaseFailuresCopyWith<$Res> get failures {
-    return $DatabaseFailuresCopyWith<$Res>(_value.failures, (value) {
-      return _then(_value.copyWith(failures: value));
+    return $DatabaseFailuresCopyWith<$Res>(_self.failures, (value) {
+      return _then(_self.copyWith(failures: value));
     });
   }
 }
 
 /// @nodoc
 
-class _$DatabaseFailure extends DatabaseFailure {
-  const _$DatabaseFailure(this.failures) : super._();
+class AuthFailure extends Failure {
+  const AuthFailure(this.failures) : super._();
+
+  final AuthFailures failures;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AuthFailureCopyWith<AuthFailure> get copyWith =>
+      _$AuthFailureCopyWithImpl<AuthFailure>(this, _$identity);
 
   @override
-  final DatabaseFailures failures;
-
-  @override
-  String toString() {
-    return 'Failure.databaseFailure(failures: $failures)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DatabaseFailure &&
+            other is AuthFailure &&
             (identical(other.failures, failures) ||
                 other.failures == failures));
   }
@@ -1022,115 +630,18 @@ class _$DatabaseFailure extends DatabaseFailure {
   @override
   int get hashCode => Object.hash(runtimeType, failures);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$DatabaseFailureCopyWith<_$DatabaseFailure> get copyWith =>
-      __$$DatabaseFailureCopyWithImpl<_$DatabaseFailure>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) {
-    return databaseFailure(failures);
+  String toString() {
+    return 'Failure.authFailure(failures: $failures)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) {
-    return databaseFailure?.call(failures);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (databaseFailure != null) {
-      return databaseFailure(failures);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) {
-    return databaseFailure(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) {
-    return databaseFailure?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (databaseFailure != null) {
-      return databaseFailure(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class DatabaseFailure extends Failure {
-  const factory DatabaseFailure(final DatabaseFailures failures) =
-      _$DatabaseFailure;
-  const DatabaseFailure._() : super._();
-
-  DatabaseFailures get failures;
-  @JsonKey(ignore: true)
-  _$$DatabaseFailureCopyWith<_$DatabaseFailure> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$AuthFailureCopyWith<$Res> {
-  factory _$$AuthFailureCopyWith(
-          _$AuthFailure value, $Res Function(_$AuthFailure) then) =
-      __$$AuthFailureCopyWithImpl<$Res>;
+abstract mixin class $AuthFailureCopyWith<$Res>
+    implements $FailureCopyWith<$Res> {
+  factory $AuthFailureCopyWith(
+          AuthFailure value, $Res Function(AuthFailure) _then) =
+      _$AuthFailureCopyWithImpl;
   @useResult
   $Res call({AuthFailures failures});
 
@@ -1138,810 +649,150 @@ abstract class _$$AuthFailureCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$AuthFailureCopyWithImpl<$Res>
-    extends _$FailureCopyWithImpl<$Res, _$AuthFailure>
-    implements _$$AuthFailureCopyWith<$Res> {
-  __$$AuthFailureCopyWithImpl(
-      _$AuthFailure _value, $Res Function(_$AuthFailure) _then)
-      : super(_value, _then);
+class _$AuthFailureCopyWithImpl<$Res> implements $AuthFailureCopyWith<$Res> {
+  _$AuthFailureCopyWithImpl(this._self, this._then);
 
+  final AuthFailure _self;
+  final $Res Function(AuthFailure) _then;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? failures = null,
   }) {
-    return _then(_$AuthFailure(
+    return _then(AuthFailure(
       null == failures
-          ? _value.failures
+          ? _self.failures
           : failures // ignore: cast_nullable_to_non_nullable
               as AuthFailures,
     ));
   }
 
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $AuthFailuresCopyWith<$Res> get failures {
-    return $AuthFailuresCopyWith<$Res>(_value.failures, (value) {
-      return _then(_value.copyWith(failures: value));
+    return $AuthFailuresCopyWith<$Res>(_self.failures, (value) {
+      return _then(_self.copyWith(failures: value));
     });
   }
-}
-
-/// @nodoc
-
-class _$AuthFailure extends AuthFailure {
-  const _$AuthFailure(this.failures) : super._();
-
-  @override
-  final AuthFailures failures;
-
-  @override
-  String toString() {
-    return 'Failure.authFailure(failures: $failures)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AuthFailure &&
-            (identical(other.failures, failures) ||
-                other.failures == failures));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, failures);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AuthFailureCopyWith<_$AuthFailure> get copyWith =>
-      __$$AuthFailureCopyWithImpl<_$AuthFailure>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) exception,
-    required TResult Function(FailureInfo info) networkFailure,
-    required TResult Function(FailureInfo info) serverError,
-    required TResult Function(DatabaseFailures failures) databaseFailure,
-    required TResult Function(AuthFailures failures) authFailure,
-  }) {
-    return authFailure(failures);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? exception,
-    TResult? Function(FailureInfo info)? networkFailure,
-    TResult? Function(FailureInfo info)? serverError,
-    TResult? Function(DatabaseFailures failures)? databaseFailure,
-    TResult? Function(AuthFailures failures)? authFailure,
-  }) {
-    return authFailure?.call(failures);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? exception,
-    TResult Function(FailureInfo info)? networkFailure,
-    TResult Function(FailureInfo info)? serverError,
-    TResult Function(DatabaseFailures failures)? databaseFailure,
-    TResult Function(AuthFailures failures)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (authFailure != null) {
-      return authFailure(failures);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Failure value) $default, {
-    required TResult Function(ExceptionFailure value) exception,
-    required TResult Function(NetworkFailure value) networkFailure,
-    required TResult Function(ServerError value) serverError,
-    required TResult Function(DatabaseFailure value) databaseFailure,
-    required TResult Function(AuthFailure value) authFailure,
-  }) {
-    return authFailure(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Failure value)? $default, {
-    TResult? Function(ExceptionFailure value)? exception,
-    TResult? Function(NetworkFailure value)? networkFailure,
-    TResult? Function(ServerError value)? serverError,
-    TResult? Function(DatabaseFailure value)? databaseFailure,
-    TResult? Function(AuthFailure value)? authFailure,
-  }) {
-    return authFailure?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Failure value)? $default, {
-    TResult Function(ExceptionFailure value)? exception,
-    TResult Function(NetworkFailure value)? networkFailure,
-    TResult Function(ServerError value)? serverError,
-    TResult Function(DatabaseFailure value)? databaseFailure,
-    TResult Function(AuthFailure value)? authFailure,
-    required TResult orElse(),
-  }) {
-    if (authFailure != null) {
-      return authFailure(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class AuthFailure extends Failure {
-  const factory AuthFailure(final AuthFailures failures) = _$AuthFailure;
-  const AuthFailure._() : super._();
-
-  AuthFailures get failures;
-  @JsonKey(ignore: true)
-  _$$AuthFailureCopyWith<_$AuthFailure> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 mixin _$DatabaseFailures {
-  FailureInfo get info => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) uniqueConstraint,
-    required TResult Function(FailureInfo info) notFound,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? uniqueConstraint,
-    TResult? Function(FailureInfo info)? notFound,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? uniqueConstraint,
-    TResult Function(FailureInfo info)? notFound,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value) $default, {
-    required TResult Function(_UniqueConstraint value) uniqueConstraint,
-    required TResult Function(_NotFound value) notFound,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_DatabaseFailures value)? $default, {
-    TResult? Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult? Function(_NotFound value)? notFound,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value)? $default, {
-    TResult Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult Function(_NotFound value)? notFound,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  FailureInfo get info;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $DatabaseFailuresCopyWith<DatabaseFailures> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+      _$DatabaseFailuresCopyWithImpl<DatabaseFailures>(
+          this as DatabaseFailures, _$identity);
 
-/// @nodoc
-abstract class $DatabaseFailuresCopyWith<$Res> {
-  factory $DatabaseFailuresCopyWith(
-          DatabaseFailures value, $Res Function(DatabaseFailures) then) =
-      _$DatabaseFailuresCopyWithImpl<$Res, DatabaseFailures>;
-  @useResult
-  $Res call({FailureInfo info});
-
-  $FailureInfoCopyWith<$Res> get info;
-}
-
-/// @nodoc
-class _$DatabaseFailuresCopyWithImpl<$Res, $Val extends DatabaseFailures>
-    implements $DatabaseFailuresCopyWith<$Res> {
-  _$DatabaseFailuresCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? info = null,
-  }) {
-    return _then(_value.copyWith(
-      info: null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as FailureInfo,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is DatabaseFailures &&
+            (identical(other.info, info) || other.info == info));
   }
 
   @override
-  @pragma('vm:prefer-inline')
-  $FailureInfoCopyWith<$Res> get info {
-    return $FailureInfoCopyWith<$Res>(_value.info, (value) {
-      return _then(_value.copyWith(info: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$_DatabaseFailuresCopyWith<$Res>
-    implements $DatabaseFailuresCopyWith<$Res> {
-  factory _$$_DatabaseFailuresCopyWith(
-          _$_DatabaseFailures value, $Res Function(_$_DatabaseFailures) then) =
-      __$$_DatabaseFailuresCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({FailureInfo info});
-
-  @override
-  $FailureInfoCopyWith<$Res> get info;
-}
-
-/// @nodoc
-class __$$_DatabaseFailuresCopyWithImpl<$Res>
-    extends _$DatabaseFailuresCopyWithImpl<$Res, _$_DatabaseFailures>
-    implements _$$_DatabaseFailuresCopyWith<$Res> {
-  __$$_DatabaseFailuresCopyWithImpl(
-      _$_DatabaseFailures _value, $Res Function(_$_DatabaseFailures) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? info = null,
-  }) {
-    return _then(_$_DatabaseFailures(
-      null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as FailureInfo,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_DatabaseFailures extends _DatabaseFailures {
-  const _$_DatabaseFailures(this.info) : super._();
-
-  @override
-  final FailureInfo info;
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'DatabaseFailures(info: $info)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_DatabaseFailures &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_DatabaseFailuresCopyWith<_$_DatabaseFailures> get copyWith =>
-      __$$_DatabaseFailuresCopyWithImpl<_$_DatabaseFailures>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) uniqueConstraint,
-    required TResult Function(FailureInfo info) notFound,
-  }) {
-    return $default(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? uniqueConstraint,
-    TResult? Function(FailureInfo info)? notFound,
-  }) {
-    return $default?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? uniqueConstraint,
-    TResult Function(FailureInfo info)? notFound,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value) $default, {
-    required TResult Function(_UniqueConstraint value) uniqueConstraint,
-    required TResult Function(_NotFound value) notFound,
-  }) {
-    return $default(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_DatabaseFailures value)? $default, {
-    TResult? Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult? Function(_NotFound value)? notFound,
-  }) {
-    return $default?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value)? $default, {
-    TResult Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult Function(_NotFound value)? notFound,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _DatabaseFailures extends DatabaseFailures {
-  const factory _DatabaseFailures(final FailureInfo info) = _$_DatabaseFailures;
-  const _DatabaseFailures._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_DatabaseFailuresCopyWith<_$_DatabaseFailures> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_UniqueConstraintCopyWith<$Res>
+abstract mixin class $DatabaseFailuresCopyWith<$Res> {
+  factory $DatabaseFailuresCopyWith(
+          DatabaseFailures value, $Res Function(DatabaseFailures) _then) =
+      _$DatabaseFailuresCopyWithImpl;
+  @useResult
+  $Res call({FailureInfo info});
+
+  $FailureInfoCopyWith<$Res> get info;
+}
+
+/// @nodoc
+class _$DatabaseFailuresCopyWithImpl<$Res>
     implements $DatabaseFailuresCopyWith<$Res> {
-  factory _$$_UniqueConstraintCopyWith(
-          _$_UniqueConstraint value, $Res Function(_$_UniqueConstraint) then) =
-      __$$_UniqueConstraintCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({FailureInfo info});
+  _$DatabaseFailuresCopyWithImpl(this._self, this._then);
 
-  @override
-  $FailureInfoCopyWith<$Res> get info;
-}
+  final DatabaseFailures _self;
+  final $Res Function(DatabaseFailures) _then;
 
-/// @nodoc
-class __$$_UniqueConstraintCopyWithImpl<$Res>
-    extends _$DatabaseFailuresCopyWithImpl<$Res, _$_UniqueConstraint>
-    implements _$$_UniqueConstraintCopyWith<$Res> {
-  __$$_UniqueConstraintCopyWithImpl(
-      _$_UniqueConstraint _value, $Res Function(_$_UniqueConstraint) _then)
-      : super(_value, _then);
-
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$_UniqueConstraint(
-      null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as FailureInfo,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_UniqueConstraint extends _UniqueConstraint {
-  const _$_UniqueConstraint(this.info) : super._();
-
-  @override
-  final FailureInfo info;
-
-  @override
-  String toString() {
-    return 'DatabaseFailures.uniqueConstraint(info: $info)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_UniqueConstraint &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_UniqueConstraintCopyWith<_$_UniqueConstraint> get copyWith =>
-      __$$_UniqueConstraintCopyWithImpl<_$_UniqueConstraint>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) uniqueConstraint,
-    required TResult Function(FailureInfo info) notFound,
-  }) {
-    return uniqueConstraint(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? uniqueConstraint,
-    TResult? Function(FailureInfo info)? notFound,
-  }) {
-    return uniqueConstraint?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? uniqueConstraint,
-    TResult Function(FailureInfo info)? notFound,
-    required TResult orElse(),
-  }) {
-    if (uniqueConstraint != null) {
-      return uniqueConstraint(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value) $default, {
-    required TResult Function(_UniqueConstraint value) uniqueConstraint,
-    required TResult Function(_NotFound value) notFound,
-  }) {
-    return uniqueConstraint(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_DatabaseFailures value)? $default, {
-    TResult? Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult? Function(_NotFound value)? notFound,
-  }) {
-    return uniqueConstraint?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value)? $default, {
-    TResult Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult Function(_NotFound value)? notFound,
-    required TResult orElse(),
-  }) {
-    if (uniqueConstraint != null) {
-      return uniqueConstraint(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _UniqueConstraint extends DatabaseFailures {
-  const factory _UniqueConstraint(final FailureInfo info) = _$_UniqueConstraint;
-  const _UniqueConstraint._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_UniqueConstraintCopyWith<_$_UniqueConstraint> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$_NotFoundCopyWith<$Res>
-    implements $DatabaseFailuresCopyWith<$Res> {
-  factory _$$_NotFoundCopyWith(
-          _$_NotFound value, $Res Function(_$_NotFound) then) =
-      __$$_NotFoundCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({FailureInfo info});
-
-  @override
-  $FailureInfoCopyWith<$Res> get info;
-}
-
-/// @nodoc
-class __$$_NotFoundCopyWithImpl<$Res>
-    extends _$DatabaseFailuresCopyWithImpl<$Res, _$_NotFound>
-    implements _$$_NotFoundCopyWith<$Res> {
-  __$$_NotFoundCopyWithImpl(
-      _$_NotFound _value, $Res Function(_$_NotFound) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? info = null,
-  }) {
-    return _then(_$_NotFound(
-      null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as FailureInfo,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$_NotFound extends _NotFound {
-  const _$_NotFound(this.info) : super._();
-
-  @override
-  final FailureInfo info;
-
-  @override
-  String toString() {
-    return 'DatabaseFailures.notFound(info: $info)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_NotFound &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_NotFoundCopyWith<_$_NotFound> get copyWith =>
-      __$$_NotFoundCopyWithImpl<_$_NotFound>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) uniqueConstraint,
-    required TResult Function(FailureInfo info) notFound,
-  }) {
-    return notFound(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? uniqueConstraint,
-    TResult? Function(FailureInfo info)? notFound,
-  }) {
-    return notFound?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? uniqueConstraint,
-    TResult Function(FailureInfo info)? notFound,
-    required TResult orElse(),
-  }) {
-    if (notFound != null) {
-      return notFound(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value) $default, {
-    required TResult Function(_UniqueConstraint value) uniqueConstraint,
-    required TResult Function(_NotFound value) notFound,
-  }) {
-    return notFound(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_DatabaseFailures value)? $default, {
-    TResult? Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult? Function(_NotFound value)? notFound,
-  }) {
-    return notFound?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_DatabaseFailures value)? $default, {
-    TResult Function(_UniqueConstraint value)? uniqueConstraint,
-    TResult Function(_NotFound value)? notFound,
-    required TResult orElse(),
-  }) {
-    if (notFound != null) {
-      return notFound(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _NotFound extends DatabaseFailures {
-  const factory _NotFound(final FailureInfo info) = _$_NotFound;
-  const _NotFound._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_NotFoundCopyWith<_$_NotFound> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-mixin _$AuthFailures {
-  FailureInfo get info => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) incorrectLoginCredential,
-    required TResult Function(FailureInfo info) forbidden,
-    required TResult Function(FailureInfo info) alreadyRegistered,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? incorrectLoginCredential,
-    TResult? Function(FailureInfo info)? forbidden,
-    TResult? Function(FailureInfo info)? alreadyRegistered,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? incorrectLoginCredential,
-    TResult Function(FailureInfo info)? forbidden,
-    TResult Function(FailureInfo info)? alreadyRegistered,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_AuthFailures value) $default, {
-    required TResult Function(_IncorrectLoginCredential value)
-        incorrectLoginCredential,
-    required TResult Function(_Forbidden value) forbidden,
-    required TResult Function(_UserAlreadyRegistered value) alreadyRegistered,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_AuthFailures value)? $default, {
-    TResult? Function(_IncorrectLoginCredential value)?
-        incorrectLoginCredential,
-    TResult? Function(_Forbidden value)? forbidden,
-    TResult? Function(_UserAlreadyRegistered value)? alreadyRegistered,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_AuthFailures value)? $default, {
-    TResult Function(_IncorrectLoginCredential value)? incorrectLoginCredential,
-    TResult Function(_Forbidden value)? forbidden,
-    TResult Function(_UserAlreadyRegistered value)? alreadyRegistered,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-
-  @JsonKey(ignore: true)
-  $AuthFailuresCopyWith<AuthFailures> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $AuthFailuresCopyWith<$Res> {
-  factory $AuthFailuresCopyWith(
-          AuthFailures value, $Res Function(AuthFailures) then) =
-      _$AuthFailuresCopyWithImpl<$Res, AuthFailures>;
-  @useResult
-  $Res call({FailureInfo info});
-
-  $FailureInfoCopyWith<$Res> get info;
-}
-
-/// @nodoc
-class _$AuthFailuresCopyWithImpl<$Res, $Val extends AuthFailures>
-    implements $AuthFailuresCopyWith<$Res> {
-  _$AuthFailuresCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? info = null,
-  }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       info: null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
-    ) as $Val);
+    ));
   }
 
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $FailureInfoCopyWith<$Res> get info {
-    return $FailureInfoCopyWith<$Res>(_value.info, (value) {
-      return _then(_value.copyWith(info: value) as $Val);
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$_AuthFailuresCopyWith<$Res>
-    implements $AuthFailuresCopyWith<$Res> {
-  factory _$$_AuthFailuresCopyWith(
-          _$_AuthFailures value, $Res Function(_$_AuthFailures) then) =
-      __$$_AuthFailuresCopyWithImpl<$Res>;
+
+class _DatabaseFailures extends DatabaseFailures {
+  const _DatabaseFailures(this.info) : super._();
+
+  @override
+  final FailureInfo info;
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$DatabaseFailuresCopyWith<_DatabaseFailures> get copyWith =>
+      __$DatabaseFailuresCopyWithImpl<_DatabaseFailures>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _DatabaseFailures &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
+
+  @override
+  String toString() {
+    return 'DatabaseFailures(info: $info)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$DatabaseFailuresCopyWith<$Res>
+    implements $DatabaseFailuresCopyWith<$Res> {
+  factory _$DatabaseFailuresCopyWith(
+          _DatabaseFailures value, $Res Function(_DatabaseFailures) _then) =
+      __$DatabaseFailuresCopyWithImpl;
   @override
   @useResult
   $Res call({FailureInfo info});
@@ -1951,153 +802,311 @@ abstract class _$$_AuthFailuresCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_AuthFailuresCopyWithImpl<$Res>
-    extends _$AuthFailuresCopyWithImpl<$Res, _$_AuthFailures>
-    implements _$$_AuthFailuresCopyWith<$Res> {
-  __$$_AuthFailuresCopyWithImpl(
-      _$_AuthFailures _value, $Res Function(_$_AuthFailures) _then)
-      : super(_value, _then);
+class __$DatabaseFailuresCopyWithImpl<$Res>
+    implements _$DatabaseFailuresCopyWith<$Res> {
+  __$DatabaseFailuresCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _DatabaseFailures _self;
+  final $Res Function(_DatabaseFailures) _then;
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$_AuthFailures(
+    return _then(_DatabaseFailures(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
+  }
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_AuthFailures extends _AuthFailures {
-  const _$_AuthFailures(this.info) : super._();
+class _UniqueConstraint extends DatabaseFailures {
+  const _UniqueConstraint(this.info) : super._();
 
   @override
   final FailureInfo info;
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UniqueConstraintCopyWith<_UniqueConstraint> get copyWith =>
+      __$UniqueConstraintCopyWithImpl<_UniqueConstraint>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _UniqueConstraint &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
+
+  @override
+  String toString() {
+    return 'DatabaseFailures.uniqueConstraint(info: $info)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$UniqueConstraintCopyWith<$Res>
+    implements $DatabaseFailuresCopyWith<$Res> {
+  factory _$UniqueConstraintCopyWith(
+          _UniqueConstraint value, $Res Function(_UniqueConstraint) _then) =
+      __$UniqueConstraintCopyWithImpl;
+  @override
+  @useResult
+  $Res call({FailureInfo info});
+
+  @override
+  $FailureInfoCopyWith<$Res> get info;
+}
+
+/// @nodoc
+class __$UniqueConstraintCopyWithImpl<$Res>
+    implements _$UniqueConstraintCopyWith<$Res> {
+  __$UniqueConstraintCopyWithImpl(this._self, this._then);
+
+  final _UniqueConstraint _self;
+  final $Res Function(_UniqueConstraint) _then;
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? info = null,
+  }) {
+    return _then(_UniqueConstraint(
+      null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as FailureInfo,
+    ));
+  }
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _NotFound extends DatabaseFailures {
+  const _NotFound(this.info) : super._();
+
+  @override
+  final FailureInfo info;
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$NotFoundCopyWith<_NotFound> get copyWith =>
+      __$NotFoundCopyWithImpl<_NotFound>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _NotFound &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
+
+  @override
+  String toString() {
+    return 'DatabaseFailures.notFound(info: $info)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$NotFoundCopyWith<$Res>
+    implements $DatabaseFailuresCopyWith<$Res> {
+  factory _$NotFoundCopyWith(_NotFound value, $Res Function(_NotFound) _then) =
+      __$NotFoundCopyWithImpl;
+  @override
+  @useResult
+  $Res call({FailureInfo info});
+
+  @override
+  $FailureInfoCopyWith<$Res> get info;
+}
+
+/// @nodoc
+class __$NotFoundCopyWithImpl<$Res> implements _$NotFoundCopyWith<$Res> {
+  __$NotFoundCopyWithImpl(this._self, this._then);
+
+  final _NotFound _self;
+  final $Res Function(_NotFound) _then;
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? info = null,
+  }) {
+    return _then(_NotFound(
+      null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as FailureInfo,
+    ));
+  }
+
+  /// Create a copy of DatabaseFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
+  }
+}
+
+/// @nodoc
+mixin _$AuthFailures {
+  FailureInfo get info;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AuthFailuresCopyWith<AuthFailures> get copyWith =>
+      _$AuthFailuresCopyWithImpl<AuthFailures>(
+          this as AuthFailures, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is AuthFailures &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'AuthFailures(info: $info)';
   }
+}
+
+/// @nodoc
+abstract mixin class $AuthFailuresCopyWith<$Res> {
+  factory $AuthFailuresCopyWith(
+          AuthFailures value, $Res Function(AuthFailures) _then) =
+      _$AuthFailuresCopyWithImpl;
+  @useResult
+  $Res call({FailureInfo info});
+
+  $FailureInfoCopyWith<$Res> get info;
+}
+
+/// @nodoc
+class _$AuthFailuresCopyWithImpl<$Res> implements $AuthFailuresCopyWith<$Res> {
+  _$AuthFailuresCopyWithImpl(this._self, this._then);
+
+  final AuthFailures _self;
+  final $Res Function(AuthFailures) _then;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? info = null,
+  }) {
+    return _then(_self.copyWith(
+      info: null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as FailureInfo,
+    ));
+  }
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _AuthFailures extends AuthFailures {
+  const _AuthFailures(this.info) : super._();
 
   @override
-  bool operator ==(dynamic other) {
+  final FailureInfo info;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$AuthFailuresCopyWith<_AuthFailures> get copyWith =>
+      __$AuthFailuresCopyWithImpl<_AuthFailures>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AuthFailures &&
+            other is _AuthFailures &&
             (identical(other.info, info) || other.info == info));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, info);
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$_AuthFailuresCopyWith<_$_AuthFailures> get copyWith =>
-      __$$_AuthFailuresCopyWithImpl<_$_AuthFailures>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) incorrectLoginCredential,
-    required TResult Function(FailureInfo info) forbidden,
-    required TResult Function(FailureInfo info) alreadyRegistered,
-  }) {
-    return $default(info);
+  String toString() {
+    return 'AuthFailures(info: $info)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? incorrectLoginCredential,
-    TResult? Function(FailureInfo info)? forbidden,
-    TResult? Function(FailureInfo info)? alreadyRegistered,
-  }) {
-    return $default?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? incorrectLoginCredential,
-    TResult Function(FailureInfo info)? forbidden,
-    TResult Function(FailureInfo info)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_AuthFailures value) $default, {
-    required TResult Function(_IncorrectLoginCredential value)
-        incorrectLoginCredential,
-    required TResult Function(_Forbidden value) forbidden,
-    required TResult Function(_UserAlreadyRegistered value) alreadyRegistered,
-  }) {
-    return $default(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_AuthFailures value)? $default, {
-    TResult? Function(_IncorrectLoginCredential value)?
-        incorrectLoginCredential,
-    TResult? Function(_Forbidden value)? forbidden,
-    TResult? Function(_UserAlreadyRegistered value)? alreadyRegistered,
-  }) {
-    return $default?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_AuthFailures value)? $default, {
-    TResult Function(_IncorrectLoginCredential value)? incorrectLoginCredential,
-    TResult Function(_Forbidden value)? forbidden,
-    TResult Function(_UserAlreadyRegistered value)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _AuthFailures extends AuthFailures {
-  const factory _AuthFailures(final FailureInfo info) = _$_AuthFailures;
-  const _AuthFailures._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_AuthFailuresCopyWith<_$_AuthFailures> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_IncorrectLoginCredentialCopyWith<$Res>
+abstract mixin class _$AuthFailuresCopyWith<$Res>
     implements $AuthFailuresCopyWith<$Res> {
-  factory _$$_IncorrectLoginCredentialCopyWith(
-          _$_IncorrectLoginCredential value,
-          $Res Function(_$_IncorrectLoginCredential) then) =
-      __$$_IncorrectLoginCredentialCopyWithImpl<$Res>;
+  factory _$AuthFailuresCopyWith(
+          _AuthFailures value, $Res Function(_AuthFailures) _then) =
+      __$AuthFailuresCopyWithImpl;
   @override
   @useResult
   $Res call({FailureInfo info});
@@ -2107,154 +1116,79 @@ abstract class _$$_IncorrectLoginCredentialCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_IncorrectLoginCredentialCopyWithImpl<$Res>
-    extends _$AuthFailuresCopyWithImpl<$Res, _$_IncorrectLoginCredential>
-    implements _$$_IncorrectLoginCredentialCopyWith<$Res> {
-  __$$_IncorrectLoginCredentialCopyWithImpl(_$_IncorrectLoginCredential _value,
-      $Res Function(_$_IncorrectLoginCredential) _then)
-      : super(_value, _then);
+class __$AuthFailuresCopyWithImpl<$Res>
+    implements _$AuthFailuresCopyWith<$Res> {
+  __$AuthFailuresCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _AuthFailures _self;
+  final $Res Function(_AuthFailures) _then;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$_IncorrectLoginCredential(
+    return _then(_AuthFailures(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
+  }
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_IncorrectLoginCredential extends _IncorrectLoginCredential {
-  const _$_IncorrectLoginCredential(this.info) : super._();
+class _IncorrectLoginCredential extends AuthFailures {
+  const _IncorrectLoginCredential(this.info) : super._();
 
   @override
   final FailureInfo info;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$IncorrectLoginCredentialCopyWith<_IncorrectLoginCredential> get copyWith =>
+      __$IncorrectLoginCredentialCopyWithImpl<_IncorrectLoginCredential>(
+          this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _IncorrectLoginCredential &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'AuthFailures.incorrectLoginCredential(info: $info)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_IncorrectLoginCredential &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_IncorrectLoginCredentialCopyWith<_$_IncorrectLoginCredential>
-      get copyWith => __$$_IncorrectLoginCredentialCopyWithImpl<
-          _$_IncorrectLoginCredential>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) incorrectLoginCredential,
-    required TResult Function(FailureInfo info) forbidden,
-    required TResult Function(FailureInfo info) alreadyRegistered,
-  }) {
-    return incorrectLoginCredential(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? incorrectLoginCredential,
-    TResult? Function(FailureInfo info)? forbidden,
-    TResult? Function(FailureInfo info)? alreadyRegistered,
-  }) {
-    return incorrectLoginCredential?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? incorrectLoginCredential,
-    TResult Function(FailureInfo info)? forbidden,
-    TResult Function(FailureInfo info)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if (incorrectLoginCredential != null) {
-      return incorrectLoginCredential(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_AuthFailures value) $default, {
-    required TResult Function(_IncorrectLoginCredential value)
-        incorrectLoginCredential,
-    required TResult Function(_Forbidden value) forbidden,
-    required TResult Function(_UserAlreadyRegistered value) alreadyRegistered,
-  }) {
-    return incorrectLoginCredential(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_AuthFailures value)? $default, {
-    TResult? Function(_IncorrectLoginCredential value)?
-        incorrectLoginCredential,
-    TResult? Function(_Forbidden value)? forbidden,
-    TResult? Function(_UserAlreadyRegistered value)? alreadyRegistered,
-  }) {
-    return incorrectLoginCredential?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_AuthFailures value)? $default, {
-    TResult Function(_IncorrectLoginCredential value)? incorrectLoginCredential,
-    TResult Function(_Forbidden value)? forbidden,
-    TResult Function(_UserAlreadyRegistered value)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if (incorrectLoginCredential != null) {
-      return incorrectLoginCredential(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _IncorrectLoginCredential extends AuthFailures {
-  const factory _IncorrectLoginCredential(final FailureInfo info) =
-      _$_IncorrectLoginCredential;
-  const _IncorrectLoginCredential._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_IncorrectLoginCredentialCopyWith<_$_IncorrectLoginCredential>
-      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ForbiddenCopyWith<$Res>
+abstract mixin class _$IncorrectLoginCredentialCopyWith<$Res>
     implements $AuthFailuresCopyWith<$Res> {
-  factory _$$_ForbiddenCopyWith(
-          _$_Forbidden value, $Res Function(_$_Forbidden) then) =
-      __$$_ForbiddenCopyWithImpl<$Res>;
+  factory _$IncorrectLoginCredentialCopyWith(_IncorrectLoginCredential value,
+          $Res Function(_IncorrectLoginCredential) _then) =
+      __$IncorrectLoginCredentialCopyWithImpl;
   @override
   @useResult
   $Res call({FailureInfo info});
@@ -2264,152 +1198,78 @@ abstract class _$$_ForbiddenCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_ForbiddenCopyWithImpl<$Res>
-    extends _$AuthFailuresCopyWithImpl<$Res, _$_Forbidden>
-    implements _$$_ForbiddenCopyWith<$Res> {
-  __$$_ForbiddenCopyWithImpl(
-      _$_Forbidden _value, $Res Function(_$_Forbidden) _then)
-      : super(_value, _then);
+class __$IncorrectLoginCredentialCopyWithImpl<$Res>
+    implements _$IncorrectLoginCredentialCopyWith<$Res> {
+  __$IncorrectLoginCredentialCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _IncorrectLoginCredential _self;
+  final $Res Function(_IncorrectLoginCredential) _then;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$_Forbidden(
+    return _then(_IncorrectLoginCredential(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
+  }
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_Forbidden extends _Forbidden {
-  const _$_Forbidden(this.info) : super._();
+class _Forbidden extends AuthFailures {
+  const _Forbidden(this.info) : super._();
 
   @override
   final FailureInfo info;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ForbiddenCopyWith<_Forbidden> get copyWith =>
+      __$ForbiddenCopyWithImpl<_Forbidden>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Forbidden &&
+            (identical(other.info, info) || other.info == info));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, info);
 
   @override
   String toString() {
     return 'AuthFailures.forbidden(info: $info)';
   }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_Forbidden &&
-            (identical(other.info, info) || other.info == info));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, info);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_ForbiddenCopyWith<_$_Forbidden> get copyWith =>
-      __$$_ForbiddenCopyWithImpl<_$_Forbidden>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) incorrectLoginCredential,
-    required TResult Function(FailureInfo info) forbidden,
-    required TResult Function(FailureInfo info) alreadyRegistered,
-  }) {
-    return forbidden(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? incorrectLoginCredential,
-    TResult? Function(FailureInfo info)? forbidden,
-    TResult? Function(FailureInfo info)? alreadyRegistered,
-  }) {
-    return forbidden?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? incorrectLoginCredential,
-    TResult Function(FailureInfo info)? forbidden,
-    TResult Function(FailureInfo info)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if (forbidden != null) {
-      return forbidden(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_AuthFailures value) $default, {
-    required TResult Function(_IncorrectLoginCredential value)
-        incorrectLoginCredential,
-    required TResult Function(_Forbidden value) forbidden,
-    required TResult Function(_UserAlreadyRegistered value) alreadyRegistered,
-  }) {
-    return forbidden(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_AuthFailures value)? $default, {
-    TResult? Function(_IncorrectLoginCredential value)?
-        incorrectLoginCredential,
-    TResult? Function(_Forbidden value)? forbidden,
-    TResult? Function(_UserAlreadyRegistered value)? alreadyRegistered,
-  }) {
-    return forbidden?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_AuthFailures value)? $default, {
-    TResult Function(_IncorrectLoginCredential value)? incorrectLoginCredential,
-    TResult Function(_Forbidden value)? forbidden,
-    TResult Function(_UserAlreadyRegistered value)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if (forbidden != null) {
-      return forbidden(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _Forbidden extends AuthFailures {
-  const factory _Forbidden(final FailureInfo info) = _$_Forbidden;
-  const _Forbidden._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_ForbiddenCopyWith<_$_Forbidden> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_UserAlreadyRegisteredCopyWith<$Res>
+abstract mixin class _$ForbiddenCopyWith<$Res>
     implements $AuthFailuresCopyWith<$Res> {
-  factory _$$_UserAlreadyRegisteredCopyWith(_$_UserAlreadyRegistered value,
-          $Res Function(_$_UserAlreadyRegistered) then) =
-      __$$_UserAlreadyRegisteredCopyWithImpl<$Res>;
+  factory _$ForbiddenCopyWith(
+          _Forbidden value, $Res Function(_Forbidden) _then) =
+      __$ForbiddenCopyWithImpl;
   @override
   @useResult
   $Res call({FailureInfo info});
@@ -2419,144 +1279,118 @@ abstract class _$$_UserAlreadyRegisteredCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_UserAlreadyRegisteredCopyWithImpl<$Res>
-    extends _$AuthFailuresCopyWithImpl<$Res, _$_UserAlreadyRegistered>
-    implements _$$_UserAlreadyRegisteredCopyWith<$Res> {
-  __$$_UserAlreadyRegisteredCopyWithImpl(_$_UserAlreadyRegistered _value,
-      $Res Function(_$_UserAlreadyRegistered) _then)
-      : super(_value, _then);
+class __$ForbiddenCopyWithImpl<$Res> implements _$ForbiddenCopyWith<$Res> {
+  __$ForbiddenCopyWithImpl(this._self, this._then);
 
-  @pragma('vm:prefer-inline')
+  final _Forbidden _self;
+  final $Res Function(_Forbidden) _then;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
+  @pragma('vm:prefer-inline')
   $Res call({
     Object? info = null,
   }) {
-    return _then(_$_UserAlreadyRegistered(
+    return _then(_Forbidden(
       null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as FailureInfo,
     ));
+  }
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
   }
 }
 
 /// @nodoc
 
-class _$_UserAlreadyRegistered extends _UserAlreadyRegistered {
-  const _$_UserAlreadyRegistered(this.info) : super._();
+class _UserAlreadyRegistered extends AuthFailures {
+  const _UserAlreadyRegistered(this.info) : super._();
 
   @override
   final FailureInfo info;
 
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'AuthFailures.alreadyRegistered(info: $info)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UserAlreadyRegisteredCopyWith<_UserAlreadyRegistered> get copyWith =>
+      __$UserAlreadyRegisteredCopyWithImpl<_UserAlreadyRegistered>(
+          this, _$identity);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_UserAlreadyRegistered &&
+            other is _UserAlreadyRegistered &&
             (identical(other.info, info) || other.info == info));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, info);
 
-  @JsonKey(ignore: true)
+  @override
+  String toString() {
+    return 'AuthFailures.alreadyRegistered(info: $info)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$UserAlreadyRegisteredCopyWith<$Res>
+    implements $AuthFailuresCopyWith<$Res> {
+  factory _$UserAlreadyRegisteredCopyWith(_UserAlreadyRegistered value,
+          $Res Function(_UserAlreadyRegistered) _then) =
+      __$UserAlreadyRegisteredCopyWithImpl;
+  @override
+  @useResult
+  $Res call({FailureInfo info});
+
+  @override
+  $FailureInfoCopyWith<$Res> get info;
+}
+
+/// @nodoc
+class __$UserAlreadyRegisteredCopyWithImpl<$Res>
+    implements _$UserAlreadyRegisteredCopyWith<$Res> {
+  __$UserAlreadyRegisteredCopyWithImpl(this._self, this._then);
+
+  final _UserAlreadyRegistered _self;
+  final $Res Function(_UserAlreadyRegistered) _then;
+
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  _$$_UserAlreadyRegisteredCopyWith<_$_UserAlreadyRegistered> get copyWith =>
-      __$$_UserAlreadyRegisteredCopyWithImpl<_$_UserAlreadyRegistered>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(FailureInfo info) $default, {
-    required TResult Function(FailureInfo info) incorrectLoginCredential,
-    required TResult Function(FailureInfo info) forbidden,
-    required TResult Function(FailureInfo info) alreadyRegistered,
+  $Res call({
+    Object? info = null,
   }) {
-    return alreadyRegistered(info);
+    return _then(_UserAlreadyRegistered(
+      null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as FailureInfo,
+    ));
   }
 
+  /// Create a copy of AuthFailures
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(FailureInfo info)? $default, {
-    TResult? Function(FailureInfo info)? incorrectLoginCredential,
-    TResult? Function(FailureInfo info)? forbidden,
-    TResult? Function(FailureInfo info)? alreadyRegistered,
-  }) {
-    return alreadyRegistered?.call(info);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(FailureInfo info)? $default, {
-    TResult Function(FailureInfo info)? incorrectLoginCredential,
-    TResult Function(FailureInfo info)? forbidden,
-    TResult Function(FailureInfo info)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if (alreadyRegistered != null) {
-      return alreadyRegistered(info);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_AuthFailures value) $default, {
-    required TResult Function(_IncorrectLoginCredential value)
-        incorrectLoginCredential,
-    required TResult Function(_Forbidden value) forbidden,
-    required TResult Function(_UserAlreadyRegistered value) alreadyRegistered,
-  }) {
-    return alreadyRegistered(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_AuthFailures value)? $default, {
-    TResult? Function(_IncorrectLoginCredential value)?
-        incorrectLoginCredential,
-    TResult? Function(_Forbidden value)? forbidden,
-    TResult? Function(_UserAlreadyRegistered value)? alreadyRegistered,
-  }) {
-    return alreadyRegistered?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_AuthFailures value)? $default, {
-    TResult Function(_IncorrectLoginCredential value)? incorrectLoginCredential,
-    TResult Function(_Forbidden value)? forbidden,
-    TResult Function(_UserAlreadyRegistered value)? alreadyRegistered,
-    required TResult orElse(),
-  }) {
-    if (alreadyRegistered != null) {
-      return alreadyRegistered(this);
-    }
-    return orElse();
+  @pragma('vm:prefer-inline')
+  $FailureInfoCopyWith<$Res> get info {
+    return $FailureInfoCopyWith<$Res>(_self.info, (value) {
+      return _then(_self.copyWith(info: value));
+    });
   }
 }
 
-abstract class _UserAlreadyRegistered extends AuthFailures {
-  const factory _UserAlreadyRegistered(final FailureInfo info) =
-      _$_UserAlreadyRegistered;
-  const _UserAlreadyRegistered._() : super._();
-
-  @override
-  FailureInfo get info;
-  @override
-  @JsonKey(ignore: true)
-  _$$_UserAlreadyRegisteredCopyWith<_$_UserAlreadyRegistered> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

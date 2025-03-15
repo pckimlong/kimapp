@@ -1,5 +1,6 @@
 import 'package:kimapp/kimapp.dart';
 import 'package:kimapp_supabase_helper/supabase_storage.dart';
+import 'package:book_swap/src/core/errors/custom_failure_message.dart';
 
 import '../startup.dart';
 import 'init_error_reporter_task.dart';
@@ -11,6 +12,7 @@ class InitKimappTask extends StartUpTask {
   Future<void> initialize(LaunchContext context) async {
     await Kimapp.initialize(
       debugMode: context.env.isDevelop,
+      customFailureMessage: CustomFailureMessage(),
       logger: (type, message, [title, stackTrace, object]) {
         // Only report error to crashlytics in release mode
         if (context.env.isRelease && type == LoggerType.error) {

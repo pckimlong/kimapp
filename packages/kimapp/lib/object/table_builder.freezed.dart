@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,91 +10,73 @@ part of 'table_builder.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$TableBuilder {
-  String get tableName => throw _privateConstructorUsedError;
-  List<ColumnBuilder> get columns => throw _privateConstructorUsedError;
+  String get tableName;
+  List<ColumnBuilder> get columns;
 
-  @JsonKey(ignore: true)
-  $TableBuilderCopyWith<TableBuilder> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $TableBuilderCopyWith<$Res> {
-  factory $TableBuilderCopyWith(
-          TableBuilder value, $Res Function(TableBuilder) then) =
-      _$TableBuilderCopyWithImpl<$Res, TableBuilder>;
-  @useResult
-  $Res call({String tableName, List<ColumnBuilder> columns});
-}
-
-/// @nodoc
-class _$TableBuilderCopyWithImpl<$Res, $Val extends TableBuilder>
-    implements $TableBuilderCopyWith<$Res> {
-  _$TableBuilderCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
+  /// Create a copy of TableBuilder
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
+  $TableBuilderCopyWith<TableBuilder> get copyWith =>
+      _$TableBuilderCopyWithImpl<TableBuilder>(
+          this as TableBuilder, _$identity);
+
   @override
-  $Res call({
-    Object? tableName = null,
-    Object? columns = null,
-  }) {
-    return _then(_value.copyWith(
-      tableName: null == tableName
-          ? _value.tableName
-          : tableName // ignore: cast_nullable_to_non_nullable
-              as String,
-      columns: null == columns
-          ? _value.columns
-          : columns // ignore: cast_nullable_to_non_nullable
-              as List<ColumnBuilder>,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is TableBuilder &&
+            (identical(other.tableName, tableName) ||
+                other.tableName == tableName) &&
+            const DeepCollectionEquality().equals(other.columns, columns));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, tableName, const DeepCollectionEquality().hash(columns));
+
+  @override
+  String toString() {
+    return 'TableBuilder(tableName: $tableName, columns: $columns)';
   }
 }
 
 /// @nodoc
-abstract class _$$_TableBuilderCopyWith<$Res>
-    implements $TableBuilderCopyWith<$Res> {
-  factory _$$_TableBuilderCopyWith(
-          _$_TableBuilder value, $Res Function(_$_TableBuilder) then) =
-      __$$_TableBuilderCopyWithImpl<$Res>;
-  @override
+abstract mixin class $TableBuilderCopyWith<$Res> {
+  factory $TableBuilderCopyWith(
+          TableBuilder value, $Res Function(TableBuilder) _then) =
+      _$TableBuilderCopyWithImpl;
   @useResult
   $Res call({String tableName, List<ColumnBuilder> columns});
 }
 
 /// @nodoc
-class __$$_TableBuilderCopyWithImpl<$Res>
-    extends _$TableBuilderCopyWithImpl<$Res, _$_TableBuilder>
-    implements _$$_TableBuilderCopyWith<$Res> {
-  __$$_TableBuilderCopyWithImpl(
-      _$_TableBuilder _value, $Res Function(_$_TableBuilder) _then)
-      : super(_value, _then);
+class _$TableBuilderCopyWithImpl<$Res> implements $TableBuilderCopyWith<$Res> {
+  _$TableBuilderCopyWithImpl(this._self, this._then);
 
+  final TableBuilder _self;
+  final $Res Function(TableBuilder) _then;
+
+  /// Create a copy of TableBuilder
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? tableName = null,
     Object? columns = null,
   }) {
-    return _then(_$_TableBuilder(
+    return _then(_self.copyWith(
       tableName: null == tableName
-          ? _value.tableName
+          ? _self.tableName
           : tableName // ignore: cast_nullable_to_non_nullable
               as String,
       columns: null == columns
-          ? _value._columns
+          ? _self.columns
           : columns // ignore: cast_nullable_to_non_nullable
               as List<ColumnBuilder>,
     ));
@@ -102,8 +85,8 @@ class __$$_TableBuilderCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_TableBuilder extends _TableBuilder {
-  const _$_TableBuilder(
+class _TableBuilder extends TableBuilder {
+  const _TableBuilder(
       {required this.tableName, required final List<ColumnBuilder> columns})
       : _columns = columns,
         super._();
@@ -118,16 +101,19 @@ class _$_TableBuilder extends _TableBuilder {
     return EqualUnmodifiableListView(_columns);
   }
 
+  /// Create a copy of TableBuilder
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'TableBuilder(tableName: $tableName, columns: $columns)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$TableBuilderCopyWith<_TableBuilder> get copyWith =>
+      __$TableBuilderCopyWithImpl<_TableBuilder>(this, _$identity);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_TableBuilder &&
+            other is _TableBuilder &&
             (identical(other.tableName, tableName) ||
                 other.tableName == tableName) &&
             const DeepCollectionEquality().equals(other._columns, _columns));
@@ -137,120 +123,132 @@ class _$_TableBuilder extends _TableBuilder {
   int get hashCode => Object.hash(
       runtimeType, tableName, const DeepCollectionEquality().hash(_columns));
 
-  @JsonKey(ignore: true)
   @override
-  @pragma('vm:prefer-inline')
-  _$$_TableBuilderCopyWith<_$_TableBuilder> get copyWith =>
-      __$$_TableBuilderCopyWithImpl<_$_TableBuilder>(this, _$identity);
+  String toString() {
+    return 'TableBuilder(tableName: $tableName, columns: $columns)';
+  }
 }
 
-abstract class _TableBuilder extends TableBuilder {
-  const factory _TableBuilder(
-      {required final String tableName,
-      required final List<ColumnBuilder> columns}) = _$_TableBuilder;
-  const _TableBuilder._() : super._();
+/// @nodoc
+abstract mixin class _$TableBuilderCopyWith<$Res>
+    implements $TableBuilderCopyWith<$Res> {
+  factory _$TableBuilderCopyWith(
+          _TableBuilder value, $Res Function(_TableBuilder) _then) =
+      __$TableBuilderCopyWithImpl;
+  @override
+  @useResult
+  $Res call({String tableName, List<ColumnBuilder> columns});
+}
 
+/// @nodoc
+class __$TableBuilderCopyWithImpl<$Res>
+    implements _$TableBuilderCopyWith<$Res> {
+  __$TableBuilderCopyWithImpl(this._self, this._then);
+
+  final _TableBuilder _self;
+  final $Res Function(_TableBuilder) _then;
+
+  /// Create a copy of TableBuilder
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String get tableName;
-  @override
-  List<ColumnBuilder> get columns;
-  @override
-  @JsonKey(ignore: true)
-  _$$_TableBuilderCopyWith<_$_TableBuilder> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? tableName = null,
+    Object? columns = null,
+  }) {
+    return _then(_TableBuilder(
+      tableName: null == tableName
+          ? _self.tableName
+          : tableName // ignore: cast_nullable_to_non_nullable
+              as String,
+      columns: null == columns
+          ? _self._columns
+          : columns // ignore: cast_nullable_to_non_nullable
+              as List<ColumnBuilder>,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$ColumnBuilder {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(String column) $default, {
-    required TResult Function(TableBuilder table, String? key,
-            String? foreignKey, String? candidateKey)
-        join,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String column)? $default, {
-    TResult? Function(TableBuilder table, String? key, String? foreignKey,
-            String? candidateKey)?
-        join,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String column)? $default, {
-    TResult Function(TableBuilder table, String? key, String? foreignKey,
-            String? candidateKey)?
-        join,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_ColumnBuilder value) $default, {
-    required TResult Function(_Join value) join,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_ColumnBuilder value)? $default, {
-    TResult? Function(_Join value)? join,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_ColumnBuilder value)? $default, {
-    TResult Function(_Join value)? join,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is ColumnBuilder);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'ColumnBuilder()';
+  }
 }
 
 /// @nodoc
-abstract class $ColumnBuilderCopyWith<$Res> {
-  factory $ColumnBuilderCopyWith(
-          ColumnBuilder value, $Res Function(ColumnBuilder) then) =
-      _$ColumnBuilderCopyWithImpl<$Res, ColumnBuilder>;
+class $ColumnBuilderCopyWith<$Res> {
+  $ColumnBuilderCopyWith(ColumnBuilder _, $Res Function(ColumnBuilder) __);
 }
 
 /// @nodoc
-class _$ColumnBuilderCopyWithImpl<$Res, $Val extends ColumnBuilder>
+
+class _ColumnBuilder extends ColumnBuilder {
+  const _ColumnBuilder(this.column) : super._();
+
+  final String column;
+
+  /// Create a copy of ColumnBuilder
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ColumnBuilderCopyWith<_ColumnBuilder> get copyWith =>
+      __$ColumnBuilderCopyWithImpl<_ColumnBuilder>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ColumnBuilder &&
+            (identical(other.column, column) || other.column == column));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, column);
+
+  @override
+  String toString() {
+    return 'ColumnBuilder(column: $column)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ColumnBuilderCopyWith<$Res>
     implements $ColumnBuilderCopyWith<$Res> {
-  _$ColumnBuilderCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-}
-
-/// @nodoc
-abstract class _$$_ColumnBuilderCopyWith<$Res> {
-  factory _$$_ColumnBuilderCopyWith(
-          _$_ColumnBuilder value, $Res Function(_$_ColumnBuilder) then) =
-      __$$_ColumnBuilderCopyWithImpl<$Res>;
+  factory _$ColumnBuilderCopyWith(
+          _ColumnBuilder value, $Res Function(_ColumnBuilder) _then) =
+      __$ColumnBuilderCopyWithImpl;
   @useResult
   $Res call({String column});
 }
 
 /// @nodoc
-class __$$_ColumnBuilderCopyWithImpl<$Res>
-    extends _$ColumnBuilderCopyWithImpl<$Res, _$_ColumnBuilder>
-    implements _$$_ColumnBuilderCopyWith<$Res> {
-  __$$_ColumnBuilderCopyWithImpl(
-      _$_ColumnBuilder _value, $Res Function(_$_ColumnBuilder) _then)
-      : super(_value, _then);
+class __$ColumnBuilderCopyWithImpl<$Res>
+    implements _$ColumnBuilderCopyWith<$Res> {
+  __$ColumnBuilderCopyWithImpl(this._self, this._then);
 
+  final _ColumnBuilder _self;
+  final $Res Function(_ColumnBuilder) _then;
+
+  /// Create a copy of ColumnBuilder
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? column = null,
   }) {
-    return _then(_$_ColumnBuilder(
+    return _then(_ColumnBuilder(
       null == column
-          ? _value.column
+          ? _self.column
           : column // ignore: cast_nullable_to_non_nullable
               as String,
     ));
@@ -259,196 +257,27 @@ class __$$_ColumnBuilderCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ColumnBuilder extends _ColumnBuilder {
-  const _$_ColumnBuilder(this.column) : super._();
-
-  @override
-  final String column;
-
-  @override
-  String toString() {
-    return 'ColumnBuilder(column: $column)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$_ColumnBuilder &&
-            (identical(other.column, column) || other.column == column));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, column);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_ColumnBuilderCopyWith<_$_ColumnBuilder> get copyWith =>
-      __$$_ColumnBuilderCopyWithImpl<_$_ColumnBuilder>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(String column) $default, {
-    required TResult Function(TableBuilder table, String? key,
-            String? foreignKey, String? candidateKey)
-        join,
-  }) {
-    return $default(column);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String column)? $default, {
-    TResult? Function(TableBuilder table, String? key, String? foreignKey,
-            String? candidateKey)?
-        join,
-  }) {
-    return $default?.call(column);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String column)? $default, {
-    TResult Function(TableBuilder table, String? key, String? foreignKey,
-            String? candidateKey)?
-        join,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(column);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_ColumnBuilder value) $default, {
-    required TResult Function(_Join value) join,
-  }) {
-    return $default(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_ColumnBuilder value)? $default, {
-    TResult? Function(_Join value)? join,
-  }) {
-    return $default?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_ColumnBuilder value)? $default, {
-    TResult Function(_Join value)? join,
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _ColumnBuilder extends ColumnBuilder {
-  const factory _ColumnBuilder(final String column) = _$_ColumnBuilder;
-  const _ColumnBuilder._() : super._();
-
-  String get column;
-  @JsonKey(ignore: true)
-  _$$_ColumnBuilderCopyWith<_$_ColumnBuilder> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$_JoinCopyWith<$Res> {
-  factory _$$_JoinCopyWith(_$_Join value, $Res Function(_$_Join) then) =
-      __$$_JoinCopyWithImpl<$Res>;
-  @useResult
-  $Res call(
-      {TableBuilder table,
-      String? key,
-      String? foreignKey,
-      String? candidateKey});
-
-  $TableBuilderCopyWith<$Res> get table;
-}
-
-/// @nodoc
-class __$$_JoinCopyWithImpl<$Res>
-    extends _$ColumnBuilderCopyWithImpl<$Res, _$_Join>
-    implements _$$_JoinCopyWith<$Res> {
-  __$$_JoinCopyWithImpl(_$_Join _value, $Res Function(_$_Join) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? table = null,
-    Object? key = freezed,
-    Object? foreignKey = freezed,
-    Object? candidateKey = freezed,
-  }) {
-    return _then(_$_Join(
-      null == table
-          ? _value.table
-          : table // ignore: cast_nullable_to_non_nullable
-              as TableBuilder,
-      key: freezed == key
-          ? _value.key
-          : key // ignore: cast_nullable_to_non_nullable
-              as String?,
-      foreignKey: freezed == foreignKey
-          ? _value.foreignKey
-          : foreignKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      candidateKey: freezed == candidateKey
-          ? _value.candidateKey
-          : candidateKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $TableBuilderCopyWith<$Res> get table {
-    return $TableBuilderCopyWith<$Res>(_value.table, (value) {
-      return _then(_value.copyWith(table: value));
-    });
-  }
-}
-
-/// @nodoc
-
-class _$_Join extends _Join {
-  const _$_Join(this.table, {this.key, this.foreignKey, this.candidateKey})
+class _Join extends ColumnBuilder {
+  const _Join(this.table, {this.key, this.foreignKey, this.candidateKey})
       : super._();
 
-  @override
   final TableBuilder table;
-  @override
   final String? key;
-  @override
   final String? foreignKey;
-  @override
   final String? candidateKey;
 
-  @override
-  String toString() {
-    return 'ColumnBuilder.join(table: $table, key: $key, foreignKey: $foreignKey, candidateKey: $candidateKey)';
-  }
+  /// Create a copy of ColumnBuilder
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$JoinCopyWith<_Join> get copyWith =>
+      __$JoinCopyWithImpl<_Join>(this, _$identity);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Join &&
+            other is _Join &&
             (identical(other.table, table) || other.table == table) &&
             (identical(other.key, key) || other.key == key) &&
             (identical(other.foreignKey, foreignKey) ||
@@ -461,92 +290,72 @@ class _$_Join extends _Join {
   int get hashCode =>
       Object.hash(runtimeType, table, key, foreignKey, candidateKey);
 
-  @JsonKey(ignore: true)
+  @override
+  String toString() {
+    return 'ColumnBuilder.join(table: $table, key: $key, foreignKey: $foreignKey, candidateKey: $candidateKey)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$JoinCopyWith<$Res>
+    implements $ColumnBuilderCopyWith<$Res> {
+  factory _$JoinCopyWith(_Join value, $Res Function(_Join) _then) =
+      __$JoinCopyWithImpl;
+  @useResult
+  $Res call(
+      {TableBuilder table,
+      String? key,
+      String? foreignKey,
+      String? candidateKey});
+
+  $TableBuilderCopyWith<$Res> get table;
+}
+
+/// @nodoc
+class __$JoinCopyWithImpl<$Res> implements _$JoinCopyWith<$Res> {
+  __$JoinCopyWithImpl(this._self, this._then);
+
+  final _Join _self;
+  final $Res Function(_Join) _then;
+
+  /// Create a copy of ColumnBuilder
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? table = null,
+    Object? key = freezed,
+    Object? foreignKey = freezed,
+    Object? candidateKey = freezed,
+  }) {
+    return _then(_Join(
+      null == table
+          ? _self.table
+          : table // ignore: cast_nullable_to_non_nullable
+              as TableBuilder,
+      key: freezed == key
+          ? _self.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      foreignKey: freezed == foreignKey
+          ? _self.foreignKey
+          : foreignKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      candidateKey: freezed == candidateKey
+          ? _self.candidateKey
+          : candidateKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+
+  /// Create a copy of ColumnBuilder
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  _$$_JoinCopyWith<_$_Join> get copyWith =>
-      __$$_JoinCopyWithImpl<_$_Join>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(String column) $default, {
-    required TResult Function(TableBuilder table, String? key,
-            String? foreignKey, String? candidateKey)
-        join,
-  }) {
-    return join(table, key, foreignKey, candidateKey);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String column)? $default, {
-    TResult? Function(TableBuilder table, String? key, String? foreignKey,
-            String? candidateKey)?
-        join,
-  }) {
-    return join?.call(table, key, foreignKey, candidateKey);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String column)? $default, {
-    TResult Function(TableBuilder table, String? key, String? foreignKey,
-            String? candidateKey)?
-        join,
-    required TResult orElse(),
-  }) {
-    if (join != null) {
-      return join(table, key, foreignKey, candidateKey);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_ColumnBuilder value) $default, {
-    required TResult Function(_Join value) join,
-  }) {
-    return join(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_ColumnBuilder value)? $default, {
-    TResult? Function(_Join value)? join,
-  }) {
-    return join?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_ColumnBuilder value)? $default, {
-    TResult Function(_Join value)? join,
-    required TResult orElse(),
-  }) {
-    if (join != null) {
-      return join(this);
-    }
-    return orElse();
+  $TableBuilderCopyWith<$Res> get table {
+    return $TableBuilderCopyWith<$Res>(_self.table, (value) {
+      return _then(_self.copyWith(table: value));
+    });
   }
 }
 
-abstract class _Join extends ColumnBuilder {
-  const factory _Join(final TableBuilder table,
-      {final String? key,
-      final String? foreignKey,
-      final String? candidateKey}) = _$_Join;
-  const _Join._() : super._();
-
-  TableBuilder get table;
-  String? get key;
-  String? get foreignKey;
-  String? get candidateKey;
-  @JsonKey(ignore: true)
-  _$$_JoinCopyWith<_$_Join> get copyWith => throw _privateConstructorUsedError;
-}
+// dart format on
