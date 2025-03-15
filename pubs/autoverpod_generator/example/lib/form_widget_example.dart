@@ -17,7 +17,7 @@ part 'form_widget_example.g.dart';
 /// Model to update the user, can be used other class as well, but using freezed is recommended
 /// since it immutability and has deep copyWith method, which essential for form state management
 @freezed
-class UpdateUserModel with _$UpdateUserModel {
+sealed class UpdateUserModel with _$UpdateUserModel {
   const UpdateUserModel._();
 
   const factory UpdateUserModel({

@@ -80,9 +80,8 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UpdateUserModelImpl _$$UpdateUserModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UpdateUserModelImpl(
+_UpdateUserModel _$UpdateUserModelFromJson(Map<String, dynamic> json) =>
+    _UpdateUserModel(
       name: json['name'] as String? ?? '',
       age: (json['age'] as num?)?.toInt(),
       email: json['email'] as String?,
@@ -90,8 +89,7 @@ _$UpdateUserModelImpl _$$UpdateUserModelImplFromJson(
       phone: json['phone'] as String?,
     );
 
-Map<String, dynamic> _$$UpdateUserModelImplToJson(
-        _$UpdateUserModelImpl instance) =>
+Map<String, dynamic> _$UpdateUserModelToJson(_UpdateUserModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'age': instance.age,
