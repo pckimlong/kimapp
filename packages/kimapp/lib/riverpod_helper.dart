@@ -76,6 +76,21 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
       },
     );
   }
+
+  // Due to removed whenOrNull of freezed, we need to port it here to avoid breaking change on pagination widget
+  Return? whenOrNull<Return>({
+    required Return Function(T) data,
+    Return Function(bool isFirstItem)? loading,
+    Return Function(Failure failure)? error,
+  }) {
+    // Use record pattern
+    return switch (this) {
+      _Data(:final item) => data(item),
+      _Loading(:final isFirstItem) => loading?.call(isFirstItem),
+      _Error(:final failure) => error?.call(failure),
+      _ => null,
+    };
+  }
 }
 
 // Use for perform action with different status state
