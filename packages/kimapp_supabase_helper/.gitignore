@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+.aider.tags.cache.v3/
 
 # IntelliJ related
 *.iml
@@ -28,3 +29,4 @@ migrate_working_dir/
 .dart_tool/
 .packages
 build/
+
