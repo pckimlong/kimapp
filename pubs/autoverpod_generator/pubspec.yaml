@@ -1,6 +1,6 @@
 name: autoverpod_generator
 description: Code generator for autoverpod annotations to create Riverpod widgets
-version: 0.0.4
+version: 0.0.4+1
 repository: https://github.com/pckimlong/kimapp
 
 environment:
