@@ -84,6 +84,9 @@ jobs:
             return $?
           }
           
+          # Clean any existing temporary files
+          rm -f CHANGELOG.md
+          
           # Version packages based on changes
           if [ -n "${{ github.event.inputs.force_version }}" ]; then
             # Handle manual version override
@@ -93,27 +96,45 @@ jobs:
             # Handle automatic versioning based on changes
             if check_dir_changes "packages"; then
               echo "Versioning kimapp packages..."
-              melos run version_kimapp --yes
+              melos version --scope="kimapp*" --yes --graduate
             fi
             
             if check_dir_changes "pubs"; then
               echo "Versioning autoverpod packages..."
-              melos run version_autoverpod --yes
+              melos version --scope="autoverpod*" --yes --graduate
             fi
           fi
           
           # Push changes and tags if any versioning occurred
           if [ -n "$(git diff --name-only)" ]; then
+            git add .
+            git commit -m "chore(release): publish packages" || true
             git push --follow-tags
           fi
 
       - name: Generate changelog
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
-          # Ensure CHANGELOG.md exists and is empty
-          echo "" > CHANGELOG.md
-          melos run changelog
+          # Create empty CHANGELOG.md
+          echo "# Changelog" > CHANGELOG.md
+          
+          # Generate changelog
+          melos run changelog || true
+          
+          # Ensure the changelog exists and has content
+          if [ ! -s CHANGELOG.md ]; then
+            echo "No changes to document in this release." >> CHANGELOG.md
+          fi
 
       - name: Create GitHub Release
         if: steps.check_changes.outputs.has_changes == 'true'
-        run: melos run release 
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          # Get the latest version
+          LATEST_VERSION=$(git describe --tags --abbrev=0)
+          
+          # Run release command
+          melos run release || gh release create "${LATEST_VERSION}" \
+            --title "Release ${LATEST_VERSION}" \
+            --notes-file CHANGELOG.md 
