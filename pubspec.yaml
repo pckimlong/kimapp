@@ -136,6 +136,7 @@ melos:
     verify:
       description: Verify all packages
       steps:
+        - build_kimapp # Build kimapp packages first
         - build_all
         - analyze
         - test
