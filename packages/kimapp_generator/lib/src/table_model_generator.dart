@@ -43,7 +43,8 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       }
 
       final key = _getKeyFromJsonKey(fieldElement);
-      final (candidateKey, foreignKey, joinedModel) = _getJoinedColumnInfo(fieldElement);
+      final (candidateKey, foreignKey, joinedModel) =
+          _getJoinedColumnInfo(fieldElement);
 
       fields.add(
         TableFieldInfo(
@@ -71,7 +72,8 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     return reader.peek('name')?.stringValue;
   }
 
-  (String?, String?, String?) _getJoinedColumnInfo(ParameterElement fieldElement) {
+  (String?, String?, String?) _getJoinedColumnInfo(
+      ParameterElement fieldElement) {
     if (!_fieldHasAnnotation(JoinedColumn, fieldElement)) {
       return (null, null, null);
     }
@@ -88,14 +90,16 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
   }
 
   String? _getJoinedModel(ParameterElement fieldElement) {
-    if (fieldElement.type.isDartCoreList || fieldElement.type.toString().contains('IList')) {
+    if (fieldElement.type.isDartCoreList ||
+        fieldElement.type.toString().contains('IList')) {
       var elementType = fieldElement.type as ParameterizedType;
       return elementType.typeArguments[0].toString();
     }
     return fieldElement.type.toString();
   }
 
-  String _buildTableDefinition(String className, String? tableName, List<TableFieldInfo> fields) {
+  String _buildTableDefinition(
+      String className, String? tableName, List<TableFieldInfo> fields) {
     final classBuffer = StringBuffer();
 
     classBuffer.writeln(
@@ -121,7 +125,8 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
 }
 
 bool _fieldHasAnnotation(Type annotationType, ParameterElement element) {
-  final annotations = TypeChecker.fromRuntime(annotationType).annotationsOf(element);
+  final annotations =
+      TypeChecker.fromRuntime(annotationType).annotationsOf(element);
   return annotations.isNotEmpty;
 }
 

@@ -29,7 +29,8 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
       );
     }
 
-    final provider = ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
+    final provider =
+        ProviderDefinition.parse(element, parseReturnTypeClassInfo: true);
     final buffer = StringBuffer();
 
     // Generate the form provider abstraction
@@ -58,7 +59,8 @@ class StateProviderInfo {
 /// - Success/error handling
 String _generateFormProviderAbstraction(ProviderDefinition provider) {
   final submitMethodInfo = provider.getSubmitMethodInfo();
-  final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
+  final stateProviderInfo =
+      _generateStateProviderInfo(provider, submitMethodInfo);
   final updateMethods = _generateUpdateMethods(provider);
 
   // Generate the proxy class using code_builder
@@ -133,7 +135,8 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
   // Add field-specific update methods if class info is available
   if (provider.returnType.classInfo != null) {
     final returnClass = provider.returnType.classInfo!;
-    final copyWithNames = returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
+    final copyWithNames =
+        returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
 
     // Generate update methods for each field where not in copyWith method
     // this allow developer to override it
@@ -168,7 +171,8 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
 /// Generates a method for updating the entire state
 Method _generateStateUpdateMethod(ProviderDefinition provider) {
   // Create appropriate update statement based on state type
-  final updateStatement = provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
+  final updateStatement =
+      provider.isAsyncValue ? 'state.whenData(update)' : 'update(state)';
 
   return Method(
     (b) => b
@@ -193,7 +197,8 @@ Method _generateStateUpdateMethod(ProviderDefinition provider) {
 }
 
 /// Generates the onSuccess callback method
-Method _generateOnSuccessMethod(ProviderDefinition provider, String rawResultType) {
+Method _generateOnSuccessMethod(
+    ProviderDefinition provider, String rawResultType) {
   final hasOverride = provider.methods.any((e) => e.name == 'onSuccess');
   return Method(
     (b) => b
@@ -224,7 +229,8 @@ Method _generateCallMethod(
   SubmitMethodInfo submitInfo,
   StateProviderInfo stateInfo,
 ) {
-  final hasOverrideOnSuccess = provider.methods.any((e) => e.name == 'onSuccess');
+  final hasOverrideOnSuccess =
+      provider.methods.any((e) => e.name == 'onSuccess');
   // Check if form is loaded based on state type
   final loadingCheck = provider.isAsyncValue
       ? '''
