@@ -106,7 +106,7 @@ melos:
 
     version_check:
       description: Check which packages would be versioned
-      run: melos version --dry-run
+      run: melos version
 
     changelog:
       description: Generate changelog for all packages

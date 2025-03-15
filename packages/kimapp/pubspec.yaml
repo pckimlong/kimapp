@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   freezed_annotation:
-  stack_trace: ^1.12.1
+  stack_trace: ^1.12.0
   fpdart: 
   riverpod: 
   fast_immutable_collections: 
