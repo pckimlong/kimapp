@@ -4,3 +4,4 @@ pubspec_overrides.yaml
 .aider*
 node_modules/
 test_output/
+.dart_tool/
