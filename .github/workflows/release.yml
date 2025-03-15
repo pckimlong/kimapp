@@ -15,6 +15,11 @@ on:
         required: false
         type: string
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -23,7 +28,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Important for detecting all changes
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -62,6 +66,7 @@ jobs:
           
           if [ -n "$CHANGES" ] || [ -n "${{ github.event.inputs.force_version }}" ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "changes=$CHANGES" >> $GITHUB_OUTPUT
             echo "Found changes in monitored paths since $COMPARE_WITH"
             echo "$CHANGES"
           else
@@ -72,12 +77,35 @@ jobs:
       - name: Version packages
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
-          if [ -n "${{ github.event.inputs.force_version }}" ]; then
+          # Function to check if there are changes in specific directory
+          check_dir_changes() {
+            local dir=$1
+            echo "$CHANGES" | grep -q "^$dir/"
+            return $?
+          }
+          
+          # Get the changes from the previous step
+          CHANGES="${{ steps.check_changes.outputs.changes }}"
+          
+          # Version packages based on changes
+          if check_dir_changes "packages" || check_dir_changes "pubs"; then
+            if check_dir_changes "packages"; then
+              echo "Versioning kimapp packages..."
+              melos version --scope="kimapp*" --yes
+            fi
+            
+            if check_dir_changes "pubs"; then
+              echo "Versioning autoverpod packages..."
+              melos version --scope="autoverpod*" --yes
+            fi
+            
+            # Push changes and tags
+            git push --follow-tags
+          elif [ -n "${{ github.event.inputs.force_version }}" ]; then
+            # Handle manual version override
             melos version --yes --exact "${{ github.event.inputs.force_version }}"
-          else
-            melos version --yes
+            git push --follow-tags
           fi
-          git push --follow-tags
 
       - name: Generate changelog
         if: steps.check_changes.outputs.has_changes == 'true'
@@ -88,6 +116,4 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.check_changes.outputs.has_changes == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: melos run release 
