@@ -35,8 +35,8 @@ dependencies:
   riverpod_annotation: ^2.3.3
   freezed_annotation: ^3.0.0
   json_annotation: ^4.8.1
-  autoverpod:
-    path: ./pubs/autoverpod
+  autoverpod: 
+    path: ../../../pubs/autoverpod
   hooks_riverpod: ^2.6.1
   flutter_hooks: ^0.21.2
   fast_immutable_collections: ^9.1.0
@@ -58,7 +58,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
   riverpod_generator: ^2.3.9
   autoverpod_generator:
-    path: ./pubs/autoverpod_generator
+    path: ../
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

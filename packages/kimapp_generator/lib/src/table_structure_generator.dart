@@ -226,7 +226,7 @@ class TableStructureGenerator extends Generator {
       final customTypes = annotation
           .read('customTypes')
           .listValue
-          .map((e) => e.toTypeValue()!.getDisplayString(withNullability: false))
+          .map((e) => e.toTypeValue()!.getDisplayString())
           .toSet();
 
       _validateCustomTypes(parsedColumns, customTypes, idColumn);

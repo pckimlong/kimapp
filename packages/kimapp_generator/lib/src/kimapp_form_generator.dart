@@ -79,7 +79,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
     if (classConstructor == null) {
       print('[FORM GENERATOR FAILED] $classElement has no constructor');
       print(
-        '[FORM GENERATOR FAILED] $classElement has following constructors: ${classElement.constructors.map((e) => e.getDisplayString(withNullability: true))}',
+        '[FORM GENERATOR FAILED] $classElement has following constructors: ${classElement.constructors.map((e) => e.getDisplayString())}',
       );
       return;
     }
@@ -473,7 +473,7 @@ typedef ${providerClassName}FormChildBuilder = Widget Function(
   $providerStatusType status,
   bool isProgressing,
   Failure? failure,
-  ${callMethod.getDisplayString(withNullability: true).replaceAll(callMethod.name, 'Function')} submit,
+  ${callMethod.getDisplayString().replaceAll(callMethod.name, 'Function')} submit,
 );
 
 class ${providerClassName}FormWidget extends HookConsumerWidget {

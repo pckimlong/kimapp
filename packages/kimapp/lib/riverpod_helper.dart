@@ -75,8 +75,9 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
           return const PaginatedItem.loading(isFirstItem: true);
         }
 
-        if (showLoadingInAllItem)
+        if (showLoadingInAllItem) {
           return const PaginatedItem.loading(isFirstItem: false);
+        }
 
         return null;
       },
@@ -381,8 +382,9 @@ extension ProviderStatusFamilyNotifierX<T>
     void Function(Failure failure)? onFailure,
     void Function(R success)? onSuccess,
   }) async {
-    if (state.isInProgress || state.isSuccess)
+    if (state.isInProgress || state.isSuccess) {
       return state as ProviderStatus<R>;
+    }
 
     state = ProviderStatus<T>.inProgress();
     final result =
@@ -428,8 +430,9 @@ extension ProviderStatusClassFamilyNotifierX<A,
     bool ignoreInSuccessState = true,
   }) async {
     if (isInProgress) return state.status as ProviderStatus<T>;
-    if (ignoreInSuccessState && isSuccess)
+    if (ignoreInSuccessState && isSuccess) {
       return state.status as ProviderStatus<T>;
+    }
 
     /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
     if (state is UpdateFormMixin) {
@@ -529,8 +532,9 @@ extension ProviderStatusClassFamilyNotifierXX<A,
     bool ignoreInSuccessState = true,
   }) async {
     if (isInProgress) return state.status as ProviderStatus<T>;
-    if (ignoreInSuccessState && isSuccess)
+    if (ignoreInSuccessState && isSuccess) {
       return state.status as ProviderStatus<T>;
+    }
 
     /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
     if (state is UpdateFormMixin) {

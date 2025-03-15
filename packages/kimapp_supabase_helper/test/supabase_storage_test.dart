@@ -255,13 +255,11 @@ void main() {
     late MockStorageClient mockClient;
     late MockStorageFileApi mockFileApi;
     late TestStorageObject storageObject;
-    late TestCompressibleImageObject compressibleObject;
 
     setUp(() {
       mockClient = MockStorageClient();
       mockFileApi = MockStorageFileApi();
       storageObject = TestStorageObject();
-      compressibleObject = TestCompressibleImageObject();
 
       // Mock the from method with positional parameter
       when(() => mockClient.from('test-bucket')).thenReturn(mockFileApi);

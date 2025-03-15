@@ -63,7 +63,8 @@ String _generateFormFieldProxy({
   ].contains(field.name);
 
   // Determine field getter name
-  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
+  final fieldGetterName =
+      widgetRefMethodConflicts ? '${field.name}State' : field.name;
 
   return generateSubProxyWidget(
     proxyRefName,

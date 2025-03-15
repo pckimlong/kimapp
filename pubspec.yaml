@@ -19,6 +19,7 @@ workspace:
   - pubs/autoverpod_generator/example
   - packages/kimapp_generator/example
 
+
 dev_dependencies:
   melos: ^7.0.0-dev.7
   build_runner: ^2.4.15
@@ -85,8 +86,8 @@ melos:
       description: Publish all packages to pub.dev
       
     test:
-      run: melos exec -- flutter test
-      description: Run tests in all packages
+      run: melos exec --dir-exists="test" -- flutter test
+      description: Run tests in packages that have a test folder
       
     clean:
       run: melos exec -- flutter clean
@@ -135,3 +136,4 @@ melos:
         - test
         - format-check
         - build_all
+        - analyze

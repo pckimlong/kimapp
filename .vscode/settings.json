@@ -9,6 +9,10 @@
     },
     "hide-files.files": [],
     "files.associations": {
-        "mason/**/__brick__/pubspec.yaml": "plaintext"
+        "**/mason/**/brick/**/*": "plaintext",
+        "**/mason/**/__brick__/**/*": "plaintext"
+    },
+    "[yaml]": {
+        "editor.formatOnSave": false
     }
 }
