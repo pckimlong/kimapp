@@ -65,7 +65,8 @@ class UnifiedWidgetBuilder implements Builder {
     LibraryReader library,
     BuildStep buildStep,
   ) async {
-    final generatedCode = await _registry.generateForLibrary(library, buildStep);
+    final generatedCode =
+        await _registry.generateForLibrary(library, buildStep);
 
     if (generatedCode.isEmpty) return '';
 
@@ -120,5 +121,6 @@ class UnifiedWidgetBuilder implements Builder {
     return _dartfmt.format(generatedLib.accept(DartEmitter()).toString());
   }
 
-  static final _dartfmt = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
+  static final _dartfmt =
+      DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
 }

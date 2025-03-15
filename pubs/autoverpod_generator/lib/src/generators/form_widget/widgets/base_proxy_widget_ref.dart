@@ -27,7 +27,8 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
               if (hasParamsConflict)
                 '/// Access the form parameters. Using formParams to avoid conflict with field named "params".',
             ])
-            ..body = Code('${provider.formInheritedWidgetName}.of(context).params'),
+            ..body =
+                Code('${provider.formInheritedWidgetName}.of(context).params'),
         ),
       Method(
         (b) => b
@@ -53,7 +54,8 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
             if (hasFormKeyConflict)
               '/// Access the form key. Using getFormKey to avoid conflict with field named "formKey".',
           ])
-          ..body = Code('${provider.formInheritedWidgetName}.of(context).formKey'),
+          ..body =
+              Code('${provider.formInheritedWidgetName}.of(context).formKey'),
       ),
       Method(
         (b) => b
@@ -77,8 +79,9 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
             .map((param) => param.name)
             .join(', ');
 
-        final namedParamsString =
-            submitInfo.namedParams.map((param) => '${param.name}: ${param.name}').join(', ');
+        final namedParamsString = submitInfo.namedParams
+            .map((param) => '${param.name}: ${param.name}')
+            .join(', ');
 
         String callParams = '';
         if (positionalParamsString.isNotEmpty && namedParamsString.isNotEmpty) {
@@ -99,7 +102,9 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
           ])
           ..modifier = MethodModifier.async
           ..requiredParameters.addAll(
-            submitInfo.positionalParams.where((e) => e.name != 'state').toList(),
+            submitInfo.positionalParams
+                .where((e) => e.name != 'state')
+                .toList(),
           )
           ..optionalParameters.addAll(submitInfo.namedParams)
           ..body = Code('''
@@ -139,7 +144,8 @@ String generateFormBaseProxyWidgetRef(ProviderDefinition provider) {
             Parameter(
               (b) => b
                 ..name = 'selector'
-                ..type = refer('Selected Function(${provider.returnType.baseType})'),
+                ..type =
+                    refer('Selected Function(${provider.returnType.baseType})'),
             ),
           )
           ..lambda = true

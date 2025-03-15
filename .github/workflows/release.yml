@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "packages/**"
+      - "pubs/**"
+      - "pubspec.yaml"
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.1'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          flutter pub global activate melos
+          flutter pub get
+          melos bootstrap
+
+      - name: Setup git user
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Verify packages
+        run: melos run verify
+
+      - name: Version packages
+        if: success()
+        run: |
+          melos version --yes
+          git push --follow-tags
+
+      - name: Generate changelog
+        if: success()
+        run: melos run changelog
+
+      - name: Create GitHub Release
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: melos run release 

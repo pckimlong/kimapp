@@ -8,7 +8,8 @@ String generateFieldUpdaterExtension(ProviderDefinition provider) {
     (b) => b
       ..name = '${provider.baseName}FieldUpdater'
       ..on = refer(provider.baseName)
-      ..docs.add('/// Extension that adds field update methods to the form provider.\n'
+      ..docs.add(
+          '/// Extension that adds field update methods to the form provider.\n'
           '/// These methods allow updating individual fields that have copyWith support.')
       ..methods.addAll(_generateUpdateMethods(provider)),
   ).accept(DartEmitter()).toString();
@@ -29,7 +30,8 @@ List<Method> _generateUpdateMethods(ProviderDefinition provider) {
   // Add field-specific update methods if class info is available
   if (provider.returnType.classInfo != null) {
     final returnClass = provider.returnType.classInfo!;
-    final copyWithNames = returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
+    final copyWithNames =
+        returnClass.copyWithMethod?.parameters.map((e) => e.name).toSet() ?? {};
 
     // Generate update methods for each field
     for (final field in returnClass.fields) {

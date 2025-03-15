@@ -29,7 +29,8 @@ String generateStateWidgetProxy(ProviderDefinition provider) {
             Parameter(
               (b) => b
                 ..name = 'selector'
-                ..type = refer('Selected Function(${provider.returnType.baseType})'),
+                ..type =
+                    refer('Selected Function(${provider.returnType.baseType})'),
             ),
           )
           ..lambda = true
