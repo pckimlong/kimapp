@@ -22,8 +22,10 @@ return builder(context, ${provider.formBaseProxyWidgetName}(ref), params);
   );
 }
 
-String generateParamWidgetWrapper(ProviderDefinition provider,
-    {required String child}) {
+String generateParamWidgetWrapper(
+  ProviderDefinition provider, {
+  required String child,
+}) {
   if (!provider.hasFamily) return child;
 
   return '''

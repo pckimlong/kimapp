@@ -53,8 +53,11 @@ class ClassField {
     return '$wrapper<$type>';
   }
 
-  factory ClassField.providerListenable(String name, String type,
-      {bool bothNullable = false}) {
+  factory ClassField.providerListenable(
+    String name,
+    String type, {
+    bool bothNullable = false,
+  }) {
     return ClassField(
       name: name,
       type:

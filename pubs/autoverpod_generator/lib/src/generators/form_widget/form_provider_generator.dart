@@ -198,7 +198,9 @@ Method _generateStateUpdateMethod(ProviderDefinition provider) {
 
 /// Generates the onSuccess callback method
 Method _generateOnSuccessMethod(
-    ProviderDefinition provider, String rawResultType) {
+  ProviderDefinition provider,
+  String rawResultType,
+) {
   final hasOverride = provider.methods.any((e) => e.name == 'onSuccess');
   return Method(
     (b) => b

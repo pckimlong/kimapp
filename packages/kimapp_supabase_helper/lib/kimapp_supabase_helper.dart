@@ -1,4 +1,4 @@
-library kimapp_supabase_helper;
+library;
 
 export 'failure.dart';
 export 'helper.dart';

@@ -65,8 +65,7 @@ class UnifiedWidgetBuilder implements Builder {
     LibraryReader library,
     BuildStep buildStep,
   ) async {
-    final generatedCode =
-        await _registry.generateForLibrary(library, buildStep);
+    final generatedCode = await _registry.generateForLibrary(library, buildStep);
 
     if (generatedCode.isEmpty) return '';
 
@@ -103,7 +102,7 @@ class UnifiedWidgetBuilder implements Builder {
         "**************************************************************************",
         "GENERATED CODE - DO NOT MODIFY BY HAND",
         "**************************************************************************",
-        "ignore_for_file: type=lint, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member",
+        "ignore_for_file: type=lint, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, unnecessary_import, unused_import",
         "coverage:ignore-file",
       ]);
 
@@ -121,6 +120,5 @@ class UnifiedWidgetBuilder implements Builder {
     return _dartfmt.format(generatedLib.accept(DartEmitter()).toString());
   }
 
-  static final _dartfmt =
-      DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
+  static final _dartfmt = DartFormatter(languageVersion: DartFormatter.latestLanguageVersion);
 }

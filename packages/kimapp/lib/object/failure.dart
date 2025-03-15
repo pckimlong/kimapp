@@ -83,38 +83,49 @@ extension FailureX on Failure {
   /// will be use, but in the debug mode the debug message will be use, you can use the release mode message
   /// even in debug mode by make [debugMessageEnable] to false
   /// If [alwaysUseDebugMessage] is true, the debug message will be use regardless of the debug mode
-  String message([bool debugMessageEnable = true, bool alwaysUseDebugMessage = false]) {
+  String message(
+      [bool debugMessageEnable = true, bool alwaysUseDebugMessage = false]) {
     final kimapp = Kimapp.instance;
     final mgs = kimapp.failureMessage;
-    final useDebugMessage = (kimapp.debugMode && debugMessageEnable) || alwaysUseDebugMessage;
+    final useDebugMessage =
+        (kimapp.debugMode && debugMessageEnable) || alwaysUseDebugMessage;
 
     return switch (this) {
-      _Failure(:final info) =>
-        useDebugMessage ? info.debugMessage : info.message ?? "Something went wrong!",
+      _Failure(:final info) => useDebugMessage
+          ? info.debugMessage
+          : info.message ?? "Something went wrong!",
       ExceptionFailure(:final info) => info.errorObject is String
           ? info.errorObject as String
-          : (useDebugMessage ? info.debugMessage : info.message ?? mgs.exception),
-      NetworkFailure(:final info) =>
-        useDebugMessage ? info.debugMessage : info.message ?? mgs.networkFailure,
+          : (useDebugMessage
+              ? info.debugMessage
+              : info.message ?? mgs.exception),
+      NetworkFailure(:final info) => useDebugMessage
+          ? info.debugMessage
+          : info.message ?? mgs.networkFailure,
       ServerError(:final info) =>
         useDebugMessage ? info.debugMessage : info.message ?? mgs.serverError,
       DatabaseFailure(failures: final f) => switch (f) {
-          _DatabaseFailures(:final info) =>
-            useDebugMessage ? info.debugMessage : info.message ?? mgs.databaseError,
-          _UniqueConstraint(:final info) =>
-            useDebugMessage ? info.debugMessage : info.message ?? mgs.uniqueConstraintError,
-          _NotFound(:final info) =>
-            useDebugMessage ? info.debugMessage : info.message ?? mgs.notFoundError,
+          _DatabaseFailures(:final info) => useDebugMessage
+              ? info.debugMessage
+              : info.message ?? mgs.databaseError,
+          _UniqueConstraint(:final info) => useDebugMessage
+              ? info.debugMessage
+              : info.message ?? mgs.uniqueConstraintError,
+          _NotFound(:final info) => useDebugMessage
+              ? info.debugMessage
+              : info.message ?? mgs.notFoundError,
         },
       AuthFailure(failures: final f) => switch (f) {
           _AuthFailures(:final info) =>
             useDebugMessage ? info.debugMessage : info.message ?? mgs.authError,
-          _IncorrectLoginCredential(:final info) =>
-            useDebugMessage ? info.debugMessage : info.message ?? mgs.incorrectLoginCredential,
+          _IncorrectLoginCredential(:final info) => useDebugMessage
+              ? info.debugMessage
+              : info.message ?? mgs.incorrectLoginCredential,
           _Forbidden(:final info) =>
             useDebugMessage ? info.debugMessage : info.message ?? mgs.forbidden,
-          _UserAlreadyRegistered(:final info) =>
-            useDebugMessage ? info.debugMessage : info.message ?? mgs.alreadyRegistered,
+          _UserAlreadyRegistered(:final info) => useDebugMessage
+              ? info.debugMessage
+              : info.message ?? mgs.alreadyRegistered,
         },
     };
   }
@@ -161,7 +172,8 @@ sealed class Failure with _$Failure {
   const factory Failure.serverError(FailureInfo info) = ServerError;
 
   /// Error throw from database
-  const factory Failure.databaseFailure(DatabaseFailures failures) = DatabaseFailure;
+  const factory Failure.databaseFailure(DatabaseFailures failures) =
+      DatabaseFailure;
 
   /// Error relate to authentication or security staffs
   const factory Failure.authFailure(AuthFailures failures) = AuthFailure;
@@ -173,7 +185,8 @@ sealed class Failure with _$Failure {
       ExceptionFailure(:final info) => "ExceptionFailure: ${info.debugMessage}",
       NetworkFailure(:final info) => "NetworkFailure: ${info.debugMessage}",
       ServerError(:final info) => "ServerError: ${info.debugMessage}",
-      DatabaseFailure(:final failures) => "DatabaseFailure -> ${failures.logMessage()}",
+      DatabaseFailure(:final failures) =>
+        "DatabaseFailure -> ${failures.logMessage()}",
       AuthFailure(:final failures) => "AuthFailure -> ${failures.logMessage()}",
     };
   }
@@ -187,15 +200,18 @@ sealed class DatabaseFailures with _$DatabaseFailures {
   const factory DatabaseFailures(FailureInfo info) = _DatabaseFailures;
 
   /// Throw from database that the input is not follow constraint rule in database
-  const factory DatabaseFailures.uniqueConstraint(FailureInfo info) = _UniqueConstraint;
+  const factory DatabaseFailures.uniqueConstraint(FailureInfo info) =
+      _UniqueConstraint;
 
   /// Cannot find any data in database with given argument
   const factory DatabaseFailures.notFound(FailureInfo info) = _NotFound;
 
   String logMessage() {
     return switch (this) {
-      _DatabaseFailures(:final info) => "DatabaseFailures: ${info.debugMessage}",
-      _UniqueConstraint(:final info) => "UniqueConstraint: ${info.debugMessage}",
+      _DatabaseFailures(:final info) =>
+        "DatabaseFailures: ${info.debugMessage}",
+      _UniqueConstraint(:final info) =>
+        "UniqueConstraint: ${info.debugMessage}",
       _NotFound(:final info) => "NotFound: ${info.debugMessage}",
     };
   }
@@ -209,20 +225,24 @@ sealed class AuthFailures with _$AuthFailures {
   const factory AuthFailures(FailureInfo info) = _AuthFailures;
 
   /// Any provider use for authentication is incorrect, eg username or password
-  const factory AuthFailures.incorrectLoginCredential(FailureInfo info) = _IncorrectLoginCredential;
+  const factory AuthFailures.incorrectLoginCredential(FailureInfo info) =
+      _IncorrectLoginCredential;
 
   /// Tried to access something that has protected
   const factory AuthFailures.forbidden(FailureInfo info) = _Forbidden;
 
   /// Information use to register or signed up might have been use by other user
-  const factory AuthFailures.alreadyRegistered(FailureInfo info) = _UserAlreadyRegistered;
+  const factory AuthFailures.alreadyRegistered(FailureInfo info) =
+      _UserAlreadyRegistered;
 
   String logMessage() {
     return switch (this) {
       _AuthFailures(:final info) => "AuthFailures: ${info.debugMessage}",
-      _IncorrectLoginCredential(:final info) => "IncorrectLoginCredential: ${info.debugMessage}",
+      _IncorrectLoginCredential(:final info) =>
+        "IncorrectLoginCredential: ${info.debugMessage}",
       _Forbidden(:final info) => "Forbidden: ${info.debugMessage}",
-      _UserAlreadyRegistered(:final info) => "UserAlreadyRegistered: ${info.debugMessage}",
+      _UserAlreadyRegistered(:final info) =>
+        "UserAlreadyRegistered: ${info.debugMessage}",
     };
   }
 }

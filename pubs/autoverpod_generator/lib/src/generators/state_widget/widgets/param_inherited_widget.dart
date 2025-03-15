@@ -10,7 +10,10 @@ String generateParamInheritedWidget(ProviderDefinition provider) {
     name: provider.paramInheritedWidgetName,
     fields: [
       ClassField(
-          name: 'params', type: provider.familyAsRecordType, isRequired: true)
+        name: 'params',
+        type: provider.familyAsRecordType,
+        isRequired: true,
+      ),
     ],
   );
 }

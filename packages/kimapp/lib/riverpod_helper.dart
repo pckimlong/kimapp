@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, implementation_imports
 
 import 'dart:async';
 import 'dart:developer';
@@ -166,6 +166,7 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
 
 extension ProviderStatusProviderX<T> on Ref<ProviderStatus<T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
+    // ignore: deprecated_member_use
     listenSelf(
       (previous, next) {
         if (previous != next && next.isSuccess) {
@@ -343,6 +344,7 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
 extension ProviderStatusClassProviderX<B, T>
     on Ref<ProviderStatusClassMixin<B, T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
+    // ignore: deprecated_member_use
     listenSelf(
       (previous, next) {
         if (previous?.status != next.status && next.status.isSuccess) {

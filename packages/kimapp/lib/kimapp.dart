@@ -1,5 +1,3 @@
-library kimapp;
-
 export 'annotation.dart';
 export 'extensions.dart';
 export 'kimapp_cache_manager.dart';

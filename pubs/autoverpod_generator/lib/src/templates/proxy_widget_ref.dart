@@ -17,7 +17,9 @@ String generateBaseProxyWidgetRef(
             ..modifier = FieldModifier.final$
             ..name = '_ref'
             ..type = refer(
-                'WidgetRef', 'package:flutter_riverpod/flutter_riverpod.dart'),
+              'WidgetRef',
+              'package:flutter_riverpod/flutter_riverpod.dart',
+            ),
         ),
       )
       ..constructors.add(

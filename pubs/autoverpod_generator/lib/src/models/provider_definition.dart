@@ -45,8 +45,10 @@ class ProviderDefinition {
     this.genericParameters = const {},
   });
 
-  factory ProviderDefinition.parse(Element element,
-      {bool parseReturnTypeClassInfo = false}) {
+  factory ProviderDefinition.parse(
+    Element element, {
+    bool parseReturnTypeClassInfo = false,
+  }) {
     try {
       final isClass = element is ClassElement;
       final baseName = element.name!.pascalCase;

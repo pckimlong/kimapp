@@ -1,7 +1,7 @@
 // **************************************************************************
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // **************************************************************************
-// ignore_for_file: type=lint, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+// ignore_for_file: type=lint, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, unnecessary_import, unused_import
 // coverage:ignore-file
 
 import 'package:autoverpod_generator_example/form_widget_example.dart';
@@ -28,21 +28,24 @@ extension UpdateUserFieldUpdater on UpdateUser {
       state = state.whenData((state) => state.copyWith(age: newValue));
 
   /// Update the email field of UpdateUserModel class.
-  void updateEmail(String? newValue) => state = state.whenData(
+  void updateEmail(String? newValue) =>
+      state = state.whenData(
         (state) => state.copyWith(
           email: newValue == null || newValue.isEmpty ? null : newValue,
         ),
       );
 
   /// Update the address field of UpdateUserModel class.
-  void updateAddress(String? newValue) => state = state.whenData(
+  void updateAddress(String? newValue) =>
+      state = state.whenData(
         (state) => state.copyWith(
           address: newValue == null || newValue.isEmpty ? null : newValue,
         ),
       );
 
   /// Update the phone field of UpdateUserModel class.
-  void updatePhone(String? newValue) => state = state.whenData(
+  void updatePhone(String? newValue) =>
+      state = state.whenData(
         (state) => state.copyWith(
           phone: newValue == null || newValue.isEmpty ? null : newValue,
         ),
@@ -119,8 +122,7 @@ class UpdateUserProxyWidgetRef extends WidgetRef {
     ProviderListenable<T> provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
-  }) =>
-      _ref.listen(provider, listener, onError: onError);
+  }) => _ref.listen(provider, listener, onError: onError);
 
   @override
   ProviderSubscription<T> listenManual<T>(
@@ -128,13 +130,12 @@ class UpdateUserProxyWidgetRef extends WidgetRef {
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
-  }) =>
-      _ref.listenManual(
-        provider,
-        listener,
-        onError: onError,
-        fireImmediately: fireImmediately,
-      );
+  }) => _ref.listenManual(
+    provider,
+    listener,
+    onError: onError,
+    fireImmediately: fireImmediately,
+  );
 
   @override
   T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
@@ -159,15 +160,16 @@ class UpdateUserFormScope extends ConsumerStatefulWidget {
     this.onInitLoading,
     this.onInitError,
   }) : assert(
-          child != null || builder != null,
-          'Either child or builder must be provided',
-        );
+         child != null || builder != null,
+         'Either child or builder must be provided',
+       );
   final int id;
   final Widget Function(
     BuildContext context,
     UpdateUserProxyWidgetRef ref,
     Widget? child,
-  )? builder;
+  )?
+  builder;
   final Widget? child;
   final GlobalKey<FormState>? formKey;
   final AutovalidateMode? autovalidateMode;
@@ -233,13 +235,14 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
 
                 return widget.child!;
               },
-              error: (error, stack) =>
-                  widget.onInitError?.call(error, stack) ??
-                  Theme.of(context)
-                      .extension<KimappThemeExtension>()
-                      ?.defaultErrorStateWidget
-                      ?.call(context, ref, error) ??
-                  const SizedBox.shrink(),
+              error:
+                  (error, stack) =>
+                      widget.onInitError?.call(error, stack) ??
+                      Theme.of(context)
+                          .extension<KimappThemeExtension>()
+                          ?.defaultErrorStateWidget
+                          ?.call(context, ref, error) ??
+                      const SizedBox.shrink(),
               loading: () {
                 return widget.onInitLoading?.call() ??
                     Theme.of(context)
@@ -289,7 +292,8 @@ class UpdateUserFormParams extends ConsumerWidget {
     BuildContext context,
     UpdateUserProxyWidgetRef ref,
     ({int id}) params,
-  ) builder;
+  )
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -313,7 +317,8 @@ class UpdateUserFormSelect<Selected> extends ConsumerWidget {
     BuildContext context,
     UpdateUserProxyWidgetRef ref,
     Selected value,
-  ) builder;
+  )
+  builder;
   final void Function(Selected? previous, Selected? next)? onStateChanged;
 
   @override
@@ -353,10 +358,11 @@ class UpdateUserFormState extends ConsumerWidget {
     BuildContext context,
     UpdateUserProxyWidgetRef ref,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
   final void Function(UpdateUserModel? previous, UpdateUserModel? next)?
-      onStateChanged;
+  onStateChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -369,8 +375,9 @@ class UpdateUserFormState extends ConsumerWidget {
       });
     }
     return UpdateUserFormParams(
-      builder: (context, ref, params) =>
-          builder(context, UpdateUserProxyWidgetRef(ref), child),
+      builder:
+          (context, ref, params) =>
+              builder(context, UpdateUserProxyWidgetRef(ref), child),
     );
   }
 }
@@ -386,9 +393,10 @@ class UpdateUserFormStatus extends ConsumerWidget {
     BuildContext context,
     UpdateUserProxyWidgetRef ref,
     AsyncValue<bool>? status,
-  ) builder;
+  )
+  builder;
   final void Function(AsyncValue<bool>? previous, AsyncValue<bool>? next)?
-      onChanged;
+  onChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -437,7 +445,7 @@ class UpdateUserNameField extends HookConsumerWidget {
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
   final Widget Function(BuildContext context, UpdateUserNameProxyWidgetRef ref)
-      builder;
+  builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String next)? onChanged;
@@ -468,8 +476,10 @@ class UpdateUserNameField extends HookConsumerWidget {
 
     // Initialize external controller if provided
     useEffect(() {
-      if (textController != null && textController!.text.isEmpty) {
-        textController!.text = initialValue ?? "";
+      if (textController != null &&
+          initialValue != null &&
+          textController!.text.isEmpty) {
+        textController!.text = initialValue;
       }
       return null;
     }, []);
@@ -510,7 +520,7 @@ class UpdateUserAgeField extends ConsumerWidget {
   const UpdateUserAgeField({super.key, required this.builder});
 
   final Widget Function(BuildContext context, UpdateUserAgeProxyWidgetRef ref)
-      builder;
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -548,7 +558,7 @@ class UpdateUserEmailField extends HookConsumerWidget {
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
   final Widget Function(BuildContext context, UpdateUserEmailProxyWidgetRef ref)
-      builder;
+  builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String? next)? onChanged;
@@ -582,7 +592,7 @@ class UpdateUserEmailField extends HookConsumerWidget {
       if (textController != null &&
           initialValue != null &&
           textController!.text.isEmpty) {
-        textController!.text = initialValue ?? "";
+        textController!.text = initialValue;
       }
       return null;
     }, []);
@@ -641,7 +651,8 @@ class UpdateUserAddressField extends HookConsumerWidget {
   final Widget Function(
     BuildContext context,
     UpdateUserAddressProxyWidgetRef ref,
-  ) builder;
+  )
+  builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String? next)? onChanged;
@@ -677,7 +688,7 @@ class UpdateUserAddressField extends HookConsumerWidget {
       if (textController != null &&
           initialValue != null &&
           textController!.text.isEmpty) {
-        textController!.text = initialValue ?? "";
+        textController!.text = initialValue;
       }
       return null;
     }, []);
@@ -734,7 +745,7 @@ class UpdateUserPhoneField extends HookConsumerWidget {
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
   final Widget Function(BuildContext context, UpdateUserPhoneProxyWidgetRef ref)
-      builder;
+  builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String? next)? onChanged;
@@ -768,7 +779,7 @@ class UpdateUserPhoneField extends HookConsumerWidget {
       if (textController != null &&
           initialValue != null &&
           textController!.text.isEmpty) {
-        textController!.text = initialValue ?? "";
+        textController!.text = initialValue;
       }
       return null;
     }, []);

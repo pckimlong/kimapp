@@ -7,7 +7,8 @@ import 'package:source_gen/source_gen.dart';
 class WidgetGenerator {
   /// The annotation type checker used to identify elements to process
   TypeChecker get annotationTypeChecker => throw UnimplementedError(
-      'Subclasses must override annotationTypeChecker');
+        'Subclasses must override annotationTypeChecker',
+      );
   static final TypeChecker riverpodAnnotationTypeChecker =
       const TypeChecker.fromRuntime(Riverpod);
 
@@ -66,6 +67,7 @@ class WidgetGenerator {
     BuildStep buildStep,
   ) async {
     throw UnimplementedError(
-        'Subclasses must override generateForAnnotatedElement');
+      'Subclasses must override generateForAnnotatedElement',
+    );
   }
 }

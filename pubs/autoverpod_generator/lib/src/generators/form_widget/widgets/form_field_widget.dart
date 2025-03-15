@@ -63,8 +63,7 @@ String _generateFormFieldProxy({
   ].contains(field.name);
 
   // Determine field getter name
-  final fieldGetterName =
-      widgetRefMethodConflicts ? '${field.name}State' : field.name;
+  final fieldGetterName = widgetRefMethodConflicts ? '${field.name}State' : field.name;
 
   return generateSubProxyWidget(
     proxyRefName,
@@ -212,8 +211,8 @@ class ${provider.fieldWidgetName(field)} extends HookConsumerWidget {
 
     // Initialize external controller if provided
     useEffect(() {
-      if (textController != null ${field.isNullable ? "&& initialValue != null" : ""} && textController!.text.isEmpty) {
-        textController!.text = ${provider.isAsyncValue ? 'initialValue ?? ""' : 'initialValue'};
+      if (textController != null ${(field.isNullable || provider.isAsyncValue) ? "&& initialValue != null" : ""} && textController!.text.isEmpty) {
+        textController!.text = initialValue;
       }
       return null;
     }, []);

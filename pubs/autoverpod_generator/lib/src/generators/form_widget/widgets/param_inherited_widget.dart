@@ -8,12 +8,16 @@ String generateParamInheritedWidget(ProviderDefinition provider) {
     name: provider.formInheritedWidgetName,
     fields: [
       ClassField(
-          name: 'formKey', type: 'GlobalKey<FormState>', isRequired: true),
+        name: 'formKey',
+        type: 'GlobalKey<FormState>',
+        isRequired: true,
+      ),
       if (provider.hasFamily)
         ClassField(
-            name: 'params',
-            type: provider.familyAsRecordType,
-            isRequired: true),
+          name: 'params',
+          type: provider.familyAsRecordType,
+          isRequired: true,
+        ),
     ],
   );
 }
