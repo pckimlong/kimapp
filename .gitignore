@@ -86,12 +86,6 @@ app.*.map.json
 *.iws
 .idea/
 
-# VS Code related
-.vscode/
-.classpath
-.project
-.settings/
-.vscode/*
 
 # Temporary files
 *.log
@@ -185,7 +179,6 @@ build/
 
 # IDE/Editor specific
 .idea/
-.vscode/
 *.sublime-workspace
 *.sublime-project
 .vs/
@@ -522,7 +515,6 @@ terraform.rc
 
 # IDE/Editor workspace files
 *.code-workspace
-.vscode/settings.json
 .idea/workspace.xml
 *.sublime-workspace
 .project
