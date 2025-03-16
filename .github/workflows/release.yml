@@ -74,45 +74,6 @@ jobs:
             echo "No changes found in monitored paths since $COMPARE_WITH"
           fi
 
-      - name: Version packages
-        if: steps.check_changes.outputs.has_changes == 'true'
-        run: |
-          # Function to check if there are meaningful changes in specific directory
-          check_meaningful_changes() {
-            local dir=$1
-            echo "${{ steps.check_changes.outputs.changes }}" | \
-              grep -E "^$dir/[^/]+/(lib|pubspec\.yaml)" > /dev/null
-            return $?
-          }
-          
-          # Clean any existing temporary files
-          rm -f CHANGELOG.md
-          
-          # Version packages based on changes
-          if [ -n "${{ github.event.inputs.force_version }}" ]; then
-            # Handle manual version override
-            echo "Applying forced version: ${{ github.event.inputs.force_version }}"
-            melos version --yes --exact "${{ github.event.inputs.force_version }}"
-          else
-            # Handle automatic versioning based on changes
-            if check_meaningful_changes "packages"; then
-              echo "Found meaningful changes in kimapp packages..."
-              melos version --scope="kimapp*" --yes --graduate
-            fi
-            
-            if check_meaningful_changes "pubs"; then
-              echo "Found meaningful changes in autoverpod packages..."
-              melos version --scope="autoverpod*" --yes --graduate
-            fi
-          fi
-          
-          # Push changes and tags if any versioning occurred
-          if [ -n "$(git diff --name-only)" ]; then
-            git add .
-            git commit -m "chore(release): publish packages" || true
-            git push --follow-tags
-          fi
-
       - name: Generate changelog
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
