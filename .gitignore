@@ -155,12 +155,6 @@ yarn-error.log
 !.env.example
 
 # Generated files
-*.g.dart
-*.freezed.dart
-*.widget.dart
-*.schema.dart
-*.mocks.dart
-*.config.dart
 generated/
 generated_*/*
 

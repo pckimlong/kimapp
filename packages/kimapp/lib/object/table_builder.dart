@@ -31,8 +31,7 @@ sealed class ColumnBuilder with _$ColumnBuilder {
   String get value {
     return switch (this) {
       _ColumnBuilder(:final column) => column,
-      _Join(:final table, :final key, :final foreignKey, :final candidateKey) =>
-        () {
+      _Join(:final table, :final key, :final foreignKey, :final candidateKey) => () {
           final selectStatement = '(${table.selectStatement})';
           final tableName = table.tableName;
           final effectiveKey = key ?? tableName;
