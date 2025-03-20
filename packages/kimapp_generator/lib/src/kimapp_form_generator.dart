@@ -303,10 +303,8 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
     ${_checkHasFormWidgetAssert(providerClassName)}
     ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
     final notifier = ref.watch($providerNameFamily.notifier);
-    ${useTextField ? """
-    // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
     final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
-
+    ${useTextField ? """
     final controller =
         this.controller ?? useTextEditingController(text: ${fieldType == "String?" ? "state ?? ''" : "state"});
 
