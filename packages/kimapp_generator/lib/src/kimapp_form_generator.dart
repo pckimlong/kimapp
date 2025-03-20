@@ -5,8 +5,7 @@ import 'package:kimapp/kimapp.dart';
 import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 
-const providerStatusClassType =
-    TypeChecker.fromRuntime(ProviderStatusClassMixin);
+const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
 const formUpdateMixin = TypeChecker.fromRuntime(UpdateFormMixin);
 
 class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
@@ -18,8 +17,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
   ) {
     if (element is! ClassElement) return;
 
-    final buildMethod =
-        element.methods.firstWhereOrNull((method) => method.name == "build");
+    final buildMethod = element.methods.firstWhereOrNull((method) => method.name == "build");
     if (buildMethod == null) {
       // Only stateful provider contain build method can generate form
       return;
@@ -48,8 +46,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
         : classElement.name;
 
     // Generate call method detail
-    final callMethod =
-        element.methods.firstWhereOrNull((method) => method.name == "call");
+    final callMethod = element.methods.firstWhereOrNull((method) => method.name == "call");
     if (callMethod == null) {
       print('[FORM GENERATOR FAILED] $classElement required [call] method');
       return;
@@ -73,8 +70,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       familyParams[name] = type.toString();
     }
 
-    final classConstructor =
-        classElement.constructors.firstWhereOrNull((c) => !c.isPrivate);
+    final classConstructor = classElement.constructors.firstWhereOrNull((c) => !c.isPrivate);
 
     if (classConstructor == null) {
       print('[FORM GENERATOR FAILED] $classElement has no constructor');
@@ -96,8 +92,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       // Don't generate status field because it from provider status mixin class
       if (param.name != "status") {
         // Also initialLoaded field
-        if (!isFormUpdateType ||
-            (isFormUpdateType && param.name != "initialLoaded")) {
+        if (!isFormUpdateType || (isFormUpdateType && param.name != "initialLoaded")) {
           final name = param.name;
           final type = param.type.toString();
           fields[name] = type;
@@ -108,9 +103,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
     }
 
     // Generate form if there any string field
-    final useFormWidget = fields.values
-        .where((type) => type == "String" || type == "String?")
-        .isNotEmpty;
+    final useFormWidget =
+        fields.values.where((type) => type == "String" || type == "String?").isNotEmpty;
 
     final buffer = StringBuffer();
 
@@ -205,8 +199,7 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
         fieldType: fieldType,
         providerNameFamily: providerNameWithFamily,
         familyParams: familyParams,
-        useTextField:
-            useFormWidget && fieldType == "String" || fieldType == "String?",
+        useTextField: useFormWidget && fieldType == "String" || fieldType == "String?",
       );
       buffer.write(fieldWidget);
     }
@@ -219,8 +212,7 @@ String _dataType(String name, Map<String, String> source) {
   return source[name] as String;
 }
 
-String _providerFamilyParamBuilder(
-    String providerClassName, List<ParameterElement> params) {
+String _providerFamilyParamBuilder(String providerClassName, List<ParameterElement> params) {
   final providerName = "${providerClassName.camelCase}Provider";
 
   if (params.isEmpty) return providerName;
@@ -311,38 +303,38 @@ class $providerClassName${fieldName.pascalCase}FieldWidget extends HookConsumerW
     ${_checkHasFormWidgetAssert(providerClassName)}
     ${familyParams.isNotEmpty ? "final family = ref.watch(${_familyProviderName(providerClassName)});" : ""}
     final notifier = ref.watch($providerNameFamily.notifier);
-    final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
     ${useTextField ? """
-      final textController = controller ?? useTextEditingController(text: ${fieldType == "String?" ? "state ?? ''" : "state"});
-      useEffect(
-        () {
-          void listener() {
-            final newText = ${fieldType == "String?" ? "textController.text.isEmpty ? null : textController.text" : "textController.text"};
-            // Only update if the values actually differ to prevent loops
-            if (state != newText) {
-              $callEvent(newText);
-            }
-          }
-          textController.addListener(listener);
-          return () => textController.removeListener(listener);
-        },
-        [textController],
-      );
+    // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
+    final state = ref.watch($providerNameFamily.select((value) => value.$fieldName));
 
-      useEffect(() {
-        if (state != textController.text) {
-          // Preserve cursor position when updating text
-          final selection = textController.selection;
-          textController.value = TextEditingValue(
-            text: ${fieldType == "String?" ? "state ?? ''" : "state"},
-            selection: selection,
-          );
+    final controller =
+        this.controller ?? useTextEditingController(text: ${fieldType == "String?" ? "state ?? ''" : "state"});
+
+    // Listen for provider changes
+    ref.listen($providerNameFamily.select((value) => value.$fieldName), (
+      previous,
+      next,
+    ) {
+      if (previous != next && controller.text != next) {
+        controller.text = next ?? '';
+      }
+    });
+
+    // Setup text listener
+    useEffect(() {
+      void listener() {
+        final currentValue = ref.read($providerNameFamily).$fieldName;
+        if (currentValue != controller.text) {
+          $callEvent(controller.text);
         }
-        return null;
-      }, [state]);
+      }
+
+      controller.addListener(listener);
+      return () => controller.removeListener(listener);
+    }, [controller]);
     """ : ""}
     final showValidation = ref.watch($providerNameFamily.select((value) => value.status.isFailure));
-    return builder(ref, ${useTextField ? "textController," : ""} state, $callEvent, showValidation,);
+    return builder(ref, ${useTextField ? "controller," : ""} state, $callEvent, showValidation,);
   }
 }
   """;
@@ -355,8 +347,7 @@ String _familyParamClassName(String providerName) {
   return "_${providerName}FamilyParam";
 }
 
-String _generateFamilyParamsClass(
-    String providerName, Map<String, String> params) {
+String _generateFamilyParamsClass(String providerName, Map<String, String> params) {
   if (params.isEmpty) return '';
 
   final name = _familyParamClassName(providerName);
@@ -385,8 +376,7 @@ class $name {
   return result;
 }
 
-String _defineLocalFamilyOrEmpty(
-    String providerName, Map<String, String> param) {
+String _defineLocalFamilyOrEmpty(String providerName, Map<String, String> param) {
   final props = param.keys;
   if (props.isEmpty) return "";
   return '''
