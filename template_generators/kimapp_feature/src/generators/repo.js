@@ -49,8 +49,6 @@ abstract class I${pascalCaseName}Repo {
   });
 }
 
-
-
 class _Impl implements I${pascalCaseName}Repo {
   _Impl(this._ref);
 
