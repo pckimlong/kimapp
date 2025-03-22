@@ -20,7 +20,6 @@ part '${snakeCaseName}_list_param.freezed.dart';
 sealed class ${pascalCaseName}ListParam with _$${pascalCaseName}ListParam {
   const ${pascalCaseName}ListParam._();
 
-  @JsonSerializable(explicitToJson: true)
   const factory ${pascalCaseName}ListParam({
     String? search,
   }) = _${pascalCaseName}ListParam;
