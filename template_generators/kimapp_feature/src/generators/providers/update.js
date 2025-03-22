@@ -50,8 +50,6 @@ class ${pascalCaseName}Update extends _$${pascalCaseName}UpdateWidget {
     /// in this case, the item should be removed from the paginated list, but using this method will just update the item
     /// other case is if we update sort order, the item might need to change position
     ${pascalCaseName}PaginationTracker.instance.updatePaginatedItem(ref, result);
-    
-    super.onSuccess(result);
   }
 }`;
 
