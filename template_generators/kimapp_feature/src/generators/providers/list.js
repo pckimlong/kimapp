@@ -32,7 +32,7 @@ class ${pascalCaseName}List extends _$${pascalCaseName}List with IListAsyncNotif
 
   @override
   FutureOr<IList<${pascalCaseName}Model>> build() {
-    return ref.watch(${camelCaseName}RepoProvider).findAll().getOrThrow();
+    return ref.watch(${camelCaseName}RepoProvider).findAll(${pascalCaseName}ListParam()).getOrThrow();
   }
 }`;
 
