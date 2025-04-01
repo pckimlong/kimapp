@@ -2,6 +2,10 @@
 
 All notable changes to the "kimapp-snippets" extension will be documented in this file.
 
+## [1.2.3]
+
+- Fixed Ilist snippet
+
 ## [1.2.2]
 
 - Fixed kimapp feature template
