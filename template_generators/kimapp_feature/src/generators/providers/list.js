@@ -28,7 +28,7 @@ part '${snakeCaseName}_list_provider.g.dart';
 @riverpod
 class ${pascalCaseName}List extends _$${pascalCaseName}List with IListAsyncNotifier<${pascalCaseName}Model> {
   @override
-  bool identity(${pascalCaseName}Model item) => item.id == item.id;
+  bool comparer(${pascalCaseName}Model a, ${pascalCaseName}Model b) => a.id == b.id;
 
   @override
   FutureOr<IList<${pascalCaseName}Model>> build() {
