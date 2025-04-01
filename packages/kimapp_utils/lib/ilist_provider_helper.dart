@@ -10,7 +10,7 @@ mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
   ///
   /// This is used by [removeItem], [updateItem], and [updateItems] to determine which items
   /// to modify in the list. Typically compares unique identifiers like IDs.
-  bool identity(T item);
+  bool comparer(T a, T b);
 
   void insertItem(T item, {int index = 0}) {
     state = state.whenData((value) => value.insert(index, item));
@@ -25,12 +25,11 @@ mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
   }
 
   void removeItem(T item) {
-    state = state.whenData((value) => value.removeWhere((e) => identity(item) == identity(e)));
+    state = state.whenData((value) => value.removeWhere((e) => comparer(item, e)));
   }
 
   void updateItem(T item) {
-    state =
-        state.whenData((value) => value.updateById([item], (e) => identity(item) == identity(e)));
+    state = state.whenData((value) => value.updateById([item], (e) => comparer(item, e)));
   }
 
   void updateState(IList<T> Function(IList<T> value) update) {
@@ -38,7 +37,7 @@ mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
   }
 
   void updateItems(List<T> items) {
-    state = state.whenData((value) =>
-        value.updateById(items, (e) => items.any((item) => identity(item) == identity(e))));
+    state = state.whenData(
+        (value) => value.updateById(items, (e) => items.any((item) => comparer(item, e))));
   }
 }
