@@ -13,6 +13,7 @@ dependencies:
   talker_flutter: ^4.6.10
   easy_localization: ^3.0.7
   animate_do: ^3.3.4
+  stack_trace: ^1.12.1
   auto_route: ^9.2.2
   easy_debounce: ^2.0.3
   bot_toast: ^4.1.3

@@ -5,4 +5,5 @@ export 'kimapp_schema.dart';
 export 'object/object.dart';
 export 'riverpod_helper.dart';
 export 'riverpod_offline_persist.dart';
+export 'riverpod_utils.dart';
 export 'service.dart';
