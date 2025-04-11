@@ -48,11 +48,11 @@ class AppState extends _$AppState with LoggerMixin {
 
     // Handle auth-dependent initialization
     final authState = ref.read(authStateProvider);
-    switch (authState) {
-      case _Authenticated(:final userId):
-        _handleAuthenticatedState(userId);
-      case _Unauthenticated():
-        _handleUnauthenticatedState();
+    if (authState.isAuthenticated) {
+      await _handleAuthenticatedState(authState.userId!);
+    }
+    if (authState.isUnauthenticated) {
+      _handleUnauthenticatedState();
     }
 
     state = ApplicationState.initialized;

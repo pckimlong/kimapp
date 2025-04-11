@@ -1,6 +1,6 @@
-import 'package:book_swap/src/core/helpers/build_context_helper.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/helpers/build_context_helper.dart';
 import '../../app/app_style.dart';
 import '../theme/base_widget.dart';
 
@@ -193,17 +193,16 @@ class AppButton extends AppBaseWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    final Color textIconColor =
-        isDisabled
-            ? colors.onSurface.withValues(alpha: 0.38)
-            : (foregroundColor ??
-                (variant == AppButtonVariant.primary
-                    ? colors.onPrimary
-                    : variant == AppButtonVariant.secondary
+    final Color textIconColor = isDisabled
+        ? colors.onSurface.withValues(alpha: 0.38)
+        : (foregroundColor ??
+            (variant == AppButtonVariant.primary
+                ? colors.onPrimary
+                : variant == AppButtonVariant.secondary
                     ? colors.onSecondary
                     : variant == AppButtonVariant.neutral
-                    ? context.colors.outlineVariant
-                    : colors.primary));
+                        ? context.colors.outlineVariant
+                        : colors.primary));
 
     double iconSize;
     switch (size) {
@@ -237,10 +236,9 @@ class AppButton extends AppBaseWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        children:
-            leadingIcon
-                ? [iconWidget, const SizedBox(width: 8), textWidget]
-                : [textWidget, const SizedBox(width: 8), iconWidget],
+        children: leadingIcon
+            ? [iconWidget, const SizedBox(width: 8), textWidget]
+            : [textWidget, const SizedBox(width: 8), iconWidget],
       );
     }
 

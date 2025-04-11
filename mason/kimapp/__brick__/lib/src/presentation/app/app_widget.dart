@@ -4,16 +4,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
+
 import '../../../config.dart';
-import '../widgets/my_error_widget.dart';
 import '../../core/helpers/build_context_helper.dart';
 import '../../core/helpers/flutter_talker.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
+import '../widgets/feedback/my_error_widget.dart';
 import './app_state_provider.dart';
 import 'app_style.dart';
 import 'app_theme_provider.dart';
@@ -68,8 +69,8 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
         debugShowCheckedModeBanner: false,
         routerConfig: router.config(
           reevaluateListenable: _authListenable,
-          navigatorObservers:
-              () => [SentryNavigatorObserver(), TalkerRouteObserver(ref.watch(talkerProvider))],
+          navigatorObservers: () =>
+              [SentryNavigatorObserver(), TalkerRouteObserver(ref.watch(talkerProvider))],
         ),
         restorationScopeId: Config.appName,
         key: ValueKey(Config.appName),

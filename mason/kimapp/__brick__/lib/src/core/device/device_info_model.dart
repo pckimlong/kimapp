@@ -3,7 +3,7 @@ part 'device_info_model.g.dart';
 part 'device_info_model.freezed.dart';
 
 @freezed
-class DeviceInfoModel with _$DeviceInfoModel {
+sealed class DeviceInfoModel with _$DeviceInfoModel {
   const DeviceInfoModel._();
 
   const factory DeviceInfoModel({

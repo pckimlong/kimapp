@@ -87,6 +87,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       return null;
     }
 
-    return result.whenOrNull(failure: (failure) => failure.message());
+    if (result.isFailure) {
+      return result.failure!.message();
+    }
+    return null;
   }
 }
