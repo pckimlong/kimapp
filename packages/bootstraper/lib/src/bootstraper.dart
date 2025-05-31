@@ -152,9 +152,17 @@ class Bootstraper {
   }) async {
     IntegrationMode.setMode(environment);
 
-    final container = _createProviderContainer(splashConfig, providerOverrides, providerObservers);
+    final parentContainer = ProviderContainer();
+    final loggerInstance = logger(parentContainer);
+    final container = _createProviderContainer(
+      parentContainer,
+      splashConfig,
+      providerOverrides,
+      providerObservers,
+      loggerInstance,
+    );
 
-    final context = _buildBootstrapContext(environment, container, logger);
+    final context = _buildBootstrapContext(environment, container, loggerInstance);
 
     // Set up global error handling for the platform dispatcher
     // This will catch errors that occur outside the Flutter framework
@@ -172,7 +180,7 @@ class Bootstraper {
       () async {
         WidgetsFlutterBinding.ensureInitialized();
 
-        await Future.wait(initialTasks.map((task) => task.execute(context)));
+        await Future.wait(initialTasks.map((task) => _executeTaskWithLogging(task, context)));
 
         // Handle flutter framework errors
         // This will catch errors in the widget tree and log them
@@ -202,6 +210,11 @@ class Bootstraper {
         );
       },
       (error, stackTrace) {
+        if (error is _BootstrapTaskError) {
+          // This error is already logged in the task execution method
+          return;
+        }
+
         context.logger.error(
           'Zone caught error during app bootstrap initialization',
           error: error,
@@ -231,9 +244,9 @@ class Bootstraper {
   static BootstrapContext _buildBootstrapContext(
     IntegrationMode env,
     ProviderContainer container,
-    Logger Function(ProviderContainer container) logger,
+    Logger logger,
   ) {
-    return BootstrapContext(env: env, container: container, logger: logger(container));
+    return BootstrapContext(env: env, container: container, logger: logger);
   }
 
   /// Creates and configures the Riverpod provider container.
@@ -255,16 +268,52 @@ class Bootstraper {
   ///
   /// Returns: A configured [ProviderContainer] ready for use
   static ProviderContainer _createProviderContainer(
+    ProviderContainer parentContainer,
     SplashConfig? splashConfig,
     List<Override> providerOverrides,
     List<ProviderObserver> providerObservers,
+    Logger logger,
   ) {
     return ProviderContainer(
+      parent: parentContainer,
       overrides: [
         ...providerOverrides,
         if (splashConfig != null) _splashConfigProvider.overrideWithValue(splashConfig),
+        _internalLoggerProvider.overrideWithValue(logger),
       ],
       observers: providerObservers,
     );
   }
+
+  /// Execute a single task with comprehensive logging
+  static Future<void> _executeTaskWithLogging(BootstrapTask task, BootstrapContext context) async {
+    final taskName = task.runtimeType.toString();
+    final startTime = DateTime.now();
+
+    context.logger.info('🚀 Starting bootstrap task: $taskName');
+
+    try {
+      await task.execute(context);
+      final duration = DateTime.now().difference(startTime);
+
+      context.logger.info('✅ Completed bootstrap task: $taskName in ${duration.inMilliseconds}ms');
+    } catch (error, stackTrace) {
+      final duration = DateTime.now().difference(startTime);
+
+      context.logger.error(
+        '❌ Failed bootstrap task: $taskName after ${duration.inMilliseconds}ms',
+        error: error,
+        stackTrace: stackTrace,
+      );
+
+      throw _BootstrapTaskError();
+    }
+  }
+}
+
+/// An error that indicates a failure in executing a bootstrap task.
+/// This used to signal zone guarded errors no need to log them again
+/// since it already logged in the `_executeTaskWithLogging` method.
+class _BootstrapTaskError {
+  const _BootstrapTaskError();
 }
