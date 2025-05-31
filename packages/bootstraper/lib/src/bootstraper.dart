@@ -156,10 +156,33 @@ class Bootstraper {
 
     final context = _buildBootstrapContext(environment, container, logger);
 
+    // Set up global error handling for the platform dispatcher
+    // This will catch errors that occur outside the Flutter framework
+    // such as in the Dart VM or during platform channel communication
+    // This is critical to ensure we log any uncaught errors that might
+    // otherwise crash the app without proper logging
+    // This should be set before any Flutter binding is initialized
+    // to ensure it catches all errors from the start
+    PlatformDispatcher.instance.onError = (error, stack) {
+      context.logger.error('PlatformDispatcher caught error', error: error, stackTrace: stack);
+      return false;
+    };
+
     await runZonedGuarded(
       () async {
         WidgetsFlutterBinding.ensureInitialized();
+
         await Future.wait(initialTasks.map((task) => task.execute(context)));
+
+        // Handle flutter framework errors
+        // This will catch errors in the widget tree and log them
+        FlutterError.onError = (details) {
+          context.logger.error(
+            'Flutter framework error',
+            error: details.exception,
+            stackTrace: details.stack,
+          );
+        };
 
         runApp(
           UncontrolledProviderScope(
