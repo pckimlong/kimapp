@@ -4,17 +4,18 @@
 // ignore_for_file: type=lint, unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member, unnecessary_import, unused_import
 // coverage:ignore-file
 
+import 'dart:core';
+import 'dart:typed_data';
+
+import 'package:autoverpod/autoverpod.dart';
 import 'package:autoverpod_generator_example/form_widget_example.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
+import 'package:autoverpod_generator_example/form_widget_example.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'dart:typed_data';
-import 'package:autoverpod/autoverpod.dart';
-import 'package:autoverpod_generator_example/form_widget_example.widget.dart';
-import 'dart:core';
+import 'package:kimapp_utils/kimapp_utils.dart';
 
 /// Extension that adds field update methods to the form provider.
 /// These methods allow updating individual fields that have copyWith support.
@@ -24,8 +25,7 @@ extension UpdateUserFieldUpdater on UpdateUser {
       state = state.whenData((state) => state.copyWith(name: newValue));
 
   /// Update the age field of UpdateUserModel class.
-  void updateAge(int? newValue) =>
-      state = state.whenData((state) => state.copyWith(age: newValue));
+  void updateAge(int? newValue) => state = state.whenData((state) => state.copyWith(age: newValue));
 
   /// Update the email field of UpdateUserModel class.
   void updateEmail(String? newValue) => state = state.whenData(
@@ -60,8 +60,7 @@ class _UpdateUserFormInheritedWidget extends InheritedWidget {
   final ({int id}) params;
 
   static _UpdateUserFormInheritedWidget of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<_UpdateUserFormInheritedWidget>()!;
+    return context.dependOnInheritedWidgetOfExactType<_UpdateUserFormInheritedWidget>()!;
   }
 
   @override
@@ -77,11 +76,9 @@ class UpdateUserProxyWidgetRef extends WidgetRef {
 
   ({int id}) get params => _UpdateUserFormInheritedWidget.of(context).params;
 
-  AsyncValue<bool>? get status =>
-      _ref.watch(updateUserCallStatusProvider((id: params.id)));
+  AsyncValue<bool>? get status => _ref.watch(updateUserCallStatusProvider((id: params.id)));
 
-  GlobalKey<FormState> get formKey =>
-      _UpdateUserFormInheritedWidget.of(context).formKey;
+  GlobalKey<FormState> get formKey => _UpdateUserFormInheritedWidget.of(context).formKey;
 
   UpdateUser get notifier => _ref.read(updateUserProvider(params.id).notifier);
 
@@ -98,8 +95,7 @@ class UpdateUserProxyWidgetRef extends WidgetRef {
     return await notifier(photoBytes: photoBytes);
   }
 
-  Selected select<Selected>(Selected Function(UpdateUserModel) selector) =>
-      _ref.watch(
+  Selected select<Selected>(Selected Function(UpdateUserModel) selector) => _ref.watch(
         updateUserProvider(
           params.id,
         ).select((value) => selector(value.requireValue)),
@@ -155,7 +151,7 @@ class UpdateUserFormScope extends ConsumerStatefulWidget {
     this.onPopInvokedWithResult,
     required this.builder,
     this.child,
-    this.onSuccessed,
+    this.onSucceed,
     this.onInitLoading,
     this.onInitError,
   }) : assert(
@@ -172,13 +168,12 @@ class UpdateUserFormScope extends ConsumerStatefulWidget {
   final GlobalKey<FormState>? formKey;
   final AutovalidateMode? autovalidateMode;
   final void Function(bool, Object?)? onPopInvokedWithResult;
-  final void Function(BuildContext context, bool value)? onSuccessed;
+  final void Function(BuildContext context, bool value)? onSucceed;
   final Widget Function()? onInitLoading;
   final Widget Function(Object error, StackTrace stack)? onInitError;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _UpdateUserFormScopeState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _UpdateUserFormScopeState();
 }
 
 class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
@@ -200,7 +195,7 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
   Widget build(BuildContext context) {
     ref.listen(updateUserCallStatusProvider((id: widget.id)), (previous, next) {
       if (previous?.hasValue == false && next?.hasValue == true) {
-        widget.onSuccessed?.call(context, next!.requireValue);
+        widget.onSucceed?.call(context, next!.requireValue);
       }
     });
 
@@ -355,8 +350,7 @@ class UpdateUserFormState extends ConsumerWidget {
     Widget? child,
   ) builder;
   final Widget? child;
-  final void Function(UpdateUserModel? previous, UpdateUserModel? next)?
-      onStateChanged;
+  final void Function(UpdateUserModel? previous, UpdateUserModel? next)? onStateChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -369,8 +363,7 @@ class UpdateUserFormState extends ConsumerWidget {
       });
     }
     return UpdateUserFormParams(
-      builder: (context, ref, params) =>
-          builder(context, UpdateUserProxyWidgetRef(ref), child),
+      builder: (context, ref, params) => builder(context, UpdateUserProxyWidgetRef(ref), child),
     );
   }
 }
@@ -387,8 +380,7 @@ class UpdateUserFormStatus extends ConsumerWidget {
     UpdateUserProxyWidgetRef ref,
     AsyncValue<bool>? status,
   ) builder;
-  final void Function(AsyncValue<bool>? previous, AsyncValue<bool>? next)?
-      onChanged;
+  final void Function(AsyncValue<bool>? previous, AsyncValue<bool>? next)? onChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -436,8 +428,7 @@ class UpdateUserNameField extends HookConsumerWidget {
 
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
-  final Widget Function(BuildContext context, UpdateUserNameProxyWidgetRef ref)
-      builder;
+  final Widget Function(BuildContext context, UpdateUserNameProxyWidgetRef ref) builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String next)? onChanged;
@@ -449,11 +440,9 @@ class UpdateUserNameField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue =
-        ref.read(updateUserProvider(params.id)).valueOrNull?.name;
+    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.name;
 
-    final controller =
-        textController ?? useTextEditingController(text: initialValue);
+    final controller = textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
@@ -468,9 +457,7 @@ class UpdateUserNameField extends HookConsumerWidget {
 
     // Initialize external controller if provided
     useEffect(() {
-      if (textController != null &&
-          initialValue != null &&
-          textController!.text.isEmpty) {
+      if (textController != null && initialValue != null && textController!.text.isEmpty) {
         textController!.text = initialValue;
       }
       return null;
@@ -479,12 +466,9 @@ class UpdateUserNameField extends HookConsumerWidget {
     // Setup text listener
     useEffect(() {
       void listener() {
-        final currentValue =
-            ref.read(updateUserProvider(params.id)).valueOrNull?.name;
+        final currentValue = ref.read(updateUserProvider(params.id)).valueOrNull?.name;
         if (currentValue != controller.text) {
-          ref
-              .read(updateUserProvider(params.id).notifier)
-              .updateName(controller.text);
+          ref.read(updateUserProvider(params.id).notifier).updateName(controller.text);
         }
       }
 
@@ -511,8 +495,7 @@ class UpdateUserAgeProxyWidgetRef extends UpdateUserProxyWidgetRef {
 class UpdateUserAgeField extends ConsumerWidget {
   const UpdateUserAgeField({super.key, required this.builder});
 
-  final Widget Function(BuildContext context, UpdateUserAgeProxyWidgetRef ref)
-      builder;
+  final Widget Function(BuildContext context, UpdateUserAgeProxyWidgetRef ref) builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -549,8 +532,7 @@ class UpdateUserEmailField extends HookConsumerWidget {
 
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
-  final Widget Function(BuildContext context, UpdateUserEmailProxyWidgetRef ref)
-      builder;
+  final Widget Function(BuildContext context, UpdateUserEmailProxyWidgetRef ref) builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String? next)? onChanged;
@@ -562,11 +544,9 @@ class UpdateUserEmailField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue =
-        ref.read(updateUserProvider(params.id)).valueOrNull?.email;
+    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.email;
 
-    final controller =
-        textController ?? useTextEditingController(text: initialValue);
+    final controller = textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
@@ -581,9 +561,7 @@ class UpdateUserEmailField extends HookConsumerWidget {
 
     // Initialize external controller if provided
     useEffect(() {
-      if (textController != null &&
-          initialValue != null &&
-          textController!.text.isEmpty) {
+      if (textController != null && initialValue != null && textController!.text.isEmpty) {
         textController!.text = initialValue;
       }
       return null;
@@ -592,12 +570,9 @@ class UpdateUserEmailField extends HookConsumerWidget {
     // Setup text listener
     useEffect(() {
       void listener() {
-        final currentValue =
-            ref.read(updateUserProvider(params.id)).valueOrNull?.email;
+        final currentValue = ref.read(updateUserProvider(params.id)).valueOrNull?.email;
         if (currentValue != controller.text) {
-          ref
-              .read(updateUserProvider(params.id).notifier)
-              .updateEmail(controller.text);
+          ref.read(updateUserProvider(params.id).notifier).updateEmail(controller.text);
         }
       }
 
@@ -655,11 +630,9 @@ class UpdateUserAddressField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue =
-        ref.read(updateUserProvider(params.id)).valueOrNull?.address;
+    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.address;
 
-    final controller =
-        textController ?? useTextEditingController(text: initialValue);
+    final controller = textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
@@ -676,9 +649,7 @@ class UpdateUserAddressField extends HookConsumerWidget {
 
     // Initialize external controller if provided
     useEffect(() {
-      if (textController != null &&
-          initialValue != null &&
-          textController!.text.isEmpty) {
+      if (textController != null && initialValue != null && textController!.text.isEmpty) {
         textController!.text = initialValue;
       }
       return null;
@@ -687,12 +658,9 @@ class UpdateUserAddressField extends HookConsumerWidget {
     // Setup text listener
     useEffect(() {
       void listener() {
-        final currentValue =
-            ref.read(updateUserProvider(params.id)).valueOrNull?.address;
+        final currentValue = ref.read(updateUserProvider(params.id)).valueOrNull?.address;
         if (currentValue != controller.text) {
-          ref
-              .read(updateUserProvider(params.id).notifier)
-              .updateAddress(controller.text);
+          ref.read(updateUserProvider(params.id).notifier).updateAddress(controller.text);
         }
       }
 
@@ -735,8 +703,7 @@ class UpdateUserPhoneField extends HookConsumerWidget {
 
   /// Builder function that will be called with the context and ref.
   /// Field utilities are accessible via [ref]
-  final Widget Function(BuildContext context, UpdateUserPhoneProxyWidgetRef ref)
-      builder;
+  final Widget Function(BuildContext context, UpdateUserPhoneProxyWidgetRef ref) builder;
 
   /// Optional callback that will be called when the field value changes
   final void Function(String? previous, String? next)? onChanged;
@@ -748,11 +715,9 @@ class UpdateUserPhoneField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue =
-        ref.read(updateUserProvider(params.id)).valueOrNull?.phone;
+    final initialValue = ref.read(updateUserProvider(params.id)).valueOrNull?.phone;
 
-    final controller =
-        textController ?? useTextEditingController(text: initialValue);
+    final controller = textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
@@ -767,9 +732,7 @@ class UpdateUserPhoneField extends HookConsumerWidget {
 
     // Initialize external controller if provided
     useEffect(() {
-      if (textController != null &&
-          initialValue != null &&
-          textController!.text.isEmpty) {
+      if (textController != null && initialValue != null && textController!.text.isEmpty) {
         textController!.text = initialValue;
       }
       return null;
@@ -778,12 +741,9 @@ class UpdateUserPhoneField extends HookConsumerWidget {
     // Setup text listener
     useEffect(() {
       void listener() {
-        final currentValue =
-            ref.read(updateUserProvider(params.id)).valueOrNull?.phone;
+        final currentValue = ref.read(updateUserProvider(params.id)).valueOrNull?.phone;
         if (currentValue != controller.text) {
-          ref
-              .read(updateUserProvider(params.id).notifier)
-              .updatePhone(controller.text);
+          ref.read(updateUserProvider(params.id).notifier).updatePhone(controller.text);
         }
       }
 

@@ -20,6 +20,10 @@ mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
     state = state.whenData((value) => value.insertAll(index, items));
   }
 
+  void addToLast(T item) {
+    state = state.whenData((value) => value.add(item));
+  }
+
   void removeWhere(bool Function(T item) test) {
     state = state.whenData((value) => value.removeWhere(test));
   }

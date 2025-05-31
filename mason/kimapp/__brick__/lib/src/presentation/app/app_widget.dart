@@ -6,7 +6,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:kimapp_utils/kimapp_utils.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 import '../../../config.dart';
@@ -14,8 +13,8 @@ import '../../core/helpers/build_context_helper.dart';
 import '../../core/helpers/flutter_talker.dart';
 import '../../features/auth/auth.dart';
 import '../router/app_router_provider.dart';
-import '../widgets/feedback/my_error_widget.dart';
-import './app_state_provider.dart';
+import '../widgets/components/app_error_widget.dart';
+import 'app_state_provider.dart';
 import 'app_style.dart';
 import 'app_theme_provider.dart';
 
@@ -69,8 +68,7 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
         debugShowCheckedModeBanner: false,
         routerConfig: router.config(
           reevaluateListenable: _authListenable,
-          navigatorObservers: () =>
-              [SentryNavigatorObserver(), TalkerRouteObserver(ref.watch(talkerProvider))],
+          navigatorObservers: () => [TalkerRouteObserver(ref.watch(talkerProvider))],
         ),
         restorationScopeId: Config.appName,
         key: ValueKey(Config.appName),
@@ -95,20 +93,26 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
             ],
           );
 
-          return _ThemeOverrider(child: child);
+          return _ThemeOverride(child: child);
         },
       ),
     );
   }
 }
 
-class _ThemeOverrider extends ConsumerWidget {
-  const _ThemeOverrider({required this.child});
+class _ThemeOverride extends ConsumerWidget {
+  const _ThemeOverride({required this.child});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final lightTokens = MoonTokens.light.copyWith(
+      colors: MoonColors.light.copyWith(
+        piccolo: context.primaryColor,
+        hit: context.colors.secondary,
+      ),
+    );
     // Get the current theme extensions
     final currentExtensions = context.theme.extensions.values.toList();
 
@@ -122,8 +126,10 @@ class _ThemeOverrider extends ConsumerWidget {
             defaultLoadingStateWidget: (context, ref) {
               return const Center(child: CircularProgressIndicator());
             },
-            defaultErrorStateWidget: (_, __, error) => Center(child: MyErrorWidget(error: error)),
+            defaultErrorStateWidget: (_, __, error) => Center(child: AppErrorWidget(error: error)),
           ),
+
+          MoonTheme(tokens: lightTokens),
         ],
 
         // Other theme settings here ...

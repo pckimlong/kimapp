@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/helpers/build_context_helper.dart';
 import '../../app/app_style.dart';
+import '../core/buttons/app_outline_button.dart';
+import '../core/buttons/app_text_button.dart';
 
 class MultiListSelectionDivider extends StatelessWidget {
   const MultiListSelectionDivider({
@@ -25,16 +27,12 @@ class MultiListSelectionDivider extends StatelessWidget {
       children: [
         if (onSelectAllPressed != null) ...[
           ...[
-            TextButton(
+            AppTextButton(
               onPressed: onSelectAllPressed,
-              child: Row(
-                children: [
-                  Icon(Icons.check_box_outlined, size: 18),
-                  Text(
-                    'Select All',
-                    style: TextStyle(fontSize: 13),
-                  ),
-                ],
+              leading: const Icon(Icons.check_box_outlined, size: 18),
+              label: const Text(
+                'Select All',
+                style: TextStyle(fontSize: 13),
               ),
             ),
           ],
@@ -60,9 +58,10 @@ class MultiListSelectionDivider extends StatelessWidget {
         ),
         if (onClearAllPressed != null) ...[
           AS.wGap8,
-          OutlinedButton(
+          AppOutlineButton(
+            isSmall: true,
             onPressed: onClearAllPressed,
-            child: const Text('Clear'),
+            label: const Text('Clear'),
           ),
         ],
       ],

@@ -21,6 +21,7 @@ import 'package:kimapp_utils/kimapp_utils.dart';
 
 import '../i_${snakeCaseName}_repo.dart';
 import '../${snakeCaseName}_schema.schema.dart';
+import '../params/${snakeCaseName}_list_param.dart';
 
 part '${snakeCaseName}_list_provider.g.dart';
 

@@ -65,7 +65,7 @@ class ${provider.formScopeWidgetName} extends ConsumerStatefulWidget {
     this.onPopInvokedWithResult,
     required this.builder,
     this.child,
-    this.onSuccessed,
+    this.onSucceed,
     ${provider.isAsyncValue ? '''
     this.onInitLoading,
     this.onInitError,''' : ''}
@@ -80,7 +80,7 @@ class ${provider.formScopeWidgetName} extends ConsumerStatefulWidget {
   final GlobalKey<FormState>? formKey;
   final AutovalidateMode? autovalidateMode;
   final void Function(bool, Object?)? onPopInvokedWithResult;
-  final void Function(BuildContext context, ${provider.getSubmitMethodInfo().rawResultType} value)? onSuccessed;
+  final void Function(BuildContext context, ${provider.getSubmitMethodInfo().rawResultType} value)? onSucceed;
   ${provider.isAsyncValue ? '''
   final Widget Function()? onInitLoading;
   final Widget Function(Object error, StackTrace stack)? onInitError;
@@ -111,7 +111,7 @@ class _${provider.formScopeWidgetName}State extends ConsumerState<${provider.for
       ${provider.callStatusProviderNameWithFamily(prefix: 'widget')},
       (previous, next) {
         if (previous?.hasValue == false && next?.hasValue == true) {
-          widget.onSuccessed?.call(context, next!.requireValue);
+          widget.onSucceed?.call(context, next!.requireValue);
         }
       },
     );

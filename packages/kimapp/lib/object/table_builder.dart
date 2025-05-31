@@ -37,7 +37,10 @@ sealed class ColumnBuilder with _$ColumnBuilder {
           final effectiveKey = key ?? tableName;
 
           if (candidateKey.isNullOrBlank) {
-            return '$effectiveKey:${foreignKey ?? tableName}$selectStatement';
+            if (foreignKey != null) {
+              return '$effectiveKey:$tableName!$foreignKey$selectStatement';
+            }
+            return '$effectiveKey:$tableName$selectStatement';
           } else if (candidateKey.isNotNullOrEmpty) {
             return '$effectiveKey:${table.tableName}!$candidateKey$selectStatement';
           } else {

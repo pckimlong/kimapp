@@ -27,7 +27,7 @@ import '${snakeCaseName}_schema.schema.dart';
 part 'i_${snakeCaseName}_repo.g.dart';
 
 
-@Riverpod(keepAlive: true)
+@riverpod
 I${pascalCaseName}Repo ${camelCaseName}Repo(Ref ref) => _Impl(ref);
 
 
