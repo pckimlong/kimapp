@@ -14,5 +14,8 @@
     },
     "[yaml]": {
         "editor.formatOnSave": false
-    }
+    },
+    "cSpell.words": [
+        "Bootstraper"
+    ]
 }

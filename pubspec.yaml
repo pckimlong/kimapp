@@ -10,6 +10,7 @@ workspace:
   - packages/kimapp_generator
   - packages/kimapp_utils
   - packages/kimapp_supabase_helper
+  - packages/bootstraper
 
   # Published packages
   - pubs/autoverpod
