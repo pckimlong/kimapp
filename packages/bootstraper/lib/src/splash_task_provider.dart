@@ -1,18 +1,12 @@
 part of 'bootstrap.dart';
 
-final _internalLoggerProvider = Provider<Logger>((ref) {
-  throw UnimplementedError(
-    'Internal logger provider is not implemented. Please provide a Logger implementation.',
-  );
-});
-
 final _statelessSplashTaskProvider = FutureProvider<bool>((ref) async {
   if (ref.state.valueOrNull != true) {
     final splashConfig = ref.watch(_splashConfigProvider);
     final tasks = (splashConfig?.tasks ?? []).whereType<StatelessSplashTask>();
     if (tasks.isEmpty) return true;
 
-    final logger = ref.read(_internalLoggerProvider);
+    final logger = ref.watch(loggerProvider);
     final context = SplashContext(ref);
 
     logger.info('🎨 Starting ${tasks.length} stateless splash tasks');
@@ -43,7 +37,7 @@ final _statefulSplashTaskProvider = FutureProvider.autoDispose<bool>((ref) async
   final tasks = (splashConfig?.tasks ?? []).whereType<StatefulSplashTask>();
   if (tasks.isEmpty) return true;
 
-  final logger = ref.read(_internalLoggerProvider);
+  final logger = ref.watch(loggerProvider);
   final context = SplashContext(ref);
 
   logger.info('🔄 Starting ${tasks.length} stateful splash tasks');

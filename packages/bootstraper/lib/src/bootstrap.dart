@@ -8,6 +8,7 @@ import 'package:kimapp_utils/startup.dart';
 
 part 'bootstrap_task.dart';
 part 'bootstraper.dart';
+part 'logger.dart';
 part 'splash_builder.dart';
 part 'splash_config.dart';
 part 'splash_task_provider.dart';

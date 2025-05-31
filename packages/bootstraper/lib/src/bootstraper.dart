@@ -27,7 +27,7 @@ part of 'bootstrap.dart';
 ///   await Bootstraper.initialize(
 ///     application: MyApp(),
 ///     environment: IntegrationMode.development,
-///     logger: (container) => container.read(loggerProvider),
+///     logger: MyCustomLogger(),
 ///     initialTasks: [
 ///       DatabaseBootstrapTask(),
 ///       ConfigurationBootstrapTask(),
@@ -40,6 +40,8 @@ part of 'bootstrap.dart';
 ///     providerOverrides: [
 ///       // Override providers for testing or different environments
 ///       apiUrlProvider.overrideWithValue('https://api.example.com'),
+///       // Logger can also be overridden here instead of using the logger parameter
+///       loggerProvider.overrideWithValue(MyCustomLogger()),
 ///     ],
 ///     providerObservers: [
 ///       // Add logging or debugging observers
@@ -81,7 +83,10 @@ class Bootstraper {
   ///
   /// - [application]: The root Flutter widget of your application
   /// - [environment]: The integration mode (development, staging, production)
-  /// - [logger]: Factory function that creates a logger from the provider container
+  /// - [logger]: Optional logger instance to use throughout the bootstrap process.
+  ///   If not provided, an empty logger that does nothing will be used.
+  ///   You can also override the logger through [providerOverrides] by overriding
+  ///   the [loggerProvider].
   ///
   /// ### Optional Parameters
   ///
@@ -124,7 +129,7 @@ class Bootstraper {
   /// await Bootstraper.initialize(
   ///   application: MyApp(),
   ///   environment: IntegrationMode.development,
-  ///   logger: (container) => Logger('MyApp'),
+  ///   logger: MyCustomLogger(),
   ///   initialTasks: [
   ///     CrashReportingBootstrapTask(),
   ///     BasicConfigBootstrapTask(),
@@ -140,7 +145,7 @@ class Bootstraper {
   static Future<void> initialize({
     required Widget application,
     required IntegrationMode environment,
-    required Logger Function(ProviderContainer container) logger,
+    required Logger? logger,
 
     /// Tasks which run in main, these should be all the tasks which are lightweight, none
     /// error prone and should not block the app from starting.
@@ -152,17 +157,14 @@ class Bootstraper {
   }) async {
     IntegrationMode.setMode(environment);
 
-    final parentContainer = ProviderContainer();
-    final loggerInstance = logger(parentContainer);
     final container = _createProviderContainer(
-      parentContainer,
       splashConfig,
       providerOverrides,
       providerObservers,
-      loggerInstance,
+      logger,
     );
 
-    final context = _buildBootstrapContext(environment, container, loggerInstance);
+    final context = _buildBootstrapContext(environment, container);
 
     // Set up global error handling for the platform dispatcher
     // This will catch errors that occur outside the Flutter framework
@@ -232,21 +234,17 @@ class Bootstraper {
   /// - Dependency injection container
   /// - Logger instance
   ///
-  /// The logger is created by calling the provided logger factory function
-  /// with the container, allowing the logger to access any providers it needs.
+  /// The logger is retrieved from the provider container using the [loggerProvider].
+  /// If a logger was passed to the initialize method, it will override the default
+  /// logger provider. Otherwise, an empty logger that does nothing will be used.
   ///
   /// Parameters:
   /// - [env]: The integration mode for this app instance
   /// - [container]: The configured provider container
-  /// - [logger]: Factory function to create the logger
   ///
   /// Returns: A configured [BootstrapContext] for bootstrap tasks
-  static BootstrapContext _buildBootstrapContext(
-    IntegrationMode env,
-    ProviderContainer container,
-    Logger logger,
-  ) {
-    return BootstrapContext(env: env, container: container, logger: logger);
+  static BootstrapContext _buildBootstrapContext(IntegrationMode env, ProviderContainer container) {
+    return BootstrapContext(env: env, container: container, logger: container.read(loggerProvider));
   }
 
   /// Creates and configures the Riverpod provider container.
@@ -256,30 +254,33 @@ class Bootstraper {
   /// 1. Applies any provided provider overrides for testing or configuration
   /// 2. Sets up the splash configuration if provided
   /// 3. Registers any provider observers for debugging or monitoring
+  /// 4. Overrides the logger provider if a custom logger was provided
   ///
   /// The splash configuration is automatically injected into the container
   /// as an override of the internal `_splashConfigProvider`, making it
   /// available to the splash system.
   ///
+  /// The logger, if provided, overrides the default [loggerProvider] to ensure
+  /// the custom logger is used throughout the bootstrap process.
+  ///
   /// Parameters:
   /// - [splashConfig]: Optional splash system configuration
   /// - [providerOverrides]: Provider overrides for testing or environment config
   /// - [providerObservers]: Observers for monitoring provider state changes
+  /// - [logger]: Optional custom logger instance to use
   ///
   /// Returns: A configured [ProviderContainer] ready for use
   static ProviderContainer _createProviderContainer(
-    ProviderContainer parentContainer,
     SplashConfig? splashConfig,
     List<Override> providerOverrides,
     List<ProviderObserver> providerObservers,
-    Logger logger,
+    Logger? logger,
   ) {
     return ProviderContainer(
-      parent: parentContainer,
       overrides: [
         ...providerOverrides,
         if (splashConfig != null) _splashConfigProvider.overrideWithValue(splashConfig),
-        _internalLoggerProvider.overrideWithValue(logger),
+        if (logger != null) loggerProvider.overrideWithValue(logger),
       ],
       observers: providerObservers,
     );
