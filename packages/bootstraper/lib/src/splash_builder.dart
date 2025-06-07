@@ -171,7 +171,7 @@ class SplashBuilder extends ConsumerWidget {
     // Watch all task execution states: one-time, stateful (deprecated), and reactive
     final oneTimeSplashTask = ref.watch(_statelessSplashTaskProvider);
     final statefulSplashTasks = ref.watch(_statefulSplashTaskProvider);
-    
+
     // For reactive tasks, we need to watch the watch phase to control splash display
     final reactiveSplashTaskWatch = ref.watch(_reactiveSplashTaskWatchProvider);
     final reactiveSplashTaskExecute = ref.watch(_reactiveSplashTaskExecuteProvider);
@@ -194,15 +194,15 @@ class SplashBuilder extends ConsumerWidget {
     // Pass error (if any) and retry callback to the splash page builder
     return config.pageBuilder(
       // Show the first error encountered (prioritize one-time task errors, then stateful, then reactive)
-      oneTimeSplashTask.error ?? 
-      statefulSplashTasks.error ?? 
-      reactiveSplashTaskWatch.error ?? 
-      reactiveSplashTaskExecute.error,
+      oneTimeSplashTask.error ??
+          statefulSplashTasks.error ??
+          reactiveSplashTaskWatch.error ??
+          reactiveSplashTaskExecute.error,
       // Provide retry callback only if there are errors
-      oneTimeSplashTask.hasError || 
-      statefulSplashTasks.hasError || 
-      reactiveSplashTaskWatch.hasError || 
-      reactiveSplashTaskExecute.hasError
+      oneTimeSplashTask.hasError ||
+              statefulSplashTasks.hasError ||
+              reactiveSplashTaskWatch.hasError ||
+              reactiveSplashTaskExecute.hasError
           ? () {
               // Retry failed reactive tasks
               if (reactiveSplashTaskWatch.hasError || reactiveSplashTaskExecute.hasError) {
@@ -230,7 +230,7 @@ class SplashBuilder extends ConsumerWidget {
   /// The key insight is that splash should only be triggered by:
   /// 1. Initial loading of any task type
   /// 2. Watch phase changes in reactive tasks (when showSplashWhenDependencyChanged is true)
-  /// 
+  ///
   /// Execute phase changes in reactive tasks should NOT trigger splash display.
   bool _shouldShowSplash({
     required SplashConfig config,
@@ -240,9 +240,9 @@ class SplashBuilder extends ConsumerWidget {
     required AsyncValue<void> reactiveExecuteTask,
   }) {
     // If any task hasn't completed successfully, show splash
-    if (!oneTimeTask.hasValue || 
-        !statefulTasks.hasValue || 
-        !reactiveWatchTask.hasValue || 
+    if (!oneTimeTask.hasValue ||
+        !statefulTasks.hasValue ||
+        !reactiveWatchTask.hasValue ||
         !reactiveExecuteTask.hasValue) {
       return true;
     }
