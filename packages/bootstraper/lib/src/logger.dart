@@ -330,4 +330,18 @@ class _EmptyLogger extends Logger {
   /// Does nothing. Warning messages are ignored.
   @override
   void warning(String message, {Object? object, StackTrace? stackTrace}) {}
+
+  @override
+  void addListener(LogListener listener) {
+    debugPrint(
+      'Adding listener to empty logger, but it will not be called. '
+      'This logger does not support listeners.',
+    );
+  }
+
+  @override
+  void clearListeners() {}
+
+  @override
+  void removeListener(LogListener listener) {}
 }

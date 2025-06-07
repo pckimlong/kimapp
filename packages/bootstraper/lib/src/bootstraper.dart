@@ -28,14 +28,25 @@ part of 'bootstrap.dart';
 ///     application: MyApp(),
 ///     environment: IntegrationMode.development,
 ///     logger: MyCustomLogger(),
+///
+///     // Bootstrap tasks: Run once before UI, lightweight and critical
 ///     initialTasks: [
-///       DatabaseBootstrapTask(),
-///       ConfigurationBootstrapTask(),
-///       CrashReportingBootstrapTask(),
+///       DatabaseBootstrapTask(),        // Initialize database connection
+///       ConfigurationBootstrapTask(),   // Load essential config
+///       CrashReportingBootstrapTask(),  // Set up error reporting
 ///     ],
+///
 ///     splashConfig: SplashConfig(
-///       statelessTasks: [ThemeInitializationTask()],
-///       statefulTasks: [UserDataSplashTask()],
+///       tasks: [
+///         // Stateless tasks: Run once per app lifetime when successful
+///         ThemeInitializationTask(),    // Load theme once per app lifetime
+///         LocalizationTask(),          // Set up i18n once per app lifetime
+///
+///         // Stateful tasks: May run multiple times based on state changes
+///         UserDataSplashTask(),        // Re-runs when auth state changes
+///         NotificationSetupTask(),     // Re-runs when user/settings change
+///       ],
+///       pageBuilder: (error, retry) => MySplashPage(error, retry),
 ///     ),
 ///     providerOverrides: [
 ///       // Override providers for testing or different environments
@@ -57,8 +68,19 @@ part of 'bootstrap.dart';
 ///
 /// ## Bootstrap vs Splash Tasks
 ///
-/// - **Bootstrap Tasks**: Run before the app UI starts, should be lightweight and critical
-/// - **Splash Tasks**: Run after UI starts, can be heavier and show progress to users
+/// ### Bootstrap Tasks
+/// - Run before the app UI starts, should be lightweight and critical
+/// - Execute once during application startup before any UI is displayed
+/// - Have access to full BootstrapContext with environment, container, and logger
+/// - Should be error-resistant and not block app startup
+///
+/// ### Splash Tasks
+/// - Run after UI starts, can be heavier and show progress to users
+/// - Have different execution behaviors based on their type:
+///   - **Stateless Tasks**: Run only once per application lifetime when successful
+///   - **Stateful Tasks**: May run multiple times based on dependency changes
+/// - Have access to SplashContext with Riverpod Ref for provider interaction
+/// - Can provide visual feedback through splash screen UI
 ///
 /// ## Error Handling
 ///
@@ -130,13 +152,23 @@ class Bootstraper {
   ///   application: MyApp(),
   ///   environment: IntegrationMode.development,
   ///   logger: MyCustomLogger(),
+  ///
+  ///   // Bootstrap tasks: Run once before UI starts
   ///   initialTasks: [
-  ///     CrashReportingBootstrapTask(),
-  ///     BasicConfigBootstrapTask(),
+  ///     CrashReportingBootstrapTask(),  // Critical error reporting setup
+  ///     BasicConfigBootstrapTask(),     // Essential configuration
   ///   ],
+  ///
   ///   splashConfig: SplashConfig(
-  ///     statelessTasks: [ThemeTask()],
-  ///     statefulTasks: [AuthTask()],
+  ///     tasks: [
+  ///       // Stateless: Run once per app lifetime when successful
+  ///       ThemeTask(),                  // Theme setup once per app lifetime
+  ///
+  ///       // Stateful: May run multiple times based on dependency changes
+  ///       AuthTask(),                   // Re-runs when auth state changes
+  ///     ],
+  ///     pageBuilder: (error, retry) => SplashPage(error, retry),
+  ///   ),
   ///   ),
   /// );
   /// ```

@@ -23,10 +23,23 @@ part of 'bootstrap.dart';
 ///
 /// ## Splash Task Execution Flow
 ///
-/// The splash system executes tasks in this order:
-/// 1. **Stateless Tasks**: Run once, no cleanup needed
-/// 2. **Stateful Tasks**: May re-run when dependencies change, can provide cleanup
-/// 3. **Error Recovery**: Failed tasks can be retried by invalidating providers
+/// The splash system executes tasks with different execution behaviors:
+///
+/// ### Execution Order and Behavior
+/// 1. **Stateless Tasks**:
+///    - Execute once per application lifetime when successful
+///    - Run sequentially to maintain initialization order
+///    - No cleanup needed, no dependency watching
+///
+/// 2. **Stateful Tasks**:
+///    - May run multiple times based on dependency changes
+///    - Can watch providers and re-execute when dependencies change
+///    - Can provide disposal callbacks for resource cleanup
+///
+/// 3. **Error Recovery**:
+///    - Failed tasks can be retried by invalidating providers
+///    - All initialized tasks are properly disposed before retry
+///    - Clean state ensured for retry attempts
 ///
 /// ## Required Setup Example
 ///
@@ -51,13 +64,14 @@ part of 'bootstrap.dart';
 ///     environment: IntegrationMode.development,
 ///     logger: (container) => Logger('MyApp'),
 ///     splashConfig: SplashConfig(
-///       statelessTasks: [
-///         ThemeInitializationTask(),
-///         ConfigurationLoadTask(),
-///       ],
-///       statefulTasks: [
-///         AuthenticationTask(),
-///         UserDataLoadTask(),
+///       tasks: [
+///         // One-time tasks: Run once per app lifetime when successful
+///         ThemeInitializationTask(),    // OneTimeSplashTask - Load theme once per app lifetime
+///         ConfigurationLoadTask(),      // OneTimeSplashTask - Load config once per app lifetime
+///
+///         // Reactive tasks: Precise control over splash triggers
+///         AuthenticationTask(),         // ReactiveSplashTask - Re-runs when auth state changes
+///         UserDataLoadTask(),          // ReactiveSplashTask - Re-runs when user changes
 ///       ],
 ///       pageBuilder: (error, retry) {
 ///         if (error != null) {
@@ -154,18 +168,24 @@ class SplashBuilder extends ConsumerWidget {
       return child;
     }
 
-    // Watch both stateless and stateful task execution states
-    final statelessSplashTask = ref.watch(_statelessSplashTaskProvider);
+    // Watch all task execution states: one-time, stateful (deprecated), and reactive
+    final oneTimeSplashTask = ref.watch(_statelessSplashTaskProvider);
     final statefulSplashTasks = ref.watch(_statefulSplashTaskProvider);
 
-    // Show main app when:
-    // 1. Stateless tasks are complete AND
-    // 2. Either:
-    //    a) Stateful tasks are complete AND not currently loading, OR
-    //    b) Stateful tasks are complete AND showSplashWhenDependencyChanged is disabled
-    if (statelessSplashTask.hasValue &&
-        statefulSplashTasks.hasValue &&
-        (!statefulSplashTasks.isLoading || !config.showSplashWhenDependencyChanged)) {
+    // For reactive tasks, we need to watch the watch phase to control splash display
+    final reactiveSplashTaskWatch = ref.watch(_reactiveSplashTaskWatchProvider);
+    final reactiveSplashTaskExecute = ref.watch(_reactiveSplashTaskExecuteProvider);
+
+    // Determine if we should show splash based on task states
+    final shouldShowSplash = _shouldShowSplash(
+      config: config,
+      oneTimeTask: oneTimeSplashTask,
+      statefulTasks: statefulSplashTasks,
+      reactiveWatchTask: reactiveSplashTaskWatch,
+      reactiveExecuteTask: reactiveSplashTaskExecute,
+    );
+
+    if (!shouldShowSplash) {
       // All tasks completed successfully = show main app
       return child;
     }
@@ -173,22 +193,73 @@ class SplashBuilder extends ConsumerWidget {
     // Tasks are still running or failed = show splash screen
     // Pass error (if any) and retry callback to the splash page builder
     return config.pageBuilder(
-      // Show the first error encountered (prioritize stateless task errors)
-      statelessSplashTask.error ?? statefulSplashTasks.error,
+      // Show the first error encountered (prioritize one-time task errors, then stateful, then reactive)
+      oneTimeSplashTask.error ??
+          statefulSplashTasks.error ??
+          reactiveSplashTaskWatch.error ??
+          reactiveSplashTaskExecute.error,
       // Provide retry callback only if there are errors
-      statelessSplashTask.hasError || statefulSplashTasks.hasError
+      oneTimeSplashTask.hasError ||
+              statefulSplashTasks.hasError ||
+              reactiveSplashTaskWatch.hasError ||
+              reactiveSplashTaskExecute.hasError
           ? () {
+              // Retry failed reactive tasks
+              if (reactiveSplashTaskWatch.hasError || reactiveSplashTaskExecute.hasError) {
+                ref.invalidate(_reactiveSplashTaskWatchProvider);
+                ref.invalidate(_reactiveSplashTaskExecuteProvider);
+              }
+
               // Retry failed stateful tasks
               if (statefulSplashTasks.hasError) {
                 ref.invalidate(_statefulSplashTaskProvider);
               }
 
-              // Retry failed stateless tasks
-              if (statelessSplashTask.hasError) {
+              // Retry failed one-time tasks
+              if (oneTimeSplashTask.hasError) {
                 ref.invalidate(_statelessSplashTaskProvider);
               }
             }
           : null,
     );
+  }
+
+  /// Determines whether splash screen should be displayed based on task states.
+  ///
+  /// This method implements the logic for when to show splash vs main app.
+  /// The key insight is that splash should only be triggered by:
+  /// 1. Initial loading of any task type
+  /// 2. Watch phase changes in reactive tasks (when showSplashWhenDependencyChanged is true)
+  ///
+  /// Execute phase changes in reactive tasks should NOT trigger splash display.
+  bool _shouldShowSplash({
+    required SplashConfig config,
+    required AsyncValue<bool> oneTimeTask,
+    required AsyncValue<void> statefulTasks,
+    required AsyncValue<Map<ReactiveSplashTask, dynamic>> reactiveWatchTask,
+    required AsyncValue<void> reactiveExecuteTask,
+  }) {
+    // If any task hasn't completed successfully, show splash
+    if (!oneTimeTask.hasValue ||
+        !statefulTasks.hasValue ||
+        !reactiveWatchTask.hasValue ||
+        !reactiveExecuteTask.hasValue) {
+      return true;
+    }
+
+    // If dependency change splash is disabled, hide splash once all tasks complete
+    if (!config.showSplashWhenDependencyChanged) {
+      return false;
+    }
+
+    // If dependency change splash is enabled, show splash when:
+    // 1. Stateful tasks are refreshing (legacy behavior)
+    // 2. Reactive watch tasks are refreshing (NEW: only watch phase triggers splash)
+    // Note: Reactive execute tasks refreshing should NOT trigger splash
+    if (statefulTasks.isLoading || reactiveWatchTask.isLoading) {
+      return true;
+    }
+
+    return false;
   }
 }

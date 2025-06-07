@@ -33,22 +33,36 @@ final _splashConfigProvider = Provider<SplashConfig?>((ref) => null);
 ///
 /// ## Task Execution Model
 ///
-/// Tasks run in a specific order and have different characteristics:
-/// 1. **Stateless Tasks**: Execute once, no dependencies, no cleanup
-/// 2. **Stateful Tasks**: May re-execute when dependencies change, can provide cleanup
+/// Tasks run with different execution behaviors based on their type:
+///
+/// ### Stateless Tasks
+/// - **Run once per application lifetime** when successful
+/// - Execute sequentially to maintain initialization order
+/// - No cleanup needed, no dependencies on changing state
+/// - Once completed successfully, will not run again until app restart
+/// - Ideal for one-time setup operations
+///
+/// ### Stateful Tasks
+/// - **May run multiple times** based on dependency changes
+/// - Can watch providers and re-execute when dependencies change
+/// - Can provide disposal callbacks for resource cleanup
+/// - Re-execution triggered by `context.ref.watch()` changes
+/// - Ideal for reactive operations that depend on app state
+///
+/// Both task types support proper disposal handling and cleanup on failure.
 ///
 /// ## Basic Usage Example
 ///
 /// ```dart
 /// SplashConfig(
 ///   tasks: [
-///     // Stateless tasks - run once
-///     ThemeInitializationTask(),
-///     ConfigurationLoadTask(),
+///     // Stateless tasks - run once per app lifetime when successful
+///     ThemeInitializationTask(),      // Loads theme preferences once
+///     ConfigurationLoadTask(),        // Loads static config once
 ///
-///     // Stateful tasks - reactive to dependencies
-///     AuthenticationTask(),
-///     UserDataLoadTask(),
+///     // Stateful tasks - reactive to dependencies, may run multiple times
+///     AuthenticationTask(),           // Re-runs when auth state changes
+///     UserDataLoadTask(),            // Re-runs when user changes
 ///   ],
 ///   pageBuilder: (error, retry) {
 ///     if (error != null) {
@@ -243,38 +257,97 @@ class SplashConfig {
 
   /// List of tasks to execute during the splash phase.
   ///
-  /// Tasks are executed based on their type and dependency relationships:
+  /// Tasks are executed based on their type with distinct execution behaviors:
   ///
-  /// ## Task Types
-  /// - **[StatelessSplashTask]**: Run once, no cleanup, no dependencies
-  /// - **[StatefulSplashTask]**: May re-run when dependencies change
+  /// ## Task Types and Execution Behavior
+  ///
+  /// ### [StatelessSplashTask]
+  /// - **Execute once per application lifetime** when successful
+  /// - No cleanup callbacks, no dependency watching
+  /// - Once completed successfully, will not run again until app restart
+  /// - Ideal for one-time initialization operations
+  ///
+  /// ### [StatefulSplashTask]
+  /// - **May run multiple times** based on dependency changes
+  /// - Can watch providers with `context.ref.watch()` for reactive behavior
+  /// - Can provide disposal callbacks for resource cleanup
+  /// - Re-execute when watched dependencies change
+  /// - Ideal for operations that depend on changing app state
   ///
   /// ## Execution Order
-  /// While tasks may run concurrently where possible, dependencies are respected:
+  /// Tasks execute sequentially to maintain proper initialization order:
   /// ```dart
   /// tasks: [
-  ///   // These might run in parallel if no dependencies
-  ///   ConfigurationTask(),
-  ///   ThemeTask(),
+  ///   // Stateless tasks - run once when successful
+  ///   ConfigurationTask(),        // Loads config once per app lifetime
+  ///   ThemeTask(),               // Sets up theme once per app lifetime
   ///
-  ///   // This waits for auth state and may re-run when it changes
-  ///   UserDataTask(), // Uses ref.watch(authStateProvider)
+  ///   // Stateful tasks - may re-run based on state changes
+  ///   UserDataTask(),            // Re-runs when auth state changes (uses ref.watch)
   /// ]
   /// ```
   ///
+  /// ## Task Types and Execution Behavior
+  ///
+  /// Tasks execute with different behaviors based on their type:
+  ///
+  /// ### [OneTimeSplashTask] 
+  /// - **Execute once per application lifetime** when successful
+  /// - No cleanup callbacks, no dependency watching
+  /// - Once completed successfully, will not run again until app restart
+  /// - Ideal for one-time initialization operations
+  ///
+  /// ### [StatefulSplashTask] (Deprecated)
+  /// - **DEPRECATED**: Use [ReactiveSplashTask] instead
+  /// - Poor splash control - ANY `ref.watch()` call triggers splash screen re-display
+  /// - Can provide disposal callbacks for resource cleanup
+  /// - Will be removed in a future version
+  ///
+  /// ### [ReactiveSplashTask] (Recommended for Reactive Behavior)
+  /// - **Separate watch and execute phases** for precise splash control
+  /// - Only providers watched in `watch()` method trigger splash re-display
+  /// - Can access any providers in `execute()` without triggering splash
+  /// - Type-safe data flow from watch phase to execute phase
+  /// - Async support in watch phase for complex data preparation
+  ///
   /// ## Task Design Guidelines
   /// - Keep tasks focused on single responsibilities
-  /// - Use stateless tasks for one-time initialization
-  /// - Use stateful tasks for reactive behavior
+  /// - Use [OneTimeSplashTask] for one-time initialization
+  /// - Use [ReactiveSplashTask] for reactive behavior with precise splash control
+  /// - Avoid [StatefulSplashTask] (deprecated - poor splash control)
   /// - Handle errors gracefully within tasks
   /// - Avoid long-running operations that block UI
+  ///
+  /// ## Example Task Usage
+  ///
+  /// ```dart
+  /// SplashConfig(
+  ///   tasks: [
+  ///     // One-time: Run once per app lifetime when successful
+  ///     ThemeInitializationTask(),        // OneTimeSplashTask
+  ///     ConfigurationLoadTask(),          // OneTimeSplashTask
+  ///
+  ///     // Reactive: Precise control over splash triggers
+  ///     UserAuthTask(),                   // ReactiveSplashTask<AuthState, DisposalCallback?>
+  ///     UserDataTask(),                   // ReactiveSplashTask<User?, DisposalCallback?>
+  ///
+  ///     // Note: StatefulSplashTask is deprecated - use ReactiveSplashTask instead
+  ///   ],
+  ///   pageBuilder: (error, retry) => MySplashPage(error, retry),
+  /// )
+  /// ```
   final List<SplashTask> tasks;
 
-  /// Whether to show splash screen again when stateful task dependencies change.
+  /// Whether to show splash screen again when reactive task dependencies change.
   ///
-  /// When `true`, the splash screen will reappear whenever a [StatefulSplashTask]
-  /// detects changes in watched providers (via `ref.watch()`). This creates a
-  /// reactive splash system that responds to app state changes.
+  /// When `true`, the splash screen will reappear whenever a [ReactiveSplashTask]
+  /// detects changes in watched providers. This creates a reactive splash system 
+  /// that responds to app state changes.
+  ///
+  /// ## Behavior for Different Task Types
+  ///
+  /// - **ReactiveSplashTask**: Only providers watched in `watch()` method trigger splash re-display
+  /// - **StatefulSplashTask** (deprecated): Any `ref.watch()` call triggers splash re-display
   ///
   /// **Default**: `false` (splash only shows on initial app launch)
   ///
@@ -289,23 +362,26 @@ class SplashConfig {
   /// ## Example Scenario
   ///
   /// ```dart
-  /// // Task that watches auth state
+  /// // Stateful task that watches auth state and re-runs when it changes
   /// class UserDataTask extends StatefulSplashTask {
   ///   @override
   ///   Future<DisposalCallback?> execute(SplashContext context) async {
+  ///     // Watching authStateProvider makes this task reactive
   ///     final authState = context.ref.watch(authStateProvider);
   ///
   ///     if (authState.isAuthenticated) {
-  ///       await loadUserData();
+  ///       await loadUserData();  // Runs each time user authenticates
   ///     }
   ///     return null;
   ///   }
   /// }
   ///
-  /// // Config that enables reactivity
+  /// // Config that enables reactivity for stateful tasks
   /// SplashConfig(
   ///   showSplashWhenDependencyChanged: true, // Splash reappears on auth changes
-  ///   tasks: [UserDataTask()],
+  ///   tasks: [
+  ///     UserDataTask(),  // This will re-run when authStateProvider changes
+  ///   ],
   ///   pageBuilder: (error, retry) => LoadingPage(),
   /// )
   /// ```
@@ -345,8 +421,11 @@ class SplashConfig {
   ///     return LoadingPage();
   ///   },
   ///   tasks: [
-  ///     ConfigurationTask(),
-  ///     UserDataTask(),
+  ///     // Stateless: Run once per app lifetime when successful
+  ///     ConfigurationTask(),        // Loads config once per app lifetime
+  ///
+  ///     // Stateful: May run multiple times based on dependency changes
+  ///     UserDataTask(),            // Re-runs when dependencies change
   ///   ],
   /// )
   /// ```
@@ -356,9 +435,11 @@ class SplashConfig {
   /// ```dart
   /// SplashConfig(
   ///   pageBuilder: (error, retry) => MySplashPage(error, retry),
-  ///   tasks: [AuthReactiveTask()],
+  ///   tasks: [
+  ///     AuthReactiveTask(),        // Stateful task that watches auth state
+  ///   ],
   ///   minimumDuration: Duration(milliseconds: 500),
-  ///   showSplashWhenDependencyChanged: true,
+  ///   showSplashWhenDependencyChanged: true,  // Enable reactive behavior
   /// )
   /// ```
   const SplashConfig({
