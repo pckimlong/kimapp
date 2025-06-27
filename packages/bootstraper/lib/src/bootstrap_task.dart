@@ -50,11 +50,12 @@ class BootstrapContext {
 ///
 /// Example usage:
 /// ```dart
-/// class DataLoadingSplashTask extends StatelessSplashTask {
+/// class DataLoadingSplashTask extends OneTimeSplashTask {
 ///   @override
-///   Future<void> execute(SplashContext context) async {
+///   Future<DisposalCallback?> execute(SplashContext context) async {
 ///     final dataService = context.ref.read(dataServiceProvider);
 ///     await dataService.preloadCriticalData();
+///     return null;
 ///   }
 /// }
 /// ```
@@ -70,7 +71,6 @@ class SplashContext {
   /// Creates a new [SplashContext] with the provided [Ref].
   SplashContext(this.ref);
 }
-
 
 /// Abstract base class for tasks that run during application bootstrap.
 ///
@@ -117,6 +117,12 @@ abstract class BootstrapTask {
   /// may handle these exceptions according to its error handling strategy.
   Future<void> execute(BootstrapContext context);
 }
+
+/// Base interface for all splash tasks.
+///
+/// This interface is implemented by both [SplashTask] and [ReactiveSplashTask]
+/// to allow them to be used together in [SplashConfig.tasks].
+abstract class SplashTaskBase {}
 
 /// Abstract base class for tasks that run during splash screen display.
 ///
@@ -168,10 +174,10 @@ abstract class BootstrapTask {
 /// ```
 ///
 /// See also:
-/// - [StatelessSplashTask] for one-time execution tasks
-/// - [StatefulSplashTask] for tasks that may need cleanup
+/// - [OneTimeSplashTask] for one-time execution tasks
+/// - [ReactiveSplashTask] for reactive tasks with precise splash control
 /// - [SplashContext] for available dependencies during splash execution
-abstract class SplashTask<Result> {
+abstract class SplashTask<Result> implements SplashTaskBase {
   /// Executes the splash task and returns a result of type [Result].
   ///
   /// This method contains the main logic of the splash task and will be called
@@ -221,13 +227,13 @@ abstract class SplashTask<Result> {
 ///   Future<ThemeMode> watch(Ref ref) async {
 ///     return ref.watch(themeModeProvider); // Only theme changes trigger splash
 ///   }
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, ThemeMode themeMode) async {
 ///     // Can access other providers freely
 ///     final locale = context.ref.read(localeProvider);
 ///     final settings = context.ref.watch(settingsProvider);
-///     
+///
 ///     await applyTheme(themeMode, locale, settings);
 ///     return null;
 ///   }
@@ -244,15 +250,15 @@ abstract class SplashTask<Result> {
 ///     final authState = ref.watch(authStateProvider);
 ///     return (user, authState);
 ///   }
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, (User?, AuthState) data) async {
 ///     final (user, authState) = data;
-///     
+///
 ///     // Can access any providers needed
 ///     final preferences = context.ref.read(userPreferencesProvider);
 ///     final analytics = context.ref.watch(analyticsProvider);
-///     
+///
 ///     await syncUserData(user, authState, preferences, analytics);
 ///     return null;
 ///   }
@@ -265,7 +271,7 @@ abstract class SplashTask<Result> {
 ///   final User? user;
 ///   final AuthState authState;
 ///   final List<Permission> permissions;
-///   
+///
 ///   UserWatchData({required this.user, required this.authState, required this.permissions});
 /// }
 ///
@@ -274,25 +280,25 @@ abstract class SplashTask<Result> {
 ///   Future<UserWatchData> watch(Ref ref) async {
 ///     final user = ref.watch(userProvider);
 ///     final authState = ref.watch(authStateProvider);
-///     
+///
 ///     // Can perform async operations in watch
-///     final permissions = authState.isAuthenticated 
+///     final permissions = authState.isAuthenticated
 ///         ? await ref.watch(userPermissionsProvider.future)
 ///         : <Permission>[];
-///     
+///
 ///     return UserWatchData(
 ///       user: user,
-///       authState: authState, 
+///       authState: authState,
 ///       permissions: permissions,
 ///     );
 ///   }
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, UserWatchData data) async {
 ///     // Complex logic with strongly typed data
 ///     final cache = context.ref.read(cacheProvider);
 ///     final analytics = context.ref.watch(analyticsProvider);
-///     
+///
 ///     await setupUserEnvironment(data, cache, analytics);
 ///     return () => cleanupUserEnvironment();
 ///   }
@@ -305,25 +311,25 @@ abstract class SplashTask<Result> {
 ///   @override
 ///   Future<AppConfig> watch(Ref ref) async {
 ///     final environment = ref.watch(environmentProvider);
-///     
+///
 ///     // Async operation in watch phase
 ///     final remoteConfig = await ref.watch(remoteConfigProvider.future);
 ///     final localConfig = ref.watch(localConfigProvider);
-///     
+///
 ///     return AppConfig.merge(environment, remoteConfig, localConfig);
 ///   }
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, AppConfig config) async {
 ///     final logger = context.ref.read(loggerProvider);
-///     
+///
 ///     await initializeWithConfig(config, logger);
 ///     return null;
 ///   }
 /// }
 /// ```
 ///
-/// ## Benefits Over Traditional StatefulSplashTask
+/// ## Key Features
 ///
 /// 1. **Precise Control**: Only specific provider changes trigger splash
 /// 2. **Better UX**: Prevent unnecessary splash displays
@@ -332,42 +338,11 @@ abstract class SplashTask<Result> {
 /// 5. **Async Support**: Can perform async operations during watch phase
 /// 6. **Performance**: Avoid unnecessary re-execution for unrelated changes
 ///
-/// ## Migration from StatefulSplashTask
-///
-/// ```dart
-/// // Old approach - any ref.watch triggers splash
-/// class OldUserTask extends StatefulSplashTask {
-///   @override
-///   Future<DisposalCallback?> execute(SplashContext context) async {
-///     final user = context.ref.watch(userProvider);        // Triggers splash
-///     final theme = context.ref.watch(themeProvider);      // Also triggers splash!
-///     await processUser(user, theme);
-///     return null;
-///   }
-/// }
-///
-/// // New approach - explicit control over splash triggers  
-/// class NewUserTask extends ReactiveSplashTask<User?, DisposalCallback?> {
-///   @override
-///   Future<User?> watch(Ref ref) async {
-///     return ref.watch(userProvider); // Only user changes trigger splash
-///   }
-///   
-///   @override
-///   Future<DisposalCallback?> execute(SplashContext context, User? user) async {
-///     final theme = context.ref.read(themeProvider); // SplashBuilder handles splash logic
-///     await processUser(user, theme);
-///     return null;
-///   }
-/// }
-/// ```
-///
 /// See also:
 /// - [SplashTask] for basic non-reactive tasks
-/// - [StatelessSplashTask] for one-time execution tasks  
-/// - [StatefulSplashTask] for backward-compatible reactive tasks
+/// - [OneTimeSplashTask] for one-time execution tasks
 /// - [SplashContext] for provider access during execution
-abstract class ReactiveSplashTask<WatchData, Result> {
+abstract class ReactiveSplashTask<WatchData, Result> implements SplashTaskBase {
   /// Define which providers to watch and return the data needed for execution.
   ///
   /// This method is called during the watch phase to determine:
@@ -455,11 +430,11 @@ abstract class ReactiveSplashTask<WatchData, Result> {
   /// Future<DisposalCallback?> execute(SplashContext context, User? user) async {
   ///   // Use watched data
   ///   if (user == null) return null;
-  ///   
+  ///
   ///   // Access additional providers freely
   ///   final settings = context.ref.read(settingsProvider);
   ///   final theme = context.ref.watch(themeProvider);
-  ///   
+  ///
   ///   await setupUserSession(user, settings, theme);
   ///   return () => cleanupUserSession();
   /// }
@@ -470,10 +445,10 @@ abstract class ReactiveSplashTask<WatchData, Result> {
   /// @override
   /// Future<UserConfig> execute(SplashContext context, (User?, AuthState) data) async {
   ///   final (user, authState) = data;
-  ///   
+  ///
   ///   final cache = context.ref.read(cacheProvider);
   ///   final database = context.ref.watch(databaseProvider);
-  ///   
+  ///
   ///   return await buildUserConfig(user, authState, cache, database);
   /// }
   /// ```
@@ -490,7 +465,7 @@ abstract class ReactiveSplashTask<WatchData, Result> {
   ///
   /// Return a [DisposalCallback] if your task creates resources that need cleanup:
   /// - Network connections or subscriptions
-  /// - Timers or periodic tasks  
+  /// - Timers or periodic tasks
   /// - File handles or database connections
   /// - Background services
   ///
@@ -551,65 +526,6 @@ abstract class ReactiveSplashTask<WatchData, Result> {
 /// use [ReactiveSplashTask] instead.
 abstract class OneTimeSplashTask extends SplashTask<DisposalCallback?> {}
 
-/// @Deprecated('Use OneTimeSplashTask instead. StatelessSplashTask will be removed in a future version.')
-/// Legacy alias for OneTimeSplashTask. Use [OneTimeSplashTask] for new code.
-@Deprecated('Use OneTimeSplashTask instead. StatelessSplashTask will be removed in a future version.')
-typedef StatelessSplashTask = OneTimeSplashTask;
-
-/// @Deprecated('Use ReactiveSplashTask instead. StatefulSplashTask will be removed in a future version.')
-/// Legacy splash task with less precise splash control.
-///
-/// **DEPRECATED**: This class is deprecated in favor of [ReactiveSplashTask] which provides
-/// better control over when splash screens are displayed. [StatefulSplashTask] causes
-/// splash re-display for ANY `ref.watch()` call, which can lead to poor user experience.
-///
-/// **Migration Guide**:
-/// ```dart
-/// // Old approach - any ref.watch triggers splash
-/// class OldUserTask extends StatefulSplashTask {
-///   @override
-///   Future<DisposalCallback?> execute(SplashContext context) async {
-///     final user = context.ref.watch(userProvider);        // Triggers splash
-///     final theme = context.ref.watch(themeProvider);      // Also triggers splash!
-///     await processUser(user, theme);
-///     return null;
-///   }
-/// }
-///
-/// // New approach - explicit control over splash triggers  
-/// class NewUserTask extends ReactiveSplashTask<User?, DisposalCallback?> {
-///   @override
-///   Future<User?> watch(Ref ref) async {
-///     return ref.watch(userProvider); // Only user changes trigger splash
-///   }
-///   
-///   @override
-///   Future<DisposalCallback?> execute(SplashContext context, User? user) async {
-///     final theme = context.ref.watch(themeProvider); // Won't trigger unwanted splash
-///     await processUser(user, theme);
-///     return null;
-///   }
-/// }
-/// ```
-///
-/// **Why Deprecated**:
-/// - ❌ ANY `ref.watch()` call triggers splash screen re-display
-/// - ❌ Poor user experience when watching auxiliary providers  
-/// - ❌ No separation between splash triggers and data access
-/// - ❌ Difficult to control when splash should actually appear
-///
-/// **Use [ReactiveSplashTask] Instead**:
-/// - ✅ Precise control over splash triggers via separate `watch()` method
-/// - ✅ Better user experience - only intended changes show splash
-/// - ✅ Type-safe data flow from watch to execute phase
-/// - ✅ Can access any providers in execute without splash side effects
-///
-/// See also:
-/// - [ReactiveSplashTask] for the recommended reactive task approach
-/// - [OneTimeSplashTask] for simple one-time tasks
-@Deprecated('Use ReactiveSplashTask instead. StatefulSplashTask will be removed in a future version.')
-abstract class StatefulSplashTask extends SplashTask<DisposalCallback?> {}
-
 // ============================================================================
 // Convenience Type Aliases for Common Reactive Task Patterns
 // ============================================================================
@@ -620,12 +536,15 @@ abstract class StatefulSplashTask extends SplashTask<DisposalCallback?> {}
 /// Use this when your task watches for provider changes and may need to dispose
 /// of resources when re-executing.
 ///
+/// **Type Safety Note**: This typedef creates a concrete type that properly
+/// works with the splash task filtering system, unlike generic base classes.
+///
 /// Example:
 /// ```dart
 /// class UserDataTask extends ReactiveTask<User?> {
 ///   @override
 ///   Future<User?> watch(Ref ref) async => ref.watch(userProvider);
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, User? user) async {
 ///     // Setup user environment
@@ -645,7 +564,7 @@ typedef ReactiveTask<WatchData> = ReactiveSplashTask<WatchData, DisposalCallback
 /// class ConfigProcessorTask extends ReactiveDataTask<AppConfig, ProcessedConfig> {
 ///   @override
 ///   Future<AppConfig> watch(Ref ref) async => ref.watch(configProvider);
-///   
+///
 ///   @override
 ///   Future<ProcessedConfig> execute(SplashContext context, AppConfig config) async {
 ///     final additionalData = context.ref.read(additionalProvider);
@@ -665,7 +584,7 @@ typedef ReactiveDataTask<WatchData, Result> = ReactiveSplashTask<WatchData, Resu
 /// class SimpleUserTask extends SimpleReactiveTask<User?> {
 ///   @override
 ///   Future<User?> watch(Ref ref) async => ref.watch(userProvider);
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, User? user) async {
 ///     await handleUserChange(user);
@@ -686,7 +605,7 @@ typedef SimpleReactiveTask<T> = ReactiveSplashTask<T, DisposalCallback?>;
 ///   Future<(User?, AuthState)> watch(Ref ref) async {
 ///     return (ref.watch(userProvider), ref.watch(authProvider));
 ///   }
-///   
+///
 ///   @override
 ///   Future<DisposalCallback?> execute(SplashContext context, (User?, AuthState) data) async {
 ///     final (user, auth) = data;

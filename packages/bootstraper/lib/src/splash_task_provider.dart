@@ -7,11 +7,11 @@ part of 'bootstrap.dart';
 /// - Collects disposal callbacks from tasks that can dispose resources
 /// - Implements proper cleanup on failure (disposes initialized tasks before retry)
 /// - Enforces minimum splash duration if configured
-/// - Waits for stateful tasks to complete before returning success
+/// - Waits for reactive tasks to complete before returning success
 final _statelessSplashTaskProvider = FutureProvider<bool>((ref) async {
   if (ref.state.valueOrNull != true) {
     final splashConfig = ref.watch(_splashConfigProvider);
-    final tasks = (splashConfig?.tasks ?? []).whereType<OneTimeSplashTask>();
+    final tasks = _filterTasksByType<OneTimeSplashTask>(splashConfig?.tasks ?? []);
     if (tasks.isEmpty) return true;
 
     final logger = ref.watch(loggerProvider);
@@ -69,61 +69,6 @@ final _statelessSplashTaskProvider = FutureProvider<bool>((ref) async {
   return true;
 });
 
-/// Provider that manages stateful splash tasks execution.
-///
-/// This provider executes all stateful splash tasks and handles their lifecycle:
-/// - Executes tasks sequentially to maintain proper initialization order
-/// - Collects disposal callbacks from tasks that create stateful resources
-/// - Implements proper cleanup on failure (disposes initialized tasks before retry)
-/// - Uses autoDispose to ensure proper cleanup when provider is invalidated
-/// - Registers disposal callbacks with provider lifecycle for automatic cleanup
-final _statefulSplashTaskProvider = FutureProvider.autoDispose<void>((ref) async {
-  final splashConfig = ref.watch(_splashConfigProvider);
-  final tasks = (splashConfig?.tasks ?? []).whereType<StatefulSplashTask>();
-  if (tasks.isEmpty) return;
-
-  final logger = ref.watch(loggerProvider);
-  final context = SplashContext(ref);
-
-  logger.info('🔄 Starting ${tasks.length} stateful splash tasks');
-
-  final disposables = <DisposalCallback>[];
-
-  try {
-    // Execute tasks sequentially to ensure proper initialization order
-    for (final task in tasks) {
-      final disposable = await _executeTaskWithLogging(task, context, logger);
-      if (disposable != null) {
-        disposables.add(disposable);
-        // Register disposal callback with provider lifecycle
-        ref.onDispose(() {
-          logger.info('🗑️ Disposing stateful task: ${task.runtimeType}');
-          disposable();
-        });
-      }
-    }
-
-    logger.info('✅ Completed all stateful splash tasks');
-  } catch (error) {
-    // Critical: Dispose all successfully initialized tasks before retrying
-    // This ensures clean state for retry attempts and prevents resource leaks
-    logger.info('🧹 Cleaning up ${disposables.length} initialized stateful tasks due to failure');
-    for (final disposable in disposables) {
-      try {
-        disposable();
-      } catch (disposeError, disposeStack) {
-        logger.error(
-          'Failed to dispose stateful task during error cleanup',
-          error: disposeError,
-          stackTrace: disposeStack,
-        );
-      }
-    }
-    rethrow;
-  }
-
-  return;
-});
 
 /// Provider that manages reactive splash task watch phase.
 ///
@@ -133,7 +78,7 @@ final _statefulSplashTaskProvider = FutureProvider.autoDispose<void>((ref) async
 final _reactiveSplashTaskWatchProvider =
     FutureProvider.autoDispose<Map<ReactiveSplashTask, dynamic>>((ref) async {
       final splashConfig = ref.watch(_splashConfigProvider);
-      final tasks = (splashConfig?.tasks ?? []).whereType<ReactiveSplashTask>();
+      final tasks = _filterTasksByType<ReactiveSplashTask>(splashConfig?.tasks ?? []);
       if (tasks.isEmpty) return {};
 
       final logger = ref.watch(loggerProvider);
@@ -259,7 +204,19 @@ Future<DisposalCallback?> _executeReactiveTaskExecutePhase(
   }
 }
 
-/// Unified task execution function that handles both stateless and stateful splash tasks.
+/// Helper function to filter tasks by type, handling generic type parameters correctly.
+///
+/// This is needed because `whereType<T>()` doesn't work properly with generic types.
+/// For example, `ReactiveSplashTask<String, void>` won't match `whereType<ReactiveSplashTask>()`.
+/// 
+/// Note: The lint `prefer_iterable_wheretype` is intentionally ignored here because
+/// `whereType<T>()` fails with generic types like `ReactiveSplashTask<WatchData, Result>`.
+Iterable<T> _filterTasksByType<T>(List<SplashTaskBase> tasks) {
+  // ignore: prefer_iterable_wheretype
+  return tasks.where((task) => task is T).cast<T>();
+}
+
+/// Unified task execution function that handles both one-time and reactive splash tasks.
 ///
 /// This function provides:
 /// - Comprehensive logging for task lifecycle (start, completion, failure)
@@ -267,7 +224,7 @@ Future<DisposalCallback?> _executeReactiveTaskExecutePhase(
 /// - Execution timing measurement for performance monitoring
 /// - Support for disposal callbacks from both task types (since both inherit from SplashTask&lt;DisposalCallback?&gt;)
 ///
-/// The unified approach ensures consistent behavior between stateless and stateful tasks,
+/// The unified approach ensures consistent behavior between one-time and reactive tasks,
 /// particularly important for disposal handling during failures and retries.
 Future<DisposalCallback?> _executeTaskWithLogging(
   SplashTask task,

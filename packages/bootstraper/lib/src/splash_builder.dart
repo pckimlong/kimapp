@@ -120,7 +120,7 @@ part of 'bootstrap.dart';
 /// When splash tasks fail:
 /// - The error is passed to the splash page builder
 /// - A retry callback is provided to re-run failed tasks
-/// - Calling retry invalidates stateful tasks, causing them to re-execute
+/// - Calling retry invalidates reactive tasks, causing them to re-execute
 /// - The splash screen remains visible during retry attempts
 ///
 /// ## Important Notes
@@ -133,8 +133,8 @@ part of 'bootstrap.dart';
 ///
 /// See also:
 /// - [SplashConfig] for configuring splash behavior
-/// - [StatelessSplashTask] for one-time initialization tasks
-/// - [StatefulSplashTask] for reactive tasks that respond to state changes
+/// - [OneTimeSplashTask] for one-time initialization tasks
+/// - [ReactiveSplashTask] for reactive tasks that respond to state changes
 class SplashBuilder extends ConsumerWidget {
   /// Creates a splash builder that manages splash screen display.
   ///
@@ -168,9 +168,8 @@ class SplashBuilder extends ConsumerWidget {
       return child;
     }
 
-    // Watch all task execution states: one-time, stateful (deprecated), and reactive
+    // Watch all task execution states: one-time and reactive
     final oneTimeSplashTask = ref.watch(_statelessSplashTaskProvider);
-    final statefulSplashTasks = ref.watch(_statefulSplashTaskProvider);
 
     // For reactive tasks, we need to watch the watch phase to control splash display
     final reactiveSplashTaskWatch = ref.watch(_reactiveSplashTaskWatchProvider);
@@ -180,7 +179,6 @@ class SplashBuilder extends ConsumerWidget {
     final shouldShowSplash = _shouldShowSplash(
       config: config,
       oneTimeTask: oneTimeSplashTask,
-      statefulTasks: statefulSplashTasks,
       reactiveWatchTask: reactiveSplashTaskWatch,
       reactiveExecuteTask: reactiveSplashTaskExecute,
     );
@@ -193,14 +191,12 @@ class SplashBuilder extends ConsumerWidget {
     // Tasks are still running or failed = show splash screen
     // Pass error (if any) and retry callback to the splash page builder
     return config.pageBuilder(
-      // Show the first error encountered (prioritize one-time task errors, then stateful, then reactive)
+      // Show the first error encountered (prioritize one-time task errors, then reactive)
       oneTimeSplashTask.error ??
-          statefulSplashTasks.error ??
           reactiveSplashTaskWatch.error ??
           reactiveSplashTaskExecute.error,
       // Provide retry callback only if there are errors
       oneTimeSplashTask.hasError ||
-              statefulSplashTasks.hasError ||
               reactiveSplashTaskWatch.hasError ||
               reactiveSplashTaskExecute.hasError
           ? () {
@@ -208,11 +204,6 @@ class SplashBuilder extends ConsumerWidget {
               if (reactiveSplashTaskWatch.hasError || reactiveSplashTaskExecute.hasError) {
                 ref.invalidate(_reactiveSplashTaskWatchProvider);
                 ref.invalidate(_reactiveSplashTaskExecuteProvider);
-              }
-
-              // Retry failed stateful tasks
-              if (statefulSplashTasks.hasError) {
-                ref.invalidate(_statefulSplashTaskProvider);
               }
 
               // Retry failed one-time tasks
@@ -235,13 +226,11 @@ class SplashBuilder extends ConsumerWidget {
   bool _shouldShowSplash({
     required SplashConfig config,
     required AsyncValue<bool> oneTimeTask,
-    required AsyncValue<void> statefulTasks,
     required AsyncValue<Map<ReactiveSplashTask, dynamic>> reactiveWatchTask,
     required AsyncValue<void> reactiveExecuteTask,
   }) {
     // If any task hasn't completed successfully, show splash
     if (!oneTimeTask.hasValue ||
-        !statefulTasks.hasValue ||
         !reactiveWatchTask.hasValue ||
         !reactiveExecuteTask.hasValue) {
       return true;
@@ -253,10 +242,9 @@ class SplashBuilder extends ConsumerWidget {
     }
 
     // If dependency change splash is enabled, show splash when:
-    // 1. Stateful tasks are refreshing (legacy behavior)
-    // 2. Reactive watch tasks are refreshing (NEW: only watch phase triggers splash)
+    // Reactive watch tasks are refreshing (only watch phase triggers splash)
     // Note: Reactive execute tasks refreshing should NOT trigger splash
-    if (statefulTasks.isLoading || reactiveWatchTask.isLoading) {
+    if (reactiveWatchTask.isLoading) {
       return true;
     }
 
