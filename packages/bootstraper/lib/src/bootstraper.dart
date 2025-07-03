@@ -77,8 +77,8 @@ part of 'bootstrap.dart';
 /// ### Splash Tasks
 /// - Run after UI starts, can be heavier and show progress to users
 /// - Have different execution behaviors based on their type:
-///   - **Stateless Tasks**: Run only once per application lifetime when successful
-///   - **Stateful Tasks**: May run multiple times based on dependency changes
+///   - **One-Time Tasks**: Run only once per application lifetime when successful
+///   - **Reactive Tasks**: Separate watch and execute phases for precise splash control
 /// - Have access to SplashContext with Riverpod Ref for provider interaction
 /// - Can provide visual feedback through splash screen UI
 ///

@@ -1,0 +1,10 @@
+name: kimapp_feature_hooks
+description: Hooks for kimapp_feature mason template
+
+environment:
+  sdk: '>=2.12.0 <4.0.0'
+
+dependencies:
+  mason: any
+  path: ^1.8.0
+  process: ^4.2.4

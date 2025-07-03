@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Shared code generator for Kimapp features",
   "main": "src/index.js",
+  "bin": {
+    "kimapp-feature-generator": "./cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

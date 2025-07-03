@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the `bootstraper` package, a Flutter package that provides a comprehensive application bootstrap system. It orchestrates app initialization through bootstrap tasks and splash screen management with support for stateless and stateful task execution patterns.
+This is the `bootstraper` package, a Flutter package that provides a comprehensive application bootstrap system. It orchestrates app initialization through bootstrap tasks and splash screen management with support for one-time and reactive task execution patterns.
 
 ## Development Commands
 
@@ -52,14 +52,14 @@ The package centers around the `Bootstraper` class which orchestrates a two-phas
 #### Splash Tasks (`SplashTask`)
 Two distinct types with different execution behaviors:
 
-**Stateless Tasks** (`StatelessSplashTask`):
+**One-Time Tasks** (`OneTimeSplashTask`):
 - Run only once per application lifetime when successful
 - No dependency watching or cleanup needed
 - Ideal for one-time initialization (themes, config)
 
-**Stateful Tasks** (`StatefulSplashTask`):
-- May run multiple times based on dependency changes
-- Can use `ref.watch()` for reactive behavior
+**Reactive Tasks** (`ReactiveSplashTask`):
+- Separate watch and execute phases for precise splash control
+- Only providers watched in `watch()` method trigger splash re-display
 - Can provide disposal callbacks for cleanup
 - Ideal for user-dependent operations (auth, user data)
 
@@ -105,20 +105,27 @@ class MyBootstrapTask extends BootstrapTask {
   }
 }
 
-// Stateless splash task (runs once)
-class MyStatelessTask extends StatelessSplashTask {
+// One-time splash task (runs once)
+class MyOneTimeTask extends OneTimeSplashTask {
   @override
-  Future<void> execute(SplashContext context) async {
+  Future<DisposalCallback?> execute(SplashContext context) async {
     // Use context.ref to access providers
+    return null;
   }
 }
 
-// Stateful splash task (reactive)
-class MyStatefulTask extends StatefulSplashTask {
+// Reactive splash task (precise splash control)
+class MyReactiveTask extends ReactiveSplashTask<String?, DisposalCallback?> {
   @override
-  Future<DisposalCallback?> execute(SplashContext context) async {
-    // Watch for changes: context.ref.watch(someProvider)
-    // Return cleanup callback or null
+  Future<String?> watch(Ref ref) async {
+    // Only providers watched here trigger splash
+    return ref.watch(someProvider);
+  }
+
+  @override
+  Future<DisposalCallback?> execute(SplashContext context, String? data) async {
+    // Can access any providers without triggering splash
+    return null;
   }
 }
 ```
@@ -154,10 +161,10 @@ await Bootstraper.initialize(
 ### Task Execution Lifecycle
 1. Bootstrap tasks run in parallel before UI
 2. Flutter app launches with provider scope
-3. Splash system initializes with stateless and stateful task providers
-4. Stateless tasks run once and cache results
-5. Stateful tasks run reactively based on dependencies
+3. Splash system initializes with one-time and reactive task providers
+4. One-time tasks run once and cache results
+5. Reactive tasks run reactively based on dependencies
 6. Disposal callbacks handle cleanup when needed
 
 ### Reactive Splash Behavior
-When `showSplashWhenDependencyChanged` is enabled, stateful tasks that use `ref.watch()` will trigger splash re-display when dependencies change, enabling seamless state transitions.
+When `showSplashWhenDependencyChanged` is enabled, reactive tasks that watch providers in their `watch()` method will trigger splash re-display when dependencies change, enabling seamless state transitions.
