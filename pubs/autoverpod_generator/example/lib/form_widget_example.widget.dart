@@ -211,7 +211,7 @@ class _UpdateUserFormScopeState extends ConsumerState<UpdateUserFormScope> {
             final isInitializedAsync = ref.watch(
               updateUserProvider(
                 widget.id,
-              ).select((_) => _.whenData((_) => true)),
+              ).select((dataAsync) => dataAsync.whenData((_) => true)),
             );
 
             return isInitializedAsync.when(

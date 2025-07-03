@@ -19,7 +19,7 @@ return widget.child!;
 
     return '''
 final isInitializedAsync = ref.watch(
-  ${provider.providerNameWithFamily(prefix: 'widget')}.select((_) => _.whenData((_) => true)),
+  ${provider.providerNameWithFamily(prefix: 'widget')}.select((dataAsync) => dataAsync.whenData((_) => true)),
 );
 
 return isInitializedAsync.when(
