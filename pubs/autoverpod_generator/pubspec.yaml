@@ -1,6 +1,6 @@
 name: autoverpod_generator
 description: Code generator for autoverpod annotations to create Riverpod widgets
-version: 0.0.4+1
+version: 0.0.5
 repository: https://github.com/pckimlong/kimapp
 
 environment:
@@ -20,7 +20,7 @@ dependencies:
   riverpod: ^2.6.1
   code_builder: ^4.10.1
   path: ^1.9.0
-  autoverpod: 0.0.4+1
+  autoverpod: 0.0.5
   flutter:
     sdk: flutter
 

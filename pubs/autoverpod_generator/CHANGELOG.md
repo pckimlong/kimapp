@@ -1,3 +1,9 @@
+## 0.0.5
+
+- Version bump for release
+- Updated autoverpod dependency to 0.0.5
+- Improved stability and bug fixes
+
 ## 0.0.4+1
 
  - **REFACTOR**: improve form widget generation and debug handling. ([68f4f173](https://github.com/pckimlong/kimapp/commit/68f4f173c56e42fbd96d596bef6601a0af354035))
