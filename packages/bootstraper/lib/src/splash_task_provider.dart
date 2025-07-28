@@ -155,32 +155,6 @@ final _reactiveSplashTaskExecuteProvider = FutureProvider.autoDispose.family<voi
   }
 });
 
-/// Provider that aggregates loading state from all reactive splash tasks.
-///
-/// This provider monitors all individual reactive task execution states and
-/// determines if the splash screen should be displayed. The splash shows when:
-/// - Any reactive task is currently executing (isLoading)
-/// - Any reactive task watch provider is loading
-///
-/// This approach provides precise control over splash visibility without
-/// the inefficiency of re-executing all tasks when only one changes.
-final _reactiveSplashTasksLoadingProvider = Provider.autoDispose<bool>((ref) {
-  final splashConfig = ref.watch(_splashConfigProvider);
-  final tasks = _filterTasksByType<ReactiveSplashTask>(splashConfig?.tasks ?? []);
-
-  // Check each task's loading state individually
-  for (int i = 0; i < tasks.length; i++) {
-    // Check if watch phase is loading
-    final watchState = ref.watch(_reactiveSplashTaskWatchProvider(i));
-    if (watchState.isLoading) return true;
-
-    // Check if execute phase is loading
-    final executeState = ref.watch(_reactiveSplashTaskExecuteProvider(i));
-    if (executeState.isLoading) return true;
-  }
-
-  return false;
-});
 
 /// Executes only the execute phase of a reactive splash task.
 ///
