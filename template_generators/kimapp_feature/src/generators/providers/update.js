@@ -30,9 +30,7 @@ class ${pascalCaseName}Update extends _$${pascalCaseName}UpdateWidget {
   @override
   Future<${pascalCaseName}UpdateParam> build(${pascalCaseName}Id ${camelCaseName}Id) async {
     final result = await ref.read(${camelCaseName}RepoProvider).findOne(${camelCaseName}Id).getOrThrow();
-    return ${pascalCaseName}UpdateParam(
-        // TODO: Initialize form fields with the ${camelCaseName} data
-    );
+    throw UnimplementedError();
   }
 
   @override

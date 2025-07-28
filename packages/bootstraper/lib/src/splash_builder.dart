@@ -192,9 +192,7 @@ class SplashBuilder extends ConsumerWidget {
     // Pass error (if any) and retry callback to the splash page builder
     return config.pageBuilder(
       // Show the first error encountered (prioritize one-time task errors, then reactive)
-      oneTimeSplashTask.error ??
-          reactiveSplashTaskWatch.error ??
-          reactiveSplashTaskExecute.error,
+      oneTimeSplashTask.error ?? reactiveSplashTaskWatch.error ?? reactiveSplashTaskExecute.error,
       // Provide retry callback only if there are errors
       oneTimeSplashTask.hasError ||
               reactiveSplashTaskWatch.hasError ||
@@ -230,9 +228,7 @@ class SplashBuilder extends ConsumerWidget {
     required AsyncValue<void> reactiveExecuteTask,
   }) {
     // If any task hasn't completed successfully, show splash
-    if (!oneTimeTask.hasValue ||
-        !reactiveWatchTask.hasValue ||
-        !reactiveExecuteTask.hasValue) {
+    if (!oneTimeTask.hasValue || !reactiveWatchTask.hasValue || !reactiveExecuteTask.hasValue) {
       return true;
     }
 

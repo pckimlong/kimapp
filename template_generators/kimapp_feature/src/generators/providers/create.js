@@ -30,7 +30,7 @@ part '${snakeCaseName}_create_provider.g.dart';
 @riverpod
 class ${pascalCaseName}Create extends _$${pascalCaseName}CreateWidget {
   @override
-  ${pascalCaseName}CreateParam build() => const ${pascalCaseName}CreateParam();
+  ${pascalCaseName}CreateParam build() => throw UnimplementedError();
 
   @override
   Future<${pascalCaseName}Model> submit(${pascalCaseName}CreateParam state) async {
