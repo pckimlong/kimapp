@@ -171,16 +171,14 @@ class SplashBuilder extends ConsumerWidget {
     // Watch all task execution states: one-time and reactive
     final oneTimeSplashTask = ref.watch(_statelessSplashTaskProvider);
 
-    // For reactive tasks, we need to watch the watch phase to control splash display
-    final reactiveSplashTaskWatch = ref.watch(_reactiveSplashTaskWatchProvider);
-    final reactiveSplashTaskExecute = ref.watch(_reactiveSplashTaskExecuteProvider);
+    // For reactive tasks, use the aggregate loading state to determine splash display
+    final reactiveSplashTasksLoading = ref.watch(_reactiveSplashTasksLoadingProvider);
 
     // Determine if we should show splash based on task states
     final shouldShowSplash = _shouldShowSplash(
       config: config,
       oneTimeTask: oneTimeSplashTask,
-      reactiveWatchTask: reactiveSplashTaskWatch,
-      reactiveExecuteTask: reactiveSplashTaskExecute,
+      reactiveTasksLoading: reactiveSplashTasksLoading,
     );
 
     if (!shouldShowSplash) {
@@ -191,17 +189,16 @@ class SplashBuilder extends ConsumerWidget {
     // Tasks are still running or failed = show splash screen
     // Pass error (if any) and retry callback to the splash page builder
     return config.pageBuilder(
-      // Show the first error encountered (prioritize one-time task errors, then reactive)
-      oneTimeSplashTask.error ?? reactiveSplashTaskWatch.error ?? reactiveSplashTaskExecute.error,
+      // Get the first error from any task
+      _getFirstError(ref, config, oneTimeSplashTask),
       // Provide retry callback only if there are errors
-      oneTimeSplashTask.hasError ||
-              reactiveSplashTaskWatch.hasError ||
-              reactiveSplashTaskExecute.hasError
+      _hasAnyError(ref, config, oneTimeSplashTask)
           ? () {
-              // Retry failed reactive tasks
-              if (reactiveSplashTaskWatch.hasError || reactiveSplashTaskExecute.hasError) {
-                ref.invalidate(_reactiveSplashTaskWatchProvider);
-                ref.invalidate(_reactiveSplashTaskExecuteProvider);
+              // Retry failed reactive tasks by invalidating all family providers
+              final tasks = _filterTasksByType<ReactiveSplashTask>(config.tasks);
+              for (int i = 0; i < tasks.length; i++) {
+                ref.invalidate(_reactiveSplashTaskWatchProvider(i));
+                ref.invalidate(_reactiveSplashTaskExecuteProvider(i));
               }
 
               // Retry failed one-time tasks
@@ -224,24 +221,70 @@ class SplashBuilder extends ConsumerWidget {
   bool _shouldShowSplash({
     required SplashConfig config,
     required AsyncValue<bool> oneTimeTask,
-    required AsyncValue<Map<ReactiveSplashTask, dynamic>> reactiveWatchTask,
-    required AsyncValue<void> reactiveExecuteTask,
+    required bool reactiveTasksLoading,
   }) {
-    // If any task hasn't completed successfully, show splash
-    if (!oneTimeTask.hasValue || !reactiveWatchTask.hasValue || !reactiveExecuteTask.hasValue) {
+    // If one-time task hasn't completed successfully, show splash
+    if (!oneTimeTask.hasValue) {
       return true;
     }
 
-    // If dependency change splash is disabled, hide splash once all tasks complete
+    // If dependency change splash is disabled, hide splash once one-time tasks complete
     if (!config.showSplashWhenDependencyChanged) {
       return false;
     }
 
     // If dependency change splash is enabled, show splash when:
-    // Reactive watch tasks are refreshing (only watch phase triggers splash)
-    // Note: Reactive execute tasks refreshing should NOT trigger splash
-    if (reactiveWatchTask.isLoading) {
+    // Any reactive task is loading (either watch or execute phase)
+    if (reactiveTasksLoading) {
       return true;
+    }
+
+    return false;
+  }
+
+  /// Gets the first error from any task (one-time or reactive).
+  Object? _getFirstError(WidgetRef ref, SplashConfig config, AsyncValue<bool> oneTimeTask) {
+    // Check one-time task error first
+    if (oneTimeTask.hasError) {
+      return oneTimeTask.error;
+    }
+
+    // Check reactive task errors
+    final tasks = _filterTasksByType<ReactiveSplashTask>(config.tasks);
+    for (int i = 0; i < tasks.length; i++) {
+      final watchState = ref.read(_reactiveSplashTaskWatchProvider(i));
+      if (watchState.hasError) {
+        return watchState.error;
+      }
+
+      final executeState = ref.read(_reactiveSplashTaskExecuteProvider(i));
+      if (executeState.hasError) {
+        return executeState.error;
+      }
+    }
+
+    return null;
+  }
+
+  /// Checks if any task (one-time or reactive) has an error.
+  bool _hasAnyError(WidgetRef ref, SplashConfig config, AsyncValue<bool> oneTimeTask) {
+    // Check one-time task error
+    if (oneTimeTask.hasError) {
+      return true;
+    }
+
+    // Check reactive task errors
+    final tasks = _filterTasksByType<ReactiveSplashTask>(config.tasks);
+    for (int i = 0; i < tasks.length; i++) {
+      final watchState = ref.read(_reactiveSplashTaskWatchProvider(i));
+      if (watchState.hasError) {
+        return true;
+      }
+
+      final executeState = ref.read(_reactiveSplashTaskExecuteProvider(i));
+      if (executeState.hasError) {
+        return true;
+      }
     }
 
     return false;

@@ -69,99 +69,117 @@ final _statelessSplashTaskProvider = FutureProvider<bool>((ref) async {
   return true;
 });
 
-
-/// Provider that manages reactive splash task watch phase.
+/// Provider that manages individual reactive splash task watch phase.
 ///
-/// This provider handles only the WATCH phase of [ReactiveSplashTask] instances.
-/// It monitors the providers that tasks care about and triggers splash display
-/// when they change. The execution happens in a separate provider.
-final _reactiveSplashTaskWatchProvider =
-    FutureProvider.autoDispose<Map<ReactiveSplashTask, dynamic>>((ref) async {
-      final splashConfig = ref.watch(_splashConfigProvider);
-      final tasks = _filterTasksByType<ReactiveSplashTask>(splashConfig?.tasks ?? []);
-      if (tasks.isEmpty) return {};
+/// This provider handles only the WATCH phase for a single [ReactiveSplashTask].
+/// Each task gets its own provider instance to ensure precise dependency isolation:
+/// - Only the specific task's dependencies trigger re-execution
+/// - No unnecessary executions when other tasks' dependencies change
+/// - Better performance and more predictable behavior
+final _reactiveSplashTaskWatchProvider = FutureProvider.autoDispose.family<dynamic, int>((
+  ref,
+  taskIndex,
+) async {
+  final splashConfig = ref.watch(_splashConfigProvider);
+  final tasks = _filterTasksByType<ReactiveSplashTask>(splashConfig?.tasks ?? []);
 
-      final logger = ref.watch(loggerProvider);
-      logger.info('👁️  Starting watch phase for ${tasks.length} reactive splash tasks');
-
-      final watchResults = <ReactiveSplashTask, dynamic>{};
-
-      try {
-        // Execute watch phase for all tasks
-        for (final task in tasks) {
-          final taskName = task.runtimeType.toString();
-          logger.info('👁️  Watching dependencies for task: $taskName');
-
-          final watchData = await task.watch(ref);
-          watchResults[task] = watchData;
-
-          logger.info('👁️  Completed watch phase for task: $taskName');
-        }
-
-        logger.info('✅ Completed watch phase for all reactive splash tasks');
-        return watchResults;
-      } catch (error, stackTrace) {
-        logger.error(
-          '❌ Failed reactive splash task watch phase',
-          error: error,
-          stackTrace: stackTrace,
-        );
-        rethrow;
-      }
-    });
-
-/// Provider that manages reactive splash task execution phase.
-///
-/// This provider handles only the EXECUTE phase of [ReactiveSplashTask] instances.
-/// It uses the watched data from the watch provider but runs execution in a
-/// separate provider context that doesn't affect splash display.
-final _reactiveSplashTaskExecuteProvider = FutureProvider.autoDispose<void>((ref) async {
-  // Get the watched data from the watch provider
-  final watchResults = await ref.watch(_reactiveSplashTaskWatchProvider.future);
-
-  if (watchResults.isEmpty) return;
-
-  final logger = ref.watch(loggerProvider);
-  logger.info('⚡ Starting execute phase for ${watchResults.length} reactive splash tasks');
-
-  final disposables = <DisposalCallback>[];
-
-  try {
-    // Execute tasks sequentially with their watched data
-    for (final entry in watchResults.entries) {
-      final task = entry.key;
-      final watchedData = entry.value;
-
-      final disposable = await _executeReactiveTaskExecutePhase(task, watchedData, ref, logger);
-      if (disposable != null) {
-        disposables.add(disposable);
-        // Register disposal callback with provider lifecycle
-        ref.onDispose(() {
-          logger.info('🗑️ Disposing reactive task: ${task.runtimeType}');
-          disposable();
-        });
-      }
-    }
-
-    logger.info('✅ Completed execute phase for all reactive splash tasks');
-  } catch (error) {
-    // Critical: Dispose all successfully initialized tasks before retrying
-    logger.info('🧹 Cleaning up ${disposables.length} initialized reactive tasks due to failure');
-    for (final disposable in disposables) {
-      try {
-        disposable();
-      } catch (disposeError, disposeStack) {
-        logger.error(
-          'Failed to dispose reactive task during error cleanup',
-          error: disposeError,
-          stackTrace: disposeStack,
-        );
-      }
-    }
-    rethrow;
+  if (taskIndex >= tasks.length) {
+    throw StateError('Task index $taskIndex out of bounds (${tasks.length} tasks)');
   }
 
-  return;
+  final task = tasks.elementAt(taskIndex);
+  final logger = ref.watch(loggerProvider);
+  final taskName = task.runtimeType.toString();
+
+  logger.info('👁️  Watching dependencies for task: $taskName (index: $taskIndex)');
+
+  try {
+    final watchData = await task.watch(ref);
+    logger.info('👁️  Completed watch phase for task: $taskName');
+    return watchData;
+  } catch (error, stackTrace) {
+    logger.error(
+      '❌ Failed reactive splash task watch phase for $taskName',
+      error: error,
+      stackTrace: stackTrace,
+    );
+    rethrow;
+  }
+});
+
+/// Provider that manages individual reactive splash task execution phase.
+///
+/// This provider handles only the EXECUTE phase for a single [ReactiveSplashTask].
+/// Each task executes independently based on its own watch data changes:
+/// - Only executes when the specific task's watch data changes
+/// - No unnecessary executions when other tasks' dependencies change
+/// - Maintains proper disposal lifecycle per task
+final _reactiveSplashTaskExecuteProvider = FutureProvider.autoDispose.family<void, int>((
+  ref,
+  taskIndex,
+) async {
+  final splashConfig = ref.watch(_splashConfigProvider);
+  final tasks = _filterTasksByType<ReactiveSplashTask>(splashConfig?.tasks ?? []);
+
+  if (taskIndex >= tasks.length) {
+    throw StateError('Task index $taskIndex out of bounds (${tasks.length} tasks)');
+  }
+
+  final task = tasks.elementAt(taskIndex);
+  final logger = ref.watch(loggerProvider);
+  final taskName = task.runtimeType.toString();
+
+  // Get the watched data for this specific task
+  final watchedData = await ref.watch(_reactiveSplashTaskWatchProvider(taskIndex).future);
+
+  logger.info('⚡ Starting execute phase for reactive task: $taskName (index: $taskIndex)');
+
+  try {
+    final disposable = await _executeReactiveTaskExecutePhase(task, watchedData, ref, logger);
+    if (disposable != null) {
+      // Register disposal callback with provider lifecycle
+      ref.onDispose(() {
+        logger.info('🗑️ Disposing reactive task: $taskName');
+        disposable();
+      });
+    }
+
+    logger.info('✅ Completed execute phase for reactive task: $taskName');
+  } catch (error, stackTrace) {
+    logger.error(
+      '❌ Failed execute phase for reactive task: $taskName',
+      error: error,
+      stackTrace: stackTrace,
+    );
+    rethrow;
+  }
+});
+
+/// Provider that aggregates loading state from all reactive splash tasks.
+///
+/// This provider monitors all individual reactive task execution states and
+/// determines if the splash screen should be displayed. The splash shows when:
+/// - Any reactive task is currently executing (isLoading)
+/// - Any reactive task watch provider is loading
+///
+/// This approach provides precise control over splash visibility without
+/// the inefficiency of re-executing all tasks when only one changes.
+final _reactiveSplashTasksLoadingProvider = Provider.autoDispose<bool>((ref) {
+  final splashConfig = ref.watch(_splashConfigProvider);
+  final tasks = _filterTasksByType<ReactiveSplashTask>(splashConfig?.tasks ?? []);
+
+  // Check each task's loading state individually
+  for (int i = 0; i < tasks.length; i++) {
+    // Check if watch phase is loading
+    final watchState = ref.watch(_reactiveSplashTaskWatchProvider(i));
+    if (watchState.isLoading) return true;
+
+    // Check if execute phase is loading
+    final executeState = ref.watch(_reactiveSplashTaskExecuteProvider(i));
+    if (executeState.isLoading) return true;
+  }
+
+  return false;
 });
 
 /// Executes only the execute phase of a reactive splash task.
@@ -208,7 +226,7 @@ Future<DisposalCallback?> _executeReactiveTaskExecutePhase(
 ///
 /// This is needed because `whereType<T>()` doesn't work properly with generic types.
 /// For example, `ReactiveSplashTask<String, void>` won't match `whereType<ReactiveSplashTask>()`.
-/// 
+///
 /// Note: The lint `prefer_iterable_wheretype` is intentionally ignored here because
 /// `whereType<T>()` fails with generic types like `ReactiveSplashTask<WatchData, Result>`.
 Iterable<T> _filterTasksByType<T>(List<SplashTaskBase> tasks) {

@@ -17,5 +17,9 @@
     },
     "cSpell.words": [
         "Bootstraper"
-    ]
+    ],
+    "editor.tokenColorCustomizations": {
+        "comments": "",
+        "textMateRules": []
+    }
 }
