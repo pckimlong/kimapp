@@ -135,7 +135,7 @@ part of 'bootstrap.dart';
 /// - [SplashConfig] for configuring splash behavior
 /// - [OneTimeSplashTask] for one-time initialization tasks
 /// - [ReactiveSplashTask] for reactive tasks that respond to state changes
-class SplashBuilder extends ConsumerWidget {
+class SplashBuilder extends ConsumerStatefulWidget {
   /// Creates a splash builder that manages splash screen display.
   ///
   /// **CRITICAL**: This widget must be used in the `builder` property of
@@ -160,86 +160,231 @@ class SplashBuilder extends ConsumerWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Check if splash configuration is provided
-    final config = ref.watch(_splashConfigProvider);
-    if (config == null) {
-      // No splash config = show main app immediately
-      return child;
-    }
+  ConsumerState<ConsumerStatefulWidget> createState() => _SplashBuilderState();
+}
 
-    // Watch all task execution states: one-time and reactive
-    final oneTimeSplashTask = ref.watch(_statelessSplashTaskProvider);
+class _SplashBuilderState extends ConsumerState<SplashBuilder> {
+  /// Tracks which reactive tasks need to execute due to watch value changes.
+  /// 
+  /// When a reactive task's watch value changes, its index is added to this set.
+  /// The task is removed once its execution completes successfully.
+  // ignore: prefer_final_fields
+  Set<int> _changedWatchValues = {};
 
-    // For reactive tasks, use the aggregate loading state to determine splash display
-    final reactiveSplashTasksLoading = ref.watch(_reactiveSplashTasksLoadingProvider);
+  /// Tracks the loading state of each reactive task's watch provider.
+  /// 
+  /// Maps task index to loading state:
+  /// - `true`: Watch provider is loading
+  /// - `false`: Watch provider has completed (success or error)
+  // ignore: prefer_final_fields
+  Map<int, bool> _activeWatchValues = {};
 
-    // Determine if we should show splash based on task states
-    final shouldShowSplash = _shouldShowSplash(
-      config: config,
-      oneTimeTask: oneTimeSplashTask,
-      reactiveTasksLoading: reactiveSplashTasksLoading,
-    );
+  /// Tracks the loading state of each reactive task's execute provider.
+  /// 
+  /// Maps task index to loading state:
+  /// - `true`: Execute provider is loading
+  /// - `false`: Execute provider has completed (success or error)
+  // ignore: prefer_final_fields
+  Map<int, bool> _activeExecuteTasks = {};
 
-    if (!shouldShowSplash) {
-      // All tasks completed successfully = show main app
-      return child;
-    }
-
-    // Tasks are still running or failed = show splash screen
-    // Pass error (if any) and retry callback to the splash page builder
-    return config.pageBuilder(
-      // Get the first error from any task
-      _getFirstError(ref, config, oneTimeSplashTask),
-      // Provide retry callback only if there are errors
-      _hasAnyError(ref, config, oneTimeSplashTask)
-          ? () {
-              // Retry failed reactive tasks by invalidating all family providers
-              final tasks = _filterTasksByType<ReactiveSplashTask>(config.tasks);
-              for (int i = 0; i < tasks.length; i++) {
-                ref.invalidate(_reactiveSplashTaskWatchProvider(i));
-                ref.invalidate(_reactiveSplashTaskExecuteProvider(i));
-              }
-
-              // Retry failed one-time tasks
-              if (oneTimeSplashTask.hasError) {
-                ref.invalidate(_statelessSplashTaskProvider);
-              }
-            }
-          : null,
-    );
+  /// Determines if any reactive tasks are currently loading or need execution.
+  /// 
+  /// Returns `true` if:
+  /// - Any tasks have changed watch values and need execution
+  /// - Any watch providers are currently loading
+  /// - Any execute providers are currently loading
+  bool get isReactiveTasksLoading {
+    return _changedWatchValues.isNotEmpty ||
+        _activeWatchValues.values.any((isLoading) => isLoading) ||
+        _activeExecuteTasks.values.any((isLoading) => isLoading);
   }
 
-  /// Determines whether splash screen should be displayed based on task states.
-  ///
-  /// This method implements the logic for when to show splash vs main app.
-  /// The key insight is that splash should only be triggered by:
-  /// 1. Initial loading of any task type
-  /// 2. Watch phase changes in reactive tasks (when showSplashWhenDependencyChanged is true)
-  ///
-  /// Execute phase changes in reactive tasks should NOT trigger splash display.
-  bool _shouldShowSplash({
-    required SplashConfig config,
-    required AsyncValue<bool> oneTimeTask,
-    required bool reactiveTasksLoading,
-  }) {
-    // If one-time task hasn't completed successfully, show splash
-    if (!oneTimeTask.hasValue) {
+  @override
+  void initState() {
+    super.initState();
+    _setupListeners();
+  }
+
+  /// Sets up listeners for reactive splash tasks.
+  /// 
+  /// This method:
+  /// 1. Initializes all reactive tasks as "changed" for initial execution
+  /// 2. Sets up watch provider listeners to detect value changes
+  /// 3. Sets up execute provider listeners to track execution completion
+  void _setupListeners() {
+    final config = ref.read(_splashConfigProvider);
+    if (config == null) return;
+
+    final reactiveTasks = _filterTasksByType<ReactiveSplashTask>(config.tasks);
+
+    // Initialize all reactive tasks as changed for initial execution
+    _initializeTaskStates(reactiveTasks.length);
+    
+    // Set up listeners for each reactive task
+    for (int taskIndex = 0; taskIndex < reactiveTasks.length; taskIndex++) {
+      _setupWatchProviderListener(taskIndex);
+      _setupExecuteProviderListener(taskIndex);
+    }
+  }
+
+  /// Initializes the state tracking for all reactive tasks.
+  /// 
+  /// On initial load, all tasks are marked as changed and loading
+  /// to ensure they execute at least once.
+  void _initializeTaskStates(int taskCount) {
+    for (int i = 0; i < taskCount; i++) {
+      _changedWatchValues.add(i);
+      _activeWatchValues[i] = true;
+      _activeExecuteTasks[i] = true;
+    }
+  }
+
+  /// Sets up a listener for a reactive task's watch provider.
+  /// 
+  /// This listener:
+  /// - Detects when the watch value actually changes
+  /// - Tracks the loading state of the watch provider
+  /// - Adds tasks to execution queue when values change
+  void _setupWatchProviderListener(int taskIndex) {
+    ref.listenManual(_reactiveSplashTaskWatchProvider(taskIndex), (previous, next) {
+      setState(() {
+        // Check if watch value actually changed (not just provider state)
+        if (previous?.value != next.value) {
+          _changedWatchValues.add(taskIndex);
+        }
+
+        // Update watch provider loading state
+        _activeWatchValues[taskIndex] = !next.hasValue;
+      });
+    });
+  }
+
+  /// Sets up a listener for a reactive task's execute provider.
+  /// 
+  /// This listener:
+  /// - Only tracks execution for tasks that are in the changed queue
+  /// - Updates execute provider loading state
+  /// - Removes completed tasks from the execution queue
+  void _setupExecuteProviderListener(int taskIndex) {
+    ref.listenManual(_reactiveSplashTaskExecuteProvider(taskIndex), (previous, next) {
+      // Only track execution for tasks that need to execute
+      if (_changedWatchValues.contains(taskIndex)) {
+        setState(() {
+          if (next.hasValue) {
+            // Task execution completed successfully
+            _activeExecuteTasks[taskIndex] = false;
+            _changedWatchValues.remove(taskIndex);
+          } else {
+            // Task is loading or failed
+            _activeExecuteTasks[taskIndex] = true;
+          }
+        });
+      }
+    });
+  }
+
+  /// Determines whether the splash screen should be shown.
+  /// 
+  /// Returns `true` if:
+  /// - One-time splash tasks are still loading
+  /// - Reactive tasks are loading or need execution
+  /// - Configuration allows showing splash on dependency changes
+  bool _shouldShowSplash(SplashConfig config, AsyncValue<bool> oneTimeSplashTask) {
+    // Always show splash during one-time task loading
+    if (!oneTimeSplashTask.hasValue) {
       return true;
     }
 
-    // If dependency change splash is disabled, hide splash once one-time tasks complete
-    if (!config.showSplashWhenDependencyChanged) {
-      return false;
-    }
-
-    // If dependency change splash is enabled, show splash when:
-    // Any reactive task is loading (either watch or execute phase)
-    if (reactiveTasksLoading) {
+    // Show splash if reactive tasks are loading
+    if (isReactiveTasksLoading) {
+      // Check if dependency splash is disabled
+      if (!config.showSplashWhenDependencyChanged && oneTimeSplashTask.hasValue) {
+        // Clear all reactive task states if dependency splash is disabled
+        _clearReactiveTaskStates();
+        return false;
+      }
       return true;
     }
 
     return false;
+  }
+
+  /// Clears all reactive task states when dependency splash is disabled.
+  void _clearReactiveTaskStates() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          for (int i = 0; i < _activeExecuteTasks.length; i++) {
+            _activeExecuteTasks[i] = false;
+            _activeWatchValues[i] = false;
+          }
+          _changedWatchValues.clear();
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check if splash configuration is provided
+    final config = ref.watch(_splashConfigProvider);
+    if (config == null) {
+      // No splash config = show main app immediately
+      return widget.child;
+    }
+
+    // Watch one-time splash tasks
+    final oneTimeSplashTask = ref.watch(_statelessSplashTaskProvider);
+
+    // Determine if splash should be shown
+    final shouldShowSplash = _shouldShowSplash(config, oneTimeSplashTask);
+
+    if (!shouldShowSplash) {
+      // All tasks completed successfully = show main app
+      return widget.child;
+    }
+
+    // Tasks are still running or failed = show splash screen
+    return config.pageBuilder(
+      // Get the first error from any task
+      _getFirstError(ref, config, oneTimeSplashTask),
+      // Provide retry callback only if there are errors
+      _hasAnyError(ref, config, oneTimeSplashTask) ? _createRetryCallback(oneTimeSplashTask) : null,
+    );
+  }
+
+  /// Creates a retry callback for failed splash tasks.
+  /// 
+  /// The callback:
+  /// 1. Invalidates all reactive task providers to trigger fresh execution
+  /// 2. Invalidates one-time task provider if it failed
+  /// 3. Resets all tracking state for a clean retry
+  /// 4. Re-establishes listeners for reactive tasks
+  VoidCallback _createRetryCallback(AsyncValue<bool> oneTimeSplashTask) {
+    return () {
+      // Retry failed reactive tasks by invalidating tracked family providers
+      for (final taskIndex in _activeExecuteTasks.keys) {
+        ref.invalidate(_reactiveSplashTaskWatchProvider(taskIndex));
+        ref.invalidate(_reactiveSplashTaskExecuteProvider(taskIndex));
+      }
+
+      // Retry failed one-time tasks
+      if (oneTimeSplashTask.hasError) {
+        ref.invalidate(_statelessSplashTaskProvider);
+      }
+
+      // Reset tracking state for fresh retry
+      setState(() {
+        _activeExecuteTasks.clear();
+        _activeWatchValues.clear();
+        _changedWatchValues.clear();
+      });
+
+      // Re-setup listeners
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _setupListeners();
+      });
+    };
   }
 
   /// Gets the first error from any task (one-time or reactive).
