@@ -22,7 +22,7 @@ workspace:
 
 
 dev_dependencies:
-  melos: ^7.0.0-dev.7
+  melos: ^7.0.0-dev.9
   build_runner: ^2.4.15
 
 melos:

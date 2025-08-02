@@ -21,8 +21,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
   const PaginatedItem._();
 
   const factory PaginatedItem.data(T item) = _Data;
-  const factory PaginatedItem.loading({@Default(true) bool isFirstItem}) =
-      _Loading;
+  const factory PaginatedItem.loading({@Default(true) bool isFirstItem}) = _Loading;
   const factory PaginatedItem.error(Failure failure) = _Error;
 
   /// Build pagination item
@@ -52,8 +51,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
     bool showLoadingInAllItem = false,
   }) {
     final itemIndexInPage = index % limit;
-    final itemOfIndexAsync =
-        pageItems.whenData((value) => value.getOrNull(itemIndexInPage));
+    final itemOfIndexAsync = pageItems.whenData((value) => value.getOrNull(itemIndexInPage));
     return itemOfIndexAsync.when(
       data: (data) {
         if (data != null) return PaginatedItem.data(data);
@@ -62,10 +60,7 @@ class PaginatedItem<T> with _$PaginatedItem<T> {
       error: (err, str) {
         if (itemIndexInPage == 0) {
           return PaginatedItem.error(
-            Failure(FailureInfo(
-                stackTrace: str,
-                debugMessage: err.toString(),
-                errorObject: err)),
+            Failure(FailureInfo(stackTrace: str, debugMessage: err.toString(), errorObject: err)),
           );
         }
         return null;
@@ -110,8 +105,7 @@ sealed class ProviderStatus<T> with _$ProviderStatus<T> {
 
   /// Safety run callback inside provider status, handle try-cache
   /// return appropriate state.
-  static Future<ProviderStatus<T>> guard<T>(
-      Future<T> Function() callback) async {
+  static Future<ProviderStatus<T>> guard<T>(Future<T> Function() callback) async {
     try {
       return ProviderStatus.success(await callback());
     } catch (err, stack) {
@@ -120,8 +114,7 @@ sealed class ProviderStatus<T> with _$ProviderStatus<T> {
             ? err
             : err is String
                 ? Failure.fromString(err)
-                : Failure(FailureInfo(
-                    stackTrace: stack, debugMessage: err.toString())),
+                : Failure(FailureInfo(stackTrace: stack, debugMessage: err.toString())),
       );
     }
   }
@@ -144,9 +137,8 @@ extension ProviderStatusX<T> on ProviderStatus<T> {
 
   AsyncValue<T> toAsyncValue({T Function()? onInitial}) {
     return switch (this) {
-      _Initial<T>() => onInitial == null
-          ? const AsyncValue.loading()
-          : AsyncValue.data(onInitial()),
+      _Initial<T>() =>
+        onInitial == null ? const AsyncValue.loading() : AsyncValue.data(onInitial()),
       _InProgress<T>() => const AsyncValue.loading(),
       _Failure<T>(:final failure) => failure.toAsyncError(),
       _Success<T>(:final success) => AsyncValue.data(success),
@@ -289,10 +281,8 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
         final isEqual = Eq.instance(comparer);
 
         // Calculate differences
-        final removedItems =
-            previousItems.difference(isEqual, currentItems).toIList();
-        final addedItems =
-            currentItems.difference(isEqual, previousItems).toIList();
+        final removedItems = previousItems.difference(isEqual, currentItems).toIList();
+        final addedItems = currentItems.difference(isEqual, previousItems).toIList();
 
         // Optimize update detection by creating a map of previous items
         final previousItemsMap = previousItems.asMap().map(
@@ -305,9 +295,7 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
         }).toIList();
 
         // Only trigger callback if there are actual changes
-        if (removedItems.isNotEmpty ||
-            addedItems.isNotEmpty ||
-            updatedItems.isNotEmpty) {
+        if (removedItems.isNotEmpty || addedItems.isNotEmpty || updatedItems.isNotEmpty) {
           onChange(removedItems, addedItems, updatedItems);
         }
 
@@ -342,8 +330,7 @@ extension IListAsyncNotifierHelper<T> on AsyncNotifierBase<IList<T>> {
   }
 }
 
-extension ProviderStatusClassProviderX<B, T>
-    on Ref<ProviderStatusClassMixin<B, T>> {
+extension ProviderStatusClassProviderX<B, T> on Ref<ProviderStatusClassMixin<B, T>> {
   void onSuccessSelf(Function(T success) onSuccess) {
     // ignore: deprecated_member_use
     listenSelf(
@@ -356,8 +343,7 @@ extension ProviderStatusClassProviderX<B, T>
   }
 }
 
-extension ProviderStatusFamilyNotifierX<T>
-    on BuildlessAutoDisposeNotifier<ProviderStatus<T>> {
+extension ProviderStatusFamilyNotifierX<T> on BuildlessAutoDisposeNotifier<ProviderStatus<T>> {
   /// Perform call function of provider with continuously update the status and catch error
   ///
   /// If status is currently in progress or already success, no action will be perform and return current status
@@ -387,8 +373,7 @@ extension ProviderStatusFamilyNotifierX<T>
     }
 
     state = ProviderStatus<T>.inProgress();
-    final result =
-        await ProviderStatus.guard<R>(() async => await callback(state));
+    final result = await ProviderStatus.guard<R>(() async => await callback(state));
 
     state = result as ProviderStatus<T>;
     final updatedState = result;
@@ -408,8 +393,7 @@ extension ProviderStatusFamilyNotifierX<T>
 }
 
 /// Make family provider(provider with params in builds) work
-extension ProviderStatusClassFamilyNotifierX<A,
-        Base extends ProviderStatusClassMixin<Base, A>>
+extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
     on BuildlessAutoDisposeNotifier<Base> {
   bool get isInProgress => state.status.isInProgress;
   bool get isFailure => state.status.isFailure;
@@ -445,8 +429,7 @@ extension ProviderStatusClassFamilyNotifierX<A,
 
     state = state.updateStatus(ProviderStatus<T>.inProgress());
 
-    final result =
-        await ProviderStatus.guard(() async => await callback(state));
+    final result = await ProviderStatus.guard(() async => await callback(state));
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
 
@@ -511,8 +494,8 @@ extension ProviderStatusFamilyNotifierXX<T> on Notifier<ProviderStatus<T>> {
 }
 
 /// Make family provider(provider with params in builds) work
-extension ProviderStatusClassFamilyNotifierXX<A,
-    Base extends ProviderStatusClassMixin<Base, A>> on Notifier<Base> {
+extension ProviderStatusClassFamilyNotifierXX<A, Base extends ProviderStatusClassMixin<Base, A>>
+    on Notifier<Base> {
   bool get isInProgress => state.status.isInProgress;
   bool get isFailure => state.status.isFailure;
   bool get isInitial => state.status.isInitial;
@@ -547,8 +530,7 @@ extension ProviderStatusClassFamilyNotifierXX<A,
 
     state = state.updateStatus(ProviderStatus<T>.inProgress());
 
-    final result =
-        await ProviderStatus.guard(() async => await callback(state));
+    final result = await ProviderStatus.guard(() async => await callback(state));
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
 
