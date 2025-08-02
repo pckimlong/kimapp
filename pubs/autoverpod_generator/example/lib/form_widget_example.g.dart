@@ -6,6 +6,21 @@ part of 'form_widget_example.dart';
 // FormProviderGenerator
 // **************************************************************************
 
+// ============================================================================
+// AUTOVERPOD GENERATED FORM PROVIDER - DO NOT MODIFY BY HAND
+// ============================================================================
+//
+// Generated from: updateUserProvider
+//
+// GENERATED PROVIDER:
+// - updateUserCallStatusProvider: Form submission status provider
+//
+// ABSTRACT CLASS: _$UpdateUserWidget
+// - call(): Submit form with validation and status handling
+// - submit(): Override to implement form submission logic
+// - onSuccess(): Override to handle successful submissions
+//
+
 final updateUserCallStatusProvider = StateProvider.autoDispose
     .family<AsyncValue<bool>?, ({int id})>((ref, _) => null);
 

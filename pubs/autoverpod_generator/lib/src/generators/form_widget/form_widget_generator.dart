@@ -12,6 +12,7 @@ import 'package:autoverpod_generator/src/generators/form_widget/widgets/status_w
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 import 'package:build/build.dart';
+import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../../autoverpod_generator.dart';
@@ -72,6 +73,10 @@ class FormWidgetGenerator extends WidgetGenerator {
 
     final buffer = StringBuffer();
 
+    // Add descriptive header comment
+    buffer.writeln(_generateHeaderComment(provider));
+    buffer.writeln();
+
     buffer.writeln(generateFieldUpdaterExtension(provider));
     buffer.writeln(generateParamInheritedWidget(provider));
     buffer.writeln(generateFormBaseProxyWidgetRef(provider));
@@ -87,5 +92,37 @@ class FormWidgetGenerator extends WidgetGenerator {
     }
 
     return returnContent(buffer, comment: false);
+  }
+
+  /// Generates a descriptive header comment for the generated form widget file
+  String _generateHeaderComment(ProviderDefinition provider) {
+    final buffer = StringBuffer();
+    final classInfo = provider.returnType.classInfo;
+    
+    buffer.writeln('// ============================================================================');
+    buffer.writeln('// AUTOVERPOD GENERATED FORM WIDGET - DO NOT MODIFY BY HAND');
+    buffer.writeln('// ============================================================================');
+    buffer.writeln('//');
+    buffer.writeln('// Source: ${provider.providerName} → ${provider.returnType.baseType}');
+    buffer.writeln('//');
+    buffer.writeln('// Widgets: ${provider.baseName}Scope, ${provider.baseName}State, ${provider.baseName}Status, ${provider.baseName}Select');
+    
+    // List field widgets if available
+    if (classInfo?.fields.isNotEmpty == true) {
+      buffer.writeln('//');
+      buffer.writeln('// Fields:');
+      for (final field in classInfo!.fields) {
+        final isTextField = field.type == 'String' || field.type == 'String?';
+        final fieldName = '${field.name.pascalCase}Field';
+        if (isTextField) {
+          buffer.writeln('// - $fieldName (${field.type}): ref.textController | ref.update${field.name.pascalCase}(value)');
+        } else {
+          buffer.writeln('// - $fieldName (${field.type}): ref.update${field.name.pascalCase}(value)');
+        }
+      }
+    }
+    buffer.writeln('//');
+    
+    return buffer.toString();
   }
 }

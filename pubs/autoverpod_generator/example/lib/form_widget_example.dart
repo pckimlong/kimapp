@@ -30,8 +30,7 @@ sealed class UpdateUserModel with _$UpdateUserModel {
 
   /// Converts JSON map to [UpdateUserModel] instance.
   /// Used for serialization/deserialization of form data.
-  factory UpdateUserModel.fromJson(Map<String, dynamic> json) =>
-      _$UpdateUserModelFromJson(json);
+  factory UpdateUserModel.fromJson(Map<String, dynamic> json) => _$UpdateUserModelFromJson(json);
 }
 
 @riverpod

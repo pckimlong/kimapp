@@ -17,8 +17,7 @@ import 'widgets/state_widget_proxy.dart';
 /// Generator for creating state-based widgets from providers
 class StateWidgetGenerator extends WidgetGenerator {
   @override
-  final TypeChecker annotationTypeChecker =
-      const TypeChecker.fromRuntime(StateWidget);
+  final TypeChecker annotationTypeChecker = const TypeChecker.fromRuntime(StateWidget);
 
   @override
   bool canProcess(Element element) {
@@ -34,6 +33,10 @@ class StateWidgetGenerator extends WidgetGenerator {
     final provider = ProviderDefinition.parse(element);
     final buffer = StringBuffer();
 
+    // Add descriptive header comment
+    buffer.writeln(_generateHeaderComment(provider));
+    buffer.writeln();
+
     buffer.writeln(generateParamInheritedWidget(provider));
     buffer.writeln(generateProxyWidgetRef(provider));
     buffer.writeln(generateScopeWidget(provider));
@@ -44,6 +47,27 @@ class StateWidgetGenerator extends WidgetGenerator {
     buffer.writeln(generateSelectWidget(provider));
 
     return returnContent(buffer, comment: false);
+  }
+
+  /// Generates a descriptive header comment for the generated state widget file
+  String _generateHeaderComment(ProviderDefinition provider) {
+    final buffer = StringBuffer();
+
+    buffer
+        .writeln('// ============================================================================');
+    buffer.writeln('// AUTOVERPOD GENERATED STATE WIDGET - DO NOT MODIFY BY HAND');
+    buffer
+        .writeln('// ============================================================================');
+    buffer.writeln('//');
+    buffer.writeln('// Source: ${provider.providerName}');
+    buffer.writeln('//');
+    buffer.writeln('// PUBLIC WIDGETS:');
+    buffer.writeln('// - ${provider.baseName}Scope: Main scope widget for provider access');
+    buffer.writeln('// - ${provider.baseName}Widget: Consumer widget with automatic state access');
+    buffer.writeln('// - ${provider.baseName}Select: Selector widget for optimized rebuilds');
+    buffer.writeln('//');
+
+    return buffer.toString();
   }
 
   @override
