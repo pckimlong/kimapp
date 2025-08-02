@@ -19,7 +19,10 @@ class Demo extends KimappSchema {
       Model('DemoDetailModel')
         ..table('v_demo_detail')
         ..inheritAllFromBase()
-        ..addFields({}),
+        ..addFields({
+          'name2': Field<String>('name2'),
+          'age2': Field<int>('age2'),
+        }),
       Model('DemoLiteModel')..inheritAllFromBase(excepts: [description])
     ];
   }

@@ -34,6 +34,8 @@ _DemoDetailModel _$DemoDetailModelFromJson(Map<String, dynamic> json) =>
       other: json['other'] == null
           ? null
           : OtherModel.fromJson(json['other'] as Map<String, dynamic>),
+      name2: json['name2'] as String,
+      age2: (json['age2'] as num).toInt(),
     );
 
 Map<String, dynamic> _$DemoDetailModelToJson(_DemoDetailModel instance) =>
@@ -43,6 +45,8 @@ Map<String, dynamic> _$DemoDetailModelToJson(_DemoDetailModel instance) =>
       'age': instance.age,
       'address': instance.address,
       'other': instance.other?.toJson(),
+      'name2': instance.name2,
+      'age2': instance.age2,
     };
 
 _DemoLiteModel _$DemoLiteModelFromJson(Map<String, dynamic> json) =>
@@ -88,5 +92,7 @@ const _tableDemoDetailModel = TableBuilder(
     ColumnBuilder('address'),
     ColumnBuilder.join(OtherModel.table,
         key: "other", candidateKey: null, foreignKey: 'other_id'),
+    ColumnBuilder('name2'),
+    ColumnBuilder('age2'),
   ],
 );

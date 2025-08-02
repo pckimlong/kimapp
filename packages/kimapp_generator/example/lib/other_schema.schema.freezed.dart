@@ -15,9 +15,9 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$OtherModel {
-  @JsonKey(name: OtherModel.idKey)
+  @JsonKey(name: "id")
   OtherId get id;
-  @JsonKey(name: OtherModel.nameKey)
+  @JsonKey(name: "name")
   String get name;
 
   /// Create a copy of OtherModel
@@ -56,8 +56,7 @@ abstract mixin class $OtherModelCopyWith<$Res> {
       _$OtherModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: OtherModel.idKey) OtherId id,
-      @JsonKey(name: OtherModel.nameKey) String name});
+      {@JsonKey(name: "id") OtherId id, @JsonKey(name: "name") String name});
 }
 
 /// @nodoc
@@ -94,17 +93,17 @@ class _$OtherModelCopyWithImpl<$Res> implements $OtherModelCopyWith<$Res> {
 @JsonSerializable(explicitToJson: true)
 class _OtherModel extends OtherModel {
   const _OtherModel(
-      {@JsonKey(name: OtherModel.idKey) required this.id,
-      @JsonKey(name: OtherModel.nameKey) required this.name})
+      {@JsonKey(name: "id") required this.id,
+      @JsonKey(name: "name") required this.name})
       : super._();
   factory _OtherModel.fromJson(Map<String, dynamic> json) =>
       _$OtherModelFromJson(json);
 
   @override
-  @JsonKey(name: OtherModel.idKey)
+  @JsonKey(name: "id")
   final OtherId id;
   @override
-  @JsonKey(name: OtherModel.nameKey)
+  @JsonKey(name: "name")
   final String name;
 
   /// Create a copy of OtherModel
@@ -150,8 +149,7 @@ abstract mixin class _$OtherModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: OtherModel.idKey) OtherId id,
-      @JsonKey(name: OtherModel.nameKey) String name});
+      {@JsonKey(name: "id") OtherId id, @JsonKey(name: "name") String name});
 }
 
 /// @nodoc

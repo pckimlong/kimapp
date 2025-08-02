@@ -1,3 +1,24 @@
+/// Kimapp Schema Code Generator
+///
+/// This file contains the main generator that processes @Schema annotations and generates:
+/// 1. Table classes - Static constants for table/column names (e.g., UserTable)
+/// 2. ID classes - Type-safe identity wrappers (e.g., UserId extends Identity<int>)
+/// 3. Base model classes - Freezed models with JSON serialization (e.g., UserBaseModel)
+/// 4. Custom model classes - Additional models derived from schema (e.g., UserDetailModel)
+///
+/// Key Classes:
+/// - KimappSchemaGenerator: Main generator entry point
+/// - _ModelDefinition: Represents a model configuration from schema
+/// - _FieldDefinition: Represents field metadata (normal, id, join, ignore types)
+/// - _SchemaMetaData: Schema annotation data (tableName, className, baseModelName)
+///
+/// Generation Flow:
+/// 1. Parse @Schema annotations from source files
+/// 2. Extract field definitions from class members
+/// 3. Parse model configurations from 'models' getter
+/// 4. Generate table constants, ID classes, base models, and custom models
+/// 5. Embed JSON keys directly in @JsonKey annotations (no static key constants)
+
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -15,29 +36,45 @@ class KimappSchemaGenerator extends Generator {
     if (schemas.isEmpty) return '';
 
     final buffer = StringBuffer();
-    _writeFileHeader(buffer, library, buildStep);
 
+    // First pass: collect all schema data for header
+    final schemaData = <Map<String, dynamic>>[];
     for (var schema in schemas) {
-      await _processSchema(buildStep, schema, buffer);
+      final annotation = schema.annotation;
+      final schemaMetaData = _SchemaMetaData.fromAnnotation(annotation);
+      final classElement = schema.element as ClassElement;
+      final fields = await _getFields(buildStep, classElement);
+      final models = await _getModels(buildStep, classElement, fields, schemaMetaData);
+      schemaData.add({
+        'schema': schema,
+        'schemaMetaData': schemaMetaData,
+        'fields': fields,
+        'models': models,
+      });
+    }
+
+    // Write header with complete information
+    if (schemaData.isNotEmpty) {
+      final firstSchema = schemaData.first;
+      _writeFileHeader(buffer, library, buildStep, firstSchema['fields'], firstSchema['models'],
+          firstSchema['schemaMetaData']);
+    }
+
+    // Second pass: generate all classes
+    for (var data in schemaData) {
+      _processSchemaData(buffer, data);
     }
 
     return buffer.toString();
   }
 
-  Future<void> _processSchema(
-    BuildStep buildStep,
-    AnnotatedElement schema,
-    StringBuffer buffer,
-  ) async {
+  void _processSchemaData(StringBuffer buffer, Map<String, dynamic> data) {
+    final schema = data['schema'] as AnnotatedElement;
+    final schemaMetaData = data['schemaMetaData'] as _SchemaMetaData;
+    final fields = data['fields'] as List<_FieldDefinition>;
+    final models = data['models'] as List<_ModelDefinition>;
+
     _checkValidSchemaElement(schema);
-
-    final annotation = schema.annotation;
-    final schemaMetaData = _SchemaMetaData.fromAnnotation(annotation);
-
-    final classElement = schema.element as ClassElement;
-
-    final fields = await _getFields(buildStep, classElement);
-    final models = await _getModels(buildStep, classElement, fields, schemaMetaData);
 
     // Generate Table class
     buffer.writeln(_generateTableClass(schemaMetaData, fields));
@@ -80,16 +117,62 @@ class KimappSchemaGenerator extends Generator {
     }
   }
 
-  void _writeFileHeader(StringBuffer buffer, LibraryReader library, BuildStep buildStep) {
+  void _writeFileHeader(
+      StringBuffer buffer,
+      LibraryReader library,
+      BuildStep buildStep,
+      List<_FieldDefinition> allFields,
+      List<_ModelDefinition> models,
+      _SchemaMetaData schemaMetaData) {
+    final currentFilePath = buildStep.inputId.path;
+    final currentFileName = path.basename(currentFilePath);
+    final basename = path.basenameWithoutExtension(currentFilePath);
+
+    buffer.writeln("// Generated from: $currentFileName");
+    buffer.writeln("//");
+    buffer.writeln("// Generated Classes:");
+
+    // Table class
+    final tableFields = allFields.map((f) => f.fieldName).join(', ');
+    buffer.writeln(
+        "// - ${schemaMetaData.className}Table: Static constants for table/column names - table, $tableFields");
+
+    // ID classes
+    for (final field in allFields) {
+      if (field is _IdField) {
+        final idClassName = field.generateIdClassNameAs ?? '${schemaMetaData.className}Id';
+        buffer.writeln(
+            "// - $idClassName: Identity<${field.dataType}> wrapper for ${schemaMetaData.className.toLowerCase()} primary key");
+      }
+    }
+
+    // Base model
+    final baseFields = allFields.where((f) => f is! _IgnoreField).map((f) {
+      if (f is _IdField) {
+        final idType = f.generateIdClassNameAs ?? '${schemaMetaData.className}Id';
+        return '${f.fieldName}:$idType';
+      }
+      return '${f.fieldName}:${f.dataType}';
+    }).join(', ');
+    buffer.writeln("// - ${schemaMetaData.baseModelName}: $baseFields");
+
+    // Custom models
+    for (final model in models) {
+      final modelFields = model.fields.map((f) {
+        if (f is _IdField) {
+          final idType = f.generateIdClassNameAs ?? '${schemaMetaData.className}Id';
+          return '${f.fieldName}:$idType';
+        }
+        return '${f.fieldName}:${f.dataType}';
+      }).join(', ');
+      buffer.writeln("// - ${model.modelName}: $modelFields");
+    }
+
+    buffer.writeln("");
     buffer.writeln(
         "// ignore_for_file: invalid_annotation_target, unused_import, require_trailing_commas");
     buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
     buffer.writeln("import 'package:kimapp/kimapp.dart';");
-    buffer.writeln();
-
-    final currentFilePath = buildStep.inputId.path;
-    final currentFileName = path.basename(currentFilePath);
-    final basename = path.basenameWithoutExtension(currentFilePath);
 
     final imports = _getSourceFileImports(library);
     for (final import in imports) {
@@ -97,14 +180,8 @@ class KimappSchemaGenerator extends Generator {
     }
 
     buffer.writeln("import '$currentFileName';");
-    buffer.writeln();
     buffer.writeln("part '${basename}.schema.freezed.dart';");
     buffer.writeln("part '${basename}.schema.g.dart';");
-    buffer.writeln();
-
-    // Generate fieldMap helper function
-    buffer.writeln(_generateFieldMapHelper());
-    buffer.writeln();
   }
 
   Set<String> _getSourceFileImports(LibraryReader library) {
@@ -871,71 +948,29 @@ String _generateTableClass(_SchemaMetaData schema, List<_FieldDefinition> fields
   final buffer = StringBuffer();
   final className = schema.className;
   final tableName = schema.tableName;
-
-  buffer.writeln("/// Defines the table structure for $className.");
-  buffer.writeln("/// This class provides constant string values for table and column names,");
-  buffer.writeln("/// facilitating type-safe database operations and query building.");
   buffer.writeln("class ${className}Table {");
   buffer.writeln("  const ${className}Table._();");
-  buffer.writeln();
-  buffer.writeln('  /// The name of the database table for $className entities.');
-  buffer.writeln('  /// Use this constant for constructing SQL queries to ensure consistency.');
   buffer.writeln('  static const String table = "${tableName.toLowerCase()}";');
-  buffer.writeln();
-
   for (final field in fields) {
-    String columnName;
     String keyValue;
-
     if (field is _JoinField) {
-      columnName = field.joinFieldForeignKey ?? field.fieldName;
       keyValue = field.fieldName;
     } else {
-      columnName = field.jsonKey ?? field.fieldName;
       keyValue = field.jsonKey ?? field.fieldName;
     }
-
-    buffer.writeln('  /// Column: $columnName');
-
-    if (field is _IdField) {
-      buffer.writeln('  /// This is the primary key column for the $className table.');
-      buffer.writeln('  /// Data type: `${field.dataType}`');
-    } else if (field is _IgnoreField) {
-      buffer.writeln('  /// This column is ignored for base class generator.');
-    } else if (field is _JoinField) {
-      buffer.writeln('  /// This is a join key for field ${field.fieldName}.');
-      buffer.writeln('  /// Data type: `${field.dataType}`');
-    } else {
-      buffer.writeln('  /// Data type: `${field.dataType}`');
-    }
-
-    buffer.writeln('  /// Key: `$keyValue`');
     buffer.writeln('  static const String ${field.fieldName} = "$keyValue";');
-    buffer.writeln();
   }
-
   buffer.writeln("}");
-
   return buffer.toString();
 }
 
 String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
   final idClassName = idField.generateIdClassNameAs ?? '${schema.className}Id';
   final buffer = StringBuffer();
-
-  buffer.writeln('/// Represents the unique identifier for a ${schema.className}.');
-  buffer.writeln(
-      '/// This class wraps the `${idField.dataType}` value, providing type safety and encapsulation.');
   buffer.writeln('class $idClassName extends Identity<${idField.dataType}> {');
   buffer.writeln('  const $idClassName._(this.value);');
-  buffer.writeln();
   buffer.writeln('  @override');
   buffer.writeln('  final ${idField.dataType} value;');
-  buffer.writeln();
-  buffer.writeln('  /// Creates an instance of $idClassName from a JSON value.');
-  buffer.writeln('  /// Accepts ${idField.dataType} representations.');
-  buffer.writeln(
-      '  /// Throws ArgumentError if the value is null or not of type ${idField.dataType}.');
   buffer.writeln('  factory $idClassName.fromJson(dynamic value) {');
   buffer.writeln('    if (value is ${idField.dataType}) {');
   buffer.writeln('      return $idClassName._(value);');
@@ -946,17 +981,11 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
       '      throw ArgumentError(\'Value of $idClassName must be of type ${idField.dataType}, but was \${value.runtimeType}. Please provide the correct type.\');');
   buffer.writeln('    }');
   buffer.writeln('  }');
-  buffer.writeln();
-  buffer.writeln('  /// Creates an instance of $idClassName from a ${idField.dataType} value.');
   buffer.writeln('  factory $idClassName.fromValue(${idField.dataType} value) {');
   buffer.writeln('    return $idClassName._(value);');
   buffer.writeln('  }');
-  buffer.writeln();
-
-  // Empty only work for number and string
   if (idField.isNumber || idField.isString) {
     final emptyValue = idField.isNumber ? -1 : '""';
-
     buffer.writeln('  /// Creates an instance of $idClassName with a value of $emptyValue.');
     buffer.writeln(
         '  /// This is used to represent an empty or invalid $idClassName for placeholder or default values of form fields.');
@@ -964,9 +993,7 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
         '  /// WARNING: This is not a valid $idClassName access it value through [value] or [call] will throw an error.');
     buffer.writeln('  factory $idClassName.empty() => $idClassName._($emptyValue);');
   }
-
   buffer.writeln('}');
-
   return buffer.toString();
 }
 
@@ -976,7 +1003,6 @@ String _baseSchemaBaseClassName(_SchemaMetaData schemaMetaData) {
 
 String _generateSchemaBaseClass(_SchemaMetaData schemaMetaData) {
   return '''
-    /// Base class of this schema, this is the parent of all generated models in this schema
     abstract class ${_baseSchemaBaseClassName(schemaMetaData)} {}
 ''';
 }
@@ -988,8 +1014,6 @@ String _baseModelBaseClassName(_SchemaMetaData schemaMetaData) {
 String _generateModelBaseClass(_SchemaMetaData schemaMetaData, List<_FieldDefinition> allFields) {
   final buffer = StringBuffer();
 
-  buffer.writeln(
-      '/// Base model class for this schema, this includes all properties of the base model, and get inherited by all generated models in this schema where [inheritAllFromBase()] is called and without any excepted fields.');
   buffer.writeln('abstract class ${_baseModelBaseClassName(schemaMetaData)} {');
   for (final field in allFields) {
     final dataType = field is _IdField
@@ -1012,28 +1036,10 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
 
   final baseClass = _baseSchemaBaseClassName(schema);
 
-  buffer.writeln('/// Base model class for $baseModelName.');
   buffer.writeln('@freezed');
   buffer.writeln(
       'sealed class $baseModelName with _\$$baseModelName implements $baseClass, ${_baseModelBaseClassName(schema)} {');
   buffer.writeln('  const $baseModelName._();');
-  buffer.writeln();
-
-  // Generate constructor comment
-  buffer.writeln('  /// Constructor for $baseModelName.');
-  buffer.writeln('  /// ');
-  buffer.writeln('  /// This class was generated by the Kimapp generator based on KimappSchema.');
-  buffer.writeln('  /// ');
-  buffer.writeln('  /// Table Mode: `enabled` (`$tableName`)');
-  buffer.writeln('  /// ');
-  buffer.writeln('  /// Fields:');
-  for (final field in fields) {
-    final dataType = field is _IdField
-        ? (field.generateIdClassNameAs ?? '${schema.className}Id')
-        : field.dataType;
-    buffer.writeln(
-        '  /// - $dataType ${field.fieldName.camelCase} : JsonKey(\'${field.jsonKey ?? field.fieldName}\')');
-  }
 
   buffer.writeln('  @TableModel(${baseModelName}.tableName)');
   buffer.writeln('  @JsonSerializable(explicitToJson: true)');
@@ -1045,21 +1051,23 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
     // Handle ID field first
     if (idField != null) {
       final idType = idField.generateIdClassNameAs ?? '${schema.className}Id';
+      final keyValue = idField.jsonKey ?? idField.fieldName;
       buffer.writeln(
-          '    @JsonKey(name: ${baseModelName}.${idField.fieldName.camelCase}Key) required $idType ${idField.fieldName.camelCase},');
+          '    @JsonKey(name: "$keyValue") required $idType ${idField.fieldName.camelCase},');
     }
 
     // Handle other fields
     for (final field in fields) {
       if (field is! _IdField) {
+        final keyValue = field.jsonKey ?? field.fieldName;
         if (field is _JoinField) {
           buffer.writeln(
               '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
           buffer.writeln(
-              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
+              '    @JsonKey(name: "$keyValue") required ${field.dataType} ${field.fieldName.camelCase},');
         } else {
           buffer.writeln(
-              '    @JsonKey(name: ${baseModelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
+              '    @JsonKey(name: "$keyValue") required ${field.dataType} ${field.fieldName.camelCase},');
         }
       }
     }
@@ -1068,18 +1076,10 @@ String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> al
   }
 
   buffer.writeln(') = _$baseModelName;');
-  buffer.writeln();
-  buffer.writeln('  /// Creates an instance of $baseModelName from a JSON map.');
   buffer.writeln(
       '  factory $baseModelName.fromJson(Map<String, dynamic> json) => _\$${baseModelName}FromJson(json);');
-  buffer.writeln();
-  buffer.writeln('  /// Supabase table configuration for this model.');
   buffer.writeln('  static const TableBuilder table = _table$baseModelName;');
-  buffer.writeln();
-  buffer.writeln('  /// Table name: `$tableName`');
   buffer.writeln('  static const String tableName = "$tableName";');
-  buffer.writeln();
-  buffer.writeln(_generateModelStaticJsonKeys(fields));
   buffer.writeln('}');
 
   return buffer.toString();
@@ -1091,35 +1091,15 @@ String _generateModelClass(
 
   final baseClass = _baseSchemaBaseClassName(schema);
 
-  buffer.writeln('/// Represents the ${model.modelName} model. generated by kimapp_generator');
-  buffer.writeln('@freezed');
   final additionalImplements =
       model.inheritedAllFromBase && model.exceptedInheritedFieldNames.isEmpty
           ? "," + _baseModelBaseClassName(schema)
           : '';
+  buffer.writeln('@freezed');
   buffer.writeln(
     'sealed class ${model.modelName} with _\$${model.modelName} implements $baseClass $additionalImplements {',
   );
   buffer.writeln('  const ${model.modelName}._();');
-  buffer.writeln();
-
-  buffer.writeln('  /// Constructor for ${model.modelName}.');
-  buffer.writeln('  /// ');
-  buffer.writeln('  /// This class was generated by the Kimapp generator based on KimappSchema.');
-  buffer.writeln('  /// ');
-  buffer.writeln('  /// Table Mode: `${model.enableTable ? 'enabled' : 'disabled'}`');
-  if (model.enableTable) {
-    buffer.writeln('  /// Table Name: `${model.tableName ?? schema.tableName}`');
-  }
-  buffer.writeln('  /// ');
-  buffer.writeln('  /// Fields:');
-  for (final field in model.fields) {
-    final dataType = field is _IdField
-        ? (field.generateIdClassNameAs ?? '${model.modelName}Id')
-        : field.dataType;
-    buffer.writeln(
-        '  /// - $dataType ${field.fieldName.camelCase} : JsonKey(\'${field.jsonKey ?? field.fieldName}\')');
-  }
 
   if (model.enableTable) {
     buffer.writeln('  @TableModel(${model.modelName}.tableName)');
@@ -1132,18 +1112,18 @@ String _generateModelClass(
 
   // Generate fields
   for (final field in model.fields) {
+    final keyValue = field.jsonKey ?? field.fieldName;
     if (field is _IdField) {
       final idType = field.generateIdClassNameAs ?? '${schema.className}Id';
-      fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) required $idType ${field.fieldName.camelCase},');
+      fields.add('    @JsonKey(name: "$keyValue") required $idType ${field.fieldName.camelCase},');
     } else if (field is _JoinField) {
       fields.add(
           '    @JoinedColumn(foreignKey: ${field.joinFieldForeignKey == null ? null : '"${field.joinFieldForeignKey}"'}, candidateKey: ${field.joinFieldCandidateKey == null ? null : '"${field.joinFieldCandidateKey}"'})');
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
+          '    @JsonKey(name: "$keyValue") required ${field.dataType} ${field.fieldName.camelCase},');
     } else {
       fields.add(
-          '    @JsonKey(name: ${model.modelName}.${field.fieldName.camelCase}Key) required ${field.dataType} ${field.fieldName.camelCase},');
+          '    @JsonKey(name: "$keyValue") required ${field.dataType} ${field.fieldName.camelCase},');
     }
   }
 
@@ -1156,25 +1136,15 @@ String _generateModelClass(
   }
 
   buffer.writeln(' = _${model.modelName};');
-  buffer.writeln();
-  buffer.writeln('  /// Creates an instance of ${model.modelName} from a JSON map.');
   buffer.writeln(
       '  factory ${model.modelName}.fromJson(Map<String, dynamic> json) => _\$${model.modelName}FromJson(json);');
 
   if (model.enableTable) {
-    buffer.writeln();
-    buffer.writeln('  /// Supabase table configuration for this model.');
     buffer.writeln('  static const TableBuilder table = _table${model.modelName};');
-    buffer.writeln();
-    buffer.writeln('  /// Table name: `${model.tableName ?? schema.tableName}`');
     buffer.writeln('  static const String tableName = "${model.tableName ?? schema.tableName}";');
-    buffer.writeln();
   }
 
-  buffer.writeln(_generateModelStaticJsonKeys(model.fields));
-
   if (model.inheritedAllFromBase && model.exceptedInheritedFieldNames.isEmpty) {
-    buffer.writeln('  /// Converts this model to a base model.');
     buffer.writeln('  ${schema.baseModelName} to${schema.baseModelName}() {');
     buffer.writeln('    return ${schema.baseModelName}(');
     for (final field in baseFields) {
@@ -1191,36 +1161,4 @@ String _generateModelClass(
   buffer.writeln('}');
 
   return buffer.toString();
-}
-
-String _generateModelStaticJsonKeys(List<_FieldDefinition> fields) {
-  final buffer = StringBuffer();
-  for (final field in fields) {
-    final key = field.jsonKey;
-    buffer.writeln('  /// Field name for ${field.fieldName} field with JsonKey(\'$key\')');
-    if (field is _JoinField) {
-      buffer.writeln(
-          '  /// This is json key for joined field. with foreign key: ${field.joinFieldForeignKey} and candidate key: ${field.joinFieldCandidateKey}');
-    }
-    buffer.writeln('  static const String ${field.fieldName.camelCase}Key = "$key";');
-  }
-  return buffer.toString();
-}
-
-String _generateFieldMapHelper() {
-  return '''
-/// Helper function to convert an array of fields to a map for use with addFields
-/// Usage: ...fieldMap([field1, field2, field3])
-Map<String, dynamic> fieldMap(List<dynamic> fields) {
-  final result = <String, dynamic>{};
-  for (final field in fields) {
-    // Extract field name from the field object - this assumes fields have a fieldName property
-    // In practice, this would need to be adapted to work with the actual field structure
-    if (field != null) {
-      final fieldName = field.toString().split('(').first.split('.').last;
-      result[fieldName] = field;
-    }
-  }
-  return result;
-}''';
 }
