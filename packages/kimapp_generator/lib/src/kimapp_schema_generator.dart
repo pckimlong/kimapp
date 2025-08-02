@@ -199,7 +199,73 @@ class KimappSchemaGenerator extends Generator {
       }
     }
 
+    // Validate for duplicate model names
+    _validateModels(models, schemaMetaData);
+
     return models;
+  }
+
+  void _validateModels(List<_ModelDefinition> models, _SchemaMetaData schemaMetaData) {
+    // Check for duplicate model names
+    final modelNames = <String>{};
+    final duplicateNames = <String>[];
+    
+    for (final model in models) {
+      if (modelNames.contains(model.modelName)) {
+        duplicateNames.add(model.modelName);
+      } else {
+        modelNames.add(model.modelName);
+      }
+    }
+    
+    if (duplicateNames.isNotEmpty) {
+      throw InvalidGenerationSourceError(
+        'Duplicate model names found in schema \'${schemaMetaData.className}\': ${duplicateNames.join(', ')}\n'
+        'Each model must have a unique name.\n'
+        'Solutions:\n'
+        '- Use different model names (e.g., \'UserDetailModel\', \'UserLiteModel\')\n'
+        '- Remove duplicate Model() declarations\n'
+        '- Check your models getter for repeated model definitions',
+      );
+    }
+
+    // Check for conflicts with base model name
+    final baseModelName = schemaMetaData.baseModelName;
+    final conflictingModels = models.where((m) => m.modelName == baseModelName).toList();
+    if (conflictingModels.isNotEmpty) {
+      throw InvalidGenerationSourceError(
+        'Model name conflict: \'$baseModelName\' is reserved for the base model in schema \'${schemaMetaData.className}\'.\n'
+        'The following models have conflicting names: ${conflictingModels.map((m) => m.modelName).join(', ')}\n'
+        'Solutions:\n'
+        '- Use different model names\n'
+        '- Change the baseModelName in your @Schema annotation\n'
+        '- Remove the conflicting model definitions',
+      );
+    }
+
+    // Validate table names for conflicts
+    final tableModels = models.where((m) => m.enableTable).toList();
+    final tableNames = <String, List<String>>{};
+    
+    for (final model in tableModels) {
+      final tableName = model.tableName ?? schemaMetaData.tableName;
+      tableNames.putIfAbsent(tableName, () => []).add(model.modelName);
+    }
+    
+    final conflictingTables = tableNames.entries.where((entry) => entry.value.length > 1).toList();
+    if (conflictingTables.isNotEmpty) {
+      final conflicts = conflictingTables
+          .map((entry) => '\'${entry.key}\' used by: ${entry.value.join(', ')}')
+          .join('\n');
+      throw InvalidGenerationSourceError(
+        'Table name conflicts found in schema \'${schemaMetaData.className}\':\n$conflicts\n'
+        'Multiple models cannot use the same table name.\n'
+        'Solutions:\n'
+        '- Use different table names: .table(\'unique_table_name\')\n'
+        '- Remove .table() from some models to disable table mode\n'
+        '- Use different model names if sharing tables is intended',
+      );
+    }
   }
 
   _ModelDefinition? _parseModelDefinition(
@@ -341,22 +407,94 @@ class KimappSchemaGenerator extends Generator {
     required List<_FieldDefinition> addedFields,
     required List<_FieldDefinition> baseFields,
   }) {
-    final fields = <String, _FieldDefinition>{};
+    // Validate model name
+    if (modelName == null || modelName.trim().isEmpty) {
+      throw InvalidGenerationSourceError(
+        'Model name cannot be empty. Please provide a valid model name using Model(\'YourModelName\').',
+      );
+    }
 
+    final fields = <String, _FieldDefinition>{};
+    final duplicateCheckMap = <String, String>{}; // fieldName -> source
+
+    // Add inherited fields first
     if (inheritAllFromBase) {
       for (final field in baseFields.where((e) => e is! _IgnoreField)) {
         if (!exceptedFieldNames.contains(field.fieldName)) {
           fields[field.fieldName] = field;
+          duplicateCheckMap[field.fieldName] = 'inherited from base';
         }
       }
     }
 
+    // Add additional fields with duplicate checking
     for (final field in addedFields) {
-      fields[field.fieldName] = field;
+      final fieldName = field.fieldName;
+      
+      // Check for duplicate field names
+      if (duplicateCheckMap.containsKey(fieldName)) {
+        final existingSource = duplicateCheckMap[fieldName]!;
+        final newSource = 'addFields/copyFields';
+        throw InvalidGenerationSourceError(
+          'Duplicate field name \'$fieldName\' found in model \'$modelName\'.\n'
+          'Field \'$fieldName\' is already defined from: $existingSource\n'
+          'Cannot redefine the same field name from: $newSource\n'
+          'Solutions:\n'
+          '- Use a different field name in your addFields map (e.g., \'${fieldName}2\': $fieldName)\n'
+          '- Remove the field from inheritAllFromBase using excepts parameter\n'
+          '- Use a different field reference in copyFields',
+        );
+      }
+
+      // Check for type conflicts with existing fields
+      if (fields.containsKey(fieldName)) {
+        final existingField = fields[fieldName]!;
+        final existingType = existingField.runtimeType;
+        final newType = field.runtimeType;
+        
+        if (existingType != newType) {
+          throw InvalidGenerationSourceError(
+            'Field type conflict for \'$fieldName\' in model \'$modelName\'.\n'
+            'Existing field type: ${existingType.toString().replaceFirst('_', '')}\n'
+            'New field type: ${newType.toString().replaceFirst('_', '')}\n'
+            'Cannot mix different field types for the same field name.',
+          );
+        }
+      }
+
+      fields[fieldName] = field;
+      duplicateCheckMap[fieldName] = 'addFields/copyFields';
     }
 
+    // Validate ID fields - only one ID field per model
+    final idFields = fields.values.whereType<_IdField>().toList();
+    if (idFields.length > 1) {
+      final idFieldNames = idFields.map((f) => f.fieldName).join(', ');
+      throw InvalidGenerationSourceError(
+        'Multiple ID fields found in model \'$modelName\': $idFieldNames\n'
+        'Each model can only have one ID field.\n'
+        'Solutions:\n'
+        '- Keep only one ID field\n'
+        '- Convert extra ID fields to normal fields using Field<YourType>(\'field_name\')\n'
+        '- Use excepts parameter in inheritAllFromBase to exclude unwanted ID fields',
+      );
+    }
+
+    // Validate table configuration
+    if (tableEnable && tableName != null && tableName.trim().isEmpty) {
+      throw InvalidGenerationSourceError(
+        'Table name cannot be empty when table mode is enabled in model \'$modelName\'.\n'
+        'Solutions:\n'
+        '- Use .table() without parameters to use the default table name\n'
+        '- Provide a valid table name: .table(\'your_table_name\')\n'
+        '- Remove .table() if table mode is not needed',
+      );
+    }
+
+    // Note: Empty models are allowed (useful for parameter objects, placeholder models, etc.)
+
     return _ModelDefinition(
-      modelName: modelName ?? '',
+      modelName: modelName,
       enableTable: tableEnable,
       tableName: tableName,
       inheritedAllFromBase: inheritAllFromBase,
@@ -486,32 +624,65 @@ class KimappSchemaGenerator extends Generator {
   List<_FieldDefinition> _extractCopyFields(
       ArgumentList argumentList, List<_FieldDefinition> baseFields) {
     final copiedFields = <_FieldDefinition>[];
-    if (argumentList.arguments.isNotEmpty) {
-      final fieldsArg = argumentList.arguments.first;
-      if (fieldsArg is ListLiteral) {
-        for (final element in fieldsArg.elements) {
-          if (element is SimpleIdentifier) {
-            final fieldDefinition = baseFields
-                .firstWhereOrNull((field) => field.fieldName == element.name);
-            if (fieldDefinition != null) {
-              copiedFields.add(fieldDefinition);
-            } else {
-              throw InvalidGenerationSourceError(
-                'Field ${element.name} is not defined in the base schema.',
-              );
-            }
-          } else {
-            throw InvalidGenerationSourceError(
-              'copyFields only accepts field identifiers in the array.',
-            );
-          }
-        }
-      } else {
+    if (argumentList.arguments.isEmpty) {
+      throw InvalidGenerationSourceError(
+        'copyFields requires a list argument.\n'
+        'Usage: .copyFields([field1, field2]) or .copyFields([]) for empty list\n'
+        'Example: .copyFields([id, name, email])',
+      );
+    }
+
+    final fieldsArg = argumentList.arguments.first;
+    if (fieldsArg is! ListLiteral) {
+      throw InvalidGenerationSourceError(
+        'copyFields expects a list of field identifiers.\n'
+        'Correct usage: .copyFields([field1, field2])\n'
+        'Invalid usage: .copyFields(field1) or .copyFields({...})',
+      );
+    }
+
+    if (fieldsArg.elements.isEmpty) {
+      // Return empty list for empty copyFields - this is valid (e.g., conditional field copying)
+      return copiedFields;
+    }
+
+    final availableFields = baseFields.map((f) => f.fieldName).toSet();
+    final invalidFields = <String>[];
+
+    for (final element in fieldsArg.elements) {
+      if (element is! SimpleIdentifier) {
         throw InvalidGenerationSourceError(
-          'copyFields expects a list of field identifiers.',
+          'copyFields only accepts field identifiers in the array.\n'
+          'Invalid element found: ${element.toString()}\n'
+          'Correct usage: .copyFields([fieldName1, fieldName2])\n'
+          'Each element should be a field defined in your schema class.',
         );
       }
+
+      final fieldDefinition = baseFields
+          .firstWhereOrNull((field) => field.fieldName == element.name);
+      if (fieldDefinition != null) {
+        copiedFields.add(fieldDefinition);
+      } else {
+        invalidFields.add(element.name);
+      }
     }
+
+    if (invalidFields.isNotEmpty) {
+      final availableFieldsStr = availableFields.isEmpty 
+          ? 'No fields defined in base schema'
+          : 'Available fields: ${availableFields.join(', ')}';
+      throw InvalidGenerationSourceError(
+        'Invalid field references in copyFields: ${invalidFields.join(', ')}\n'
+        '$availableFieldsStr\n'
+        'Solutions:\n'
+        '- Check field name spelling and case sensitivity\n'
+        '- Ensure fields are defined in your schema class\n'
+        '- Use addFields instead if defining new fields\n'
+        'Example: final ${invalidFields.first} = Field<String>(\'${invalidFields.first}\');',
+      );
+    }
+
     return copiedFields;
   }
 
