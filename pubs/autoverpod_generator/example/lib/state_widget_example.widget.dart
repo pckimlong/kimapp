@@ -5,21 +5,19 @@
 // coverage:ignore-file
 
 import 'package:autoverpod_generator_example/state_widget_example.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kimapp_utils/kimapp_utils.dart';
+import 'package:autoverpod/autoverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:autoverpod/autoverpod.dart';
-import 'dart:core';
+import 'package:kimapp_utils/kimapp_utils.dart';
 
 // ============================================================================
 // AUTOVERPOD GENERATED STATE WIDGET - DO NOT MODIFY BY HAND
 // ============================================================================
 //
-// Generated from: myNameAsyncProvider
-// State type: FutureOr<String>
+// Source: myNameAsyncProvider
 //
 // PUBLIC WIDGETS:
 // - MyNameAsyncScope: Main scope widget for provider access
@@ -264,8 +262,7 @@ class MyNameAsyncSelectWidget<Selected> extends ConsumerWidget {
 // AUTOVERPOD GENERATED STATE WIDGET - DO NOT MODIFY BY HAND
 // ============================================================================
 //
-// Generated from: myNameProvider
-// State type: String
+// Source: myNameProvider
 //
 // PUBLIC WIDGETS:
 // - MyNameScope: Main scope widget for provider access

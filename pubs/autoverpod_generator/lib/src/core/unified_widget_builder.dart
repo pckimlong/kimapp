@@ -73,18 +73,12 @@ class UnifiedWidgetBuilder implements Builder {
     // Get imports from registry
     final imports = Set<String>.from(_registry.getAllRequiredImports());
 
-    // TODO: Improve imports handling later...
     // Add source file's imports to ensure dependencies are available
     final sourceImports = library.element.importedLibraries
         .map((lib) => lib.source.uri.toString())
-        .where((uri) => !uri.startsWith('dart:_'))
+        .where((uri) => _shouldIncludeSourceImport(uri))
         .cast<String>()
         .toSet();
-
-    // Remove some imports
-    sourceImports.removeWhere(
-      (uri) => uri.contains('riverpod_widget') || uri.contains('annotation'),
-    );
 
     // Handle relative imports
     final currentDir = path.dirname(buildStep.inputId.path);
@@ -97,6 +91,10 @@ class UnifiedWidgetBuilder implements Builder {
       return relativePath.startsWith('.') ? relativePath : './$relativePath';
     }).toSet();
 
+    // Combine all imports and filter out unwanted ones
+    final allImports = {...resolvedImports, ...sourceImports};
+    final filteredImports = _filterAndSortImports(allImports, buildStep);
+
     // Create a library with imports and generated code
     final generatedLib = Library((b) {
       b.comments.addAll([
@@ -107,18 +105,80 @@ class UnifiedWidgetBuilder implements Builder {
         "coverage:ignore-file",
       ]);
 
-      // // Import source file
-      b.directives.add(Directive.import(buildStep.inputId.uri.toString()));
+      // Import source file (but not the generated file itself)
+      final sourceFileUri = buildStep.inputId.uri.toString();
+      if (!sourceFileUri.endsWith('.widget.dart')) {
+        b.directives.add(Directive.import(sourceFileUri));
+      }
 
-      // Add all imports, removing duplicates
-      final allImports = {...resolvedImports, ...sourceImports};
-      b.directives.addAll(allImports.map((e) => Directive.import(e)));
+      // Add filtered and sorted imports
+      b.directives.addAll(filteredImports.map((e) => Directive.import(e)));
 
       // Add the generated code
       b.body.add(Code("\n\n$generatedCode"));
     });
 
     return _dartfmt.format(generatedLib.accept(DartEmitter()).toString());
+  }
+
+  /// Filter out unwanted imports and sort them deterministically
+  List<String> _filterAndSortImports(Set<String> imports, BuildStep buildStep) {
+    final outputFileUri = buildStep.inputId.changeExtension('.widget.dart').uri.toString();
+    
+    final filtered = imports.where((uri) {
+      // Remove self-imports (generated file importing itself)
+      if (uri == outputFileUri) return false;
+      
+      // Remove only dart:core (it's automatically available)
+      if (uri == 'dart:core') return false;
+      
+      // Remove private dart: imports
+      if (uri.startsWith('dart:_')) return false;
+      
+      // Remove autoverpod_generator package imports
+      if (uri.contains('autoverpod_generator')) return false;
+      
+      return true;
+    }).toList();
+
+    // Sort imports deterministically for consistent output
+    filtered.sort(_compareImports);
+    
+    return filtered;
+  }
+
+  /// Determine if a source import should be included
+  bool _shouldIncludeSourceImport(String uri) {
+    // Skip private dart imports
+    if (uri.startsWith('dart:_')) return false;
+    
+    // Skip annotation packages (they're not needed in generated code)
+    if (uri.contains('annotation')) return false;
+    
+    // Skip the generator package itself
+    if (uri.contains('autoverpod_generator')) return false;
+    
+    return true;
+  }
+
+  /// Compare imports for deterministic sorting
+  int _compareImports(String a, String b) {
+    // Dart imports first
+    if (a.startsWith('dart:') && !b.startsWith('dart:')) return -1;
+    if (!a.startsWith('dart:') && b.startsWith('dart:')) return 1;
+    
+    // Package imports second
+    if (a.startsWith('package:') && !b.startsWith('package:')) return -1;
+    if (!a.startsWith('package:') && b.startsWith('package:')) return 1;
+    
+    // Relative imports last
+    if (!a.startsWith('dart:') && !a.startsWith('package:') && 
+        (b.startsWith('dart:') || b.startsWith('package:'))) return 1;
+    if ((a.startsWith('dart:') || a.startsWith('package:')) && 
+        !b.startsWith('dart:') && !b.startsWith('package:')) return -1;
+    
+    // Within each category, sort alphabetically
+    return a.compareTo(b);
   }
 
   static final _dartfmt =
