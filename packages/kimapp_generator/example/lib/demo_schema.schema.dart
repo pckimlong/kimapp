@@ -15,6 +15,21 @@ import 'demo_schema.dart';
 part 'demo_schema.schema.freezed.dart';
 part 'demo_schema.schema.g.dart';
 
+/// Helper function to convert an array of fields to a map for use with addFields
+/// Usage: ...fieldMap([field1, field2, field3])
+Map<String, dynamic> fieldMap(List<dynamic> fields) {
+  final result = <String, dynamic>{};
+  for (final field in fields) {
+    // Extract field name from the field object - this assumes fields have a fieldName property
+    // In practice, this would need to be adapted to work with the actual field structure
+    if (field != null) {
+      final fieldName = field.toString().split('(').first.split('.').last;
+      result[fieldName] = field;
+    }
+  }
+  return result;
+}
+
 /// Defines the table structure for Demo.
 /// This class provides constant string values for table and column names,
 /// facilitating type-safe database operations and query building.
@@ -40,11 +55,6 @@ class DemoTable {
   /// Key: `age`
   static const String age = "age";
 
-  /// Column: birthdate
-  /// Data type: `DateTime?`
-  /// Key: `birthdate`
-  static const String birthdate = "birthdate";
-
   /// Column: address
   /// Data type: `String?`
   /// Key: `address`
@@ -65,7 +75,6 @@ abstract class IDemoModel {
   String? get name;
   String? get description;
   int get age;
-  DateTime? get birthdate;
   String? get address;
   OtherModel? get other;
 }
@@ -85,7 +94,6 @@ sealed class DemoModel with _$DemoModel implements BaseDemoSchema, IDemoModel {
   /// - String? name : JsonKey('name')
   /// - String? description : JsonKey('description')
   /// - int age : JsonKey('age')
-  /// - DateTime? birthdate : JsonKey('birthdate')
   /// - String? address : JsonKey('address')
   /// - OtherModel? other : JsonKey('other')
   @TableModel(DemoModel.tableName)
@@ -94,7 +102,6 @@ sealed class DemoModel with _$DemoModel implements BaseDemoSchema, IDemoModel {
     @JsonKey(name: DemoModel.nameKey) required String? name,
     @JsonKey(name: DemoModel.descriptionKey) required String? description,
     @JsonKey(name: DemoModel.ageKey) required int age,
-    @JsonKey(name: DemoModel.birthdateKey) required DateTime? birthdate,
     @JsonKey(name: DemoModel.addressKey) required String? address,
     @JoinedColumn(foreignKey: "other_id", candidateKey: null)
     @JsonKey(name: DemoModel.otherKey)
@@ -119,9 +126,6 @@ sealed class DemoModel with _$DemoModel implements BaseDemoSchema, IDemoModel {
 
   /// Field name for age field with JsonKey('age')
   static const String ageKey = "age";
-
-  /// Field name for birthdate field with JsonKey('birthdate')
-  static const String birthdateKey = "birthdate";
 
   /// Field name for address field with JsonKey('address')
   static const String addressKey = "address";
@@ -149,7 +153,6 @@ sealed class DemoDetailModel
   /// - String? name : JsonKey('name')
   /// - String? description : JsonKey('description')
   /// - int age : JsonKey('age')
-  /// - DateTime? birthdate : JsonKey('birthdate')
   /// - String? address : JsonKey('address')
   /// - OtherModel? other : JsonKey('other')
   @TableModel(DemoDetailModel.tableName)
@@ -158,7 +161,6 @@ sealed class DemoDetailModel
     @JsonKey(name: DemoDetailModel.nameKey) required String? name,
     @JsonKey(name: DemoDetailModel.descriptionKey) required String? description,
     @JsonKey(name: DemoDetailModel.ageKey) required int age,
-    @JsonKey(name: DemoDetailModel.birthdateKey) required DateTime? birthdate,
     @JsonKey(name: DemoDetailModel.addressKey) required String? address,
     @JoinedColumn(foreignKey: "other_id", candidateKey: null)
     @JsonKey(name: DemoDetailModel.otherKey)
@@ -184,9 +186,6 @@ sealed class DemoDetailModel
   /// Field name for age field with JsonKey('age')
   static const String ageKey = "age";
 
-  /// Field name for birthdate field with JsonKey('birthdate')
-  static const String birthdateKey = "birthdate";
-
   /// Field name for address field with JsonKey('address')
   static const String addressKey = "address";
 
@@ -200,7 +199,6 @@ sealed class DemoDetailModel
       name: name,
       description: description,
       age: age,
-      birthdate: birthdate,
       address: address,
       other: other,
     );
@@ -221,14 +219,12 @@ sealed class DemoLiteModel with _$DemoLiteModel implements BaseDemoSchema {
   /// Fields:
   /// - String? name : JsonKey('name')
   /// - int age : JsonKey('age')
-  /// - DateTime? birthdate : JsonKey('birthdate')
   /// - String? address : JsonKey('address')
   /// - OtherModel? other : JsonKey('other')
   @JsonSerializable(explicitToJson: true)
   const factory DemoLiteModel({
     @JsonKey(name: DemoLiteModel.nameKey) required String? name,
     @JsonKey(name: DemoLiteModel.ageKey) required int age,
-    @JsonKey(name: DemoLiteModel.birthdateKey) required DateTime? birthdate,
     @JsonKey(name: DemoLiteModel.addressKey) required String? address,
     @JoinedColumn(foreignKey: "other_id", candidateKey: null)
     @JsonKey(name: DemoLiteModel.otherKey)
@@ -244,9 +240,6 @@ sealed class DemoLiteModel with _$DemoLiteModel implements BaseDemoSchema {
 
   /// Field name for age field with JsonKey('age')
   static const String ageKey = "age";
-
-  /// Field name for birthdate field with JsonKey('birthdate')
-  static const String birthdateKey = "birthdate";
 
   /// Field name for address field with JsonKey('address')
   static const String addressKey = "address";

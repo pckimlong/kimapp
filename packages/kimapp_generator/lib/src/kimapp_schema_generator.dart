@@ -37,8 +37,7 @@ class KimappSchemaGenerator extends Generator {
     final classElement = schema.element as ClassElement;
 
     final fields = await _getFields(buildStep, classElement);
-    final models =
-        await _getModels(buildStep, classElement, fields, schemaMetaData);
+    final models = await _getModels(buildStep, classElement, fields, schemaMetaData);
 
     // Generate Table class
     buffer.writeln(_generateTableClass(schemaMetaData, fields));
@@ -73,8 +72,7 @@ class KimappSchemaGenerator extends Generator {
 
     final classElement = schema.element as ClassElement;
 
-    if (!classElement.allSupertypes
-        .any((type) => type.element.name == 'KimappSchema')) {
+    if (!classElement.allSupertypes.any((type) => type.element.name == 'KimappSchema')) {
       throw InvalidGenerationSourceError(
         'The class ${classElement.displayName} must extend KimappSchema.',
         element: classElement,
@@ -82,12 +80,10 @@ class KimappSchemaGenerator extends Generator {
     }
   }
 
-  void _writeFileHeader(
-      StringBuffer buffer, LibraryReader library, BuildStep buildStep) {
+  void _writeFileHeader(StringBuffer buffer, LibraryReader library, BuildStep buildStep) {
     buffer.writeln(
         "// ignore_for_file: invalid_annotation_target, unused_import, require_trailing_commas");
-    buffer.writeln(
-        "import 'package:freezed_annotation/freezed_annotation.dart';");
+    buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';");
     buffer.writeln("import 'package:kimapp/kimapp.dart';");
     buffer.writeln();
 
@@ -105,7 +101,7 @@ class KimappSchemaGenerator extends Generator {
     buffer.writeln("part '${basename}.schema.freezed.dart';");
     buffer.writeln("part '${basename}.schema.g.dart';");
     buffer.writeln();
-    
+
     // Generate fieldMap helper function
     buffer.writeln(_generateFieldMapHelper());
     buffer.writeln();
@@ -133,8 +129,7 @@ class KimappSchemaGenerator extends Generator {
   Future<LibraryElement> _getLatestLibraryElement(
       BuildStep buildStep, LibraryElement libraryElement) async {
     final resolver = buildStep.resolver;
-    return await resolver
-        .libraryFor(await resolver.assetIdForElement(libraryElement));
+    return await resolver.libraryFor(await resolver.assetIdForElement(libraryElement));
   }
 
   String _extractTypeString(TypeArgumentList? typeArguments) {
@@ -157,8 +152,7 @@ class KimappSchemaGenerator extends Generator {
     if (modelsGetter == null) return [];
 
     // Get the latest library element
-    final latestLibraryElement =
-        await _getLatestLibraryElement(buildStep, element.library);
+    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library);
 
     // Use the latest library element to get the session
     final session = latestLibraryElement.session;
@@ -187,11 +181,9 @@ class KimappSchemaGenerator extends Generator {
     for (final element in listExpression.elements) {
       _ModelDefinition? modelDefinition;
       if (element is MethodInvocation) {
-        modelDefinition =
-            _parseModelDefinition(element, baseFields, schemaMetaData);
+        modelDefinition = _parseModelDefinition(element, baseFields, schemaMetaData);
       } else if (element is CascadeExpression) {
-        modelDefinition =
-            _parseCascadeModelDefinition(element, baseFields, schemaMetaData);
+        modelDefinition = _parseCascadeModelDefinition(element, baseFields, schemaMetaData);
       }
 
       if (modelDefinition != null) {
@@ -199,73 +191,7 @@ class KimappSchemaGenerator extends Generator {
       }
     }
 
-    // Validate for duplicate model names
-    _validateModels(models, schemaMetaData);
-
     return models;
-  }
-
-  void _validateModels(List<_ModelDefinition> models, _SchemaMetaData schemaMetaData) {
-    // Check for duplicate model names
-    final modelNames = <String>{};
-    final duplicateNames = <String>[];
-    
-    for (final model in models) {
-      if (modelNames.contains(model.modelName)) {
-        duplicateNames.add(model.modelName);
-      } else {
-        modelNames.add(model.modelName);
-      }
-    }
-    
-    if (duplicateNames.isNotEmpty) {
-      throw InvalidGenerationSourceError(
-        'Duplicate model names found in schema \'${schemaMetaData.className}\': ${duplicateNames.join(', ')}\n'
-        'Each model must have a unique name.\n'
-        'Solutions:\n'
-        '- Use different model names (e.g., \'UserDetailModel\', \'UserLiteModel\')\n'
-        '- Remove duplicate Model() declarations\n'
-        '- Check your models getter for repeated model definitions',
-      );
-    }
-
-    // Check for conflicts with base model name
-    final baseModelName = schemaMetaData.baseModelName;
-    final conflictingModels = models.where((m) => m.modelName == baseModelName).toList();
-    if (conflictingModels.isNotEmpty) {
-      throw InvalidGenerationSourceError(
-        'Model name conflict: \'$baseModelName\' is reserved for the base model in schema \'${schemaMetaData.className}\'.\n'
-        'The following models have conflicting names: ${conflictingModels.map((m) => m.modelName).join(', ')}\n'
-        'Solutions:\n'
-        '- Use different model names\n'
-        '- Change the baseModelName in your @Schema annotation\n'
-        '- Remove the conflicting model definitions',
-      );
-    }
-
-    // Validate table names for conflicts
-    final tableModels = models.where((m) => m.enableTable).toList();
-    final tableNames = <String, List<String>>{};
-    
-    for (final model in tableModels) {
-      final tableName = model.tableName ?? schemaMetaData.tableName;
-      tableNames.putIfAbsent(tableName, () => []).add(model.modelName);
-    }
-    
-    final conflictingTables = tableNames.entries.where((entry) => entry.value.length > 1).toList();
-    if (conflictingTables.isNotEmpty) {
-      final conflicts = conflictingTables
-          .map((entry) => '\'${entry.key}\' used by: ${entry.value.join(', ')}')
-          .join('\n');
-      throw InvalidGenerationSourceError(
-        'Table name conflicts found in schema \'${schemaMetaData.className}\':\n$conflicts\n'
-        'Multiple models cannot use the same table name.\n'
-        'Solutions:\n'
-        '- Use different table names: .table(\'unique_table_name\')\n'
-        '- Remove .table() from some models to disable table mode\n'
-        '- Use different model names if sharing tables is intended',
-      );
-    }
   }
 
   _ModelDefinition? _parseModelDefinition(
@@ -407,94 +333,22 @@ class KimappSchemaGenerator extends Generator {
     required List<_FieldDefinition> addedFields,
     required List<_FieldDefinition> baseFields,
   }) {
-    // Validate model name
-    if (modelName == null || modelName.trim().isEmpty) {
-      throw InvalidGenerationSourceError(
-        'Model name cannot be empty. Please provide a valid model name using Model(\'YourModelName\').',
-      );
-    }
-
     final fields = <String, _FieldDefinition>{};
-    final duplicateCheckMap = <String, String>{}; // fieldName -> source
 
-    // Add inherited fields first
     if (inheritAllFromBase) {
       for (final field in baseFields.where((e) => e is! _IgnoreField)) {
         if (!exceptedFieldNames.contains(field.fieldName)) {
           fields[field.fieldName] = field;
-          duplicateCheckMap[field.fieldName] = 'inherited from base';
         }
       }
     }
 
-    // Add additional fields with duplicate checking
     for (final field in addedFields) {
-      final fieldName = field.fieldName;
-      
-      // Check for duplicate field names
-      if (duplicateCheckMap.containsKey(fieldName)) {
-        final existingSource = duplicateCheckMap[fieldName]!;
-        final newSource = 'addFields/copyFields';
-        throw InvalidGenerationSourceError(
-          'Duplicate field name \'$fieldName\' found in model \'$modelName\'.\n'
-          'Field \'$fieldName\' is already defined from: $existingSource\n'
-          'Cannot redefine the same field name from: $newSource\n'
-          'Solutions:\n'
-          '- Use a different field name in your addFields map (e.g., \'${fieldName}2\': $fieldName)\n'
-          '- Remove the field from inheritAllFromBase using excepts parameter\n'
-          '- Use a different field reference in copyFields',
-        );
-      }
-
-      // Check for type conflicts with existing fields
-      if (fields.containsKey(fieldName)) {
-        final existingField = fields[fieldName]!;
-        final existingType = existingField.runtimeType;
-        final newType = field.runtimeType;
-        
-        if (existingType != newType) {
-          throw InvalidGenerationSourceError(
-            'Field type conflict for \'$fieldName\' in model \'$modelName\'.\n'
-            'Existing field type: ${existingType.toString().replaceFirst('_', '')}\n'
-            'New field type: ${newType.toString().replaceFirst('_', '')}\n'
-            'Cannot mix different field types for the same field name.',
-          );
-        }
-      }
-
-      fields[fieldName] = field;
-      duplicateCheckMap[fieldName] = 'addFields/copyFields';
+      fields[field.fieldName] = field;
     }
-
-    // Validate ID fields - only one ID field per model
-    final idFields = fields.values.whereType<_IdField>().toList();
-    if (idFields.length > 1) {
-      final idFieldNames = idFields.map((f) => f.fieldName).join(', ');
-      throw InvalidGenerationSourceError(
-        'Multiple ID fields found in model \'$modelName\': $idFieldNames\n'
-        'Each model can only have one ID field.\n'
-        'Solutions:\n'
-        '- Keep only one ID field\n'
-        '- Convert extra ID fields to normal fields using Field<YourType>(\'field_name\')\n'
-        '- Use excepts parameter in inheritAllFromBase to exclude unwanted ID fields',
-      );
-    }
-
-    // Validate table configuration
-    if (tableEnable && tableName != null && tableName.trim().isEmpty) {
-      throw InvalidGenerationSourceError(
-        'Table name cannot be empty when table mode is enabled in model \'$modelName\'.\n'
-        'Solutions:\n'
-        '- Use .table() without parameters to use the default table name\n'
-        '- Provide a valid table name: .table(\'your_table_name\')\n'
-        '- Remove .table() if table mode is not needed',
-      );
-    }
-
-    // Note: Empty models are allowed (useful for parameter objects, placeholder models, etc.)
 
     return _ModelDefinition(
-      modelName: modelName,
+      modelName: modelName ?? '',
       enableTable: tableEnable,
       tableName: tableName,
       inheritedAllFromBase: inheritAllFromBase,
@@ -517,13 +371,11 @@ class KimappSchemaGenerator extends Generator {
     final exceptsList = <String>[];
     if (argumentList.arguments.isNotEmpty) {
       final exceptsArg = argumentList.arguments.first;
-      if (exceptsArg is NamedExpression &&
-          exceptsArg.name.label.name == 'excepts') {
+      if (exceptsArg is NamedExpression && exceptsArg.name.label.name == 'excepts') {
         final exceptsExpression = exceptsArg.expression;
         if (exceptsExpression is ListLiteral) {
-          exceptsList.addAll(exceptsExpression.elements
-              .whereType<SimpleIdentifier>()
-              .map((e) => e.name));
+          exceptsList
+              .addAll(exceptsExpression.elements.whereType<SimpleIdentifier>().map((e) => e.name));
         }
       }
     }
@@ -542,8 +394,8 @@ class KimappSchemaGenerator extends Generator {
             final fieldValue = entry.value;
 
             if (fieldValue is SimpleIdentifier) {
-              final fieldDefinition = baseFields
-                  .firstWhereOrNull((e) => e.fieldName == fieldValue.name);
+              final fieldDefinition =
+                  baseFields.firstWhereOrNull((e) => e.fieldName == fieldValue.name);
               if (fieldDefinition != null) {
                 // Create a new field definition with the map key as the field name
                 // but preserve all other properties from the original field
@@ -606,8 +458,7 @@ class KimappSchemaGenerator extends Generator {
             }
 
             try {
-              final fieldDefination =
-                  _parseFieldDefinition(fieldName, fieldValue);
+              final fieldDefination = _parseFieldDefinition(fieldName, fieldValue);
               addedFields.add(fieldDefination);
             } catch (e) {
               throw InvalidGenerationSourceError(
@@ -624,84 +475,47 @@ class KimappSchemaGenerator extends Generator {
   List<_FieldDefinition> _extractCopyFields(
       ArgumentList argumentList, List<_FieldDefinition> baseFields) {
     final copiedFields = <_FieldDefinition>[];
-    if (argumentList.arguments.isEmpty) {
-      throw InvalidGenerationSourceError(
-        'copyFields requires a list argument.\n'
-        'Usage: .copyFields([field1, field2]) or .copyFields([]) for empty list\n'
-        'Example: .copyFields([id, name, email])',
-      );
-    }
-
-    final fieldsArg = argumentList.arguments.first;
-    if (fieldsArg is! ListLiteral) {
-      throw InvalidGenerationSourceError(
-        'copyFields expects a list of field identifiers.\n'
-        'Correct usage: .copyFields([field1, field2])\n'
-        'Invalid usage: .copyFields(field1) or .copyFields({...})',
-      );
-    }
-
-    if (fieldsArg.elements.isEmpty) {
-      // Return empty list for empty copyFields - this is valid (e.g., conditional field copying)
-      return copiedFields;
-    }
-
-    final availableFields = baseFields.map((f) => f.fieldName).toSet();
-    final invalidFields = <String>[];
-
-    for (final element in fieldsArg.elements) {
-      if (element is! SimpleIdentifier) {
+    if (argumentList.arguments.isNotEmpty) {
+      final fieldsArg = argumentList.arguments.first;
+      if (fieldsArg is ListLiteral) {
+        for (final element in fieldsArg.elements) {
+          if (element is SimpleIdentifier) {
+            final fieldDefinition =
+                baseFields.firstWhereOrNull((field) => field.fieldName == element.name);
+            if (fieldDefinition != null) {
+              copiedFields.add(fieldDefinition);
+            } else {
+              throw InvalidGenerationSourceError(
+                'Field ${element.name} is not defined in the base schema.',
+              );
+            }
+          } else {
+            throw InvalidGenerationSourceError(
+              'copyFields only accepts field identifiers in the array.',
+            );
+          }
+        }
+      } else {
         throw InvalidGenerationSourceError(
-          'copyFields only accepts field identifiers in the array.\n'
-          'Invalid element found: ${element.toString()}\n'
-          'Correct usage: .copyFields([fieldName1, fieldName2])\n'
-          'Each element should be a field defined in your schema class.',
+          'copyFields expects a list of field identifiers.',
         );
       }
-
-      final fieldDefinition = baseFields
-          .firstWhereOrNull((field) => field.fieldName == element.name);
-      if (fieldDefinition != null) {
-        copiedFields.add(fieldDefinition);
-      } else {
-        invalidFields.add(element.name);
-      }
     }
-
-    if (invalidFields.isNotEmpty) {
-      final availableFieldsStr = availableFields.isEmpty 
-          ? 'No fields defined in base schema'
-          : 'Available fields: ${availableFields.join(', ')}';
-      throw InvalidGenerationSourceError(
-        'Invalid field references in copyFields: ${invalidFields.join(', ')}\n'
-        '$availableFieldsStr\n'
-        'Solutions:\n'
-        '- Check field name spelling and case sensitivity\n'
-        '- Ensure fields are defined in your schema class\n'
-        '- Use addFields instead if defining new fields\n'
-        'Example: final ${invalidFields.first} = Field<String>(\'${invalidFields.first}\');',
-      );
-    }
-
     return copiedFields;
   }
 
-  Future<List<_FieldDefinition>> _getFields(
-      BuildStep buildStep, ClassElement element) async {
+  Future<List<_FieldDefinition>> _getFields(BuildStep buildStep, ClassElement element) async {
     final fields = <_FieldDefinition>[];
     final expressions = <String, Expression>{};
 
-    final latestLibraryElement =
-        await _getLatestLibraryElement(buildStep, element.library);
+    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library);
 
     // Helper function to check if a property is the 'models' property
     bool isModelProperty(String name) => name == 'models';
 
     // Process getters and fields
     for (var member in [...element.accessors, ...element.fields]) {
-      if ((member is PropertyAccessorElement &&
-              member.isGetter &&
-              !member.isStatic) ||
+      if ((member is PropertyAccessorElement && member.isGetter && !member.isStatic) ||
           (member is FieldElement && !member.isStatic)) {
         if (!isModelProperty(member.name!)) {
           final session = latestLibraryElement.session;
@@ -709,11 +523,9 @@ class KimappSchemaGenerator extends Generator {
           if (result is ParsedLibraryResult) {
             final node = result.getElementDeclaration(member)?.node;
             Expression? expression;
-            if (node is MethodDeclaration &&
-                node.body is ExpressionFunctionBody) {
+            if (node is MethodDeclaration && node.body is ExpressionFunctionBody) {
               expression = (node.body as ExpressionFunctionBody).expression;
-            } else if (node is VariableDeclaration &&
-                node.initializer != null) {
+            } else if (node is VariableDeclaration && node.initializer != null) {
               expression = node.initializer!;
             }
             if (expression != null) {
@@ -786,14 +598,12 @@ class KimappSchemaGenerator extends Generator {
       }
     } else if (expression is InstanceCreationExpression) {
       jsonKey = _extractStringArgument(expression.argumentList);
-      fieldType = _FieldType.fromString(
-          _extractTypeString(expression.constructorName.type.typeArguments));
+      fieldType =
+          _FieldType.fromString(_extractTypeString(expression.constructorName.type.typeArguments));
     }
 
     // If it's a join field and no jsonKey was set, use the foreignKey as the jsonKey
-    if (fieldType == _FieldType.join &&
-        jsonKey == null &&
-        joinFieldForeignKey != null) {
+    if (fieldType == _FieldType.join && jsonKey == null && joinFieldForeignKey != null) {
       jsonKey = joinFieldForeignKey;
     }
 
@@ -933,9 +743,7 @@ class _FieldDefinition {
   final String? jsonKey;
 
   bool get isNumber =>
-      dataType.contains('int') ||
-      dataType.contains('double') ||
-      dataType.contains('num');
+      dataType.contains('int') || dataType.contains('double') || dataType.contains('num');
   bool get isString => dataType.contains('String');
 
   @override
@@ -1040,17 +848,12 @@ enum _FieldType {
 }
 
 class _SchemaMetaData {
-  _SchemaMetaData(
-      {required this.tableName,
-      required this.className,
-      required this.baseModelName});
+  _SchemaMetaData({required this.tableName, required this.className, required this.baseModelName});
 
   factory _SchemaMetaData.fromAnnotation(ConstantReader annotation) {
     final tableName = annotation.read('tableName').stringValue;
-    final className =
-        annotation.peek('className')?.stringValue ?? tableName.pascalCase;
-    final baseModelName = annotation.peek('baseModelName')?.stringValue ??
-        '${className}BaseModel';
+    final className = annotation.peek('className')?.stringValue ?? tableName.pascalCase;
+    final baseModelName = annotation.peek('baseModelName')?.stringValue ?? '${className}BaseModel';
 
     return _SchemaMetaData(
       tableName: tableName,
@@ -1064,24 +867,19 @@ class _SchemaMetaData {
   final String tableName;
 }
 
-String _generateTableClass(
-    _SchemaMetaData schema, List<_FieldDefinition> fields) {
+String _generateTableClass(_SchemaMetaData schema, List<_FieldDefinition> fields) {
   final buffer = StringBuffer();
   final className = schema.className;
   final tableName = schema.tableName;
 
   buffer.writeln("/// Defines the table structure for $className.");
-  buffer.writeln(
-      "/// This class provides constant string values for table and column names,");
-  buffer.writeln(
-      "/// facilitating type-safe database operations and query building.");
+  buffer.writeln("/// This class provides constant string values for table and column names,");
+  buffer.writeln("/// facilitating type-safe database operations and query building.");
   buffer.writeln("class ${className}Table {");
   buffer.writeln("  const ${className}Table._();");
   buffer.writeln();
-  buffer
-      .writeln('  /// The name of the database table for $className entities.');
-  buffer.writeln(
-      '  /// Use this constant for constructing SQL queries to ensure consistency.');
+  buffer.writeln('  /// The name of the database table for $className entities.');
+  buffer.writeln('  /// Use this constant for constructing SQL queries to ensure consistency.');
   buffer.writeln('  static const String table = "${tableName.toLowerCase()}";');
   buffer.writeln();
 
@@ -1100,8 +898,7 @@ String _generateTableClass(
     buffer.writeln('  /// Column: $columnName');
 
     if (field is _IdField) {
-      buffer.writeln(
-          '  /// This is the primary key column for the $className table.');
+      buffer.writeln('  /// This is the primary key column for the $className table.');
       buffer.writeln('  /// Data type: `${field.dataType}`');
     } else if (field is _IgnoreField) {
       buffer.writeln('  /// This column is ignored for base class generator.');
@@ -1126,8 +923,7 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
   final idClassName = idField.generateIdClassNameAs ?? '${schema.className}Id';
   final buffer = StringBuffer();
 
-  buffer.writeln(
-      '/// Represents the unique identifier for a ${schema.className}.');
+  buffer.writeln('/// Represents the unique identifier for a ${schema.className}.');
   buffer.writeln(
       '/// This class wraps the `${idField.dataType}` value, providing type safety and encapsulation.');
   buffer.writeln('class $idClassName extends Identity<${idField.dataType}> {');
@@ -1136,8 +932,7 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
   buffer.writeln('  @override');
   buffer.writeln('  final ${idField.dataType} value;');
   buffer.writeln();
-  buffer
-      .writeln('  /// Creates an instance of $idClassName from a JSON value.');
+  buffer.writeln('  /// Creates an instance of $idClassName from a JSON value.');
   buffer.writeln('  /// Accepts ${idField.dataType} representations.');
   buffer.writeln(
       '  /// Throws ArgumentError if the value is null or not of type ${idField.dataType}.');
@@ -1152,10 +947,8 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
   buffer.writeln('    }');
   buffer.writeln('  }');
   buffer.writeln();
-  buffer.writeln(
-      '  /// Creates an instance of $idClassName from a ${idField.dataType} value.');
-  buffer
-      .writeln('  factory $idClassName.fromValue(${idField.dataType} value) {');
+  buffer.writeln('  /// Creates an instance of $idClassName from a ${idField.dataType} value.');
+  buffer.writeln('  factory $idClassName.fromValue(${idField.dataType} value) {');
   buffer.writeln('    return $idClassName._(value);');
   buffer.writeln('  }');
   buffer.writeln();
@@ -1164,14 +957,12 @@ String _generateIdClass(_IdField idField, _SchemaMetaData schema) {
   if (idField.isNumber || idField.isString) {
     final emptyValue = idField.isNumber ? -1 : '""';
 
-    buffer.writeln(
-        '  /// Creates an instance of $idClassName with a value of $emptyValue.');
+    buffer.writeln('  /// Creates an instance of $idClassName with a value of $emptyValue.');
     buffer.writeln(
         '  /// This is used to represent an empty or invalid $idClassName for placeholder or default values of form fields.');
     buffer.writeln(
         '  /// WARNING: This is not a valid $idClassName access it value through [value] or [call] will throw an error.');
-    buffer.writeln(
-        '  factory $idClassName.empty() => $idClassName._($emptyValue);');
+    buffer.writeln('  factory $idClassName.empty() => $idClassName._($emptyValue);');
   }
 
   buffer.writeln('}');
@@ -1194,8 +985,7 @@ String _baseModelBaseClassName(_SchemaMetaData schemaMetaData) {
   return 'I${schemaMetaData.className}Model';
 }
 
-String _generateModelBaseClass(
-    _SchemaMetaData schemaMetaData, List<_FieldDefinition> allFields) {
+String _generateModelBaseClass(_SchemaMetaData schemaMetaData, List<_FieldDefinition> allFields) {
   final buffer = StringBuffer();
 
   buffer.writeln(
@@ -1212,15 +1002,13 @@ String _generateModelBaseClass(
   return buffer.toString();
 }
 
-String _generateBaseModelClass(
-    _SchemaMetaData schema, List<_FieldDefinition> allFields) {
+String _generateBaseModelClass(_SchemaMetaData schema, List<_FieldDefinition> allFields) {
   final buffer = StringBuffer();
   final baseModelName = schema.baseModelName;
   final tableName = schema.tableName;
 
   final fields = allFields.where((field) => field is! _IgnoreField).toList();
-  final idField =
-      fields.firstWhereOrNull((field) => field is _IdField) as _IdField?;
+  final idField = fields.firstWhereOrNull((field) => field is _IdField) as _IdField?;
 
   final baseClass = _baseSchemaBaseClassName(schema);
 
@@ -1234,8 +1022,7 @@ String _generateBaseModelClass(
   // Generate constructor comment
   buffer.writeln('  /// Constructor for $baseModelName.');
   buffer.writeln('  /// ');
-  buffer.writeln(
-      '  /// This class was generated by the Kimapp generator based on KimappSchema.');
+  buffer.writeln('  /// This class was generated by the Kimapp generator based on KimappSchema.');
   buffer.writeln('  /// ');
   buffer.writeln('  /// Table Mode: `enabled` (`$tableName`)');
   buffer.writeln('  /// ');
@@ -1282,8 +1069,7 @@ String _generateBaseModelClass(
 
   buffer.writeln(') = _$baseModelName;');
   buffer.writeln();
-  buffer
-      .writeln('  /// Creates an instance of $baseModelName from a JSON map.');
+  buffer.writeln('  /// Creates an instance of $baseModelName from a JSON map.');
   buffer.writeln(
       '  factory $baseModelName.fromJson(Map<String, dynamic> json) => _\$${baseModelName}FromJson(json);');
   buffer.writeln();
@@ -1299,14 +1085,13 @@ String _generateBaseModelClass(
   return buffer.toString();
 }
 
-String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema,
-    List<_FieldDefinition> baseFields) {
+String _generateModelClass(
+    _ModelDefinition model, _SchemaMetaData schema, List<_FieldDefinition> baseFields) {
   final buffer = StringBuffer();
 
   final baseClass = _baseSchemaBaseClassName(schema);
 
-  buffer.writeln(
-      '/// Represents the ${model.modelName} model. generated by kimapp_generator');
+  buffer.writeln('/// Represents the ${model.modelName} model. generated by kimapp_generator');
   buffer.writeln('@freezed');
   final additionalImplements =
       model.inheritedAllFromBase && model.exceptedInheritedFieldNames.isEmpty
@@ -1320,14 +1105,11 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema,
 
   buffer.writeln('  /// Constructor for ${model.modelName}.');
   buffer.writeln('  /// ');
-  buffer.writeln(
-      '  /// This class was generated by the Kimapp generator based on KimappSchema.');
+  buffer.writeln('  /// This class was generated by the Kimapp generator based on KimappSchema.');
   buffer.writeln('  /// ');
-  buffer.writeln(
-      '  /// Table Mode: `${model.enableTable ? 'enabled' : 'disabled'}`');
+  buffer.writeln('  /// Table Mode: `${model.enableTable ? 'enabled' : 'disabled'}`');
   if (model.enableTable) {
-    buffer
-        .writeln('  /// Table Name: `${model.tableName ?? schema.tableName}`');
+    buffer.writeln('  /// Table Name: `${model.tableName ?? schema.tableName}`');
   }
   buffer.writeln('  /// ');
   buffer.writeln('  /// Fields:');
@@ -1375,21 +1157,17 @@ String _generateModelClass(_ModelDefinition model, _SchemaMetaData schema,
 
   buffer.writeln(' = _${model.modelName};');
   buffer.writeln();
-  buffer.writeln(
-      '  /// Creates an instance of ${model.modelName} from a JSON map.');
+  buffer.writeln('  /// Creates an instance of ${model.modelName} from a JSON map.');
   buffer.writeln(
       '  factory ${model.modelName}.fromJson(Map<String, dynamic> json) => _\$${model.modelName}FromJson(json);');
 
   if (model.enableTable) {
     buffer.writeln();
     buffer.writeln('  /// Supabase table configuration for this model.');
-    buffer.writeln(
-        '  static const TableBuilder table = _table${model.modelName};');
+    buffer.writeln('  static const TableBuilder table = _table${model.modelName};');
     buffer.writeln();
-    buffer
-        .writeln('  /// Table name: `${model.tableName ?? schema.tableName}`');
-    buffer.writeln(
-        '  static const String tableName = "${model.tableName ?? schema.tableName}";');
+    buffer.writeln('  /// Table name: `${model.tableName ?? schema.tableName}`');
+    buffer.writeln('  static const String tableName = "${model.tableName ?? schema.tableName}";');
     buffer.writeln();
   }
 
@@ -1419,14 +1197,12 @@ String _generateModelStaticJsonKeys(List<_FieldDefinition> fields) {
   final buffer = StringBuffer();
   for (final field in fields) {
     final key = field.jsonKey;
-    buffer.writeln(
-        '  /// Field name for ${field.fieldName} field with JsonKey(\'$key\')');
+    buffer.writeln('  /// Field name for ${field.fieldName} field with JsonKey(\'$key\')');
     if (field is _JoinField) {
       buffer.writeln(
           '  /// This is json key for joined field. with foreign key: ${field.joinFieldForeignKey} and candidate key: ${field.joinFieldCandidateKey}');
     }
-    buffer.writeln(
-        '  static const String ${field.fieldName.camelCase}Key = "$key";');
+    buffer.writeln('  static const String ${field.fieldName.camelCase}Key = "$key";');
   }
   return buffer.toString();
 }

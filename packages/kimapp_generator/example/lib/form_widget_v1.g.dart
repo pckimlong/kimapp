@@ -282,10 +282,8 @@ class FormWidgetExampleNameFieldWidget extends HookConsumerWidget {
     assert(_debugCheckHasFormWidgetExampleFormWidget(context));
 
     final notifier = ref.watch(formWidgetExampleProvider.notifier);
-    // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
     final state =
         ref.watch(formWidgetExampleProvider.select((value) => value.name));
-
     final controller = this.controller ?? useTextEditingController(text: state);
 
     // Listen for provider changes

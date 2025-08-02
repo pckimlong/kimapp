@@ -10,9 +10,6 @@ _DemoModel _$DemoModelFromJson(Map<String, dynamic> json) => _DemoModel(
       name: json['name'] as String?,
       description: json['description'] as String?,
       age: (json['age'] as num).toInt(),
-      birthdate: json['birthdate'] == null
-          ? null
-          : DateTime.parse(json['birthdate'] as String),
       address: json['address'] as String?,
       other: json['other'] == null
           ? null
@@ -24,7 +21,6 @@ Map<String, dynamic> _$DemoModelToJson(_DemoModel instance) =>
       'name': instance.name,
       'description': instance.description,
       'age': instance.age,
-      'birthdate': instance.birthdate?.toIso8601String(),
       'address': instance.address,
       'other': instance.other?.toJson(),
     };
@@ -34,9 +30,6 @@ _DemoDetailModel _$DemoDetailModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       description: json['description'] as String?,
       age: (json['age'] as num).toInt(),
-      birthdate: json['birthdate'] == null
-          ? null
-          : DateTime.parse(json['birthdate'] as String),
       address: json['address'] as String?,
       other: json['other'] == null
           ? null
@@ -48,7 +41,6 @@ Map<String, dynamic> _$DemoDetailModelToJson(_DemoDetailModel instance) =>
       'name': instance.name,
       'description': instance.description,
       'age': instance.age,
-      'birthdate': instance.birthdate?.toIso8601String(),
       'address': instance.address,
       'other': instance.other?.toJson(),
     };
@@ -57,9 +49,6 @@ _DemoLiteModel _$DemoLiteModelFromJson(Map<String, dynamic> json) =>
     _DemoLiteModel(
       name: json['name'] as String?,
       age: (json['age'] as num).toInt(),
-      birthdate: json['birthdate'] == null
-          ? null
-          : DateTime.parse(json['birthdate'] as String),
       address: json['address'] as String?,
       other: json['other'] == null
           ? null
@@ -70,7 +59,6 @@ Map<String, dynamic> _$DemoLiteModelToJson(_DemoLiteModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'age': instance.age,
-      'birthdate': instance.birthdate?.toIso8601String(),
       'address': instance.address,
       'other': instance.other?.toJson(),
     };
@@ -85,7 +73,6 @@ const _tableDemoModel = TableBuilder(
     ColumnBuilder('name'),
     ColumnBuilder('description'),
     ColumnBuilder('age'),
-    ColumnBuilder('birthdate'),
     ColumnBuilder('address'),
     ColumnBuilder.join(OtherModel.table,
         key: "other", candidateKey: null, foreignKey: 'other_id'),
@@ -98,7 +85,6 @@ const _tableDemoDetailModel = TableBuilder(
     ColumnBuilder('name'),
     ColumnBuilder('description'),
     ColumnBuilder('age'),
-    ColumnBuilder('birthdate'),
     ColumnBuilder('address'),
     ColumnBuilder.join(OtherModel.table,
         key: "other", candidateKey: null, foreignKey: 'other_id'),

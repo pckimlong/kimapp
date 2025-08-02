@@ -14,6 +14,21 @@ import 'other_schema.dart';
 part 'other_schema.schema.freezed.dart';
 part 'other_schema.schema.g.dart';
 
+/// Helper function to convert an array of fields to a map for use with addFields
+/// Usage: ...fieldMap([field1, field2, field3])
+Map<String, dynamic> fieldMap(List<dynamic> fields) {
+  final result = <String, dynamic>{};
+  for (final field in fields) {
+    // Extract field name from the field object - this assumes fields have a fieldName property
+    // In practice, this would need to be adapted to work with the actual field structure
+    if (field != null) {
+      final fieldName = field.toString().split('(').first.split('.').last;
+      result[fieldName] = field;
+    }
+  }
+  return result;
+}
+
 /// Defines the table structure for Other.
 /// This class provides constant string values for table and column names,
 /// facilitating type-safe database operations and query building.

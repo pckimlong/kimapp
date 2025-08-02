@@ -21,8 +21,6 @@ mixin _$DemoModel {
   String? get description;
   @JsonKey(name: DemoModel.ageKey)
   int get age;
-  @JsonKey(name: DemoModel.birthdateKey)
-  DateTime? get birthdate;
   @JsonKey(name: DemoModel.addressKey)
   String? get address;
   @JoinedColumn(foreignKey: "other_id", candidateKey: null)
@@ -48,20 +46,18 @@ mixin _$DemoModel {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.birthdate, birthdate) ||
-                other.birthdate == birthdate) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, description, age, birthdate, address, other);
+  int get hashCode =>
+      Object.hash(runtimeType, name, description, age, address, other);
 
   @override
   String toString() {
-    return 'DemoModel(name: $name, description: $description, age: $age, birthdate: $birthdate, address: $address, other: $other)';
+    return 'DemoModel(name: $name, description: $description, age: $age, address: $address, other: $other)';
   }
 }
 
@@ -74,7 +70,6 @@ abstract mixin class $DemoModelCopyWith<$Res> {
       {@JsonKey(name: DemoModel.nameKey) String? name,
       @JsonKey(name: DemoModel.descriptionKey) String? description,
       @JsonKey(name: DemoModel.ageKey) int age,
-      @JsonKey(name: DemoModel.birthdateKey) DateTime? birthdate,
       @JsonKey(name: DemoModel.addressKey) String? address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoModel.otherKey)
@@ -98,7 +93,6 @@ class _$DemoModelCopyWithImpl<$Res> implements $DemoModelCopyWith<$Res> {
     Object? name = freezed,
     Object? description = freezed,
     Object? age = null,
-    Object? birthdate = freezed,
     Object? address = freezed,
     Object? other = freezed,
   }) {
@@ -115,10 +109,6 @@ class _$DemoModelCopyWithImpl<$Res> implements $DemoModelCopyWith<$Res> {
           ? _self.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
-      birthdate: freezed == birthdate
-          ? _self.birthdate
-          : birthdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       address: freezed == address
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -154,7 +144,6 @@ class _DemoModel extends DemoModel {
       {@JsonKey(name: DemoModel.nameKey) required this.name,
       @JsonKey(name: DemoModel.descriptionKey) required this.description,
       @JsonKey(name: DemoModel.ageKey) required this.age,
-      @JsonKey(name: DemoModel.birthdateKey) required this.birthdate,
       @JsonKey(name: DemoModel.addressKey) required this.address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoModel.otherKey)
@@ -172,9 +161,6 @@ class _DemoModel extends DemoModel {
   @override
   @JsonKey(name: DemoModel.ageKey)
   final int age;
-  @override
-  @JsonKey(name: DemoModel.birthdateKey)
-  final DateTime? birthdate;
   @override
   @JsonKey(name: DemoModel.addressKey)
   final String? address;
@@ -207,20 +193,18 @@ class _DemoModel extends DemoModel {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.birthdate, birthdate) ||
-                other.birthdate == birthdate) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, description, age, birthdate, address, other);
+  int get hashCode =>
+      Object.hash(runtimeType, name, description, age, address, other);
 
   @override
   String toString() {
-    return 'DemoModel(name: $name, description: $description, age: $age, birthdate: $birthdate, address: $address, other: $other)';
+    return 'DemoModel(name: $name, description: $description, age: $age, address: $address, other: $other)';
   }
 }
 
@@ -236,7 +220,6 @@ abstract mixin class _$DemoModelCopyWith<$Res>
       {@JsonKey(name: DemoModel.nameKey) String? name,
       @JsonKey(name: DemoModel.descriptionKey) String? description,
       @JsonKey(name: DemoModel.ageKey) int age,
-      @JsonKey(name: DemoModel.birthdateKey) DateTime? birthdate,
       @JsonKey(name: DemoModel.addressKey) String? address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoModel.otherKey)
@@ -261,7 +244,6 @@ class __$DemoModelCopyWithImpl<$Res> implements _$DemoModelCopyWith<$Res> {
     Object? name = freezed,
     Object? description = freezed,
     Object? age = null,
-    Object? birthdate = freezed,
     Object? address = freezed,
     Object? other = freezed,
   }) {
@@ -278,10 +260,6 @@ class __$DemoModelCopyWithImpl<$Res> implements _$DemoModelCopyWith<$Res> {
           ? _self.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
-      birthdate: freezed == birthdate
-          ? _self.birthdate
-          : birthdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       address: freezed == address
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -316,8 +294,6 @@ mixin _$DemoDetailModel {
   String? get description;
   @JsonKey(name: DemoDetailModel.ageKey)
   int get age;
-  @JsonKey(name: DemoDetailModel.birthdateKey)
-  DateTime? get birthdate;
   @JsonKey(name: DemoDetailModel.addressKey)
   String? get address;
   @JoinedColumn(foreignKey: "other_id", candidateKey: null)
@@ -344,20 +320,18 @@ mixin _$DemoDetailModel {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.birthdate, birthdate) ||
-                other.birthdate == birthdate) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, description, age, birthdate, address, other);
+  int get hashCode =>
+      Object.hash(runtimeType, name, description, age, address, other);
 
   @override
   String toString() {
-    return 'DemoDetailModel(name: $name, description: $description, age: $age, birthdate: $birthdate, address: $address, other: $other)';
+    return 'DemoDetailModel(name: $name, description: $description, age: $age, address: $address, other: $other)';
   }
 }
 
@@ -371,7 +345,6 @@ abstract mixin class $DemoDetailModelCopyWith<$Res> {
       {@JsonKey(name: DemoDetailModel.nameKey) String? name,
       @JsonKey(name: DemoDetailModel.descriptionKey) String? description,
       @JsonKey(name: DemoDetailModel.ageKey) int age,
-      @JsonKey(name: DemoDetailModel.birthdateKey) DateTime? birthdate,
       @JsonKey(name: DemoDetailModel.addressKey) String? address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoDetailModel.otherKey)
@@ -396,7 +369,6 @@ class _$DemoDetailModelCopyWithImpl<$Res>
     Object? name = freezed,
     Object? description = freezed,
     Object? age = null,
-    Object? birthdate = freezed,
     Object? address = freezed,
     Object? other = freezed,
   }) {
@@ -413,10 +385,6 @@ class _$DemoDetailModelCopyWithImpl<$Res>
           ? _self.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
-      birthdate: freezed == birthdate
-          ? _self.birthdate
-          : birthdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       address: freezed == address
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -452,7 +420,6 @@ class _DemoDetailModel extends DemoDetailModel {
       {@JsonKey(name: DemoDetailModel.nameKey) required this.name,
       @JsonKey(name: DemoDetailModel.descriptionKey) required this.description,
       @JsonKey(name: DemoDetailModel.ageKey) required this.age,
-      @JsonKey(name: DemoDetailModel.birthdateKey) required this.birthdate,
       @JsonKey(name: DemoDetailModel.addressKey) required this.address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoDetailModel.otherKey)
@@ -470,9 +437,6 @@ class _DemoDetailModel extends DemoDetailModel {
   @override
   @JsonKey(name: DemoDetailModel.ageKey)
   final int age;
-  @override
-  @JsonKey(name: DemoDetailModel.birthdateKey)
-  final DateTime? birthdate;
   @override
   @JsonKey(name: DemoDetailModel.addressKey)
   final String? address;
@@ -505,20 +469,18 @@ class _DemoDetailModel extends DemoDetailModel {
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.birthdate, birthdate) ||
-                other.birthdate == birthdate) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, description, age, birthdate, address, other);
+  int get hashCode =>
+      Object.hash(runtimeType, name, description, age, address, other);
 
   @override
   String toString() {
-    return 'DemoDetailModel(name: $name, description: $description, age: $age, birthdate: $birthdate, address: $address, other: $other)';
+    return 'DemoDetailModel(name: $name, description: $description, age: $age, address: $address, other: $other)';
   }
 }
 
@@ -534,7 +496,6 @@ abstract mixin class _$DemoDetailModelCopyWith<$Res>
       {@JsonKey(name: DemoDetailModel.nameKey) String? name,
       @JsonKey(name: DemoDetailModel.descriptionKey) String? description,
       @JsonKey(name: DemoDetailModel.ageKey) int age,
-      @JsonKey(name: DemoDetailModel.birthdateKey) DateTime? birthdate,
       @JsonKey(name: DemoDetailModel.addressKey) String? address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoDetailModel.otherKey)
@@ -560,7 +521,6 @@ class __$DemoDetailModelCopyWithImpl<$Res>
     Object? name = freezed,
     Object? description = freezed,
     Object? age = null,
-    Object? birthdate = freezed,
     Object? address = freezed,
     Object? other = freezed,
   }) {
@@ -577,10 +537,6 @@ class __$DemoDetailModelCopyWithImpl<$Res>
           ? _self.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
-      birthdate: freezed == birthdate
-          ? _self.birthdate
-          : birthdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       address: freezed == address
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -613,8 +569,6 @@ mixin _$DemoLiteModel {
   String? get name;
   @JsonKey(name: DemoLiteModel.ageKey)
   int get age;
-  @JsonKey(name: DemoLiteModel.birthdateKey)
-  DateTime? get birthdate;
   @JsonKey(name: DemoLiteModel.addressKey)
   String? get address;
   @JoinedColumn(foreignKey: "other_id", candidateKey: null)
@@ -639,20 +593,17 @@ mixin _$DemoLiteModel {
             other is DemoLiteModel &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.birthdate, birthdate) ||
-                other.birthdate == birthdate) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, age, birthdate, address, other);
+  int get hashCode => Object.hash(runtimeType, name, age, address, other);
 
   @override
   String toString() {
-    return 'DemoLiteModel(name: $name, age: $age, birthdate: $birthdate, address: $address, other: $other)';
+    return 'DemoLiteModel(name: $name, age: $age, address: $address, other: $other)';
   }
 }
 
@@ -665,7 +616,6 @@ abstract mixin class $DemoLiteModelCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: DemoLiteModel.nameKey) String? name,
       @JsonKey(name: DemoLiteModel.ageKey) int age,
-      @JsonKey(name: DemoLiteModel.birthdateKey) DateTime? birthdate,
       @JsonKey(name: DemoLiteModel.addressKey) String? address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoLiteModel.otherKey)
@@ -689,7 +639,6 @@ class _$DemoLiteModelCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? age = null,
-    Object? birthdate = freezed,
     Object? address = freezed,
     Object? other = freezed,
   }) {
@@ -702,10 +651,6 @@ class _$DemoLiteModelCopyWithImpl<$Res>
           ? _self.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
-      birthdate: freezed == birthdate
-          ? _self.birthdate
-          : birthdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       address: freezed == address
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -739,7 +684,6 @@ class _DemoLiteModel extends DemoLiteModel {
   const _DemoLiteModel(
       {@JsonKey(name: DemoLiteModel.nameKey) required this.name,
       @JsonKey(name: DemoLiteModel.ageKey) required this.age,
-      @JsonKey(name: DemoLiteModel.birthdateKey) required this.birthdate,
       @JsonKey(name: DemoLiteModel.addressKey) required this.address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoLiteModel.otherKey)
@@ -754,9 +698,6 @@ class _DemoLiteModel extends DemoLiteModel {
   @override
   @JsonKey(name: DemoLiteModel.ageKey)
   final int age;
-  @override
-  @JsonKey(name: DemoLiteModel.birthdateKey)
-  final DateTime? birthdate;
   @override
   @JsonKey(name: DemoLiteModel.addressKey)
   final String? address;
@@ -787,20 +728,17 @@ class _DemoLiteModel extends DemoLiteModel {
             other is _DemoLiteModel &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.age, age) || other.age == age) &&
-            (identical(other.birthdate, birthdate) ||
-                other.birthdate == birthdate) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.other, this.other) || other.other == this.other));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, age, birthdate, address, other);
+  int get hashCode => Object.hash(runtimeType, name, age, address, other);
 
   @override
   String toString() {
-    return 'DemoLiteModel(name: $name, age: $age, birthdate: $birthdate, address: $address, other: $other)';
+    return 'DemoLiteModel(name: $name, age: $age, address: $address, other: $other)';
   }
 }
 
@@ -815,7 +753,6 @@ abstract mixin class _$DemoLiteModelCopyWith<$Res>
   $Res call(
       {@JsonKey(name: DemoLiteModel.nameKey) String? name,
       @JsonKey(name: DemoLiteModel.ageKey) int age,
-      @JsonKey(name: DemoLiteModel.birthdateKey) DateTime? birthdate,
       @JsonKey(name: DemoLiteModel.addressKey) String? address,
       @JoinedColumn(foreignKey: "other_id", candidateKey: null)
       @JsonKey(name: DemoLiteModel.otherKey)
@@ -840,7 +777,6 @@ class __$DemoLiteModelCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? age = null,
-    Object? birthdate = freezed,
     Object? address = freezed,
     Object? other = freezed,
   }) {
@@ -853,10 +789,6 @@ class __$DemoLiteModelCopyWithImpl<$Res>
           ? _self.age
           : age // ignore: cast_nullable_to_non_nullable
               as int,
-      birthdate: freezed == birthdate
-          ? _self.birthdate
-          : birthdate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       address: freezed == address
           ? _self.address
           : address // ignore: cast_nullable_to_non_nullable
