@@ -1,3 +1,12 @@
+## 0.0.6
+
+- **FIX**: Stabilize import generation to prevent random git commits
+  - Remove self-imports that caused generated files to import themselves
+  - Filter out unnecessary dart:core imports while preserving required ones like dart:typed_data
+  - Add deterministic import sorting for consistent output
+  - Improve source import filtering to avoid generator package imports
+  - This eliminates random import changes that caused unnecessary git commits on every build_runner execution
+
 ## 0.0.5
 
 - Version bump for release
