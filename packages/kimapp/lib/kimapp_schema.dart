@@ -140,6 +140,44 @@ class Model {
     return Model._(_name, [..._fields, ...fields.values], _inherited, _tableName);
   }
 
+  /// Copies existing fields from the base schema to the model.
+  ///
+  /// This method provides a convenient way to add multiple fields from the base schema
+  /// without having to specify them in a map with string keys. It's particularly useful
+  /// for improved developer experience when you want to include specific fields.
+  ///
+  /// Usage:
+  /// ```dart
+  /// class UserSchema extends KimappSchema {
+  ///   final id = Field.id<int>('id');
+  ///   final name = Field<String>('name');
+  ///   final email = Field<String>('email');
+  ///
+  ///   @override
+  ///   List<Model> get models {
+  ///     return [
+  ///       Model('UserLiteModel')
+  ///         .table()
+  ///         .copyFields([id, name, email]),
+  ///       Model('UserDetailModel')
+  ///         .inheritAllFromBase()
+  ///         .copyFields([createdAt, updatedAt]),
+  ///     ];
+  ///   }
+  /// }
+  /// ```
+  ///
+  /// @param fields A list of BaseField objects to copy to the model.
+  /// @return A new Model instance with the copied fields appended to existing fields.
+  ///
+  /// Note: This method creates a new Model instance and does not modify the original.
+  /// The copied fields are added to the end of the existing field list.
+  /// This method is designed to work with the kimapp_generator to provide better DX
+  /// by eliminating the need for manual key-value mapping.
+  Model copyFields(List<BaseField> fields) {
+    return Model._(_name, [..._fields, ...fields], _inherited, _tableName);
+  }
+
   /// Specifies a custom table name for the model, useful for Supabase integration.
   ///
   /// This method allows to generate models as table models which useful for supabase integration

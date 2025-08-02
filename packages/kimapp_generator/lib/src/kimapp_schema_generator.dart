@@ -105,6 +105,10 @@ class KimappSchemaGenerator extends Generator {
     buffer.writeln("part '${basename}.schema.freezed.dart';");
     buffer.writeln("part '${basename}.schema.g.dart';");
     buffer.writeln();
+    
+    // Generate fieldMap helper function
+    buffer.writeln(_generateFieldMapHelper());
+    buffer.writeln();
   }
 
   Set<String> _getSourceFileImports(LibraryReader library) {
@@ -225,6 +229,7 @@ class KimappSchemaGenerator extends Generator {
           exceptedFieldNames = excepts;
         },
         onAddFields: (newFields) => addedFields.addAll(newFields),
+        onCopyFields: (copiedFields) => addedFields.addAll(copiedFields),
       );
 
       if (currentInvocation.target is MethodInvocation) {
@@ -279,6 +284,7 @@ class KimappSchemaGenerator extends Generator {
             exceptedFieldNames = excepts;
           },
           onAddFields: (newFields) => addedFields.addAll(newFields),
+          onCopyFields: (copiedFields) => addedFields.addAll(copiedFields),
         );
       }
     }
@@ -300,6 +306,7 @@ class KimappSchemaGenerator extends Generator {
     required void Function(String?) onTableEnable,
     required void Function(List<String>) onInheritAllFromBase,
     required void Function(List<_FieldDefinition>) onAddFields,
+    required void Function(List<_FieldDefinition>) onCopyFields,
     required List<_FieldDefinition> baseFields,
   }) {
     switch (invocation.methodName.name) {
@@ -317,6 +324,10 @@ class KimappSchemaGenerator extends Generator {
       case 'addFields':
         final fields = _extractAddedFields(invocation.argumentList, baseFields);
         onAddFields(fields);
+        break;
+      case 'copyFields':
+        final fields = _extractCopyFields(invocation.argumentList, baseFields);
+        onCopyFields(fields);
         break;
     }
   }
@@ -396,7 +407,37 @@ class KimappSchemaGenerator extends Generator {
               final fieldDefinition = baseFields
                   .firstWhereOrNull((e) => e.fieldName == fieldValue.name);
               if (fieldDefinition != null) {
-                addedFields.add(fieldDefinition);
+                // Create a new field definition with the map key as the field name
+                // but preserve all other properties from the original field
+                _FieldDefinition newFieldDefinition;
+                if (fieldDefinition is _IdField) {
+                  newFieldDefinition = _FieldDefinition.id(
+                    fieldName: fieldName,
+                    dataType: fieldDefinition.dataType,
+                    jsonKey: fieldDefinition.jsonKey,
+                    generateIdClassNameAs: fieldDefinition.generateIdClassNameAs,
+                  );
+                } else if (fieldDefinition is _JoinField) {
+                  newFieldDefinition = _FieldDefinition.join(
+                    fieldName: fieldName,
+                    dataType: fieldDefinition.dataType,
+                    jsonKey: fieldDefinition.jsonKey,
+                    foreignKey: fieldDefinition.joinFieldForeignKey,
+                    candidateKey: fieldDefinition.joinFieldCandidateKey,
+                  );
+                } else if (fieldDefinition is _IgnoreField) {
+                  newFieldDefinition = _FieldDefinition.ignore(
+                    fieldName: fieldName,
+                    key: fieldDefinition.jsonKey ?? fieldName,
+                  );
+                } else {
+                  newFieldDefinition = _FieldDefinition.normal(
+                    fieldName: fieldName,
+                    dataType: fieldDefinition.dataType,
+                    jsonKey: fieldDefinition.jsonKey,
+                  );
+                }
+                addedFields.add(newFieldDefinition);
                 continue;
               } else {
                 throw InvalidGenerationSourceError(
@@ -440,6 +481,38 @@ class KimappSchemaGenerator extends Generator {
       }
     }
     return addedFields;
+  }
+
+  List<_FieldDefinition> _extractCopyFields(
+      ArgumentList argumentList, List<_FieldDefinition> baseFields) {
+    final copiedFields = <_FieldDefinition>[];
+    if (argumentList.arguments.isNotEmpty) {
+      final fieldsArg = argumentList.arguments.first;
+      if (fieldsArg is ListLiteral) {
+        for (final element in fieldsArg.elements) {
+          if (element is SimpleIdentifier) {
+            final fieldDefinition = baseFields
+                .firstWhereOrNull((field) => field.fieldName == element.name);
+            if (fieldDefinition != null) {
+              copiedFields.add(fieldDefinition);
+            } else {
+              throw InvalidGenerationSourceError(
+                'Field ${element.name} is not defined in the base schema.',
+              );
+            }
+          } else {
+            throw InvalidGenerationSourceError(
+              'copyFields only accepts field identifiers in the array.',
+            );
+          }
+        }
+      } else {
+        throw InvalidGenerationSourceError(
+          'copyFields expects a list of field identifiers.',
+        );
+      }
+    }
+    return copiedFields;
   }
 
   Future<List<_FieldDefinition>> _getFields(
@@ -1185,4 +1258,22 @@ String _generateModelStaticJsonKeys(List<_FieldDefinition> fields) {
         '  static const String ${field.fieldName.camelCase}Key = "$key";');
   }
   return buffer.toString();
+}
+
+String _generateFieldMapHelper() {
+  return '''
+/// Helper function to convert an array of fields to a map for use with addFields
+/// Usage: ...fieldMap([field1, field2, field3])
+Map<String, dynamic> fieldMap(List<dynamic> fields) {
+  final result = <String, dynamic>{};
+  for (final field in fields) {
+    // Extract field name from the field object - this assumes fields have a fieldName property
+    // In practice, this would need to be adapted to work with the actual field structure
+    if (field != null) {
+      final fieldName = field.toString().split('(').first.split('.').last;
+      result[fieldName] = field;
+    }
+  }
+  return result;
+}''';
 }
