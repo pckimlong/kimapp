@@ -265,7 +265,7 @@ class SplashConfig {
   ///
   /// Tasks execute with different behaviors based on their type:
   ///
-  /// ### [OneTimeSplashTask] 
+  /// ### [OneTimeSplashTask]
   /// - **Execute once per application lifetime** when successful
   /// - No cleanup callbacks, no dependency watching
   /// - Once completed successfully, will not run again until app restart
@@ -319,7 +319,7 @@ class SplashConfig {
   /// Whether to show splash screen again when reactive task dependencies change.
   ///
   /// When `true`, the splash screen will reappear whenever a [ReactiveSplashTask]
-  /// detects changes in watched providers. This creates a reactive splash system 
+  /// detects changes in watched providers. This creates a reactive splash system
   /// that responds to app state changes.
   ///
   /// ## Behavior for Reactive Tasks
