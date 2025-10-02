@@ -28,7 +28,7 @@ part '${snakeCaseName}_create_provider.g.dart';
 
 @formWidget
 @riverpod
-class ${pascalCaseName}Create extends _$${pascalCaseName}CreateWidget {
+class ${pascalCaseName}Create extends AsyncNotifier<${pascalCaseName}CreateParam> {
   @override
   ${pascalCaseName}CreateParam build() => throw UnimplementedError();
 

@@ -26,7 +26,7 @@ import '${snakeCaseName}_list_provider.dart';
 part '${snakeCaseName}_delete_provider.g.dart';
 
 @riverpod
-class ${pascalCaseName}Delete extends _$${pascalCaseName}Delete {
+class ${pascalCaseName}Delete extends Notifier<ProviderStatus<Unit>> {
   @override
   ProviderStatus<Unit> build(${pascalCaseName}Id id) => const ProviderStatus.initial();
 

@@ -31,10 +31,7 @@ class FormWidgetExample extends _$FormWidgetExample with _$FormWidgetExampleForm
   FormWidgetExampleState build() => const FormWidgetExampleState(name: '');
 
   Future<ProviderStatus<bool>> call() async {
-    return await perform<bool>(
-      (state) async {
-        throw UnimplementedError();
-      },
-    );
+    // TODO: Implement form submission logic
+    throw UnimplementedError('Form submission not implemented in this example');
   }
 }

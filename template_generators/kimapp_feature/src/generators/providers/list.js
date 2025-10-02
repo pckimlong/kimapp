@@ -27,7 +27,7 @@ part '${snakeCaseName}_list_provider.g.dart';
 
 @stateWidget
 @riverpod
-class ${pascalCaseName}List extends _$${pascalCaseName}List with IListAsyncNotifier<${pascalCaseName}Model> {
+class ${pascalCaseName}List extends AsyncNotifier<IList<${pascalCaseName}Model>> with IListAsyncNotifier<${pascalCaseName}Model> {
   @override
   bool comparer(${pascalCaseName}Model a, ${pascalCaseName}Model b) => a.id == b.id;
 

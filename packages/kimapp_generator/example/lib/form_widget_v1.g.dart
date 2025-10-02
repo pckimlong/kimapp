@@ -325,21 +325,59 @@ class FormWidgetExampleNameFieldWidget extends HookConsumerWidget {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$formWidgetExampleHash() => r'0a4697bcf4f1346f889952094b7591febef2718d';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [FormWidgetExample].
 @ProviderFor(FormWidgetExample)
-final formWidgetExampleProvider = AutoDisposeNotifierProvider<FormWidgetExample,
-    FormWidgetExampleState>.internal(
-  FormWidgetExample.new,
-  name: r'formWidgetExampleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$formWidgetExampleHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@kimappForm
+const formWidgetExampleProvider = FormWidgetExampleProvider._();
 
-typedef _$FormWidgetExample = AutoDisposeNotifier<FormWidgetExampleState>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+@kimappForm
+final class FormWidgetExampleProvider
+    extends $NotifierProvider<FormWidgetExample, FormWidgetExampleState> {
+  const FormWidgetExampleProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'formWidgetExampleProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$formWidgetExampleHash();
+
+  @$internal
+  @override
+  FormWidgetExample create() => FormWidgetExample();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FormWidgetExampleState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FormWidgetExampleState>(value),
+    );
+  }
+}
+
+String _$formWidgetExampleHash() => r'e3f1476d2168a38d24fdcf7a9b3dfc5a5d90afa9';
+
+@kimappForm
+abstract class _$FormWidgetExample extends $Notifier<FormWidgetExampleState> {
+  FormWidgetExampleState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<FormWidgetExampleState, FormWidgetExampleState>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<FormWidgetExampleState, FormWidgetExampleState>,
+        FormWidgetExampleState,
+        Object?,
+        Object?>;
+    element.handleValue(ref, created);
+  }
+}
