@@ -5,7 +5,6 @@
 library;
 
 export 'package:autoverpod/autoverpod.dart';
-export 'package:riverpod/riverpod.dart' show StateProvider;
 
 export 'src/core/generator.dart';
 export 'src/core/generator_registry.dart';

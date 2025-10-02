@@ -74,11 +74,19 @@ class UnifiedWidgetBuilder implements Builder {
     final imports = Set<String>.from(_registry.getAllRequiredImports());
 
     // Add source file's imports to ensure dependencies are available
-    final sourceImports = library.element.importedLibraries
-        .map((lib) => lib.source.uri.toString())
-        .where((uri) => _shouldIncludeSourceImport(uri))
-        .cast<String>()
-        .toSet();
+    final sourceImports = <String>{};
+    for (final fragment in library.element.fragments) {
+      for (final importDirective in fragment.libraryImports2) {
+        final importedLibrary = importDirective.importedLibrary2;
+        final uri = importedLibrary?.uri;
+        if (uri == null) continue;
+
+        final uriString = uri.toString();
+        if (_shouldIncludeSourceImport(uriString)) {
+          sourceImports.add(uriString);
+        }
+      }
+    }
 
     // Handle relative imports
     final currentDir = path.dirname(buildStep.inputId.path);
@@ -164,18 +172,30 @@ class UnifiedWidgetBuilder implements Builder {
   /// Compare imports for deterministic sorting
   int _compareImports(String a, String b) {
     // Dart imports first
-    if (a.startsWith('dart:') && !b.startsWith('dart:')) return -1;
-    if (!a.startsWith('dart:') && b.startsWith('dart:')) return 1;
+    if (a.startsWith('dart:') && !b.startsWith('dart:')) {
+      return -1;
+    }
+    if (!a.startsWith('dart:') && b.startsWith('dart:')) {
+      return 1;
+    }
     
     // Package imports second
-    if (a.startsWith('package:') && !b.startsWith('package:')) return -1;
-    if (!a.startsWith('package:') && b.startsWith('package:')) return 1;
+    if (a.startsWith('package:') && !b.startsWith('package:')) {
+      return -1;
+    }
+    if (!a.startsWith('package:') && b.startsWith('package:')) {
+      return 1;
+    }
     
     // Relative imports last
-    if (!a.startsWith('dart:') && !a.startsWith('package:') && 
-        (b.startsWith('dart:') || b.startsWith('package:'))) return 1;
-    if ((a.startsWith('dart:') || a.startsWith('package:')) && 
-        !b.startsWith('dart:') && !b.startsWith('package:')) return -1;
+    if (!a.startsWith('dart:') && !a.startsWith('package:') &&
+        (b.startsWith('dart:') || b.startsWith('package:'))) {
+      return 1;
+    }
+    if ((a.startsWith('dart:') || a.startsWith('package:')) &&
+        !b.startsWith('dart:') && !b.startsWith('package:')) {
+      return -1;
+    }
     
     // Within each category, sort alphabetically
     return a.compareTo(b);

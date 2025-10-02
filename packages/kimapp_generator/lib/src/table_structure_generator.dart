@@ -116,18 +116,23 @@ class AdditionalClassDefinition {
 class TableStructureGenerator extends Generator {
   Set<String> _getSourceFileImports(LibraryReader library) {
     final imports = Set<String>();
-    for (var import in library.element.importedLibraries) {
-      final uri = import.source.uri;
-      String importStr = "import '${uri.toString()}';";
+    for (final fragment in library.element.fragments) {
+      for (final importDirective in fragment.libraryImports2) {
+        final importedLibrary = importDirective.importedLibrary2;
+        final uri = importedLibrary?.uri;
+        if (uri == null) continue;
 
-      // Avoid duplicating package imports
-      if (!uri.isScheme('dart') &&
-          !uri.toString().contains('package:flutter/') &&
-          !uri.toString().contains('package:flutter_riverpod/') &&
-          !uri.toString().contains('package:riverpod/') &&
-          !uri.toString().contains('annotation/') &&
-          !uri.toString().contains('package:kimapp/')) {
-        imports.add(importStr);
+        final importStr = "import '${uri.toString()}';";
+
+        // Avoid duplicating package imports
+        if (!uri.isScheme('dart') &&
+            !uri.toString().contains('package:flutter/') &&
+            !uri.toString().contains('package:flutter_riverpod/') &&
+            !uri.toString().contains('package:riverpod/') &&
+            !uri.toString().contains('annotation/') &&
+            !uri.toString().contains('package:kimapp/')) {
+          imports.add(importStr);
+        }
       }
     }
 

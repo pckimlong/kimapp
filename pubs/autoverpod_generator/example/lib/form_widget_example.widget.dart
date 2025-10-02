@@ -84,7 +84,7 @@ class _UpdateUserFormInheritedWidget extends InheritedWidget {
   }
 }
 
-class UpdateUserProxyWidgetRef extends WidgetRef {
+class UpdateUserProxyWidgetRef {
   UpdateUserProxyWidgetRef(this._ref);
 
   final WidgetRef _ref;
@@ -119,25 +119,21 @@ class UpdateUserProxyWidgetRef extends WidgetRef {
         ).select((value) => selector(value.requireValue)),
       );
 
-  @override
   BuildContext get context => _ref.context;
 
-  @override
-  bool exists(ProviderBase<Object?> provider) => _ref.exists(provider);
+  bool exists(provider) => _ref.exists(provider);
 
-  @override
-  void invalidate(ProviderOrFamily provider) => _ref.invalidate(provider);
+  void invalidate(provider, {bool asReload = false}) =>
+      _ref.invalidate(provider, asReload: asReload);
 
-  @override
   void listen<T>(
-    ProviderListenable<T> provider,
+    provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
   }) => _ref.listen(provider, listener, onError: onError);
 
-  @override
   ProviderSubscription<T> listenManual<T>(
-    ProviderListenable<T> provider,
+    provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
@@ -148,14 +144,11 @@ class UpdateUserProxyWidgetRef extends WidgetRef {
     fireImmediately: fireImmediately,
   );
 
-  @override
-  T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
+  T read<T>(provider) => _ref.read(provider);
 
-  @override
-  State refresh<State>(Refreshable<State> provider) => _ref.refresh(provider);
+  State refresh<State>(provider) => _ref.refresh(provider);
 
-  @override
-  T watch<T>(ProviderListenable<T> provider) => _ref.watch(provider);
+  T watch<T>(provider) => _ref.watch(provider);
 }
 
 class UpdateUserFormScope extends ConsumerStatefulWidget {
@@ -360,9 +353,7 @@ class UpdateUserFormState extends ConsumerWidget {
   });
 
   /// The builder function that constructs the widget tree.
-  /// Access the state directly via ref.state, which is equivalent to ref.watch(updateUserProvider(params.id))
-  ///
-  /// For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)
+  /// Use ref.select for field-level updates to minimise rebuilds.
   /// The ref parameter provides type-safe access to the provider state and notifier
   final Widget Function(
     BuildContext context,
@@ -381,7 +372,7 @@ class UpdateUserFormState extends ConsumerWidget {
     if (onStateChanged != null) {
       final params = _UpdateUserFormInheritedWidget.of(context).params;
       ref.listen(updateUserProvider(params.id), (pre, next) {
-        if (pre != next) onStateChanged!(pre?.valueOrNull, next.valueOrNull);
+        if (pre != next) onStateChanged!(pre?.value, next.value);
       });
     }
     return UpdateUserFormParams(
@@ -466,17 +457,14 @@ class UpdateUserNameField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue = ref
-        .read(updateUserProvider(params.id))
-        .valueOrNull
-        ?.name;
+    final initialValue = ref.read(updateUserProvider(params.id)).value?.name;
 
     final controller =
         textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
-      updateUserProvider(params.id).select((value) => value.valueOrNull?.name),
+      updateUserProvider(params.id).select((value) => value.value?.name),
       (previous, next) {
         if (previous != next && controller.text != next) {
           controller.text = next ?? "";
@@ -500,7 +488,7 @@ class UpdateUserNameField extends HookConsumerWidget {
       void listener() {
         final currentValue = ref
             .read(updateUserProvider(params.id))
-            .valueOrNull
+            .value
             ?.name;
         if (currentValue != controller.text) {
           ref
@@ -583,17 +571,14 @@ class UpdateUserEmailField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue = ref
-        .read(updateUserProvider(params.id))
-        .valueOrNull
-        ?.email;
+    final initialValue = ref.read(updateUserProvider(params.id)).value?.email;
 
     final controller =
         textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
-      updateUserProvider(params.id).select((value) => value.valueOrNull?.email),
+      updateUserProvider(params.id).select((value) => value.value?.email),
       (previous, next) {
         if (previous != next && controller.text != next) {
           controller.text = next ?? "";
@@ -617,7 +602,7 @@ class UpdateUserEmailField extends HookConsumerWidget {
       void listener() {
         final currentValue = ref
             .read(updateUserProvider(params.id))
-            .valueOrNull
+            .value
             ?.email;
         if (currentValue != controller.text) {
           ref
@@ -681,19 +666,14 @@ class UpdateUserAddressField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue = ref
-        .read(updateUserProvider(params.id))
-        .valueOrNull
-        ?.address;
+    final initialValue = ref.read(updateUserProvider(params.id)).value?.address;
 
     final controller =
         textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
-      updateUserProvider(
-        params.id,
-      ).select((value) => value.valueOrNull?.address),
+      updateUserProvider(params.id).select((value) => value.value?.address),
       (previous, next) {
         if (previous != next && controller.text != next) {
           controller.text = next ?? "";
@@ -717,7 +697,7 @@ class UpdateUserAddressField extends HookConsumerWidget {
       void listener() {
         final currentValue = ref
             .read(updateUserProvider(params.id))
-            .valueOrNull
+            .value
             ?.address;
         if (currentValue != controller.text) {
           ref
@@ -778,17 +758,14 @@ class UpdateUserPhoneField extends HookConsumerWidget {
     final params = _UpdateUserFormInheritedWidget.of(context).params;
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue = ref
-        .read(updateUserProvider(params.id))
-        .valueOrNull
-        ?.phone;
+    final initialValue = ref.read(updateUserProvider(params.id)).value?.phone;
 
     final controller =
         textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
-      updateUserProvider(params.id).select((value) => value.valueOrNull?.phone),
+      updateUserProvider(params.id).select((value) => value.value?.phone),
       (previous, next) {
         if (previous != next && controller.text != next) {
           controller.text = next ?? "";
@@ -812,7 +789,7 @@ class UpdateUserPhoneField extends HookConsumerWidget {
       void listener() {
         final currentValue = ref
             .read(updateUserProvider(params.id))
-            .valueOrNull
+            .value
             ?.phone;
         if (currentValue != controller.text) {
           ref

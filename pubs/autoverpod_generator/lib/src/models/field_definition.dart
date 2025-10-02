@@ -1,5 +1,6 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
+import 'package:analyzer/dart/element/type.dart';
 
 class FieldDefinition {
   final String name;
@@ -47,53 +48,56 @@ class FieldDefinition {
     };
   }
 
-  factory FieldDefinition.parse(FieldElement field) {
+  factory FieldDefinition.parse(FieldElement2 field) {
     String? importPath;
     final fieldType = field.type;
-    if (fieldType.element != null) {
-      final uri = fieldType.element!.librarySource?.uri.toString();
-      if (uri != null && !uri.startsWith('dart:')) {
-        importPath = uri;
+    if (fieldType is InterfaceType) {
+      final element = fieldType.element3;
+      final uri = element.library2.uri;
+      if (!uri.isScheme('dart')) {
+        importPath = uri.toString();
       }
     }
 
     return FieldDefinition(
-      name: field.name,
-      type: field.type.toString(),
+      name: field.displayName,
+      type: field.type.getDisplayString(),
       isNullable: field.type.nullabilitySuffix == NullabilitySuffix.question,
       isFinal: field.isFinal,
       documentation: field.documentationComment,
       defaultValue: field.computeConstantValue()?.toString(),
-      annotations: field.metadata.map((m) => m.toSource()).toList(),
+      annotations: field.metadata2.annotations.map((m) => m.toSource()).toList(),
       isPrivate: field.isPrivate,
       isStatic: field.isStatic,
-      isGetter: field.getter != null && field.setter == null,
+      isGetter: field.getter2 != null && field.setter2 == null,
       isLate: field.isLate,
       importPath: importPath,
     );
   }
 
-  factory FieldDefinition.parseFreezedParam(ParameterElement param) {
+  factory FieldDefinition.parseFreezedParam(FormalParameterElement param) {
     String? importPath;
     final paramType = param.type;
-    if (paramType.element != null) {
-      final uri = paramType.element!.librarySource?.uri.toString();
-      if (uri != null && !uri.startsWith('dart:')) {
-        importPath = uri;
+    if (paramType is InterfaceType) {
+      final element = paramType.element3;
+      final uri = element.library2.uri;
+      if (!uri.isScheme('dart')) {
+        importPath = uri.toString();
       }
     }
 
     return FieldDefinition(
-      name: param.name,
-      type: param.type.toString(),
+      name: param.displayName,
+      type: param.type.getDisplayString(),
       isNullable: param.type.nullabilitySuffix == NullabilitySuffix.question,
       isFinal: true, // Freezed classes always generated as final
       documentation: param.documentationComment,
       defaultValue: param.defaultValueCode,
-      annotations: param.metadata.map((m) => m.toSource()).toList(),
+      annotations:
+          param.metadata2.annotations.map((m) => m.toSource()).toList(),
       isPrivate: param.isPrivate,
       isStatic: param.isStatic,
-      isGetter: param is FieldFormalParameterElement,
+      isGetter: param is FieldFormalParameterElement2,
       isLate: param.isLate,
       importPath: importPath,
     );

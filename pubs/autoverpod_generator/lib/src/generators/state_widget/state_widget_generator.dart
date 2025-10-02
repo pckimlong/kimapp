@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 import 'package:build/build.dart';
@@ -17,16 +17,17 @@ import 'widgets/state_widget_proxy.dart';
 /// Generator for creating state-based widgets from providers
 class StateWidgetGenerator extends WidgetGenerator {
   @override
-  final TypeChecker annotationTypeChecker = const TypeChecker.fromRuntime(StateWidget);
+  final TypeChecker annotationTypeChecker =
+      const TypeChecker.typeNamed(StateWidget, inPackage: 'autoverpod');
 
   @override
-  bool canProcess(Element element) {
+  bool canProcess(Element2 element) {
     return annotationTypeChecker.hasAnnotationOf(element);
   }
 
   @override
   Future<String> generateForAnnotatedElement(
-    Element element,
+    Element2 element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {

@@ -21,8 +21,15 @@ part of 'form_widget_example.dart';
 // - onSuccess(): Override to handle successful submissions
 //
 
-final updateUserCallStatusProvider = StateProvider.autoDispose
-    .family<AsyncValue<bool>?, ({int id})>((ref, _) => null);
+final updateUserCallStatusProvider = NotifierProvider.autoDispose
+    .family<_UpdateUserCallStatusNotifier, AsyncValue<bool>?, ({int id})>(
+      _UpdateUserCallStatusNotifier.new,
+    );
+
+class _UpdateUserCallStatusNotifier extends Notifier<AsyncValue<bool>?> {
+  @override
+  AsyncValue<bool>? build() => null;
+}
 
 abstract class _$UpdateUserWidget extends _$UpdateUser {
   /// Callback for when the form is successfully submitted.
@@ -37,8 +44,9 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
     if (this.state.hasValue == false) return const AsyncValue.loading();
 
     final _callStatus = ref.read(updateUserCallStatusProvider((id: id)));
-    final _updateCallStatus =
-        ref.read(updateUserCallStatusProvider((id: id)).notifier);
+    final _updateCallStatus = ref.read(
+      updateUserCallStatusProvider((id: id)).notifier,
+    );
 
     if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
@@ -47,8 +55,9 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
     }
 
     _updateCallStatus.state = const AsyncValue.loading();
-    final result = await AsyncValue.guard(() async =>
-        await submit(this.state.requireValue, photoBytes: photoBytes));
+    final result = await AsyncValue.guard(
+      () async => await submit(this.state.requireValue, photoBytes: photoBytes),
+    );
 
     _updateCallStatus.state = result;
 
@@ -60,7 +69,7 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   }
 
   void invalidateSelf() {
-    ref.invalidate(updateUserCallStatusProvider);
+    ref.invalidate(updateUserCallStatusProvider((id: id)));
     ref.invalidateSelf();
   }
 
@@ -80,10 +89,7 @@ abstract class _$UpdateUserWidget extends _$UpdateUser {
   /// 4. Return success/failure result
   @visibleForOverriding
   @protected
-  Future<bool> submit(
-    UpdateUserModel state, {
-    required Uint8List? photoBytes,
-  });
+  Future<bool> submit(UpdateUserModel state, {required Uint8List? photoBytes});
 
   /// Update the state of the form.
   /// This allows for more flexible updates to specific fields.
@@ -117,200 +123,157 @@ Map<String, dynamic> _$UpdateUserModelToJson(_UpdateUserModel instance) =>
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(userRepository)
+const userRepositoryProvider = UserRepositoryProvider._();
+
+final class UserRepositoryProvider
+    extends $FunctionalProvider<UserRepository, UserRepository, UserRepository>
+    with $Provider<UserRepository> {
+  const UserRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$userRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<UserRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  UserRepository create(Ref ref) {
+    return userRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UserRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UserRepository>(value),
+    );
+  }
+}
+
 String _$userRepositoryHash() => r'e75530ca34ed2fc7744e8fd5e2a8e5d7f738dc62';
 
-/// See also [userRepository].
-@ProviderFor(userRepository)
-final userRepositoryProvider = AutoDisposeProvider<UserRepository>.internal(
-  userRepository,
-  name: r'userRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$userRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef UserRepositoryRef = AutoDisposeProviderRef<UserRepository>;
-String _$updateUserHash() => r'9d6c1001ed4d54fb9f0fecfe604f0ae70b2ed26b';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$UpdateUser
-    extends BuildlessAutoDisposeAsyncNotifier<UpdateUserModel> {
-  late final int id;
-
-  FutureOr<UpdateUserModel> build(
-    int id,
-  );
-}
-
 /// Annotated with @formWidget and @riverpod
-///
-/// Copied from [UpdateUser].
+// @stateWidget
+
 @ProviderFor(UpdateUser)
-const updateUserProvider = UpdateUserFamily();
+@formWidget
+const updateUserProvider = UpdateUserFamily._();
 
 /// Annotated with @formWidget and @riverpod
-///
-/// Copied from [UpdateUser].
-class UpdateUserFamily extends Family<AsyncValue<UpdateUserModel>> {
+// @stateWidget
+@formWidget
+final class UpdateUserProvider
+    extends $AsyncNotifierProvider<UpdateUser, UpdateUserModel> {
   /// Annotated with @formWidget and @riverpod
-  ///
-  /// Copied from [UpdateUser].
-  const UpdateUserFamily();
+  // @stateWidget
+  const UpdateUserProvider._({
+    required UpdateUserFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'updateUserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// Annotated with @formWidget and @riverpod
-  ///
-  /// Copied from [UpdateUser].
-  UpdateUserProvider call(
-    int id,
-  ) {
-    return UpdateUserProvider(
-      id,
-    );
+  @override
+  String debugGetCreateSourceHash() => _$updateUserHash();
+
+  @override
+  String toString() {
+    return r'updateUserProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  UpdateUserProvider getProviderOverride(
-    covariant UpdateUserProvider provider,
-  ) {
-    return call(
-      provider.id,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'updateUserProvider';
-}
-
-/// Annotated with @formWidget and @riverpod
-///
-/// Copied from [UpdateUser].
-class UpdateUserProvider
-    extends AutoDisposeAsyncNotifierProviderImpl<UpdateUser, UpdateUserModel> {
-  /// Annotated with @formWidget and @riverpod
-  ///
-  /// Copied from [UpdateUser].
-  UpdateUserProvider(
-    int id,
-  ) : this._internal(
-          () => UpdateUser()..id = id,
-          from: updateUserProvider,
-          name: r'updateUserProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$updateUserHash,
-          dependencies: UpdateUserFamily._dependencies,
-          allTransitiveDependencies:
-              UpdateUserFamily._allTransitiveDependencies,
-          id: id,
-        );
-
-  UpdateUserProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.id,
-  }) : super.internal();
-
-  final int id;
-
-  @override
-  FutureOr<UpdateUserModel> runNotifierBuild(
-    covariant UpdateUser notifier,
-  ) {
-    return notifier.build(
-      id,
-    );
-  }
-
-  @override
-  Override overrideWith(UpdateUser Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: UpdateUserProvider._internal(
-        () => create()..id = id,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        id: id,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeAsyncNotifierProviderElement<UpdateUser, UpdateUserModel>
-      createElement() {
-    return _UpdateUserProviderElement(this);
-  }
+  UpdateUser create() => UpdateUser();
 
   @override
   bool operator ==(Object other) {
-    return other is UpdateUserProvider && other.id == id;
+    return other is UpdateUserProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, id.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin UpdateUserRef on AutoDisposeAsyncNotifierProviderRef<UpdateUserModel> {
-  /// The parameter `id` of this provider.
-  int get id;
-}
+String _$updateUserHash() => r'9d6c1001ed4d54fb9f0fecfe604f0ae70b2ed26b';
 
-class _UpdateUserProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<UpdateUser, UpdateUserModel>
-    with UpdateUserRef {
-  _UpdateUserProviderElement(super.provider);
+/// Annotated with @formWidget and @riverpod
+// @stateWidget
+
+@formWidget
+final class UpdateUserFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          UpdateUser,
+          AsyncValue<UpdateUserModel>,
+          UpdateUserModel,
+          FutureOr<UpdateUserModel>,
+          int
+        > {
+  const UpdateUserFamily._()
+    : super(
+        retry: null,
+        name: r'updateUserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Annotated with @formWidget and @riverpod
+  // @stateWidget
+
+  @formWidget
+  UpdateUserProvider call(int id) =>
+      UpdateUserProvider._(argument: id, from: this);
 
   @override
-  int get id => (origin as UpdateUserProvider).id;
+  String toString() => r'updateUserProvider';
 }
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+
+/// Annotated with @formWidget and @riverpod
+// @stateWidget
+
+@formWidget
+abstract class _$UpdateUser extends $AsyncNotifier<UpdateUserModel> {
+  late final _$args = ref.$arg as int;
+  int get id => _$args;
+
+  FutureOr<UpdateUserModel> build(int id);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<UpdateUserModel>, UpdateUserModel>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<UpdateUserModel>, UpdateUserModel>,
+              AsyncValue<UpdateUserModel>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

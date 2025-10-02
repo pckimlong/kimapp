@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:code_builder/code_builder.dart';
 
 import 'param_definition.dart';
@@ -32,26 +32,30 @@ class MethodDefinition {
     };
   }
 
-  factory MethodDefinition.parseMethod(MethodElement method) {
+  factory MethodDefinition.parseMethod(MethodElement2 method) {
     return MethodDefinition(
-      name: method.name,
+      name: method.displayName,
       returnType: method.returnType.getDisplayString(),
-      parameters:
-          method.parameters.map((p) => ParamDefinition.parse(p)).toList(),
+      parameters: method.formalParameters
+          .map((p) => ParamDefinition.parse(p))
+          .toList(),
       isStatic: method.isStatic,
-      annotations: method.metadata.map((m) => m.toSource()).toList(),
+      annotations:
+          method.metadata2.annotations.map((m) => m.toSource()).toList(),
       documentation: method.documentationComment,
     );
   }
 
-  factory MethodDefinition.parseGetter(PropertyAccessorElement getter) {
+  factory MethodDefinition.parseGetter(PropertyAccessorElement2 getter) {
     return MethodDefinition(
-      name: getter.name,
+      name: getter.displayName,
       returnType: getter.returnType.getDisplayString(),
-      parameters:
-          getter.parameters.map((p) => ParamDefinition.parse(p)).toList(),
+      parameters: getter.formalParameters
+          .map((p) => ParamDefinition.parse(p))
+          .toList(),
       isStatic: getter.isStatic,
-      annotations: getter.metadata.map((m) => m.toSource()).toList(),
+      annotations:
+          getter.metadata2.annotations.map((m) => m.toSource()).toList(),
       documentation: getter.documentationComment,
       // body: getter.source.contents.data,
     );

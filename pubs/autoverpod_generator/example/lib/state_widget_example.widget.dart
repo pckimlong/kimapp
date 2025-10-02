@@ -25,32 +25,28 @@ import 'package:kimapp_utils/kimapp_utils.dart';
 // - MyNameAsyncSelect: Selector widget for optimized rebuilds
 //
 
-class _MyNameAsyncProxyWidgetRef extends WidgetRef {
+class _MyNameAsyncProxyWidgetRef {
   _MyNameAsyncProxyWidgetRef(this._ref);
 
   final WidgetRef _ref;
 
   MyNameAsync get notifier => _ref.read(myNameAsyncProvider.notifier);
 
-  @override
   BuildContext get context => _ref.context;
 
-  @override
-  bool exists(ProviderBase<Object?> provider) => _ref.exists(provider);
+  bool exists(provider) => _ref.exists(provider);
 
-  @override
-  void invalidate(ProviderOrFamily provider) => _ref.invalidate(provider);
+  void invalidate(provider, {bool asReload = false}) =>
+      _ref.invalidate(provider, asReload: asReload);
 
-  @override
   void listen<T>(
-    ProviderListenable<T> provider,
+    provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
   }) => _ref.listen(provider, listener, onError: onError);
 
-  @override
   ProviderSubscription<T> listenManual<T>(
-    ProviderListenable<T> provider,
+    provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
@@ -61,14 +57,11 @@ class _MyNameAsyncProxyWidgetRef extends WidgetRef {
     fireImmediately: fireImmediately,
   );
 
-  @override
-  T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
+  T read<T>(provider) => _ref.read(provider);
 
-  @override
-  State refresh<State>(Refreshable<State> provider) => _ref.refresh(provider);
+  State refresh<State>(provider) => _ref.refresh(provider);
 
-  @override
-  T watch<T>(ProviderListenable<T> provider) => _ref.watch(provider);
+  T watch<T>(provider) => _ref.watch(provider);
 }
 
 class MyNameAsyncProviderScope extends ConsumerWidget {
@@ -198,9 +191,7 @@ class MyNameAsyncStateWidget extends ConsumerWidget {
   });
 
   /// The builder function that constructs the widget tree.
-  /// Access the state directly via ref.state, which is equivalent to ref.watch(myNameAsyncProvider)
-  ///
-  /// For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)
+  /// Use ref.select for field-level updates to minimise rebuilds.
   /// The ref parameter provides type-safe access to the provider state and notifier
   final Widget Function(
     BuildContext context,
@@ -217,7 +208,7 @@ class MyNameAsyncStateWidget extends ConsumerWidget {
 
     if (onStateChanged != null) {
       ref.listen(myNameAsyncProvider, (pre, next) {
-        if (pre != next) onStateChanged!(pre?.valueOrNull, next.valueOrNull);
+        if (pre != next) onStateChanged!(pre?.value, next.value);
       });
     }
     return builder(context, _MyNameAsyncStateProxyWidgetRef(ref), child);
@@ -270,30 +261,26 @@ class MyNameAsyncSelectWidget<Selected> extends ConsumerWidget {
 // - MyNameSelect: Selector widget for optimized rebuilds
 //
 
-class _MyNameProxyWidgetRef extends WidgetRef {
+class _MyNameProxyWidgetRef {
   _MyNameProxyWidgetRef(this._ref);
 
   final WidgetRef _ref;
 
-  @override
   BuildContext get context => _ref.context;
 
-  @override
-  bool exists(ProviderBase<Object?> provider) => _ref.exists(provider);
+  bool exists(provider) => _ref.exists(provider);
 
-  @override
-  void invalidate(ProviderOrFamily provider) => _ref.invalidate(provider);
+  void invalidate(provider, {bool asReload = false}) =>
+      _ref.invalidate(provider, asReload: asReload);
 
-  @override
   void listen<T>(
-    ProviderListenable<T> provider,
+    provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
   }) => _ref.listen(provider, listener, onError: onError);
 
-  @override
   ProviderSubscription<T> listenManual<T>(
-    ProviderListenable<T> provider,
+    provider,
     void Function(T?, T) listener, {
     void Function(Object, StackTrace)? onError,
     bool fireImmediately = false,
@@ -304,14 +291,11 @@ class _MyNameProxyWidgetRef extends WidgetRef {
     fireImmediately: fireImmediately,
   );
 
-  @override
-  T read<T>(ProviderListenable<T> provider) => _ref.read(provider);
+  T read<T>(provider) => _ref.read(provider);
 
-  @override
-  State refresh<State>(Refreshable<State> provider) => _ref.refresh(provider);
+  State refresh<State>(provider) => _ref.refresh(provider);
 
-  @override
-  T watch<T>(ProviderListenable<T> provider) => _ref.watch(provider);
+  T watch<T>(provider) => _ref.watch(provider);
 }
 
 class MyNameProviderScope extends ConsumerWidget {
@@ -395,9 +379,7 @@ class MyNameStateWidget extends ConsumerWidget {
   });
 
   /// The builder function that constructs the widget tree.
-  /// Access the state directly via ref.state, which is equivalent to ref.watch(myNameProvider)
-  ///
-  /// For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)
+  /// Use ref.select for field-level updates to minimise rebuilds.
   /// The ref parameter provides type-safe access to the provider state and notifier
   final Widget Function(
     BuildContext context,

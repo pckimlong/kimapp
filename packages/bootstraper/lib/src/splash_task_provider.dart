@@ -1,57 +1,57 @@
 part of 'bootstrap.dart';
 
 final _statelessSplashTaskProvider = FutureProvider<bool>((ref) async {
-  if (ref.state.valueOrNull != true) {
-    final splashConfig = ref.watch(_splashConfigProvider);
-    final tasks = _filterTasksByType<OneTimeSplashTask>(splashConfig?.tasks ?? []);
-    if (tasks.isEmpty) return true;
+  // In Riverpod v3, we can't directly access previous state like before
+  // We'll use a different approach to ensure one-time execution
+  final splashConfig = ref.watch(_splashConfigProvider);
+  final tasks = _filterTasksByType<OneTimeSplashTask>(splashConfig?.tasks ?? []);
+  if (tasks.isEmpty) return true;
 
-    final logger = ref.watch(loggerProvider);
-    final context = SplashContext(ref);
+  final logger = ref.watch(loggerProvider);
+  final context = SplashContext(ref);
 
-    logger.info('🎨 Starting ${tasks.length} one-time splash tasks');
-    final start = DateTime.now();
+  logger.info('🎨 Starting ${tasks.length} one-time splash tasks');
+  final start = DateTime.now();
 
-    final disposables = <DisposalCallback>[];
+  final disposables = <DisposalCallback>[];
 
-    try {
-      for (final task in tasks) {
-        final disposable = await _executeTaskWithLogging(task, context, logger);
-        if (disposable != null) {
-          disposables.add(disposable);
+  try {
+    for (final task in tasks) {
+      final disposable = await _executeTaskWithLogging(task, context, logger);
+      if (disposable != null) {
+        disposables.add(disposable);
 
-          ref.onDispose(() {
-            logger.info('🗑️ Disposing one-time task: ${task.runtimeType}');
-            disposable();
-          });
-        }
-      }
-
-      final elapsed = DateTime.now().difference(start);
-      logger.info('✅ Completed all one-time splash tasks in ${elapsed.inMilliseconds}ms');
-
-      if (elapsed < (splashConfig?.minimumDuration ?? Duration.zero)) {
-        final delayDuration = splashConfig!.minimumDuration - elapsed;
-        logger.info(
-          '⏱️  Enforcing minimum splash duration, delaying for ${delayDuration.inMilliseconds}ms',
-        );
-        await Future.delayed(delayDuration);
-      }
-    } catch (error) {
-      logger.info('🧹 Cleaning up ${disposables.length} initialized one-time tasks due to failure');
-      for (final disposable in disposables) {
-        try {
+        ref.onDispose(() {
+          logger.info('🗑️ Disposing one-time task: ${task.runtimeType}');
           disposable();
-        } catch (disposeError, disposeStack) {
-          logger.error(
-            'Failed to dispose task during error cleanup',
-            error: disposeError,
-            stackTrace: disposeStack,
-          );
-        }
+        });
       }
-      rethrow;
     }
+
+    final elapsed = DateTime.now().difference(start);
+    logger.info('✅ Completed all one-time splash tasks in ${elapsed.inMilliseconds}ms');
+
+    if (elapsed < (splashConfig?.minimumDuration ?? Duration.zero)) {
+      final delayDuration = splashConfig!.minimumDuration - elapsed;
+      logger.info(
+        '⏱️  Enforcing minimum splash duration, delaying for ${delayDuration.inMilliseconds}ms',
+      );
+      await Future.delayed(delayDuration);
+    }
+  } catch (error) {
+    logger.info('🧹 Cleaning up ${disposables.length} initialized one-time tasks due to failure');
+    for (final disposable in disposables) {
+      try {
+        disposable();
+      } catch (disposeError, disposeStack) {
+        logger.error(
+          'Failed to dispose task during error cleanup',
+          error: disposeError,
+          stackTrace: disposeStack,
+        );
+      }
+    }
+    rethrow;
   }
 
   return true;

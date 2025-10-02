@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 
 class ParamDefinition {
@@ -34,14 +34,15 @@ class ParamDefinition {
     };
   }
 
-  factory ParamDefinition.parse(ParameterElement parameter) {
+  factory ParamDefinition.parse(FormalParameterElement parameter) {
     return ParamDefinition(
-      name: parameter.name,
+      name: parameter.displayName,
       type: parameter.type.getDisplayString(),
       isRequired: parameter.isRequired,
       isNamed: parameter.isNamed,
       defaultValue: parameter.defaultValueCode,
-      annotations: parameter.metadata.map((m) => m.toSource()).toList(),
+      annotations:
+          parameter.metadata2.annotations.map((m) => m.toSource()).toList(),
       documentation: parameter.documentationComment,
     );
   }

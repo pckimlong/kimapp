@@ -31,14 +31,15 @@ class ProviderReturnTypeDefinition {
   }) {
     final isGeneric =
         type is ParameterizedType && type.typeArguments.isNotEmpty;
-    final wrapperType = type is InterfaceType ? type.element.name : null;
+    final wrapperType =
+        type is InterfaceType ? type.element3.displayName : null;
     final isAsync = ['Future', 'Stream', 'FutureOr'].contains(wrapperType);
-    String baseType = type.toString();
+    String baseType = type.getDisplayString();
     if (isGeneric) {
       // We interest on base type and wrapper type only when the first type argument is not Future or Stream
       // this mean IList, Map etc are not included
       if (isAsync) {
-        baseType = type.typeArguments.first.toString();
+        baseType = type.typeArguments.first.getDisplayString();
       } else {
         baseType = type.getDisplayString();
       }

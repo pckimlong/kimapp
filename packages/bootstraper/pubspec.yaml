@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   hooks_riverpod: ^3.0.0
+  riverpod: ^3.0.0
   kimapp_utils:
     path: ../kimapp_utils 
 

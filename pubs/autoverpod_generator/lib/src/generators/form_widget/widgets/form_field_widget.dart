@@ -195,13 +195,13 @@ class ${provider.fieldWidgetName(field)} extends HookConsumerWidget {
     ${provider.paramsDeclaration}
 
     // Using ref.read to get the initial value to avoid rebuilding the widget when the provider value changes
-    final initialValue = ref.read(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name};
+    final initialValue = ref.read(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.value?.' : '.'}${field.name};
     
     final controller = textController ?? useTextEditingController(text: initialValue);
 
     // Listen for provider changes
     ref.listen(
-      ${provider.providerNameWithFamily(prefix: 'params')}.select((value) => value${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name}),
+      ${provider.providerNameWithFamily(prefix: 'params')}.select((value) => value${provider.isAsyncValue ? '.value?.' : '.'}${field.name}),
       (previous, next) {
         if (previous != next && controller.text != next) {
           controller.text = ${(provider.isAsyncValue || field.isNullable) ? 'next ?? ""' : 'next'};
@@ -221,7 +221,7 @@ class ${provider.fieldWidgetName(field)} extends HookConsumerWidget {
     // Setup text listener
     useEffect(() {
       void listener() {
-        final currentValue = ref.read(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.valueOrNull?' : ''}.${field.name};
+        final currentValue = ref.read(${provider.providerNameWithFamily(prefix: 'params')})${provider.isAsyncValue ? '.value?.' : '.'}${field.name};
         if (currentValue != controller.text) {
           ref.read(${provider.providerNameWithFamily(prefix: 'params')}.notifier)
              .update${field.name.pascalCase}(controller.text);

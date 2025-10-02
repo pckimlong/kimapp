@@ -3,10 +3,8 @@
 import 'dart:async';
 
 import 'package:riverpod/riverpod.dart';
-// ignore: implementation_imports
-import 'package:riverpod/src/async_notifier.dart';
 
-extension PersistRiverpodAsyncNotifier<T> on AsyncNotifierBase<T> {
+extension PersistRiverpodAsyncNotifier<T> on AsyncNotifier<T> {
   /// Persists the state of the notifier by fetching fresh data and persisting it if necessary.
   /// This callback should be called inside build to make it taking effect
   ///
@@ -43,7 +41,7 @@ extension PersistRiverpodAsyncNotifier<T> on AsyncNotifierBase<T> {
   }) async {
     // Only get persisted data when [enableCache] is true and state is not refreshing
     // or [refetchOnRefresh] is false which mean, it still use persisted data even the state is refreshing
-    if (enableCache && (!state.isRefreshing || !refetchOnRefresh)) {
+    if (enableCache && (!state.isLoading || !refetchOnRefresh)) {
       try {
         final persistedData = await fetchPersistedData();
         // Check if should get fresh data instead
@@ -95,7 +93,7 @@ extension RefPersist on Ref {
     bool Function(T persistedData)? validPersistedData,
     Duration refreshIn = const Duration(seconds: 3),
   }) async {
-    if (!state.isRefreshing) {
+    if (!state.isLoading) {
       final cached = await fetchPersistedData();
       if (cached != null && (validPersistedData?.call(cached) ?? true)) {
         Future.delayed(refreshIn).then((_) => invalidateSelf());

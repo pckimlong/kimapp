@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:build/build.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:source_gen/source_gen.dart';
@@ -10,7 +10,7 @@ class WidgetGenerator {
         'Subclasses must override annotationTypeChecker',
       );
   static final TypeChecker riverpodAnnotationTypeChecker =
-      const TypeChecker.fromRuntime(Riverpod);
+      const TypeChecker.typeNamed(Riverpod, inPackage: 'riverpod_annotation');
 
   /// Generate code for the given library
   ///
@@ -19,17 +19,30 @@ class WidgetGenerator {
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
     final buffer = StringBuffer();
 
-    for (final element in library.allElements) {
-      if (canProcess(element)) {
-        final annotation =
-            ConstantReader(annotationTypeChecker.firstAnnotationOf(element));
+    for (final annotated in library.annotatedWith(annotationTypeChecker)) {
+      final element = annotated.element;
 
-        final output =
-            await generateForAnnotatedElement(element, annotation, buildStep);
-
-        if (output.isNotEmpty) {
-          buffer.writeln(output);
+      final sourceUri = element.firstFragment.libraryFragment?.source.uri;
+      if (sourceUri != null) {
+        final path = sourceUri.path;
+        if (path.endsWith('.g.dart') ||
+            path.endsWith('.freezed.dart') ||
+            path.endsWith('.widget.dart') ||
+            path.endsWith('.riverpod.dart')) {
+          continue;
         }
+      }
+
+      if (!canProcess(element)) continue;
+
+      final output = await generateForAnnotatedElement(
+        element,
+        annotated.annotation,
+        buildStep,
+      );
+
+      if (output.isNotEmpty) {
+        buffer.writeln(output);
       }
     }
 
@@ -43,7 +56,7 @@ class WidgetGenerator {
   ///
   /// This method is used internally and should not be overridden
   /// unless you need custom annotation detection logic.
-  bool canProcess(Element element) {
+  bool canProcess(Element2 element) {
     final hasWidgetAnnotation = annotationTypeChecker.hasAnnotationOf(element);
     final hasRiverpodAnnotation =
         riverpodAnnotationTypeChecker.hasAnnotationOf(element);
@@ -62,7 +75,7 @@ class WidgetGenerator {
   ///
   /// This is the main method that implementers should override.
   Future<String> generateForAnnotatedElement(
-    Element element,
+    Element2 element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {

@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -8,21 +8,22 @@ import 'package:source_gen/source_gen.dart';
 class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
   @override
   String generateForAnnotatedElement(
-    Element element,
+    Element2 element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement) {
+    if (element is! ClassElement2) {
       throw ArgumentError(
           'Only classes can be annotated with @TableModel. $element is not a ClassElement.');
     }
 
-    final className = _getClassName(element);
+    final classElement = element;
+    final className = _getClassName(classElement);
     final tableName = annotation.peek('tableName')?.stringValue;
 
-    final constructor = element.unnamedConstructor;
-    if (constructor is! ConstructorElement) {
-      throw ArgumentError('Default constructor for ${element.name} is missing');
+    final constructor = classElement.unnamedConstructor2;
+    if (constructor == null) {
+      throw ArgumentError('Default constructor for ${classElement.name3} is missing');
     }
 
     final fields = _extractFields(constructor);
@@ -30,14 +31,19 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     return _buildTableDefinition(className, tableName, fields);
   }
 
-  String _getClassName(ClassElement element) {
-    return element.supertype!.element.name;
+  String _getClassName(ClassElement2 element) {
+    final superType = element.supertype;
+    final superElement = superType?.element3;
+    if (superElement is ClassElement2) {
+      return superElement.name3 ?? element.name3 ?? element.displayName;
+    }
+    return element.name3 ?? element.displayName;
   }
 
-  List<TableFieldInfo> _extractFields(ConstructorElement constructor) {
+  List<TableFieldInfo> _extractFields(ConstructorElement2 constructor) {
     final fields = <TableFieldInfo>[];
 
-    for (final fieldElement in constructor.parameters) {
+    for (final fieldElement in constructor.formalParameters) {
       if (fieldElement.isPrivate) {
         continue;
       }
@@ -48,7 +54,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
 
       fields.add(
         TableFieldInfo(
-          key: key ?? fieldElement.name,
+          key: key ?? fieldElement.name3,
           candidateKey: candidateKey,
           foreignKey: foreignKey,
           joinedModel: joinedModel,
@@ -59,7 +65,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     return fields;
   }
 
-  String? _getKeyFromJsonKey(ParameterElement fieldElement) {
+  String? _getKeyFromJsonKey(FormalParameterElement fieldElement) {
     const checker = TypeChecker.fromRuntime(JsonKey);
     final annotation = checker.firstAnnotationOf(fieldElement);
     if (annotation == null) return null;
@@ -73,7 +79,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
   }
 
   (String?, String?, String?) _getJoinedColumnInfo(
-      ParameterElement fieldElement) {
+      FormalParameterElement fieldElement) {
     if (!_fieldHasAnnotation(JoinedColumn, fieldElement)) {
       return (null, null, null);
     }
@@ -89,7 +95,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     return (candidateKey, foreignKey, joinedModel);
   }
 
-  String? _getJoinedModel(ParameterElement fieldElement) {
+  String? _getJoinedModel(FormalParameterElement fieldElement) {
     if (fieldElement.type.isDartCoreList ||
         fieldElement.type.toString().contains('IList')) {
       var elementType = fieldElement.type as ParameterizedType;
@@ -124,7 +130,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
   }
 }
 
-bool _fieldHasAnnotation(Type annotationType, ParameterElement element) {
+bool _fieldHasAnnotation(Type annotationType, FormalParameterElement element) {
   final annotations =
       TypeChecker.fromRuntime(annotationType).annotationsOf(element);
   return annotations.isNotEmpty;
