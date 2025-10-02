@@ -32,10 +32,10 @@ dependencies:
   freezed_annotation: any
   {{/freezed}}
   {{#riverpod}}
-  riverpod_annotation: any
+  riverpod_annotation: ^3.0.0
   {{#ui}}
   flutter_hooks: any
-  hooks_riverpod: any
+  hooks_riverpod: ^3.0.0
   {{/ui}}
   {{/riverpod}}
 
@@ -58,8 +58,8 @@ dev_dependencies:
   {{/kimapp}}
   {{#riverpod}}
   custom_lint: any
-  riverpod_lint: any
-  riverpod_generator: any
+  riverpod_lint: ^3.0.0
+  riverpod_generator: ^3.0.0
   {{/riverpod}}
 
   
@@ -67,4 +67,3 @@ dev_dependencies:
 {{#ui}}
 flutter:
 {{/ui}}
-

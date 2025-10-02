@@ -15,7 +15,7 @@ dependencies:
   freezed_annotation:
   stack_trace: ^1.12.0
   fpdart: 
-  riverpod: 
+  riverpod: ^3.0.0
   fast_immutable_collections: 
 
 dev_dependencies:

@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
   freezed_annotation:
   fpdart: 
-  flutter_riverpod: 
+  flutter_riverpod: ^3.0.0
   fast_immutable_collections:
   kimapp:
     path: ../kimapp 

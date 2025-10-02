@@ -2,10 +2,8 @@
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// ignore: depend_on_referenced_packages, implementation_imports
-import 'package:riverpod/src/async_notifier.dart';
 
-mixin IListAsyncNotifier<T> on AsyncNotifierBase<IList<T>> {
+mixin IListAsyncNotifier<T> on AsyncNotifier<IList<T>> {
   /// Returns true if the given [item] matches the identity criteria for updating/removing items.
   ///
   /// This is used by [removeItem], [updateItem], and [updateItems] to determine which items

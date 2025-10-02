@@ -15,8 +15,8 @@ dependencies:
   build: ^3.1.0
   analyzer: 
   json_annotation: ^4.9.0
-  riverpod_annotation: 
-  riverpod:
+  riverpod_annotation: ^3.0.0
+  riverpod: ^3.0.0
   flutter:
     sdk: flutter
   kimapp:
