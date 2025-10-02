@@ -35,7 +35,7 @@ dependencies:
   freezed_annotation: ^3.0.0
   hive_ce: ^2.8.0
   hive_ce_flutter: ^2.1.0
-  hooks_riverpod: ^2.6.1
+  hooks_riverpod: ^3.0.0
   connectivity_plus: ^6.1.1
   intl: ^0.20.1
   json_annotation: ^4.9.0
