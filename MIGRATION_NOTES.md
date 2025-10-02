@@ -2,18 +2,18 @@
 
 ## Current snapshot (2025-???)
 - kimapp_form_generator, table_model_generator, kimapp_schema_generator, and table_structure_generator now use analyzer Element2 APIs and Riverpod 3 types.
-- Workspace still fails `dart analyze` / `build_runner` because autoverpod_generator and its models continue to depend on legacy analyzer elements and Riverpod 2 provider names.
+- Workspace still fails `dart analyze` because packages that consume autoverpod_generator (kimapp_generator, kimapp_supabase_helper, examples) haven't yet been updated to the new Riverpod 3 APIs.
 
 ## High-priority follow-up
-1. Port `pubs/autoverpod_generator` to Element2:
-   - update all `Element`, `ClassElement`, `FieldElement`, etc. references to their `...Element2` counterparts.
-   - replace `getElementDeclaration` calls with `getFragmentDeclaration` and use fragment-aware AST access.
-   - audit generator outputs for removed provider symbols (`AutoDisposeNotifierProvider`, `state`, `ref.watch` patterns) and align with Riverpod 3 API.
-2. Regenerate code
-   - run `dart run build_runner build --delete-conflicting-outputs` in `kimapp_generator` and `autoverpod_generator` once generators compile.
+1. ✅ Port `pubs/autoverpod_generator` to Element2 / Riverpod 3 APIs.
+2. Regenerate code in dependents
+   - run `dart run build_runner build --delete-conflicting-outputs` in `kimapp_generator`, `autoverpod_generator`, and their examples after updating templates.
    - refresh example outputs (`packages/kimapp_generator/example`, `pubs/autoverpod_generator/example`).
-3. Workspace validation
-   - `dart run melos exec -- dart analyze`.
+3. Migrate consumers
+   - update `kimapp_generator` outputs & templates to the new Riverpod 3 provider APIs (replace legacy mixins/providers, stop importing `riverpod/src/...`).
+   - update `kimapp_supabase_helper` providers to the new notifier APIs (`Notifier`, `AsyncNotifier`, `Ref` helpers) and drop private `riverpod/src` imports.
+4. Workspace validation
+   - `dart run melos exec -- dart analyze` once generators/consumers compile.
    - targeted widget/provider tests where they exist.
 
 ## Helpful references

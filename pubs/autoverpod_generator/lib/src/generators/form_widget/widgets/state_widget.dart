@@ -37,7 +37,7 @@ if (onStateChanged != null) {
       onStateChanged!(${provider.isAsyncValue ? 'pre?.value' : 'pre'}, ${provider.isAsyncValue ? 'next.value' : 'next'});
   });
 }
-return ${generateParamWidgetWrapper(provider, child: 'builder(context, ${provider.formBaseProxyWidgetName}(ref), child)')};
+return ${generateParamWidgetWrapper(provider, child: 'builder(context, ref, child)')};
     ''',
   );
 }

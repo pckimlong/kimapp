@@ -376,8 +376,7 @@ class UpdateUserFormState extends ConsumerWidget {
       });
     }
     return UpdateUserFormParams(
-      builder: (context, ref, params) =>
-          builder(context, UpdateUserProxyWidgetRef(ref), child),
+      builder: (context, ref, params) => builder(context, ref, child),
     );
   }
 }

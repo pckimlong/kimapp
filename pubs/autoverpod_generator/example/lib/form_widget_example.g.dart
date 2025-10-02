@@ -23,7 +23,7 @@ part of 'form_widget_example.dart';
 
 final updateUserCallStatusProvider = NotifierProvider.autoDispose
     .family<_UpdateUserCallStatusNotifier, AsyncValue<bool>?, ({int id})>(
-      _UpdateUserCallStatusNotifier.new,
+      (({int id}) _) => _UpdateUserCallStatusNotifier(),
     );
 
 class _UpdateUserCallStatusNotifier extends Notifier<AsyncValue<bool>?> {
