@@ -1,61 +1,94 @@
 import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:autoverpod/autoverpod.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:kimapp/kimapp.dart';
 import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 
-const providerStatusClassType = TypeChecker.fromRuntime(ProviderStatusClassMixin);
+const providerStatusClassType =
+    TypeChecker.fromRuntime(ProviderStatusClassMixin);
 const formUpdateMixin = TypeChecker.fromRuntime(UpdateFormMixin);
 
-class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
+class KimappFormGenerator extends Generator {
+  KimappFormGenerator();
+
+  static final _kimappFormChecker = TypeChecker.fromRuntime(KimappForm);
+  static final _autoverpodFormChecker = TypeChecker.fromRuntime(FormWidget);
+
   @override
-  generateForAnnotatedElement(
-    Element2 element,
-    ConstantReader annotation,
+  String generate(
+    LibraryReader library,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement2) return;
+    final buffer = StringBuffer();
+    final processed = <ClassElement2>{};
 
-    final providerClass = element;
-    final buildMethod =
-        providerClass.methods2.firstWhereOrNull((method) => method.name3 == 'build');
+    void handleAnnotatedElement(AnnotatedElement annotated) {
+      final element = annotated.element;
+      if (element is! ClassElement2) return;
+      if (!processed.add(element)) return;
+
+      final generated = _generateForProviderClass(element);
+      if (generated != null && generated.isNotEmpty) {
+        buffer.writeln(generated);
+      }
+    }
+
+    for (final annotated in library.annotatedWith(_kimappFormChecker)) {
+      handleAnnotatedElement(annotated);
+    }
+
+    for (final annotated in library.annotatedWith(_autoverpodFormChecker)) {
+      handleAnnotatedElement(annotated);
+    }
+
+    return buffer.toString();
+  }
+
+  String? _generateForProviderClass(ClassElement2 providerClass) {
+    final buildMethod = providerClass.methods2
+        .firstWhereOrNull((method) => method.name3 == 'build');
     if (buildMethod == null) {
       // Only stateful provider contain build method can generate form
-      return;
+      return null;
     }
 
     final returnType = buildMethod.returnType;
     if (returnType is! InterfaceType) {
-      return;
+      return null;
     }
 
     final stateElement = returnType.element3;
     if (stateElement is! ClassElement2) {
-      return;
+      return null;
     }
 
     if (!providerStatusClassType.isAssignableFrom(stateElement)) {
       // Support only class with ProviderStatusClassMixin
-      return;
+      print(
+        '[FORM GENERATOR FAILED] ${providerClass.name3} build method must return a type that mixes ProviderStatusClassMixin.',
+      );
+      return null;
     }
 
     // All valid start generate code...
     final isFormUpdateType = formUpdateMixin.isAssignableFrom(stateElement);
     final providerClassName = providerClass.thisType.getDisplayString();
     final familyParams = <String, String>{};
-    final providerNameWithFamily =
-        _providerFamilyParamBuilder(providerClassName, buildMethod.formalParameters);
+    final providerNameWithFamily = _providerFamilyParamBuilder(
+        providerClassName, buildMethod.formalParameters);
     final fields = <String, String>{};
     final buildMethodReturnType = stateElement.name3 ?? '';
 
     // Generate call method detail
-    final callMethod =
-        providerClass.methods2.firstWhereOrNull((method) => method.name3 == 'call');
+    final callMethod = providerClass.methods2
+        .firstWhereOrNull((method) => method.name3 == 'call');
     if (callMethod == null) {
-      print('[FORM GENERATOR FAILED] ${stateElement.name3} required [call] method');
-      return;
+      print(
+          '[FORM GENERATOR FAILED] ${stateElement.name3} required [call] method');
+      return null;
     }
 
     // Validate call method for my style
@@ -84,12 +117,13 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       print(
         '[FORM GENERATOR FAILED] ${stateElement.name3} has following constructors: ${stateElement.constructors2.map((e) => e.displayName)}',
       );
-      return;
+      return null;
     }
 
     if (classConstructor.formalParameters.isEmpty) {
-      print('[FORM GENERATOR FAILED] ${classConstructor.displayName} has no parameters');
-      return;
+      print(
+          '[FORM GENERATOR FAILED] ${classConstructor.displayName} has no parameters');
+      return null;
     }
 
     late final String providerStatusType;
@@ -99,7 +133,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
       // Don't generate status field because it from provider status mixin class
       if (param.displayName != 'status') {
         // Also initialLoaded field
-        if (!isFormUpdateType || (isFormUpdateType && param.displayName != 'initialLoaded')) {
+        if (!isFormUpdateType ||
+            (isFormUpdateType && param.displayName != 'initialLoaded')) {
           final name = param.displayName;
           final type = param.type.getDisplayString();
           fields[name] = type;
@@ -110,8 +145,9 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
     }
 
     // Generate form if there any string field
-    final useFormWidget =
-        fields.values.where((type) => type == 'String' || type == 'String?').isNotEmpty;
+    final useFormWidget = fields.values
+        .where((type) => type == 'String' || type == 'String?')
+        .isNotEmpty;
 
     final buffer = StringBuffer();
 
@@ -206,7 +242,8 @@ class KimappFormGenerator extends GeneratorForAnnotation<KimappForm> {
         fieldType: fieldType,
         providerNameFamily: providerNameWithFamily,
         familyParams: familyParams,
-        useTextField: useFormWidget && fieldType == "String" || fieldType == "String?",
+        useTextField:
+            useFormWidget && fieldType == "String" || fieldType == "String?",
       );
       buffer.write(fieldWidget);
     }
@@ -355,7 +392,8 @@ String _familyParamClassName(String providerName) {
   return "_${providerName}FamilyParam";
 }
 
-String _generateFamilyParamsClass(String providerName, Map<String, String> params) {
+String _generateFamilyParamsClass(
+    String providerName, Map<String, String> params) {
   if (params.isEmpty) return '';
 
   final name = _familyParamClassName(providerName);
@@ -384,7 +422,8 @@ class $name {
   return result;
 }
 
-String _defineLocalFamilyOrEmpty(String providerName, Map<String, String> param) {
+String _defineLocalFamilyOrEmpty(
+    String providerName, Map<String, String> param) {
   final props = param.keys;
   if (props.isEmpty) return "";
   return '''

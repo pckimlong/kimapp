@@ -43,6 +43,8 @@ dependencies:
       url: https://github.com/pckimlong/kimapp.git
       ref: master
       path: packages/kimapp
+  autoverpod:
+    path: ../../../pubs/autoverpod
   flutter_riverpod: ^3.0.0
   json_annotation:
   riverpod_annotation: ^3.0.0
