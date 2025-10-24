@@ -6,6 +6,7 @@ import 'dart:developer';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:riverpod/src/providers/notifier.dart';
 
 import 'object/failure.dart';
 
@@ -232,7 +233,7 @@ extension RiverpodRefExtension on Ref {
   }
 }
 
-extension ProviderStatusFamilyNotifierX<T> on AsyncNotifier<ProviderStatus<T>> {
+extension ProviderStatusFamilyNotifierX<T> on $Notifier<ProviderStatus<T>> {
   /// Perform call function of provider with continuously update the status and catch error
   ///
   /// If status is currently in progress or already success, no action will be perform and return current status
@@ -257,18 +258,17 @@ extension ProviderStatusFamilyNotifierX<T> on AsyncNotifier<ProviderStatus<T>> {
     void Function(Failure failure)? onFailure,
     void Function(R success)? onSuccess,
   }) async {
-    final currentState = state.value;
-    if (currentState == null) return ProviderStatus<R>.initial();
+    final currentState = state;
 
     if (currentState.isInProgress || currentState.isSuccess) {
       return currentState as ProviderStatus<R>;
     }
 
     final inProgressStatus = ProviderStatus<T>.inProgress();
-    state = AsyncValue.data(inProgressStatus);
+    state = inProgressStatus;
 
     final result = await ProviderStatus.guard<R>(() async => await callback(inProgressStatus));
-    state = AsyncValue.data(result as ProviderStatus<T>);
+    state = result as ProviderStatus<T>;
 
     if (result.isFailure && onFailure != null) {
       final failure = result.failure;
@@ -286,11 +286,11 @@ extension ProviderStatusFamilyNotifierX<T> on AsyncNotifier<ProviderStatus<T>> {
 
 /// Make family provider(provider with params in builds) work
 extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClassMixin<Base, A>>
-    on AsyncNotifier<Base> {
-  bool get isInProgress => state.value?.status.isInProgress ?? false;
-  bool get isFailure => state.value?.status.isFailure ?? false;
-  bool get isInitial => state.value?.status.isInitial ?? true;
-  bool get isSuccess => state.value?.status.isSuccess ?? false;
+    on $Notifier<Base> {
+  bool get isInProgress => state.status.isInProgress;
+  bool get isFailure => state.status.isFailure;
+  bool get isInitial => state.status.isInitial;
+  bool get isSuccess => state.status.isSuccess;
 
   /// Perform callback update the provider status class and return class state
   Future<ProviderStatus<T>> perform<T extends A>(
@@ -305,8 +305,8 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     /// Function has no effect when current status is already a success state
     bool ignoreInSuccessState = true,
   }) async {
-    final currentState = state.value;
-    if (currentState == null) return ProviderStatus<T>.initial();
+    final currentState = state;
+    if (currentState.status.isInitial) return ProviderStatus<T>.initial();
 
     if (isInProgress) return currentState.status as ProviderStatus<T>;
     if (ignoreInSuccessState && isSuccess) {
@@ -318,16 +318,16 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
       final updateForm = currentState as UpdateFormMixin;
       if (!updateForm.initialLoaded) {
         log('${currentState.runtimeType}.initialLoaded is false. So this call back will be ignore');
-        return currentState.status as ProviderStatus<T>;
+        return currentState as ProviderStatus<T>;
       }
     }
 
     final updatedState = currentState.updateStatus(ProviderStatus<T>.inProgress());
-    state = AsyncValue.data(updatedState);
+    state = updatedState;
 
     final result = await ProviderStatus.guard(() async => await callback(updatedState));
     final finalState = updatedState.updateStatus(result);
-    state = AsyncValue.data(finalState);
+    state = finalState;
     final updatedStatus = finalState.status as ProviderStatus<T>;
 
     if (isFailure && onFailure != null) {
@@ -344,51 +344,51 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
   }
 }
 
-extension ProviderStatusFamilyNotifierXX<T> on Notifier<ProviderStatus<T>> {
-  /// Perform call function of provider with continuously update the status and catch error
-  ///
-  /// If status is currently in progress or already success, no action will be perform and return current status
-  ///
-  /// Update current status to in progress then execute [callback] function which has current state inside
-  /// this callback must return ProviderStatus success type [T]
-  ///
-  /// It is safe to run error prone function in it, since callback will be perform inside
-  /// [ProviderStatus.guard] function which will update the status depend on the process
-  ///
-  /// [onFailure] callback will be trigger when provider is in error state and given callback is none null
-  /// ```
-  /// Future<ProviderStatus<T>> call(Parameters) async {
-  ///   return perform((state) async {
-  ///   final result = await ref.read(authRepoProvider).signIn(signInParam); // call to function
-  ///   return result.getOrThrow();
-  ///  });
-  /// }
-  /// ```
-  Future<ProviderStatus<T>> perform(
-    Future<T> Function(ProviderStatus<T> state) callback, {
-    void Function(Failure failure)? onFailure,
+// extension ProviderStatusFamilyNotifierXX<T> on $Notifier<ProviderStatus<T>> {
+//   /// Perform call function of provider with continuously update the status and catch error
+//   ///
+//   /// If status is currently in progress or already success, no action will be perform and return current status
+//   ///
+//   /// Update current status to in progress then execute [callback] function which has current state inside
+//   /// this callback must return ProviderStatus success type [T]
+//   ///
+//   /// It is safe to run error prone function in it, since callback will be perform inside
+//   /// [ProviderStatus.guard] function which will update the status depend on the process
+//   ///
+//   /// [onFailure] callback will be trigger when provider is in error state and given callback is none null
+//   /// ```
+//   /// Future<ProviderStatus<T>> call(Parameters) async {
+//   ///   return perform((state) async {
+//   ///   final result = await ref.read(authRepoProvider).signIn(signInParam); // call to function
+//   ///   return result.getOrThrow();
+//   ///  });
+//   /// }
+//   /// ```
+//   Future<ProviderStatus<T>> perform(
+//     Future<T> Function(ProviderStatus<T> state) callback, {
+//     void Function(Failure failure)? onFailure,
 
-    /// Trigger whenever success
-    void Function(T success)? onSuccess,
-  }) async {
-    if (state.isInProgress || state.isSuccess) return state;
-    state = ProviderStatus<T>.inProgress();
-    state = await ProviderStatus.guard<T>(() async => await callback(state));
-    final updatedState = state;
+//     /// Trigger whenever success
+//     void Function(T success)? onSuccess,
+//   }) async {
+//     if (state.isInProgress || state.isSuccess) return state;
+//     state = ProviderStatus<T>.inProgress();
+//     state = await ProviderStatus.guard<T>(() async => await callback(state));
+//     final updatedState = state;
 
-    if (state.isFailure && onFailure != null) {
-      final failure = state.failure;
-      if (failure != null) onFailure(failure);
-    }
+//     if (state.isFailure && onFailure != null) {
+//       final failure = state.failure;
+//       if (failure != null) onFailure(failure);
+//     }
 
-    if (state.isSuccess && onSuccess != null) {
-      final success = state.successOrNull;
-      if (success != null) onSuccess(success);
-    }
+//     if (state.isSuccess && onSuccess != null) {
+//       final success = state.successOrNull;
+//       if (success != null) onSuccess(success);
+//     }
 
-    return updatedState;
-  }
-}
+//     return updatedState;
+//   }
+// }
 
 /// Make family provider(provider with params in builds) work
 extension ProviderStatusClassFamilyNotifierXX<A, Base extends ProviderStatusClassMixin<Base, A>>

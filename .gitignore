@@ -25,6 +25,8 @@ build/
 
 .project
 .classpath
+.dart-tool
+.dartServer
 .settings
 .last_build_id
 *.iml
