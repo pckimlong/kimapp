@@ -27,7 +27,7 @@ part '${snakeCaseName}_detail_provider.g.dart';
 
 @stateWidget
 @riverpod
-class ${pascalCaseName}Detail extends _$${pascalCaseName}Detail {
+class ${pascalCaseName}Detail extends AsyncNotifier<${pascalCaseName}Model> {
   @override
   FutureOr<${pascalCaseName}Model> build(${pascalCaseName}Id id) {
     return ref.watch(${camelCaseName}RepoProvider).findOne(id).then((value) => value.getOrThrow());

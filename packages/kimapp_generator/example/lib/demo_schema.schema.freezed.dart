@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -132,6 +131,186 @@ class _$DemoModelCopyWithImpl<$Res> implements $DemoModelCopyWith<$Res> {
     return $OtherModelCopyWith<$Res>(_self.other!, (value) {
       return _then(_self.copyWith(other: value));
     });
+  }
+}
+
+/// Adds pattern-matching-related methods to [DemoModel].
+extension DemoModelPatterns on DemoModel {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_DemoModel value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DemoModel() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_DemoModel value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoModel():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_DemoModel value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoModel() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "description") String? description,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DemoModel() when $default != null:
+        return $default(_that.name, _that.description, _that.age, _that.address,
+            _that.other);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "description") String? description,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoModel():
+        return $default(_that.name, _that.description, _that.age, _that.address,
+            _that.other);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "description") String? description,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoModel() when $default != null:
+        return $default(_that.name, _that.description, _that.age, _that.address,
+            _that.other);
+      case _:
+        return null;
+    }
   }
 }
 
@@ -429,6 +608,192 @@ class _$DemoDetailModelCopyWithImpl<$Res>
   }
 }
 
+/// Adds pattern-matching-related methods to [DemoDetailModel].
+extension DemoDetailModelPatterns on DemoDetailModel {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_DemoDetailModel value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DemoDetailModel() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_DemoDetailModel value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoDetailModel():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_DemoDetailModel value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoDetailModel() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "description") String? description,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other,
+            @JsonKey(name: "name2") String name2,
+            @JsonKey(name: "age2") int age2)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DemoDetailModel() when $default != null:
+        return $default(_that.name, _that.description, _that.age, _that.address,
+            _that.other, _that.name2, _that.age2);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "description") String? description,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other,
+            @JsonKey(name: "name2") String name2,
+            @JsonKey(name: "age2") int age2)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoDetailModel():
+        return $default(_that.name, _that.description, _that.age, _that.address,
+            _that.other, _that.name2, _that.age2);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "description") String? description,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other,
+            @JsonKey(name: "name2") String name2,
+            @JsonKey(name: "age2") int age2)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoDetailModel() when $default != null:
+        return $default(_that.name, _that.description, _that.age, _that.address,
+            _that.other, _that.name2, _that.age2);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 
 @TableModel(DemoDetailModel.tableName)
@@ -714,6 +1079,180 @@ class _$DemoLiteModelCopyWithImpl<$Res>
     return $OtherModelCopyWith<$Res>(_self.other!, (value) {
       return _then(_self.copyWith(other: value));
     });
+  }
+}
+
+/// Adds pattern-matching-related methods to [DemoLiteModel].
+extension DemoLiteModelPatterns on DemoLiteModel {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_DemoLiteModel value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DemoLiteModel() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_DemoLiteModel value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoLiteModel():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_DemoLiteModel value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoLiteModel() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DemoLiteModel() when $default != null:
+        return $default(_that.name, _that.age, _that.address, _that.other);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoLiteModel():
+        return $default(_that.name, _that.age, _that.address, _that.other);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            @JsonKey(name: "name") String? name,
+            @JsonKey(name: "age") int age,
+            @JsonKey(name: "address") String? address,
+            @JoinedColumn(foreignKey: "other_id", candidateKey: null)
+            @JsonKey(name: "other")
+            OtherModel? other)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _DemoLiteModel() when $default != null:
+        return $default(_that.name, _that.age, _that.address, _that.other);
+      case _:
+        return null;
+    }
   }
 }
 

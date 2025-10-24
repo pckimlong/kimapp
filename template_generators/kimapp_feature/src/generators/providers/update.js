@@ -26,7 +26,7 @@ part '${snakeCaseName}_update_provider.g.dart';
 
 @formWidget
 @riverpod
-class ${pascalCaseName}Update extends _$${pascalCaseName}UpdateWidget {
+class ${pascalCaseName}Update extends AsyncNotifier<${pascalCaseName}UpdateParam> {
   @override
   Future<${pascalCaseName}UpdateParam> build(${pascalCaseName}Id ${camelCaseName}Id) async {
     final result = await ref.read(${camelCaseName}RepoProvider).findOne(${camelCaseName}Id).getOrThrow();

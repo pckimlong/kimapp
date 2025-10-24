@@ -1,3 +1,8 @@
+## 0.0.3
+
+ - **FEAT**: Support `@formWidget` annotation from autoverpod alongside legacy `@kimappForm`.
+ - **CHORE**: Add autoverpod dependency and update examples to use the shared annotation.
+
 ## 0.0.2
 
  - **FEAT**: Enhance Identity object with validation and error handling. ([bb093399](https://github.com/pckimlong/kimapp/commit/bb093399c7ddae168d5d9cc0e87d75f4714d749d))

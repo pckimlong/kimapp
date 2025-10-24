@@ -183,7 +183,7 @@ class Bootstraper {
     /// error prone and should not block the app from starting.
     List<BootstrapTask> initialTasks = const [],
     SplashConfig? splashConfig,
-    List<Override> providerOverrides = const [],
+    List providerOverrides = const [],
     List<ProviderObserver> providerObservers = const [],
     void Function(WidgetRef ref)? earlyEagerInitializer,
   }) async {
@@ -304,7 +304,7 @@ class Bootstraper {
   /// Returns: A configured [ProviderContainer] ready for use
   static ProviderContainer _createProviderContainer(
     SplashConfig? splashConfig,
-    List<Override> providerOverrides,
+    List providerOverrides,
     List<ProviderObserver> providerObservers,
     Logger? logger,
   ) {

@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -99,6 +98,168 @@ class _$FailureInfoCopyWithImpl<$Res> implements $FailureInfoCopyWith<$Res> {
               as String?,
       errorObject: freezed == errorObject ? _self.errorObject : errorObject,
     ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [FailureInfo].
+extension FailureInfoPatterns on FailureInfo {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_FailureInfo value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FailureInfo() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_FailureInfo value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _FailureInfo():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_FailureInfo value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _FailureInfo() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(StackTrace stackTrace, String debugMessage,
+            String? message, Object? errorObject)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _FailureInfo() when $default != null:
+        return $default(_that.stackTrace, _that.debugMessage, _that.message,
+            _that.errorObject);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(StackTrace stackTrace, String debugMessage,
+            String? message, Object? errorObject)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _FailureInfo():
+        return $default(_that.stackTrace, _that.debugMessage, _that.message,
+            _that.errorObject);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(StackTrace stackTrace, String debugMessage,
+            String? message, Object? errorObject)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _FailureInfo() when $default != null:
+        return $default(_that.stackTrace, _that.debugMessage, _that.message,
+            _that.errorObject);
+      case _:
+        return null;
+    }
   }
 }
 
@@ -225,6 +386,249 @@ mixin _$Failure {
 /// @nodoc
 class $FailureCopyWith<$Res> {
   $FailureCopyWith(Failure _, $Res Function(Failure) __);
+}
+
+/// Adds pattern-matching-related methods to [Failure].
+extension FailurePatterns on Failure {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Failure value)? $default, {
+    TResult Function(ExceptionFailure value)? exception,
+    TResult Function(NetworkFailure value)? networkFailure,
+    TResult Function(ServerError value)? serverError,
+    TResult Function(DatabaseFailure value)? databaseFailure,
+    TResult Function(AuthFailure value)? authFailure,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Failure() when $default != null:
+        return $default(_that);
+      case ExceptionFailure() when exception != null:
+        return exception(_that);
+      case NetworkFailure() when networkFailure != null:
+        return networkFailure(_that);
+      case ServerError() when serverError != null:
+        return serverError(_that);
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that);
+      case AuthFailure() when authFailure != null:
+        return authFailure(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_Failure value) $default, {
+    required TResult Function(ExceptionFailure value) exception,
+    required TResult Function(NetworkFailure value) networkFailure,
+    required TResult Function(ServerError value) serverError,
+    required TResult Function(DatabaseFailure value) databaseFailure,
+    required TResult Function(AuthFailure value) authFailure,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Failure():
+        return $default(_that);
+      case ExceptionFailure():
+        return exception(_that);
+      case NetworkFailure():
+        return networkFailure(_that);
+      case ServerError():
+        return serverError(_that);
+      case DatabaseFailure():
+        return databaseFailure(_that);
+      case AuthFailure():
+        return authFailure(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Failure value)? $default, {
+    TResult? Function(ExceptionFailure value)? exception,
+    TResult? Function(NetworkFailure value)? networkFailure,
+    TResult? Function(ServerError value)? serverError,
+    TResult? Function(DatabaseFailure value)? databaseFailure,
+    TResult? Function(AuthFailure value)? authFailure,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Failure() when $default != null:
+        return $default(_that);
+      case ExceptionFailure() when exception != null:
+        return exception(_that);
+      case NetworkFailure() when networkFailure != null:
+        return networkFailure(_that);
+      case ServerError() when serverError != null:
+        return serverError(_that);
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that);
+      case AuthFailure() when authFailure != null:
+        return authFailure(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(FailureInfo info)? $default, {
+    TResult Function(FailureInfo info)? exception,
+    TResult Function(FailureInfo info)? networkFailure,
+    TResult Function(FailureInfo info)? serverError,
+    TResult Function(DatabaseFailures failures)? databaseFailure,
+    TResult Function(AuthFailures failures)? authFailure,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Failure() when $default != null:
+        return $default(_that.info);
+      case ExceptionFailure() when exception != null:
+        return exception(_that.info);
+      case NetworkFailure() when networkFailure != null:
+        return networkFailure(_that.info);
+      case ServerError() when serverError != null:
+        return serverError(_that.info);
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that.failures);
+      case AuthFailure() when authFailure != null:
+        return authFailure(_that.failures);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(FailureInfo info) $default, {
+    required TResult Function(FailureInfo info) exception,
+    required TResult Function(FailureInfo info) networkFailure,
+    required TResult Function(FailureInfo info) serverError,
+    required TResult Function(DatabaseFailures failures) databaseFailure,
+    required TResult Function(AuthFailures failures) authFailure,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Failure():
+        return $default(_that.info);
+      case ExceptionFailure():
+        return exception(_that.info);
+      case NetworkFailure():
+        return networkFailure(_that.info);
+      case ServerError():
+        return serverError(_that.info);
+      case DatabaseFailure():
+        return databaseFailure(_that.failures);
+      case AuthFailure():
+        return authFailure(_that.failures);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(FailureInfo info)? $default, {
+    TResult? Function(FailureInfo info)? exception,
+    TResult? Function(FailureInfo info)? networkFailure,
+    TResult? Function(FailureInfo info)? serverError,
+    TResult? Function(DatabaseFailures failures)? databaseFailure,
+    TResult? Function(AuthFailures failures)? authFailure,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Failure() when $default != null:
+        return $default(_that.info);
+      case ExceptionFailure() when exception != null:
+        return exception(_that.info);
+      case NetworkFailure() when networkFailure != null:
+        return networkFailure(_that.info);
+      case ServerError() when serverError != null:
+        return serverError(_that.info);
+      case DatabaseFailure() when databaseFailure != null:
+        return databaseFailure(_that.failures);
+      case AuthFailure() when authFailure != null:
+        return authFailure(_that.failures);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -754,6 +1158,195 @@ class _$DatabaseFailuresCopyWithImpl<$Res>
   }
 }
 
+/// Adds pattern-matching-related methods to [DatabaseFailures].
+extension DatabaseFailuresPatterns on DatabaseFailures {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_DatabaseFailures value)? $default, {
+    TResult Function(_UniqueConstraint value)? uniqueConstraint,
+    TResult Function(_NotFound value)? notFound,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DatabaseFailures() when $default != null:
+        return $default(_that);
+      case _UniqueConstraint() when uniqueConstraint != null:
+        return uniqueConstraint(_that);
+      case _NotFound() when notFound != null:
+        return notFound(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_DatabaseFailures value) $default, {
+    required TResult Function(_UniqueConstraint value) uniqueConstraint,
+    required TResult Function(_NotFound value) notFound,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DatabaseFailures():
+        return $default(_that);
+      case _UniqueConstraint():
+        return uniqueConstraint(_that);
+      case _NotFound():
+        return notFound(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_DatabaseFailures value)? $default, {
+    TResult? Function(_UniqueConstraint value)? uniqueConstraint,
+    TResult? Function(_NotFound value)? notFound,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DatabaseFailures() when $default != null:
+        return $default(_that);
+      case _UniqueConstraint() when uniqueConstraint != null:
+        return uniqueConstraint(_that);
+      case _NotFound() when notFound != null:
+        return notFound(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(FailureInfo info)? $default, {
+    TResult Function(FailureInfo info)? uniqueConstraint,
+    TResult Function(FailureInfo info)? notFound,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DatabaseFailures() when $default != null:
+        return $default(_that.info);
+      case _UniqueConstraint() when uniqueConstraint != null:
+        return uniqueConstraint(_that.info);
+      case _NotFound() when notFound != null:
+        return notFound(_that.info);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(FailureInfo info) $default, {
+    required TResult Function(FailureInfo info) uniqueConstraint,
+    required TResult Function(FailureInfo info) notFound,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DatabaseFailures():
+        return $default(_that.info);
+      case _UniqueConstraint():
+        return uniqueConstraint(_that.info);
+      case _NotFound():
+        return notFound(_that.info);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(FailureInfo info)? $default, {
+    TResult? Function(FailureInfo info)? uniqueConstraint,
+    TResult? Function(FailureInfo info)? notFound,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _DatabaseFailures() when $default != null:
+        return $default(_that.info);
+      case _UniqueConstraint() when uniqueConstraint != null:
+        return uniqueConstraint(_that.info);
+      case _NotFound() when notFound != null:
+        return notFound(_that.info);
+      case _:
+        return null;
+    }
+  }
+}
+
 /// @nodoc
 
 class _DatabaseFailures extends DatabaseFailures {
@@ -1065,6 +1658,215 @@ class _$AuthFailuresCopyWithImpl<$Res> implements $AuthFailuresCopyWith<$Res> {
     return $FailureInfoCopyWith<$Res>(_self.info, (value) {
       return _then(_self.copyWith(info: value));
     });
+  }
+}
+
+/// Adds pattern-matching-related methods to [AuthFailures].
+extension AuthFailuresPatterns on AuthFailures {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_AuthFailures value)? $default, {
+    TResult Function(_IncorrectLoginCredential value)? incorrectLoginCredential,
+    TResult Function(_Forbidden value)? forbidden,
+    TResult Function(_UserAlreadyRegistered value)? alreadyRegistered,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _AuthFailures() when $default != null:
+        return $default(_that);
+      case _IncorrectLoginCredential() when incorrectLoginCredential != null:
+        return incorrectLoginCredential(_that);
+      case _Forbidden() when forbidden != null:
+        return forbidden(_that);
+      case _UserAlreadyRegistered() when alreadyRegistered != null:
+        return alreadyRegistered(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_AuthFailures value) $default, {
+    required TResult Function(_IncorrectLoginCredential value)
+        incorrectLoginCredential,
+    required TResult Function(_Forbidden value) forbidden,
+    required TResult Function(_UserAlreadyRegistered value) alreadyRegistered,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _AuthFailures():
+        return $default(_that);
+      case _IncorrectLoginCredential():
+        return incorrectLoginCredential(_that);
+      case _Forbidden():
+        return forbidden(_that);
+      case _UserAlreadyRegistered():
+        return alreadyRegistered(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_AuthFailures value)? $default, {
+    TResult? Function(_IncorrectLoginCredential value)?
+        incorrectLoginCredential,
+    TResult? Function(_Forbidden value)? forbidden,
+    TResult? Function(_UserAlreadyRegistered value)? alreadyRegistered,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _AuthFailures() when $default != null:
+        return $default(_that);
+      case _IncorrectLoginCredential() when incorrectLoginCredential != null:
+        return incorrectLoginCredential(_that);
+      case _Forbidden() when forbidden != null:
+        return forbidden(_that);
+      case _UserAlreadyRegistered() when alreadyRegistered != null:
+        return alreadyRegistered(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(FailureInfo info)? $default, {
+    TResult Function(FailureInfo info)? incorrectLoginCredential,
+    TResult Function(FailureInfo info)? forbidden,
+    TResult Function(FailureInfo info)? alreadyRegistered,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _AuthFailures() when $default != null:
+        return $default(_that.info);
+      case _IncorrectLoginCredential() when incorrectLoginCredential != null:
+        return incorrectLoginCredential(_that.info);
+      case _Forbidden() when forbidden != null:
+        return forbidden(_that.info);
+      case _UserAlreadyRegistered() when alreadyRegistered != null:
+        return alreadyRegistered(_that.info);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(FailureInfo info) $default, {
+    required TResult Function(FailureInfo info) incorrectLoginCredential,
+    required TResult Function(FailureInfo info) forbidden,
+    required TResult Function(FailureInfo info) alreadyRegistered,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _AuthFailures():
+        return $default(_that.info);
+      case _IncorrectLoginCredential():
+        return incorrectLoginCredential(_that.info);
+      case _Forbidden():
+        return forbidden(_that.info);
+      case _UserAlreadyRegistered():
+        return alreadyRegistered(_that.info);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(FailureInfo info)? $default, {
+    TResult? Function(FailureInfo info)? incorrectLoginCredential,
+    TResult? Function(FailureInfo info)? forbidden,
+    TResult? Function(FailureInfo info)? alreadyRegistered,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _AuthFailures() when $default != null:
+        return $default(_that.info);
+      case _IncorrectLoginCredential() when incorrectLoginCredential != null:
+        return incorrectLoginCredential(_that.info);
+      case _Forbidden() when forbidden != null:
+        return forbidden(_that.info);
+      case _UserAlreadyRegistered() when alreadyRegistered != null:
+        return alreadyRegistered(_that.info);
+      case _:
+        return null;
+    }
   }
 }
 

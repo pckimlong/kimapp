@@ -10,8 +10,7 @@ import 'package:image/image.dart' as img;
 import 'package:kimapp/kimapp.dart';
 import 'package:kimapp_supabase_helper/helper.dart';
 import 'package:path/path.dart' as p;
-import 'package:riverpod/src/async_notifier.dart';
-import 'package:riverpod/src/notifier.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:slugify/slugify.dart';
 import 'package:uuid/uuid.dart';
@@ -103,7 +102,7 @@ class ImageDimensions {
 }
 
 @riverpod
-class UploadImageObject extends _$UploadImageObject {
+class UploadImageObject extends Notifier<ProviderStatus<BaseStorageObject>> {
   @override
   ProviderStatus<BaseStorageObject> build() => const ProviderStatus.initial();
 
@@ -154,14 +153,14 @@ class UploadImageObject extends _$UploadImageObject {
 
   /// Upload the file to storage and return the object
   /// It will auto generate the path including image dimensions
-  Future<ProviderStatus<T>> call<T extends BaseStorageObject>(
+  Future<ProviderStatus<BaseStorageObject>> call<T extends BaseStorageObject>(
     XFile image, {
     required T Function(String generatedPath) object,
     String? customPrefix,
     String directory = '',
     bool upsert = false,
   }) async {
-    return await perform<T>(
+    return await perform(
       (state) async {
         // Validate filename
         final validFilename = _validateFilename(image.name);
@@ -196,7 +195,7 @@ class UploadImageObject extends _$UploadImageObject {
             )
             .then((v) => v.getOrThrow());
 
-        return uploadResult as T;
+        return uploadResult;
       },
       onSuccess: (success) {
         ref.invalidateSelf();
@@ -205,7 +204,7 @@ class UploadImageObject extends _$UploadImageObject {
   }
 }
 
-extension UploadImageObjectNotifierX on NotifierBase {
+extension UploadImageObjectNotifierX on Notifier {
   /// Wrapper function to handle image upload and callback execution
   /// This can be use to make sure if the upload is successful, the callback will be executed
   /// but failed upload will be handled and deleted
@@ -273,7 +272,7 @@ extension UploadImageObjectNotifierX on NotifierBase {
   }
 }
 
-extension UploadImageObjectAsyncNotifierX on AsyncNotifierBase {
+extension UploadImageObjectAsyncNotifierX on AsyncNotifier {
   /// Wrapper function to handle image upload and callback execution
   /// This can be use to make sure if the upload is successful, the callback will be executed
   /// but failed upload will be handled and deleted

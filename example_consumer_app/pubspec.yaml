@@ -1,0 +1,54 @@
+name: example_consumer_app
+description: Example app demonstrating kimapp packages usage
+
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: ">=3.27.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Kimapp packages - Production setup with Git dependencies
+  # Update the URL to point to your actual kimapp repository
+  kimapp:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      path: packages/kimapp
+      ref: kimapp-v0.0.3
+  
+  kimapp_supabase_helper:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      path: packages/kimapp_supabase_helper
+      ref: kimapp_supabase_helper-v0.0.3
+  
+  kimapp_utils:
+    git:
+      url: https://github.com/pckimlong/kimapp.git
+      path: packages/kimapp_utils
+      ref: kimapp_utils-v0.0.3
+  
+  # Required dependencies for kimapp packages
+  supabase_flutter: ^2.0.0
+  riverpod: ^3.0.0
+  logger: ^2.0.0
+  fpdart: ^1.1.0
+  dartx: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+# For local development, uncomment and use these overrides instead of Git dependencies
+# dependency_overrides:
+#   kimapp:
+#     path: ../packages/kimapp
+#   kimapp_supabase_helper:
+#     path: ../packages/kimapp_supabase_helper
+#   kimapp_utils:
+#     path: ../packages/kimapp_utils
+
+flutter:
+  uses-material-design: true

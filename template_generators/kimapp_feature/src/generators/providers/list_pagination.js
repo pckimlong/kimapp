@@ -28,7 +28,7 @@ part '${snakeCaseName}_list_pagination_provider.g.dart';
 const int _page${pascalCaseName}Limit = 25;
 
 @riverpod
-class ${pascalCaseName}ListPagination extends _$${pascalCaseName}ListPagination with LoggerMixin {
+class ${pascalCaseName}ListPagination extends AsyncNotifier<IList<${pascalCaseName}Model>> with LoggerMixin {
   @override
   FutureOr<IList<${pascalCaseName}Model>> build({
     required int page,
@@ -240,7 +240,7 @@ class ${pascalCaseName}PaginationTracker {
 }
 
 @riverpod
-class ${pascalCaseName}PaginationState extends _$${pascalCaseName}PaginationState {
+class ${pascalCaseName}PaginationState extends Notifier<({bool isLoading, int totalPages, int currentPage})> {
   @override
   ({bool isLoading, int totalPages, int currentPage}) build({required ${pascalCaseName}ListParam param}) {
     bool isLoading = false;

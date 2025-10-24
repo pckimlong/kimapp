@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -80,6 +79,159 @@ class _$TableBuilderCopyWithImpl<$Res> implements $TableBuilderCopyWith<$Res> {
           : columns // ignore: cast_nullable_to_non_nullable
               as List<ColumnBuilder>,
     ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [TableBuilder].
+extension TableBuilderPatterns on TableBuilder {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_TableBuilder value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TableBuilder() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_TableBuilder value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TableBuilder():
+        return $default(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_TableBuilder value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TableBuilder() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String tableName, List<ColumnBuilder> columns)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _TableBuilder() when $default != null:
+        return $default(_that.tableName, _that.columns);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String tableName, List<ColumnBuilder> columns) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TableBuilder():
+        return $default(_that.tableName, _that.columns);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String tableName, List<ColumnBuilder> columns)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _TableBuilder() when $default != null:
+        return $default(_that.tableName, _that.columns);
+      case _:
+        return null;
+    }
   }
 }
 
@@ -189,6 +341,186 @@ mixin _$ColumnBuilder {
 /// @nodoc
 class $ColumnBuilderCopyWith<$Res> {
   $ColumnBuilderCopyWith(ColumnBuilder _, $Res Function(ColumnBuilder) __);
+}
+
+/// Adds pattern-matching-related methods to [ColumnBuilder].
+extension ColumnBuilderPatterns on ColumnBuilder {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_ColumnBuilder value)? $default, {
+    TResult Function(_Join value)? join,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ColumnBuilder() when $default != null:
+        return $default(_that);
+      case _Join() when join != null:
+        return join(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_ColumnBuilder value) $default, {
+    required TResult Function(_Join value) join,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ColumnBuilder():
+        return $default(_that);
+      case _Join():
+        return join(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_ColumnBuilder value)? $default, {
+    TResult? Function(_Join value)? join,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ColumnBuilder() when $default != null:
+        return $default(_that);
+      case _Join() when join != null:
+        return join(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String column)? $default, {
+    TResult Function(TableBuilder table, String? key, String? foreignKey,
+            String? candidateKey)?
+        join,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ColumnBuilder() when $default != null:
+        return $default(_that.column);
+      case _Join() when join != null:
+        return join(
+            _that.table, _that.key, _that.foreignKey, _that.candidateKey);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String column) $default, {
+    required TResult Function(TableBuilder table, String? key,
+            String? foreignKey, String? candidateKey)
+        join,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ColumnBuilder():
+        return $default(_that.column);
+      case _Join():
+        return join(
+            _that.table, _that.key, _that.foreignKey, _that.candidateKey);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String column)? $default, {
+    TResult? Function(TableBuilder table, String? key, String? foreignKey,
+            String? candidateKey)?
+        join,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _ColumnBuilder() when $default != null:
+        return $default(_that.column);
+      case _Join() when join != null:
+        return join(
+            _that.table, _that.key, _that.foreignKey, _that.candidateKey);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

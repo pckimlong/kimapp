@@ -12,13 +12,13 @@ Add to your `pubspec.yaml`:
 ```yaml
 dependencies:
   kimapp: ^1.0.0
-  riverpod_annotation: ^2.0.0
-  flutter_riverpod: ^2.0.0
+  riverpod_annotation: ^3.0.0
+  flutter_riverpod: ^3.0.0
 
 dev_dependencies:
   build_runner: ^2.0.0
   kimapp_generator: ^1.0.0
-  riverpod_generator: ^2.0.0
+  riverpod_generator: ^3.0.0
 ```
 
 ## Quick Start 🚀

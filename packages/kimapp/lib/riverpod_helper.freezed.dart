@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -34,6 +33,199 @@ mixin _$PaginatedItem<T> {
 class $PaginatedItemCopyWith<T, $Res> {
   $PaginatedItemCopyWith(
       PaginatedItem<T> _, $Res Function(PaginatedItem<T>) __);
+}
+
+/// Adds pattern-matching-related methods to [PaginatedItem].
+extension PaginatedItemPatterns<T> on PaginatedItem<T> {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Data<T> value)? data,
+    TResult Function(_Loading<T> value)? loading,
+    TResult Function(_Error<T> value)? error,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Data() when data != null:
+        return data(_that);
+      case _Loading() when loading != null:
+        return loading(_that);
+      case _Error() when error != null:
+        return error(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Data<T> value) data,
+    required TResult Function(_Loading<T> value) loading,
+    required TResult Function(_Error<T> value) error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Data():
+        return data(_that);
+      case _Loading():
+        return loading(_that);
+      case _Error():
+        return error(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Data<T> value)? data,
+    TResult? Function(_Loading<T> value)? loading,
+    TResult? Function(_Error<T> value)? error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Data() when data != null:
+        return data(_that);
+      case _Loading() when loading != null:
+        return loading(_that);
+      case _Error() when error != null:
+        return error(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(T item)? data,
+    TResult Function(bool isFirstItem)? loading,
+    TResult Function(Failure failure)? error,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Data() when data != null:
+        return data(_that.item);
+      case _Loading() when loading != null:
+        return loading(_that.isFirstItem);
+      case _Error() when error != null:
+        return error(_that.failure);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(T item) data,
+    required TResult Function(bool isFirstItem) loading,
+    required TResult Function(Failure failure) error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Data():
+        return data(_that.item);
+      case _Loading():
+        return loading(_that.isFirstItem);
+      case _Error():
+        return error(_that.failure);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(T item)? data,
+    TResult? Function(bool isFirstItem)? loading,
+    TResult? Function(Failure failure)? error,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Data() when data != null:
+        return data(_that.item);
+      case _Loading() when loading != null:
+        return loading(_that.isFirstItem);
+      case _Error() when error != null:
+        return error(_that.failure);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
@@ -259,6 +451,213 @@ mixin _$ProviderStatus<T> {
 class $ProviderStatusCopyWith<T, $Res> {
   $ProviderStatusCopyWith(
       ProviderStatus<T> _, $Res Function(ProviderStatus<T>) __);
+}
+
+/// Adds pattern-matching-related methods to [ProviderStatus].
+extension ProviderStatusPatterns<T> on ProviderStatus<T> {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial<T> value)? initial,
+    TResult Function(_InProgress<T> value)? inProgress,
+    TResult Function(_Failure<T> value)? failure,
+    TResult Function(_Success<T> value)? success,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initial() when initial != null:
+        return initial(_that);
+      case _InProgress() when inProgress != null:
+        return inProgress(_that);
+      case _Failure() when failure != null:
+        return failure(_that);
+      case _Success() when success != null:
+        return success(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial<T> value) initial,
+    required TResult Function(_InProgress<T> value) inProgress,
+    required TResult Function(_Failure<T> value) failure,
+    required TResult Function(_Success<T> value) success,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initial():
+        return initial(_that);
+      case _InProgress():
+        return inProgress(_that);
+      case _Failure():
+        return failure(_that);
+      case _Success():
+        return success(_that);
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial<T> value)? initial,
+    TResult? Function(_InProgress<T> value)? inProgress,
+    TResult? Function(_Failure<T> value)? failure,
+    TResult? Function(_Success<T> value)? success,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initial() when initial != null:
+        return initial(_that);
+      case _InProgress() when inProgress != null:
+        return inProgress(_that);
+      case _Failure() when failure != null:
+        return failure(_that);
+      case _Success() when success != null:
+        return success(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? inProgress,
+    TResult Function(Failure failure)? failure,
+    TResult Function(T success)? success,
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initial() when initial != null:
+        return initial();
+      case _InProgress() when inProgress != null:
+        return inProgress();
+      case _Failure() when failure != null:
+        return failure(_that.failure);
+      case _Success() when success != null:
+        return success(_that.success);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() inProgress,
+    required TResult Function(Failure failure) failure,
+    required TResult Function(T success) success,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initial():
+        return initial();
+      case _InProgress():
+        return inProgress();
+      case _Failure():
+        return failure(_that.failure);
+      case _Success():
+        return success(_that.success);
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? inProgress,
+    TResult? Function(Failure failure)? failure,
+    TResult? Function(T success)? success,
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Initial() when initial != null:
+        return initial();
+      case _InProgress() when inProgress != null:
+        return inProgress();
+      case _Failure() when failure != null:
+        return failure(_that.failure);
+      case _Success() when success != null:
+        return success(_that.success);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc

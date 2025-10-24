@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:autoverpod/autoverpod.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/form_widget_names.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
@@ -18,11 +18,11 @@ import '../../models/provider_definition.dart';
 class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
   @override
   Future<String> generateForAnnotatedElement(
-    Element element,
+    Element2 element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {
-    if (element is! ClassElement) {
+    if (element is! ClassElement2) {
       throw InvalidGenerationSourceError(
         'FormWidget annotation can only be applied to classes.',
         element: element,
@@ -65,16 +65,18 @@ class FormProviderGenerator extends GeneratorForAnnotation<FormWidget> {
   }
 }
 
-/// Contains information about the state provider
-class StateProviderInfo {
+/// Contains information about the generated call status provider
+class CallStatusProviderInfo {
   final String declaration;
-  final String readProvider;
-  final Field statusProvider;
+  final String readProviderExpression;
+  final String notifierReadExpression;
+  final String notifierClassName;
 
-  StateProviderInfo({
+  CallStatusProviderInfo({
     required this.declaration,
-    required this.readProvider,
-    required this.statusProvider,
+    required this.readProviderExpression,
+    required this.notifierReadExpression,
+    required this.notifierClassName,
   });
 }
 
@@ -85,7 +87,8 @@ class StateProviderInfo {
 /// - Success/error handling
 String _generateFormProviderAbstraction(ProviderDefinition provider) {
   final submitMethodInfo = provider.getSubmitMethodInfo();
-  final stateProviderInfo = _generateStateProviderInfo(provider, submitMethodInfo);
+  final callStatusInfo =
+      _generateCallStatusProviderInfo(provider, submitMethodInfo);
   final updateMethods = _generateUpdateMethods(provider);
 
   // Generate the proxy class using code_builder
@@ -96,57 +99,47 @@ String _generateFormProviderAbstraction(ProviderDefinition provider) {
       ..extend = refer('_\$${provider.baseName}')
       ..methods.addAll([
         _generateOnSuccessMethod(provider, submitMethodInfo.rawResultType),
-        _generateCallMethod(provider, submitMethodInfo, stateProviderInfo),
-        _generateInvalidateSelfMethod(provider),
+        _generateCallMethod(provider, submitMethodInfo, callStatusInfo),
+        _generateInvalidateSelfMethod(provider, callStatusInfo),
         _generateSubmitMethod(provider, submitMethodInfo),
         ...updateMethods,
       ]),
   ).accept(DartEmitter()).toString();
 
-  // Create the call status provider declaration
-  final callStatusDeclaration = 'StateProvider.autoDispose'
-      '${provider.hasFamily ? ".family" : ""}'
-      '<AsyncValue<${submitMethodInfo.rawResultType}>?'
-      '${provider.hasFamily ? ",${provider.familyAsRecordType}" : ""}>'
-      '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
-
   // Return the complete generated code
   return '''
-final ${provider.callStatusProviderName} = $callStatusDeclaration;
+${callStatusInfo.declaration}
+
+class ${callStatusInfo.notifierClassName}
+    extends Notifier<AsyncValue<${submitMethodInfo.rawResultType}>?> {
+  @override
+  AsyncValue<${submitMethodInfo.rawResultType}>? build() => null;
+}
 
 $proxyClass
 ''';
 }
 
 /// Generates state provider information
-StateProviderInfo _generateStateProviderInfo(
+CallStatusProviderInfo _generateCallStatusProviderInfo(
   ProviderDefinition provider,
   SubmitMethodInfo submitInfo,
 ) {
-  // Create the provider declaration
-  final declaration = 'StateProvider.autoDispose'
-      '${provider.hasFamily ? ".family" : ""}'
-      '<AsyncValue<${submitInfo.rawResultType}>?'
-      '${provider.hasFamily ? ",${provider.familyAsRecordType}" : ""}>'
-      '((ref${provider.hasFamily ? " ,_" : ""}) => null)';
+  final notifierClassName = '_${provider.baseName}CallStatusNotifier';
 
-  // Create the provider read expression
-  final readProvider = "${provider.callStatusProviderName}"
-      "${provider.hasFamily ? "(${provider.familyAsRecordBindString()})" : ""}";
+  final declaration = provider.hasFamily
+      ? 'final ${provider.callStatusProviderName} = NotifierProvider.autoDispose.family<$notifierClassName, AsyncValue<${submitInfo.rawResultType}>?, ${provider.familyAsRecordType}>((${provider.familyAsRecordType} _) => $notifierClassName());'
+      : 'final ${provider.callStatusProviderName} = NotifierProvider.autoDispose<$notifierClassName, AsyncValue<${submitInfo.rawResultType}>?>($notifierClassName.new);';
 
-  // Create the field definition
-  final statusProvider = Field(
-    (b) => b
-      ..name = provider.callStatusProviderName
-      ..static = false
-      ..modifier = FieldModifier.final$
-      ..assignment = Code(declaration),
-  );
+  final readExpression = provider.hasFamily
+      ? '${provider.callStatusProviderName}(${provider.familyAsRecordBindString()})'
+      : provider.callStatusProviderName;
 
-  return StateProviderInfo(
+  return CallStatusProviderInfo(
     declaration: declaration,
-    readProvider: readProvider,
-    statusProvider: statusProvider,
+    readProviderExpression: readExpression,
+    notifierReadExpression: '$readExpression.notifier',
+    notifierClassName: notifierClassName,
   );
 }
 
@@ -252,7 +245,7 @@ Method _generateOnSuccessMethod(
 Method _generateCallMethod(
   ProviderDefinition provider,
   SubmitMethodInfo submitInfo,
-  StateProviderInfo stateInfo,
+  CallStatusProviderInfo stateInfo,
 ) {
   final hasOverrideOnSuccess = provider.methods.any((e) => e.name == 'onSuccess');
   // Check if form is loaded based on state type
@@ -278,8 +271,8 @@ Method _generateCallMethod(
       ..body = Code('''
 $loadingCheck
 
-final _callStatus = ref.read(${stateInfo.readProvider});
-final _updateCallStatus = ref.read(${stateInfo.readProvider}.notifier);
+final _callStatus = ref.read(${stateInfo.readProviderExpression});
+final _updateCallStatus = ref.read(${stateInfo.notifierReadExpression});
 
 if (_callStatus?.isLoading == true) return const AsyncValue.loading();
 
@@ -314,13 +307,16 @@ return result;
 }
 
 /// Generates the invalidateSelf method
-Method _generateInvalidateSelfMethod(ProviderDefinition provider) {
+Method _generateInvalidateSelfMethod(
+  ProviderDefinition provider,
+  CallStatusProviderInfo stateInfo,
+) {
   return Method(
     (b) => b
       ..name = 'invalidateSelf'
       ..returns = refer('void')
       ..body = Code(
-        'ref.invalidate(${provider.callStatusProviderName});\nref.invalidateSelf();',
+        'ref.invalidate(${stateInfo.readProviderExpression});\nref.invalidateSelf();',
       ),
   );
 }

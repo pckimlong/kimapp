@@ -17,9 +17,7 @@ String generateStateWidget(ProviderDefinition provider) {
         type: builderType,
         comment: [
           'The builder function that constructs the widget tree.',
-          'Access the state directly via ref.state, which is equivalent to ref.watch(${provider.providerNameWithFamily(prefix: 'params')})',
-          '',
-          'For selecting specific fields, use ref.select() - e.g. ref.select((value) => value.someField)',
+          'Use ref.select for field-level updates to minimise rebuilds.',
           'The ref parameter provides type-safe access to the provider state and notifier',
         ],
       ),
@@ -36,10 +34,10 @@ if (onStateChanged != null) {
   ${provider.paramsDeclaration}
   ref.listen(${provider.providerNameWithFamily(prefix: 'params')}, (pre, next) {
     if (pre != next)
-      onStateChanged!(${provider.isAsyncValue ? 'pre?.valueOrNull' : 'pre'}, ${provider.isAsyncValue ? 'next.valueOrNull' : 'next'});
+      onStateChanged!(${provider.isAsyncValue ? 'pre?.value' : 'pre'}, ${provider.isAsyncValue ? 'next.value' : 'next'});
   });
 }
-return ${generateParamWidgetWrapper(provider, child: 'builder(context, ${provider.formBaseProxyWidgetName}(ref), child)')};
+return ${generateParamWidgetWrapper(provider, child: 'builder(context, ref, child)')};
     ''',
   );
 }

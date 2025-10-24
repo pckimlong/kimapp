@@ -10,7 +10,6 @@ String generateBaseProxyWidgetRef(
     (b) => b
       ..docs.addAll([if (classComment != null) classComment.content])
       ..name = name
-      ..extend = refer('WidgetRef')
       ..fields.add(
         Field(
           (b) => b
@@ -42,7 +41,6 @@ String generateBaseProxyWidgetRef(
             ..name = 'context'
             ..type = MethodType.getter
             ..returns = refer('BuildContext')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..body = refer('_ref.context').code,
         ),
@@ -50,14 +48,9 @@ String generateBaseProxyWidgetRef(
           (b) => b
             ..name = 'exists'
             ..returns = refer('bool')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.add(
-              Parameter(
-                (b) => b
-                  ..name = 'provider'
-                  ..type = refer('ProviderBase<Object?>'),
-              ),
+              Parameter((b) => b..name = 'provider'),
             )
             ..body = refer('_ref.exists').call([refer('provider')]).code,
         ),
@@ -65,30 +58,32 @@ String generateBaseProxyWidgetRef(
           (b) => b
             ..name = 'invalidate'
             ..returns = refer('void')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.add(
+              Parameter((b) => b..name = 'provider'),
+            )
+            ..optionalParameters.add(
               Parameter(
                 (b) => b
-                  ..name = 'provider'
-                  ..type = refer('ProviderOrFamily'),
+                  ..name = 'asReload'
+                  ..named = true
+                  ..type = refer('bool')
+                  ..defaultTo = literalFalse.code,
               ),
             )
-            ..body = refer('_ref.invalidate').call([refer('provider')]).code,
+            ..body = refer('_ref.invalidate').call(
+              [refer('provider')],
+              {'asReload': refer('asReload')},
+            ).code,
         ),
         Method(
           (b) => b
             ..name = 'listen'
             ..types.add(refer('T'))
             ..returns = refer('void')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.addAll([
-              Parameter(
-                (b) => b
-                  ..name = 'provider'
-                  ..type = refer('ProviderListenable<T>'),
-              ),
+              Parameter((b) => b..name = 'provider'),
               Parameter(
                 (b) => b
                   ..name = 'listener'
@@ -113,14 +108,9 @@ String generateBaseProxyWidgetRef(
             ..name = 'listenManual'
             ..types.add(refer('T'))
             ..returns = refer('ProviderSubscription<T>')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.addAll([
-              Parameter(
-                (b) => b
-                  ..name = 'provider'
-                  ..type = refer('ProviderListenable<T>'),
-              ),
+              Parameter((b) => b..name = 'provider'),
               Parameter(
                 (b) => b
                   ..name = 'listener'
@@ -155,14 +145,9 @@ String generateBaseProxyWidgetRef(
             ..name = 'read'
             ..types.add(refer('T'))
             ..returns = refer('T')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.add(
-              Parameter(
-                (b) => b
-                  ..name = 'provider'
-                  ..type = refer('ProviderListenable<T>'),
-              ),
+              Parameter((b) => b..name = 'provider'),
             )
             ..body = refer('_ref.read').call([refer('provider')]).code,
         ),
@@ -171,14 +156,9 @@ String generateBaseProxyWidgetRef(
             ..name = 'refresh'
             ..types.add(refer('State'))
             ..returns = refer('State')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.add(
-              Parameter(
-                (b) => b
-                  ..name = 'provider'
-                  ..type = refer('Refreshable<State>'),
-              ),
+              Parameter((b) => b..name = 'provider'),
             )
             ..body = refer('_ref.refresh').call([refer('provider')]).code,
         ),
@@ -187,14 +167,9 @@ String generateBaseProxyWidgetRef(
             ..name = 'watch'
             ..types.add(refer('T'))
             ..returns = refer('T')
-            ..annotations.add(refer('override'))
             ..lambda = true
             ..requiredParameters.add(
-              Parameter(
-                (b) => b
-                  ..name = 'provider'
-                  ..type = refer('ProviderListenable<T>'),
-              ),
+              Parameter((b) => b..name = 'provider'),
             )
             ..body = refer('_ref.watch').call([refer('provider')]).code,
         ),
