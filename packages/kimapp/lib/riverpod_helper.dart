@@ -268,6 +268,10 @@ extension ProviderStatusFamilyNotifierX<T> on $Notifier<ProviderStatus<T>> {
     state = inProgressStatus;
 
     final result = await ProviderStatus.guard<R>(() async => await callback(inProgressStatus));
+
+    // Check if still mounted after async operation
+    if (!ref.mounted) return result;
+
     state = result as ProviderStatus<T>;
 
     if (result.isFailure && onFailure != null) {
@@ -326,6 +330,10 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     state = updatedState;
 
     final result = await ProviderStatus.guard(() async => await callback(updatedState));
+
+    // Check if still mounted after async operation
+    if (!ref.mounted) return result;
+
     final finalState = updatedState.updateStatus(result);
     state = finalState;
     final updatedStatus = finalState.status as ProviderStatus<T>;
@@ -428,6 +436,10 @@ extension ProviderStatusClassFamilyNotifierXX<A, Base extends ProviderStatusClas
     state = state.updateStatus(ProviderStatus<T>.inProgress());
 
     final result = await ProviderStatus.guard(() async => await callback(state));
+
+    // Check if still mounted after async operation
+    if (!ref.mounted) return result;
+
     state = state.updateStatus(result);
     final updatedStatus = state.status as ProviderStatus<T>;
 
