@@ -5,6 +5,7 @@ import 'dart:developer';
 
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod/misc.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod/src/providers/notifier.dart';
 
@@ -257,33 +258,38 @@ extension ProviderStatusFamilyNotifierX<T> on $Notifier<ProviderStatus<T>> {
     void Function(Failure failure)? onFailure,
     void Function(R success)? onSuccess,
   }) async {
-    final currentState = state;
+    KeepAliveLink? link = ref.keepAlive();
+    try {
+      final currentState = state;
 
-    if (currentState.isInProgress || currentState.isSuccess) {
-      return currentState as ProviderStatus<R>;
+      if (currentState.isInProgress || currentState.isSuccess) {
+        return currentState as ProviderStatus<R>;
+      }
+
+      final inProgressStatus = ProviderStatus<T>.inProgress();
+      state = inProgressStatus;
+
+      final result = await ProviderStatus.guard<R>(() async => await callback(inProgressStatus));
+
+      // Check if still mounted after async operation
+      if (!ref.mounted) return result;
+
+      state = result as ProviderStatus<T>;
+
+      if (result.isFailure && onFailure != null) {
+        final failure = result.failure;
+        if (failure != null) onFailure(failure);
+      }
+
+      if (result.isSuccess && onSuccess != null) {
+        final success = result.successOrNull;
+        if (success != null) onSuccess(success as R);
+      }
+
+      return result;
+    } finally {
+      link.close();
     }
-
-    final inProgressStatus = ProviderStatus<T>.inProgress();
-    state = inProgressStatus;
-
-    final result = await ProviderStatus.guard<R>(() async => await callback(inProgressStatus));
-
-    // Check if still mounted after async operation
-    if (!ref.mounted) return result;
-
-    state = result as ProviderStatus<T>;
-
-    if (result.isFailure && onFailure != null) {
-      final failure = result.failure;
-      if (failure != null) onFailure(failure);
-    }
-
-    if (result.isSuccess && onSuccess != null) {
-      final success = result.successOrNull;
-      if (success != null) onSuccess(success as R);
-    }
-
-    return result;
   }
 }
 
@@ -308,45 +314,51 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     /// Function has no effect when current status is already a success state
     bool ignoreInSuccessState = true,
   }) async {
-    final currentState = state;
+    KeepAliveLink? link = ref.keepAlive();
 
-    if (isInProgress) return currentState.status as ProviderStatus<T>;
-    if (ignoreInSuccessState && isSuccess) {
-      return currentState.status as ProviderStatus<T>;
-    }
+    try {
+      final currentState = state;
 
-    /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
-    if (currentState is UpdateFormMixin) {
-      final updateForm = currentState as UpdateFormMixin;
-      if (!updateForm.initialLoaded) {
-        log('${currentState.runtimeType}.initialLoaded is false. So this call back will be ignore');
-        return currentState as ProviderStatus<T>;
+      if (isInProgress) return currentState.status as ProviderStatus<T>;
+      if (ignoreInSuccessState && isSuccess) {
+        return currentState.status as ProviderStatus<T>;
       }
+
+      /// If current provider mixin with [UpdateFormMixin]. Ignore it action when initialLoaded flag is false
+      if (currentState is UpdateFormMixin) {
+        final updateForm = currentState as UpdateFormMixin;
+        if (!updateForm.initialLoaded) {
+          log('${currentState.runtimeType}.initialLoaded is false. So this call back will be ignore');
+          return currentState as ProviderStatus<T>;
+        }
+      }
+
+      final updatedState = currentState.updateStatus(ProviderStatus<T>.inProgress());
+      state = updatedState;
+
+      final result = await ProviderStatus.guard(() async => await callback(updatedState));
+
+      // Check if still mounted after async operation
+      if (!ref.mounted) return result;
+
+      final finalState = updatedState.updateStatus(result);
+      state = finalState;
+      final updatedStatus = finalState.status as ProviderStatus<T>;
+
+      if (isFailure && onFailure != null) {
+        final failure = finalState.status.failure;
+        if (failure != null) onFailure(failure);
+      }
+
+      if (isSuccess && onSuccess != null) {
+        final success = finalState.status.successOrNull;
+        if (success != null) onSuccess(success as T);
+      }
+
+      return updatedStatus;
+    } finally {
+      link.close();
     }
-
-    final updatedState = currentState.updateStatus(ProviderStatus<T>.inProgress());
-    state = updatedState;
-
-    final result = await ProviderStatus.guard(() async => await callback(updatedState));
-
-    // Check if still mounted after async operation
-    if (!ref.mounted) return result;
-
-    final finalState = updatedState.updateStatus(result);
-    state = finalState;
-    final updatedStatus = finalState.status as ProviderStatus<T>;
-
-    if (isFailure && onFailure != null) {
-      final failure = finalState.status.failure;
-      if (failure != null) onFailure(failure);
-    }
-
-    if (isSuccess && onSuccess != null) {
-      final success = finalState.status.successOrNull;
-      if (success != null) onSuccess(success as T);
-    }
-
-    return updatedStatus;
   }
 }
 
