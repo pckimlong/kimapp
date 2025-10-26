@@ -309,7 +309,6 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
     bool ignoreInSuccessState = true,
   }) async {
     final currentState = state;
-    if (currentState.status.isInitial) return ProviderStatus<T>.initial();
 
     if (isInProgress) return currentState.status as ProviderStatus<T>;
     if (ignoreInSuccessState && isSuccess) {
