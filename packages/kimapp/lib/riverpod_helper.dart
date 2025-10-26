@@ -235,9 +235,8 @@ extension RiverpodRefExtension on Ref {
 
 extension ProviderStatusFamilyNotifierX<T> on $Notifier<ProviderStatus<T>> {
   /// Perform call function of provider with continuously update the status and catch error
-  ///
+
   /// If status is currently in progress or already success, no action will be perform and return current status
-  ///
   /// Update current status to in progress then execute [callback] function which has current state inside
   /// this callback must return ProviderStatus success type [T]
   ///
