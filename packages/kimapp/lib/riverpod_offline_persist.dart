@@ -2,9 +2,9 @@
 
 import 'dart:async';
 
-import 'package:riverpod/riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-extension PersistRiverpodAsyncNotifier<T> on AsyncNotifier<T> {
+extension PersistRiverpodAsyncNotifier<T> on $AsyncNotifier<T> {
   /// Persists the state of the notifier by fetching fresh data and persisting it if necessary.
   /// This callback should be called inside build to make it taking effect
   ///
@@ -46,8 +46,7 @@ extension PersistRiverpodAsyncNotifier<T> on AsyncNotifier<T> {
         final persistedData = await fetchPersistedData();
         // Check if should get fresh data instead
         // if not, use the persistedData
-        if (persistedData != null &&
-            await shouldFetchFreshData(persistedData) == false) {
+        if (persistedData != null && await shouldFetchFreshData(persistedData) == false) {
           if (silentlyFetchFreshForLaterUse) {
             // Get fresh data and persist it silently
             unawaited(
