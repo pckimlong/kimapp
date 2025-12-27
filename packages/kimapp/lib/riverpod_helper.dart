@@ -282,8 +282,12 @@ extension ProviderStatusFamilyNotifierX<T> on $Notifier<ProviderStatus<T>> {
       }
 
       if (result.isSuccess && onSuccess != null) {
-        final success = result.successOrNull;
-        if (success != null) onSuccess(success as R);
+        switch (result) {
+          case _Success<R>(:final success):
+            onSuccess(success);
+          default:
+            break;
+        }
       }
 
       return result;
@@ -351,8 +355,12 @@ extension ProviderStatusClassFamilyNotifierX<A, Base extends ProviderStatusClass
       }
 
       if (isSuccess && onSuccess != null) {
-        final success = finalState.status.successOrNull;
-        if (success != null) onSuccess(success as T);
+        switch (updatedStatus) {
+          case _Success<T>(:final success):
+            onSuccess(success);
+          default:
+            break;
+        }
       }
 
       return updatedStatus;
