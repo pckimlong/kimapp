@@ -8,14 +8,15 @@ import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 
 const providerStatusClassType =
-    TypeChecker.fromRuntime(ProviderStatusClassMixin);
-const formUpdateMixin = TypeChecker.fromRuntime(UpdateFormMixin);
+    TypeChecker.typeNamed(ProviderStatusClassMixin, inPackage: 'kimapp');
+const formUpdateMixin = TypeChecker.typeNamed(UpdateFormMixin, inPackage: 'kimapp');
 
 class KimappFormGenerator extends Generator {
   KimappFormGenerator();
 
-  static final _kimappFormChecker = TypeChecker.fromRuntime(KimappForm);
-  static final _autoverpodFormChecker = TypeChecker.fromRuntime(FormWidget);
+  static const _kimappFormChecker = TypeChecker.typeNamed(KimappForm, inPackage: 'kimapp');
+  static const _autoverpodFormChecker =
+      TypeChecker.typeNamed(FormWidget, inPackage: 'autoverpod');
 
   @override
   String generate(

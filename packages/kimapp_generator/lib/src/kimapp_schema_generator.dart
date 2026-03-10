@@ -32,7 +32,8 @@ import 'package:source_gen/source_gen.dart';
 class KimappSchemaGenerator extends Generator {
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
-    final schemas = library.annotatedWith(TypeChecker.fromRuntime(Schema));
+    const schemaChecker = TypeChecker.typeNamed(Schema, inPackage: 'kimapp');
+    final schemas = library.annotatedWith(schemaChecker);
     if (schemas.isEmpty) return '';
 
     final buffer = StringBuffer();

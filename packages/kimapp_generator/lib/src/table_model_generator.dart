@@ -66,7 +66,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
   }
 
   String? _getKeyFromJsonKey(FormalParameterElement fieldElement) {
-    const checker = TypeChecker.fromRuntime(JsonKey);
+    const checker = TypeChecker.typeNamed(JsonKey, inPackage: 'json_annotation');
     final annotation = checker.firstAnnotationOf(fieldElement);
     if (annotation == null) return null;
 
@@ -84,7 +84,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
       return (null, null, null);
     }
 
-    const checker = TypeChecker.fromRuntime(JoinedColumn);
+    const checker = TypeChecker.typeNamed(JoinedColumn, inPackage: 'kimapp');
     final annotation = checker.firstAnnotationOf(fieldElement);
     final reader = ConstantReader(annotation);
 
@@ -131,8 +131,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
 }
 
 bool _fieldHasAnnotation(Type annotationType, FormalParameterElement element) {
-  final annotations =
-      TypeChecker.fromRuntime(annotationType).annotationsOf(element);
+  final annotations = TypeChecker.typeNamed(annotationType).annotationsOf(element);
   return annotations.isNotEmpty;
 }
 
