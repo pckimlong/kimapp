@@ -141,8 +141,9 @@ class TableStructureGenerator extends Generator {
 
   @override
   String generate(LibraryReader library, BuildStep buildStep) {
-    final providers =
-        library.annotatedWith(TypeChecker.fromRuntime(TableStructure));
+    const tableStructureChecker =
+        TypeChecker.typeNamed(TableStructure, inPackage: 'kimapp');
+    final providers = library.annotatedWith(tableStructureChecker);
 
     if (providers.isEmpty) {
       return '';
