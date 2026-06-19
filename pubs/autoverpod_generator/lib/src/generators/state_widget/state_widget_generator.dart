@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:autoverpod_generator/src/models/provider_definition.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 import 'package:build/build.dart';
@@ -21,13 +21,13 @@ class StateWidgetGenerator extends WidgetGenerator {
       const TypeChecker.typeNamed(StateWidget, inPackage: 'autoverpod');
 
   @override
-  bool canProcess(Element2 element) {
+  bool canProcess(Element element) {
     return annotationTypeChecker.hasAnnotationOf(element);
   }
 
   @override
   Future<String> generateForAnnotatedElement(
-    Element2 element,
+    Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {

@@ -4,7 +4,7 @@ version: 0.0.3
 publish_to: none
 
 environment:
-  sdk: '>=3.6.0 <4.0.0'
+  sdk: '>=3.11.4 <4.0.0'
   flutter: ">=3.27.1"
 resolution: workspace
 
@@ -15,9 +15,9 @@ dependencies:
   freezed_annotation:
   stack_trace: ^1.12.0
   fpdart:
-  riverpod: ^3.0.3
+  riverpod: ^3.1.0
   fast_immutable_collections: 
-  riverpod_annotation: ^3.0.3
+  riverpod_annotation: ^4.0.2
 
 dev_dependencies:
   freezed: 

@@ -11,12 +11,12 @@ part of 'state_widget_example.dart';
 
 @ProviderFor(myName)
 @stateWidget
-const myNameProvider = MyNameProvider._();
+final myNameProvider = MyNameProvider._();
 
 @stateWidget
 final class MyNameProvider extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const MyNameProvider._()
+  MyNameProvider._()
     : super(
         from: null,
         argument: null,
@@ -53,12 +53,12 @@ String _$myNameHash() => r'174c92ed23138b8882929a2a813fe81c66d5c309';
 
 @ProviderFor(MyNameAsync)
 @stateWidget
-const myNameAsyncProvider = MyNameAsyncProvider._();
+final myNameAsyncProvider = MyNameAsyncProvider._();
 
 @stateWidget
 final class MyNameAsyncProvider
     extends $AsyncNotifierProvider<MyNameAsync, String> {
-  const MyNameAsyncProvider._()
+  MyNameAsyncProvider._()
     : super(
         from: null,
         argument: null,
@@ -84,8 +84,7 @@ abstract class _$MyNameAsync extends $AsyncNotifier<String> {
   FutureOr<String> build();
   @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build();
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<String>, String>;
     final element =
         ref.element
@@ -95,6 +94,6 @@ abstract class _$MyNameAsync extends $AsyncNotifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    return element.handleCreate(ref, build);
   }
 }

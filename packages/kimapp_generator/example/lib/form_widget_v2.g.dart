@@ -17,12 +17,15 @@ bool _debugCheckHasProductCreateFormWidget(BuildContext context) {
             context.findAncestorWidgetOfExactType<ProductCreateFormWidget>() ==
                 null) &&
         (context.widget is! ProductCreateFormBuilderWidget &&
-            context.findAncestorWidgetOfExactType<
-                    ProductCreateFormBuilderWidget>() ==
+            context
+                    .findAncestorWidgetOfExactType<
+                      ProductCreateFormBuilderWidget
+                    >() ==
                 null)) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
-            'No ProductCreateFormWidget or ProductCreateFormBuilderWidget found'),
+          'No ProductCreateFormWidget or ProductCreateFormBuilderWidget found',
+        ),
         ErrorDescription(
           '${context.widget.runtimeType} widgets require a ProductCreateFormWidget or ProductCreateFormBuilderWidget widget ancestor.',
         ),
@@ -33,14 +36,15 @@ bool _debugCheckHasProductCreateFormWidget(BuildContext context) {
   return true;
 }
 
-typedef ProductCreateFormChildBuilder = Widget Function(
-  WidgetRef ref,
-  GlobalKey<FormState> formKey,
-  ProviderStatus<void> status,
-  bool isProgressing,
-  Failure? failure,
-  Future<void> Function() submit,
-);
+typedef ProductCreateFormChildBuilder =
+    Widget Function(
+      WidgetRef ref,
+      GlobalKey<FormState> formKey,
+      ProviderStatus<void> status,
+      bool isProgressing,
+      Failure? failure,
+      Future<void> Function() submit,
+    );
 
 class ProductCreateFormWidget extends HookConsumerWidget {
   /// Base form widget for [ProductCreate] provider
@@ -53,6 +57,7 @@ class ProductCreateFormWidget extends HookConsumerWidget {
     this.autovalidateMode,
     this.onPopInvokedWithResult,
     this.onChanged,
+
     required this.builder,
   });
 
@@ -80,11 +85,13 @@ class ProductCreateFormWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cachedFormKey =
-        useMemoized(() => formKey ?? GlobalKey<FormState>(), [formKey]);
+    final cachedFormKey = useMemoized(() => formKey ?? GlobalKey<FormState>(), [
+      formKey,
+    ]);
 
-    final status =
-        ref.watch(productCreateProvider.select((value) => value.status));
+    final status = ref.watch(
+      productCreateProvider.select((value) => value.status),
+    );
     final isProgressing = status.isInProgress;
     final failure = status.failure;
     final controller = ref.watch(productCreateProvider.notifier);
@@ -110,6 +117,7 @@ class ProductCreateFormWidget extends HookConsumerWidget {
 class ProductCreateFormBuilderWidget extends ConsumerWidget {
   const ProductCreateFormBuilderWidget({
     super.key,
+
     required this.builder,
     this.child,
   });
@@ -120,7 +128,8 @@ class ProductCreateFormBuilderWidget extends ConsumerWidget {
     ProviderStatus<void> status,
     ProductCreate notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -129,15 +138,10 @@ class ProductCreateFormBuilderWidget extends ConsumerWidget {
       child: child,
       builder: (context, ref, child) {
         final notifier = ref.watch(productCreateProvider.notifier);
-        final status =
-            ref.watch(productCreateProvider.select((value) => value.status));
-        return builder(
-          context,
-          ref,
-          status,
-          notifier,
-          child,
+        final status = ref.watch(
+          productCreateProvider.select((value) => value.status),
         );
+        return builder(context, ref, status, notifier, child);
       },
     );
   }
@@ -157,7 +161,8 @@ class ProductCreateStatusWidget extends ConsumerWidget {
     ProviderStatus<void> status,
     ProductCreate notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -165,8 +170,9 @@ class ProductCreateStatusWidget extends ConsumerWidget {
     assert(_debugCheckHasProductCreateFormWidget(context));
 
     final notifier = ref.watch(productCreateProvider.notifier);
-    final status =
-        ref.watch(productCreateProvider.select((value) => value.status));
+    final status = ref.watch(
+      productCreateProvider.select((value) => value.status),
+    );
 
     return builder(context, ref, status, notifier, child);
   }
@@ -186,7 +192,8 @@ class ProductCreateStateWidget extends ConsumerWidget {
     ProductCreateState state,
     ProductCreate notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -217,7 +224,8 @@ class ProductCreateSelectWidget<Selected> extends ConsumerWidget {
     Selected selected,
     ProductCreate notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -234,16 +242,14 @@ class ProductCreateSelectWidget<Selected> extends ConsumerWidget {
 /// Widget that expose [ProductCreate] provider notifier manage the state
 /// using this ensure the state is correct map even it is family provider
 class ProductCreateNotifierWidget extends ConsumerWidget {
-  const ProductCreateNotifierWidget({
-    super.key,
-    required this.builder,
-  });
+  const ProductCreateNotifierWidget({super.key, required this.builder});
 
   final Widget Function(
     BuildContext context,
     WidgetRef ref,
     ProductCreate notifier,
-  ) builder;
+  )
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -255,13 +261,14 @@ class ProductCreateNotifierWidget extends ConsumerWidget {
   }
 }
 
-typedef ProductCreateNameChildBuilder = Widget Function(
-  WidgetRef ref,
-  TextEditingController textController,
-  String name,
-  void Function(String newName) changeName,
-  bool showValidation,
-);
+typedef ProductCreateNameChildBuilder =
+    Widget Function(
+      WidgetRef ref,
+      TextEditingController textController,
+      String name,
+      void Function(String newName) changeName,
+      bool showValidation,
+    );
 
 /// Widget form field for property [name]. To use this widget. You will need to add [ProductCreateFormWidget] widget as ancestor
 /// otherwise assert error will be thrown
@@ -281,8 +288,9 @@ class ProductCreateNameFieldWidget extends HookConsumerWidget {
     assert(_debugCheckHasProductCreateFormWidget(context));
 
     final notifier = ref.watch(productCreateProvider.notifier);
-    final state =
-        ref.watch(productCreateProvider.select((value) => value.name));
+    final state = ref.watch(
+      productCreateProvider.select((value) => value.name),
+    );
     final controller = this.controller ?? useTextEditingController(text: state);
 
     // Listen for provider changes
@@ -308,8 +316,9 @@ class ProductCreateNameFieldWidget extends HookConsumerWidget {
       return () => controller.removeListener(listener);
     }, [controller]);
 
-    final showValidation = ref
-        .watch(productCreateProvider.select((value) => value.status.isFailure));
+    final showValidation = ref.watch(
+      productCreateProvider.select((value) => value.status.isFailure),
+    );
     return builder(
       ref,
       controller,
@@ -329,21 +338,21 @@ class ProductCreateNameFieldWidget extends HookConsumerWidget {
 
 @ProviderFor(ProductCreate)
 @formWidget
-const productCreateProvider = ProductCreateProvider._();
+final productCreateProvider = ProductCreateProvider._();
 
 @formWidget
 final class ProductCreateProvider
     extends $NotifierProvider<ProductCreate, ProductParam> {
-  const ProductCreateProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'productCreateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  ProductCreateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'productCreateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$productCreateHash();
@@ -368,14 +377,16 @@ abstract class _$ProductCreate extends $Notifier<ProductParam> {
   ProductParam build();
   @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build();
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ProductParam, ProductParam>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<ProductParam, ProductParam>,
-        ProductParam,
-        Object?,
-        Object?>;
-    element.handleValue(ref, created);
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ProductParam, ProductParam>,
+              ProductParam,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
   }
 }

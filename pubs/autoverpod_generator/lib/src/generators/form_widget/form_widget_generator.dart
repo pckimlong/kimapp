@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/base_proxy_widget_ref.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/debug_check.dart';
 import 'package:autoverpod_generator/src/generators/form_widget/widgets/field_updater.dart';
@@ -50,7 +50,7 @@ class FormWidgetGenerator extends WidgetGenerator {
 
   @override
   Future<String> generateForAnnotatedElement(
-    Element2 element,
+    Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {

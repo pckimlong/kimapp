@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:code_builder/code_builder.dart';
 
 import 'param_definition.dart';
@@ -32,7 +32,7 @@ class MethodDefinition {
     };
   }
 
-  factory MethodDefinition.parseMethod(MethodElement2 method) {
+  factory MethodDefinition.parseMethod(MethodElement method) {
     return MethodDefinition(
       name: method.displayName,
       returnType: method.returnType.getDisplayString(),
@@ -41,12 +41,12 @@ class MethodDefinition {
           .toList(),
       isStatic: method.isStatic,
       annotations:
-          method.metadata2.annotations.map((m) => m.toSource()).toList(),
+          method.metadata.annotations.map((m) => m.toSource()).toList(),
       documentation: method.documentationComment,
     );
   }
 
-  factory MethodDefinition.parseGetter(PropertyAccessorElement2 getter) {
+  factory MethodDefinition.parseGetter(PropertyAccessorElement getter) {
     return MethodDefinition(
       name: getter.displayName,
       returnType: getter.returnType.getDisplayString(),
@@ -55,7 +55,7 @@ class MethodDefinition {
           .toList(),
       isStatic: getter.isStatic,
       annotations:
-          getter.metadata2.annotations.map((m) => m.toSource()).toList(),
+          getter.metadata.annotations.map((m) => m.toSource()).toList(),
       documentation: getter.documentationComment,
       // body: getter.source.contents.data,
     );

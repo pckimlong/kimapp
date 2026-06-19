@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:autoverpod/autoverpod.dart';
 import 'package:build/build.dart';
@@ -24,11 +24,11 @@ class KimappFormGenerator extends Generator {
     BuildStep buildStep,
   ) {
     final buffer = StringBuffer();
-    final processed = <ClassElement2>{};
+    final processed = <ClassElement>{};
 
     void handleAnnotatedElement(AnnotatedElement annotated) {
       final element = annotated.element;
-      if (element is! ClassElement2) return;
+      if (element is! ClassElement) return;
       if (!processed.add(element)) return;
 
       final generated = _generateForProviderClass(element);
@@ -48,9 +48,9 @@ class KimappFormGenerator extends Generator {
     return buffer.toString();
   }
 
-  String? _generateForProviderClass(ClassElement2 providerClass) {
-    final buildMethod = providerClass.methods2
-        .firstWhereOrNull((method) => method.name3 == 'build');
+  String? _generateForProviderClass(ClassElement providerClass) {
+    final buildMethod = providerClass.methods
+        .firstWhereOrNull((method) => method.name == 'build');
     if (buildMethod == null) {
       // Only stateful provider contain build method can generate form
       return null;
@@ -61,15 +61,15 @@ class KimappFormGenerator extends Generator {
       return null;
     }
 
-    final stateElement = returnType.element3;
-    if (stateElement is! ClassElement2) {
+    final stateElement = returnType.element;
+    if (stateElement is! ClassElement) {
       return null;
     }
 
     if (!providerStatusClassType.isAssignableFrom(stateElement)) {
       // Support only class with ProviderStatusClassMixin
       print(
-        '[FORM GENERATOR FAILED] ${providerClass.name3} build method must return a type that mixes ProviderStatusClassMixin.',
+        '[FORM GENERATOR FAILED] ${providerClass.name} build method must return a type that mixes ProviderStatusClassMixin.',
       );
       return null;
     }
@@ -81,14 +81,14 @@ class KimappFormGenerator extends Generator {
     final providerNameWithFamily = _providerFamilyParamBuilder(
         providerClassName, buildMethod.formalParameters);
     final fields = <String, String>{};
-    final buildMethodReturnType = stateElement.name3 ?? '';
+    final buildMethodReturnType = stateElement.name ?? '';
 
     // Generate call method detail
-    final callMethod = providerClass.methods2
-        .firstWhereOrNull((method) => method.name3 == 'call');
+    final callMethod = providerClass.methods
+        .firstWhereOrNull((method) => method.name == 'call');
     if (callMethod == null) {
       print(
-          '[FORM GENERATOR FAILED] ${stateElement.name3} required [call] method');
+          '[FORM GENERATOR FAILED] ${stateElement.name} required [call] method');
       return null;
     }
 
@@ -111,14 +111,13 @@ class KimappFormGenerator extends Generator {
     }
 
     final classConstructor =
-        stateElement.constructors2.firstWhereOrNull((c) => !c.isPrivate);
+        stateElement.constructors.firstWhereOrNull((c) => !c.isPrivate);
 
     if (classConstructor == null) {
-      print('[FORM GENERATOR FAILED] ${stateElement.name3} has no constructor');
-      print(
-        '[FORM GENERATOR FAILED] ${stateElement.name3} has following constructors: ${stateElement.constructors2.map((e) => e.displayName)}',
+      print('[FORM GENERATOR FAILED] ${stateElement.name} has no constructor');
+      throw InvalidGenerationSourceError(
+        '[FORM GENERATOR FAILED] ${stateElement.name} has following constructors: ${stateElement.constructors.map((e) => e.displayName)}',
       );
-      return null;
     }
 
     if (classConstructor.formalParameters.isEmpty) {
@@ -447,7 +446,7 @@ String _generateFormWidget({
   required String providerNameFamily,
   required Map<String, String> familyParams,
   required String providerStatusType,
-  required MethodElement2 callMethod,
+  required MethodElement callMethod,
   required bool isUpdateForm,
   required String buildMethodReturnType,
   required bool useFormWidget,
@@ -638,7 +637,7 @@ String _generateFormBuilderWidget({
   required String providerNameFamily,
   required Map<String, String> familyParams,
   required String providerStatusType,
-  required MethodElement2 callMethod,
+  required MethodElement callMethod,
   required bool isUpdateForm,
   required String buildMethodReturnType,
   required bool useFormWidget,

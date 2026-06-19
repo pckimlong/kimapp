@@ -32,7 +32,7 @@ class ProviderReturnTypeDefinition {
     final isGeneric =
         type is ParameterizedType && type.typeArguments.isNotEmpty;
     final wrapperType =
-        type is InterfaceType ? type.element3.displayName : null;
+        type is InterfaceType ? type.element.displayName : null;
     final isAsync = ['Future', 'Stream', 'FutureOr'].contains(wrapperType);
     String baseType = type.getDisplayString();
     if (isGeneric) {

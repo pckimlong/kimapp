@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:autoverpod_generator/src/models/provider_return_type_definition.dart';
 import 'package:autoverpod_generator/src/templates/utils.dart';
 import 'package:code_builder/code_builder.dart';
@@ -46,7 +46,7 @@ class ProviderDefinition {
   });
 
   factory ProviderDefinition.parse(
-    Element2 element, {
+    Element element, {
     bool parseReturnTypeClassInfo = false,
   }) {
     try {
@@ -55,13 +55,10 @@ class ProviderDefinition {
       final modifiers = _parseModifiers(element);
       final dependencies = _parseDependencies(element);
       final genericParams = _parseGenericParameters(element);
-      final documentation = switch (element) {
-        final Annotatable annotatable => annotatable.documentationComment,
-        _ => null,
-      };
+      final documentation = element.documentationComment;
 
-      if (element case final ClassElement2 classElement) {
-        final buildMethod = classElement.methods2.firstWhere(
+      if (element case final ClassElement classElement) {
+        final buildMethod = classElement.methods.firstWhere(
           (m) => m.displayName == 'build',
           orElse: () => throw InvalidGenerationSourceError(
             'Provider class must have a build method',
@@ -80,7 +77,7 @@ class ProviderDefinition {
           familyParameters: buildMethod.formalParameters
               .map((p) => ParamDefinition.parse(p))
               .toList(),
-          methods: classElement.methods2
+          methods: classElement.methods
               .map((m) => MethodDefinition.parseMethod(m))
               .toList(),
           modifiers: modifiers,
@@ -120,15 +117,10 @@ class ProviderDefinition {
     }
   }
 
-  static Set<ProviderModifier> _parseModifiers(Element2 element) {
+  static Set<ProviderModifier> _parseModifiers(Element element) {
     final modifiers = <ProviderModifier>{};
-    if (element is! Annotatable) {
-      return modifiers;
-    }
 
-    final annotatable = element as Annotatable;
-
-    for (final metadata in annotatable.metadata2.annotations) {
+    for (final metadata in element.metadata.annotations) {
       final annotation = metadata.computeConstantValue();
       if (annotation != null) {
         final type = annotation.type?.getDisplayString();
@@ -144,10 +136,10 @@ class ProviderDefinition {
     return modifiers;
   }
 
-  static List<String> _parseDependencies(Element2 element) {
+  static List<String> _parseDependencies(Element element) {
     final dependencies = <String>[];
-    if (element is ClassElement2) {
-      for (final field in element.fields2) {
+    if (element is ClassElement) {
+      for (final field in element.fields) {
         final fieldType = field.type.getDisplayString();
         if (fieldType.contains('Provider')) {
           dependencies.add(fieldType);
@@ -157,10 +149,10 @@ class ProviderDefinition {
     return dependencies;
   }
 
-  static Map<String, List<String>> _parseGenericParameters(Element2 element) {
+  static Map<String, List<String>> _parseGenericParameters(Element element) {
     final genericParams = <String, List<String>>{};
-    if (element is ClassElement2) {
-      for (final typeParam in element.typeParameters2) {
+    if (element is ClassElement) {
+      for (final typeParam in element.typeParameters) {
         final bound = typeParam.bound;
         final bounds = <String>[];
 

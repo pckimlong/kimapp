@@ -6,12 +6,12 @@ homepage: https://github.com/pckimlong/kimapp
 issue_tracker: https://github.com/pckimlong/kimapp/issues
 
 environment:
-  sdk: ">=3.6.0 <4.0.0"
+  sdk: ">=3.11.4 <4.0.0"
 resolution: workspace
 
 dependencies:
   meta: ^1.16.0
-  riverpod: ^3.0.0
+  riverpod: ^3.1.0
 
 dev_dependencies:
   lints: ^6.0.0

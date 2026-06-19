@@ -7,14 +7,14 @@ part of 'demo_schema.schema.dart';
 // **************************************************************************
 
 _DemoModel _$DemoModelFromJson(Map<String, dynamic> json) => _DemoModel(
-      name: json['name'] as String?,
-      description: json['description'] as String?,
-      age: (json['age'] as num).toInt(),
-      address: json['address'] as String?,
-      other: json['other'] == null
-          ? null
-          : OtherModel.fromJson(json['other'] as Map<String, dynamic>),
-    );
+  name: json['name'] as String?,
+  description: json['description'] as String?,
+  age: (json['age'] as num).toInt(),
+  address: json['address'] as String?,
+  other: json['other'] == null
+      ? null
+      : OtherModel.fromJson(json['other'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$DemoModelToJson(_DemoModel instance) =>
     <String, dynamic>{
@@ -78,8 +78,12 @@ const _tableDemoModel = TableBuilder(
     ColumnBuilder('description'),
     ColumnBuilder('age'),
     ColumnBuilder('address'),
-    ColumnBuilder.join(OtherModel.table,
-        key: "other", candidateKey: null, foreignKey: 'other_id'),
+    ColumnBuilder.join(
+      OtherModel.table,
+      key: "other",
+      candidateKey: null,
+      foreignKey: 'other_id',
+    ),
   ],
 );
 
@@ -90,8 +94,12 @@ const _tableDemoDetailModel = TableBuilder(
     ColumnBuilder('description'),
     ColumnBuilder('age'),
     ColumnBuilder('address'),
-    ColumnBuilder.join(OtherModel.table,
-        key: "other", candidateKey: null, foreignKey: 'other_id'),
+    ColumnBuilder.join(
+      OtherModel.table,
+      key: "other",
+      candidateKey: null,
+      foreignKey: 'other_id',
+    ),
     ColumnBuilder('name2'),
     ColumnBuilder('age2'),
   ],

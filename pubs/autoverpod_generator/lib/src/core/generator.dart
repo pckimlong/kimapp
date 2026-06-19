@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:source_gen/source_gen.dart';
@@ -56,7 +56,7 @@ class WidgetGenerator {
   ///
   /// This method is used internally and should not be overridden
   /// unless you need custom annotation detection logic.
-  bool canProcess(Element2 element) {
+  bool canProcess(Element element) {
     final hasWidgetAnnotation = annotationTypeChecker.hasAnnotationOf(element);
     final hasRiverpodAnnotation =
         riverpodAnnotationTypeChecker.hasAnnotationOf(element);
@@ -75,7 +75,7 @@ class WidgetGenerator {
   ///
   /// This is the main method that implementers should override.
   Future<String> generateForAnnotatedElement(
-    Element2 element,
+    Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) async {

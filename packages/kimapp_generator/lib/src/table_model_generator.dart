@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -8,11 +8,11 @@ import 'package:source_gen/source_gen.dart';
 class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
   @override
   String generateForAnnotatedElement(
-    Element2 element,
+    Element element,
     ConstantReader annotation,
     BuildStep buildStep,
   ) {
-    if (element is! ClassElement2) {
+    if (element is! ClassElement) {
       throw ArgumentError(
           'Only classes can be annotated with @TableModel. $element is not a ClassElement.');
     }
@@ -21,9 +21,9 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     final className = _getClassName(classElement);
     final tableName = annotation.peek('tableName')?.stringValue;
 
-    final constructor = classElement.unnamedConstructor2;
+    final constructor = classElement.unnamedConstructor;
     if (constructor == null) {
-      throw ArgumentError('Default constructor for ${classElement.name3} is missing');
+      throw ArgumentError('Default constructor for ${classElement.name} is missing');
     }
 
     final fields = _extractFields(constructor);
@@ -31,16 +31,16 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
     return _buildTableDefinition(className, tableName, fields);
   }
 
-  String _getClassName(ClassElement2 element) {
+  String _getClassName(ClassElement element) {
     final superType = element.supertype;
-    final superElement = superType?.element3;
-    if (superElement is ClassElement2) {
-      return superElement.name3 ?? element.name3 ?? element.displayName;
+    final superElement = superType?.element;
+    if (superElement is ClassElement) {
+      return superElement.name ?? element.name ?? element.displayName;
     }
-    return element.name3 ?? element.displayName;
+    return element.name ?? element.displayName;
   }
 
-  List<TableFieldInfo> _extractFields(ConstructorElement2 constructor) {
+  List<TableFieldInfo> _extractFields(ConstructorElement constructor) {
     final fields = <TableFieldInfo>[];
 
     for (final fieldElement in constructor.formalParameters) {
@@ -54,7 +54,7 @@ class TableModelGenerator extends GeneratorForAnnotation<TableModel> {
 
       fields.add(
         TableFieldInfo(
-          key: key ?? fieldElement.name3,
+          key: key ?? fieldElement.name,
           candidateKey: candidateKey,
           foreignKey: foreignKey,
           joinedModel: joinedModel,

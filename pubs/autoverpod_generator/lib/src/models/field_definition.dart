@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 
@@ -48,12 +48,12 @@ class FieldDefinition {
     };
   }
 
-  factory FieldDefinition.parse(FieldElement2 field) {
+  factory FieldDefinition.parse(FieldElement field) {
     String? importPath;
     final fieldType = field.type;
     if (fieldType is InterfaceType) {
-      final element = fieldType.element3;
-      final uri = element.library2.uri;
+      final element = fieldType.element;
+      final uri = element.library.uri;
       if (!uri.isScheme('dart')) {
         importPath = uri.toString();
       }
@@ -66,10 +66,10 @@ class FieldDefinition {
       isFinal: field.isFinal,
       documentation: field.documentationComment,
       defaultValue: field.computeConstantValue()?.toString(),
-      annotations: field.metadata2.annotations.map((m) => m.toSource()).toList(),
+      annotations: field.metadata.annotations.map((m) => m.toSource()).toList(),
       isPrivate: field.isPrivate,
       isStatic: field.isStatic,
-      isGetter: field.getter2 != null && field.setter2 == null,
+      isGetter: field.getter != null && field.setter == null,
       isLate: field.isLate,
       importPath: importPath,
     );
@@ -79,8 +79,8 @@ class FieldDefinition {
     String? importPath;
     final paramType = param.type;
     if (paramType is InterfaceType) {
-      final element = paramType.element3;
-      final uri = element.library2.uri;
+      final element = paramType.element;
+      final uri = element.library.uri;
       if (!uri.isScheme('dart')) {
         importPath = uri.toString();
       }
@@ -94,10 +94,10 @@ class FieldDefinition {
       documentation: param.documentationComment,
       defaultValue: param.defaultValueCode,
       annotations:
-          param.metadata2.annotations.map((m) => m.toSource()).toList(),
+          param.metadata.annotations.map((m) => m.toSource()).toList(),
       isPrivate: param.isPrivate,
       isStatic: param.isStatic,
-      isGetter: param is FieldFormalParameterElement2,
+      isGetter: param is FieldFormalParameterElement,
       isLate: param.isLate,
       importPath: importPath,
     );

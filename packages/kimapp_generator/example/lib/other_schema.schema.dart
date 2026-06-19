@@ -1,5 +1,5 @@
-// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format width=80
 
 // **************************************************************************
 // KimappSchemaGenerator
@@ -37,7 +37,8 @@ class OtherId extends Identity<int> {
       throw ArgumentError.notNull('value');
     } else {
       throw ArgumentError(
-          'Value of OtherId must be of type int, but was ${value.runtimeType}. Please provide the correct type.');
+        'Value of OtherId must be of type int, but was ${value.runtimeType}. Please provide the correct type.',
+      );
     }
   }
   factory OtherId.fromValue(int value) {

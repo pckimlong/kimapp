@@ -127,12 +127,12 @@ Map<String, dynamic> _$UpdateUserModelToJson(_UpdateUserModel instance) =>
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(userRepository)
-const userRepositoryProvider = UserRepositoryProvider._();
+final userRepositoryProvider = UserRepositoryProvider._();
 
 final class UserRepositoryProvider
     extends $FunctionalProvider<UserRepository, UserRepository, UserRepository>
     with $Provider<UserRepository> {
-  const UserRepositoryProvider._()
+  UserRepositoryProvider._()
     : super(
         from: null,
         argument: null,
@@ -172,7 +172,7 @@ String _$userRepositoryHash() => r'e75530ca34ed2fc7744e8fd5e2a8e5d7f738dc62';
 
 @ProviderFor(UpdateUser)
 @formWidget
-const updateUserProvider = UpdateUserFamily._();
+final updateUserProvider = UpdateUserFamily._();
 
 /// Annotated with @formWidget and @riverpod
 // @stateWidget
@@ -181,7 +181,7 @@ final class UpdateUserProvider
     extends $AsyncNotifierProvider<UpdateUser, UpdateUserModel> {
   /// Annotated with @formWidget and @riverpod
   // @stateWidget
-  const UpdateUserProvider._({
+  UpdateUserProvider._({
     required UpdateUserFamily super.from,
     required int super.argument,
   }) : super(
@@ -232,7 +232,7 @@ final class UpdateUserFamily extends $Family
           FutureOr<UpdateUserModel>,
           int
         > {
-  const UpdateUserFamily._()
+  UpdateUserFamily._()
     : super(
         retry: null,
         name: r'updateUserProvider',
@@ -263,8 +263,7 @@ abstract class _$UpdateUser extends $AsyncNotifier<UpdateUserModel> {
   FutureOr<UpdateUserModel> build(int id);
   @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build(_$args);
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<UpdateUserModel>, UpdateUserModel>;
     final element =
         ref.element
@@ -274,6 +273,6 @@ abstract class _$UpdateUser extends $AsyncNotifier<UpdateUserModel> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    return element.handleCreate(ref, () => build(_$args));
   }
 }

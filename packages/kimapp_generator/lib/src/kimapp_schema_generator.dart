@@ -21,7 +21,7 @@
 
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:kimapp/kimapp.dart';
@@ -43,7 +43,7 @@ class KimappSchemaGenerator extends Generator {
     for (var schema in schemas) {
       final annotation = schema.annotation;
       final schemaMetaData = _SchemaMetaData.fromAnnotation(annotation);
-      final classElement = schema.element as ClassElement2;
+      final classElement = schema.element as ClassElement;
       final fields = await _getFields(buildStep, classElement);
       final models = await _getModels(buildStep, classElement, fields, schemaMetaData);
       schemaData.add({
@@ -101,16 +101,16 @@ class KimappSchemaGenerator extends Generator {
   }
 
   void _checkValidSchemaElement(AnnotatedElement schema) {
-    if (schema.element is! ClassElement2) {
+    if (schema.element is! ClassElement) {
       throw InvalidGenerationSourceError(
-        'Schema annotation can only be applied to classes.',
+        'Generator can only target Class',
         element: schema.element,
       );
     }
 
-    final classElement = schema.element as ClassElement2;
+    final classElement = schema.element as ClassElement;
 
-    if (!classElement.allSupertypes.any((type) => type.element3?.name3 == 'KimappSchema')) {
+    if (!classElement.allSupertypes.any((type) => type.element.name == 'KimappSchema')) {
       throw InvalidGenerationSourceError(
         'The class ${classElement.displayName} must extend KimappSchema.',
         element: classElement,
@@ -188,8 +188,8 @@ class KimappSchemaGenerator extends Generator {
   Set<String> _getSourceFileImports(LibraryReader library) {
     final imports = Set<String>();
     for (final fragment in library.element.fragments) {
-      for (final importDirective in fragment.libraryImports2) {
-        final importedLibrary = importDirective.importedLibrary2;
+      for (final importDirective in fragment.libraryImports) {
+        final importedLibrary = importDirective.importedLibrary;
         final uri = importedLibrary?.uri;
         if (uri == null) continue;
 
@@ -209,8 +209,8 @@ class KimappSchemaGenerator extends Generator {
     return imports;
   }
 
-  Future<LibraryElement2> _getLatestLibraryElement(
-      BuildStep buildStep, LibraryElement2 libraryElement) async {
+  Future<LibraryElement> _getLatestLibraryElement(
+      BuildStep buildStep, LibraryElement libraryElement) async {
     final resolver = buildStep.resolver;
     return await resolver.libraryFor(await resolver.assetIdForElement(libraryElement));
   }
@@ -218,7 +218,7 @@ class KimappSchemaGenerator extends Generator {
   String _extractTypeString(TypeArgumentList? typeArguments) {
     if (typeArguments != null && typeArguments.arguments.isNotEmpty) {
       return typeArguments.arguments
-          .map((arg) => arg is NamedType ? arg.name2.toString() : 'dynamic')
+          .map((arg) => arg is NamedType ? arg.name.toString() : 'dynamic')
           .join(', ');
     }
     return 'dynamic';
@@ -226,24 +226,24 @@ class KimappSchemaGenerator extends Generator {
 
   Future<List<_ModelDefinition>> _getModels(
     BuildStep buildStep,
-    ClassElement2 element,
+    ClassElement element,
     List<_FieldDefinition> baseFields,
     _SchemaMetaData schemaMetaData,
   ) async {
     final models = <_ModelDefinition>[];
-    final modelsGetter = element.getGetter2('models');
+    final modelsGetter = element.getGetter('models');
     if (modelsGetter == null) return [];
 
     // Get the latest library element
-    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library2);
+    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library);
 
     // Use the latest library element to get the session
     final session = latestLibraryElement.session;
-    final result = session.getParsedLibraryByElement2(latestLibraryElement);
+    final result = session.getParsedLibraryByElement(latestLibraryElement);
     if (result is! ParsedLibraryResult) return [];
 
     final node =
-        result.getFragmentDeclaration(modelsGetter.firstFragment)?.node as AstNode?;
+        result.getFragmentDeclaration(modelsGetter.firstFragment)?.node;
     if (node is! MethodDeclaration) return [];
 
     Expression? listExpression;
@@ -590,14 +590,14 @@ class KimappSchemaGenerator extends Generator {
 
   Future<List<_FieldDefinition>> _getFields(
     BuildStep buildStep,
-    ClassElement2 element,
+    ClassElement element,
   ) async {
     final fields = <_FieldDefinition>[];
     final expressions = <String, Expression>{};
 
-    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library2);
+    final latestLibraryElement = await _getLatestLibraryElement(buildStep, element.library);
     final session = latestLibraryElement.session;
-    final parsedLibrary = session.getParsedLibraryByElement2(latestLibraryElement);
+    final parsedLibrary = session.getParsedLibraryByElement(latestLibraryElement);
     if (parsedLibrary is! ParsedLibraryResult) {
       return fields;
     }
@@ -606,12 +606,12 @@ class KimappSchemaGenerator extends Generator {
     bool isModelProperty(String name) => name == 'models';
 
     // Process getters and fields
-    for (final getter in element.getters2) {
-      final name = getter.name3 ?? getter.displayName;
+    for (final getter in element.getters) {
+      final name = getter.name ?? getter.displayName;
       if (getter.isStatic || isModelProperty(name)) continue;
 
       final declaration =
-          parsedLibrary.getFragmentDeclaration(getter.firstFragment)?.node as AstNode?;
+          parsedLibrary.getFragmentDeclaration(getter.firstFragment)?.node;
       Expression? expression;
       if (declaration is MethodDeclaration) {
         if (declaration.body is ExpressionFunctionBody) {
@@ -632,12 +632,12 @@ class KimappSchemaGenerator extends Generator {
       }
     }
 
-    for (final field in element.fields2) {
-      final name = field.name3 ?? field.displayName;
-      if (field.isStatic || name == null || isModelProperty(name)) continue;
+    for (final field in element.fields) {
+      final name = field.name ?? field.displayName;
+      if (field.isStatic || isModelProperty(name)) continue;
 
       final declaration =
-          parsedLibrary.getFragmentDeclaration(field.firstFragment)?.node as AstNode?;
+          parsedLibrary.getFragmentDeclaration(field.firstFragment)?.node;
       Expression? expression;
       if (declaration is VariableDeclaration && declaration.initializer != null) {
         expression = declaration.initializer;

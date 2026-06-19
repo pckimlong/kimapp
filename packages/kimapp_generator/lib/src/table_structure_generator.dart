@@ -117,8 +117,8 @@ class TableStructureGenerator extends Generator {
   Set<String> _getSourceFileImports(LibraryReader library) {
     final imports = Set<String>();
     for (final fragment in library.element.fragments) {
-      for (final importDirective in fragment.libraryImports2) {
-        final importedLibrary = importDirective.importedLibrary2;
+      for (final importDirective in fragment.libraryImports) {
+        final importedLibrary = importDirective.importedLibrary;
         final uri = importedLibrary?.uri;
         if (uri == null) continue;
 

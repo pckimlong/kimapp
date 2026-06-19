@@ -1,5 +1,4 @@
 import 'package:autoverpod/autoverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'state_widget_example.g.dart';

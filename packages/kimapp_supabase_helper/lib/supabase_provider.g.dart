@@ -10,21 +10,21 @@ part of 'supabase_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(supabase)
-const supabaseProvider = SupabaseProvider._();
+final supabaseProvider = SupabaseProvider._();
 
 final class SupabaseProvider
     extends $FunctionalProvider<Supabase, Supabase, Supabase>
     with $Provider<Supabase> {
-  const SupabaseProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'supabaseProvider',
-          isAutoDispose: false,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  SupabaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'supabaseProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$supabaseHash();

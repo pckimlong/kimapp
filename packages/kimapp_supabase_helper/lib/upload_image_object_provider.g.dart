@@ -10,20 +10,24 @@ part of 'upload_image_object_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(UploadImageObject)
-const uploadImageObjectProvider = UploadImageObjectProvider._();
+final uploadImageObjectProvider = UploadImageObjectProvider._();
 
-final class UploadImageObjectProvider extends $NotifierProvider<
-    UploadImageObject, ProviderStatus<BaseStorageObject>> {
-  const UploadImageObjectProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'uploadImageObjectProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+final class UploadImageObjectProvider
+    extends
+        $NotifierProvider<
+          UploadImageObject,
+          ProviderStatus<BaseStorageObject>
+        > {
+  UploadImageObjectProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'uploadImageObjectProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$uploadImageObjectHash();
@@ -36,8 +40,9 @@ final class UploadImageObjectProvider extends $NotifierProvider<
   Override overrideWithValue(ProviderStatus<BaseStorageObject> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride:
-          $SyncValueProvider<ProviderStatus<BaseStorageObject>>(value),
+      providerOverride: $SyncValueProvider<ProviderStatus<BaseStorageObject>>(
+        value,
+      ),
     );
   }
 }
@@ -49,16 +54,24 @@ abstract class _$UploadImageObject
   ProviderStatus<BaseStorageObject> build();
   @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<ProviderStatus<BaseStorageObject>,
-        ProviderStatus<BaseStorageObject>>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<ProviderStatus<BaseStorageObject>,
-            ProviderStatus<BaseStorageObject>>,
-        ProviderStatus<BaseStorageObject>,
-        Object?,
-        Object?>;
-    element.handleValue(ref, created);
+  WhenComplete runBuild() {
+    final ref =
+        this.ref
+            as $Ref<
+              ProviderStatus<BaseStorageObject>,
+              ProviderStatus<BaseStorageObject>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                ProviderStatus<BaseStorageObject>,
+                ProviderStatus<BaseStorageObject>
+              >,
+              ProviderStatus<BaseStorageObject>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
   }
 }

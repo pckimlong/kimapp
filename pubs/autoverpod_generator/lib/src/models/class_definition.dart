@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
 import 'package:autoverpod_generator/src/models/field_definition.dart';
@@ -112,8 +112,8 @@ class ClassDefinition {
       return null;
     }
 
-    final element = type.element3;
-    if (element is! ClassElement2) {
+    final element = type.element;
+    if (element is! ClassElement) {
       return null;
     }
 
@@ -162,9 +162,9 @@ class ClassDefinition {
 
   /// Check if a class is a freezed class by looking for the @freezed annotation
   /// and the _$ mixin
-  static bool _isFreezed(ClassElement2 element) {
-    final hasFreezedAnnotation = element.metadata2.annotations
-        .any((m) => m.element2?.displayName == 'freezed');
+  static bool _isFreezed(ClassElement element) {
+    final hasFreezedAnnotation = element.metadata.annotations
+        .any((m) => m.element?.displayName == 'freezed');
 
     final hasMixin = element.mixins.any(
       (m) => _stripNullability(m.getDisplayString()).startsWith('_\$'),
@@ -174,10 +174,10 @@ class ClassDefinition {
   }
 
   /// Parse parent types (superclass, interfaces, and mixins)
-  static List<String> _parseParentTypes(ClassElement2 element) {
+  static List<String> _parseParentTypes(ClassElement element) {
     return [
       if (element.supertype != null &&
-        element.supertype!.element3.displayName != 'Object')
+        element.supertype!.element.displayName != 'Object')
         _stripNullability(element.supertype!.getDisplayString()),
       ...element.interfaces
           .map((i) => _stripNullability(i.getDisplayString())),
@@ -185,13 +185,13 @@ class ClassDefinition {
     ];
   }
 
-  static bool _isLibraryType(ClassElement2 element) {
+  static bool _isLibraryType(ClassElement element) {
     // First check the base type against known library types
     final className = element.displayName;
     if (_dartCoreTypes.contains(className)) return true;
 
     // If it's a generic library type, check its base
-    final isGeneric = element.typeParameters2.isNotEmpty;
+    final isGeneric = element.typeParameters.isNotEmpty;
     if (isGeneric && _dartCoreTypes.contains(className)) return true;
 
     return false;
@@ -199,7 +199,7 @@ class ClassDefinition {
 
   /// Parse fields from a class element, handling both Freezed and regular classes
   static List<FieldDefinition> _parseFields(
-    InterfaceElement2 element,
+    InterfaceElement element,
     bool isFreezed,
     ClassParserOptions options,
   ) {
@@ -207,18 +207,17 @@ class ClassDefinition {
 
     if (isFreezed) {
       // For freezed classes, look at the factory constructor parameters
-      final factoryConstructors = element.constructors2.where((c) {
+      final factoryConstructors = element.constructors.where((c) {
         return c.isFactory &&
-            (!c.isSynthetic || options.parseSyntheticFields) &&
+            (c.isOriginDeclaration || options.parseSyntheticFields) &&
             (c.isPublic || options.parsePrivateFields) &&
             (options.parseStaticFields || !c.isStatic) &&
-            c.name3 != 'fromJson'; // ignore fromJson factory constructor
+            c.name != 'fromJson'; // ignore fromJson factory constructor
       });
 
       for (final constructor in factoryConstructors) {
         final params = constructor.formalParameters.where((p) {
-          return (!p.isSynthetic || options.parseSyntheticFields) &&
-              (p.isPublic || options.parsePrivateFields);
+          return (p.isPublic || options.parsePrivateFields);
         });
 
         for (final param in params) {
@@ -233,9 +232,9 @@ class ClassDefinition {
 
       // Add fields from the class element
       fields.addAll(
-        element.fields2
+        element.fields
             .where((f) {
-              return (!f.isSynthetic || options.parseSyntheticFields) &&
+              return (f.isOriginDeclaration || options.parseSyntheticFields) &&
                   (options.parseStaticFields || !f.isStatic) &&
                   (f.isPublic || options.parsePrivateFields);
             })
@@ -245,9 +244,9 @@ class ClassDefinition {
     } else {
       // Regular class field parsing
       fields.addAll(
-        element.fields2
+        element.fields
             .where((f) {
-              return (!f.isSynthetic || options.parseSyntheticFields) &&
+              return (f.isOriginDeclaration || options.parseSyntheticFields) &&
                   (options.parseStaticFields || !f.isStatic) &&
                   (f.isPublic || options.parsePrivateFields);
             })
@@ -261,7 +260,7 @@ class ClassDefinition {
 
   /// Parse method names from a class element, including methods from mixins and freezed implementations
   static Map<String, MethodDefinition?> _parseMethods(
-    InterfaceElement2 element,
+    InterfaceElement element,
     List<FieldDefinition> fields,
     ClassParserOptions options,
   ) {
@@ -272,14 +271,14 @@ class ClassDefinition {
     final methods = <String, MethodDefinition?>{};
 
     // Get methods directly declared in the class
-    for (final method in element.methods2.where((m) {
+    for (final method in element.methods.where((m) {
       final methodName = m.displayName;
       final matchesRequestedMethod =
           options.parseAllMethods || options.toParseMethods.contains(methodName);
       final shouldParseCopyWith =
           options.parseCopyWith && methodName == 'copyWith';
       final isVisible = (m.isPublic || options.parsePrivateFields) &&
-          (!m.isSynthetic || options.parseSyntheticFields);
+          (m.isOriginDeclaration || options.parseSyntheticFields);
 
       return isVisible && (matchesRequestedMethod || shouldParseCopyWith);
     })) {
@@ -287,29 +286,29 @@ class ClassDefinition {
     }
 
     // Get getters
-    for (final accessor in element.getters2.where((a) {
+    for (final accessor in element.getters.where((a) {
       final accessorName = a.displayName;
       final matchesRequestedGetter =
           options.parseAllMethods || options.toParseMethods.contains(accessorName);
       final shouldParseCopyWith =
           options.parseCopyWith && accessorName == 'copyWith';
       final isVisible = (a.isPublic || options.parsePrivateFields) &&
-          (!a.isSynthetic || options.parseSyntheticFields);
+          (a.isOriginDeclaration || options.parseSyntheticFields);
 
       return isVisible && (matchesRequestedGetter || shouldParseCopyWith);
     })) {
       methods[accessor.displayName] = MethodDefinition.parseGetter(accessor);
     }
 
-    if (_isFreezed(element as ClassElement2)) {
+    if (_isFreezed(element as ClassElement)) {
       // For Freezed classes, look for the generated CopyWith interface
-      final copyWithInterface = element.library2.classes
+      final copyWithInterface = element.library.classes
           .where((e) => e.displayName == '\$${element.displayName}CopyWith')
           .firstOrNull;
 
       if (copyWithInterface != null) {
         // Find the call method in the CopyWith interface which contains the parameters
-        final callMethod = copyWithInterface.methods2
+        final callMethod = copyWithInterface.methods
             .where((m) => m.displayName == 'call')
             .firstOrNull;
 
@@ -319,14 +318,14 @@ class ClassDefinition {
       }
 
       // Also look for methods in the private mixin for completeness
-      final privateMixin = element.library2.mixins
+      final privateMixin = element.library.mixins
           .where((e) => e.displayName.startsWith('_\$${element.displayName}'))
           .firstOrNull;
 
       if (privateMixin != null) {
-        for (final method in privateMixin.methods2.where(
+        for (final method in privateMixin.methods.where(
           (m) =>
-              (!m.isSynthetic || options.parseSyntheticFields) &&
+              (m.isOriginDeclaration || options.parseSyntheticFields) &&
               (m.isPublic || options.parsePrivateFields) &&
               !m.displayName.startsWith('_') &&
               // Skip methods that are already defined as fields
@@ -338,9 +337,9 @@ class ClassDefinition {
         }
 
         // Get getters from private mixin
-        for (final accessor in privateMixin.getters2.where(
+        for (final accessor in privateMixin.getters.where(
           (a) =>
-              (!a.isSynthetic || options.parseSyntheticFields) &&
+              (a.isOriginDeclaration || options.parseSyntheticFields) &&
               (a.isPublic || options.parsePrivateFields) &&
               !a.displayName.startsWith('_') &&
               !fields.any((f) => f.name == a.displayName) &&
@@ -357,15 +356,15 @@ class ClassDefinition {
 
   /// Parse constructor names from a class element
   static List<String> _parseConstructors(
-    InterfaceElement2 element,
+    InterfaceElement element,
     ClassParserOptions options,
   ) {
-    return element.constructors2
+    return element.constructors
         .where((c) {
-          return (!c.isSynthetic || options.parseSyntheticFields) &&
+          return (c.isOriginDeclaration || options.parseSyntheticFields) &&
               (c.isPublic || options.parsePrivateFields);
         })
-        .map((c) => c.name3 ?? '')
+        .map((c) => c.name ?? '')
         .toList();
   }
 }

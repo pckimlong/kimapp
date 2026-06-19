@@ -14,16 +14,21 @@ mixin _$FormWidgetExampleForm on _$FormWidgetExample {
 bool _debugCheckHasFormWidgetExampleFormWidget(BuildContext context) {
   assert(() {
     if ((context.widget is! FormWidgetExampleFormWidget &&
-            context.findAncestorWidgetOfExactType<
-                    FormWidgetExampleFormWidget>() ==
+            context
+                    .findAncestorWidgetOfExactType<
+                      FormWidgetExampleFormWidget
+                    >() ==
                 null) &&
         (context.widget is! FormWidgetExampleFormBuilderWidget &&
-            context.findAncestorWidgetOfExactType<
-                    FormWidgetExampleFormBuilderWidget>() ==
+            context
+                    .findAncestorWidgetOfExactType<
+                      FormWidgetExampleFormBuilderWidget
+                    >() ==
                 null)) {
       throw FlutterError.fromParts(<DiagnosticsNode>[
         ErrorSummary(
-            'No FormWidgetExampleFormWidget or FormWidgetExampleFormBuilderWidget found'),
+          'No FormWidgetExampleFormWidget or FormWidgetExampleFormBuilderWidget found',
+        ),
         ErrorDescription(
           '${context.widget.runtimeType} widgets require a FormWidgetExampleFormWidget or FormWidgetExampleFormBuilderWidget widget ancestor.',
         ),
@@ -34,14 +39,15 @@ bool _debugCheckHasFormWidgetExampleFormWidget(BuildContext context) {
   return true;
 }
 
-typedef FormWidgetExampleFormChildBuilder = Widget Function(
-  WidgetRef ref,
-  GlobalKey<FormState> formKey,
-  ProviderStatus<bool> status,
-  bool isProgressing,
-  Failure? failure,
-  Future<ProviderStatus<bool>> Function() submit,
-);
+typedef FormWidgetExampleFormChildBuilder =
+    Widget Function(
+      WidgetRef ref,
+      GlobalKey<FormState> formKey,
+      ProviderStatus<bool> status,
+      bool isProgressing,
+      Failure? failure,
+      Future<ProviderStatus<bool>> Function() submit,
+    );
 
 class FormWidgetExampleFormWidget extends HookConsumerWidget {
   /// Base form widget for [FormWidgetExample] provider
@@ -54,6 +60,7 @@ class FormWidgetExampleFormWidget extends HookConsumerWidget {
     this.autovalidateMode,
     this.onPopInvokedWithResult,
     this.onChanged,
+
     required this.builder,
   });
 
@@ -81,11 +88,13 @@ class FormWidgetExampleFormWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cachedFormKey =
-        useMemoized(() => formKey ?? GlobalKey<FormState>(), [formKey]);
+    final cachedFormKey = useMemoized(() => formKey ?? GlobalKey<FormState>(), [
+      formKey,
+    ]);
 
-    final status =
-        ref.watch(formWidgetExampleProvider.select((value) => value.status));
+    final status = ref.watch(
+      formWidgetExampleProvider.select((value) => value.status),
+    );
     final isProgressing = status.isInProgress;
     final failure = status.failure;
     final controller = ref.watch(formWidgetExampleProvider.notifier);
@@ -111,6 +120,7 @@ class FormWidgetExampleFormWidget extends HookConsumerWidget {
 class FormWidgetExampleFormBuilderWidget extends ConsumerWidget {
   const FormWidgetExampleFormBuilderWidget({
     super.key,
+
     required this.builder,
     this.child,
   });
@@ -121,7 +131,8 @@ class FormWidgetExampleFormBuilderWidget extends ConsumerWidget {
     ProviderStatus<bool> status,
     FormWidgetExample notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -130,15 +141,10 @@ class FormWidgetExampleFormBuilderWidget extends ConsumerWidget {
       child: child,
       builder: (context, ref, child) {
         final notifier = ref.watch(formWidgetExampleProvider.notifier);
-        final status = ref
-            .watch(formWidgetExampleProvider.select((value) => value.status));
-        return builder(
-          context,
-          ref,
-          status,
-          notifier,
-          child,
+        final status = ref.watch(
+          formWidgetExampleProvider.select((value) => value.status),
         );
+        return builder(context, ref, status, notifier, child);
       },
     );
   }
@@ -158,7 +164,8 @@ class FormWidgetExampleStatusWidget extends ConsumerWidget {
     ProviderStatus<bool> status,
     FormWidgetExample notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -166,8 +173,9 @@ class FormWidgetExampleStatusWidget extends ConsumerWidget {
     assert(_debugCheckHasFormWidgetExampleFormWidget(context));
 
     final notifier = ref.watch(formWidgetExampleProvider.notifier);
-    final status =
-        ref.watch(formWidgetExampleProvider.select((value) => value.status));
+    final status = ref.watch(
+      formWidgetExampleProvider.select((value) => value.status),
+    );
 
     return builder(context, ref, status, notifier, child);
   }
@@ -187,7 +195,8 @@ class FormWidgetExampleStateWidget extends ConsumerWidget {
     FormWidgetExampleState state,
     FormWidgetExample notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -218,7 +227,8 @@ class FormWidgetExampleSelectWidget<Selected> extends ConsumerWidget {
     Selected selected,
     FormWidgetExample notifier,
     Widget? child,
-  ) builder;
+  )
+  builder;
   final Widget? child;
 
   @override
@@ -235,16 +245,14 @@ class FormWidgetExampleSelectWidget<Selected> extends ConsumerWidget {
 /// Widget that expose [FormWidgetExample] provider notifier manage the state
 /// using this ensure the state is correct map even it is family provider
 class FormWidgetExampleNotifierWidget extends ConsumerWidget {
-  const FormWidgetExampleNotifierWidget({
-    super.key,
-    required this.builder,
-  });
+  const FormWidgetExampleNotifierWidget({super.key, required this.builder});
 
   final Widget Function(
     BuildContext context,
     WidgetRef ref,
     FormWidgetExample notifier,
-  ) builder;
+  )
+  builder;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -256,13 +264,14 @@ class FormWidgetExampleNotifierWidget extends ConsumerWidget {
   }
 }
 
-typedef FormWidgetExampleNameChildBuilder = Widget Function(
-  WidgetRef ref,
-  TextEditingController textController,
-  String name,
-  void Function(String newName) changeName,
-  bool showValidation,
-);
+typedef FormWidgetExampleNameChildBuilder =
+    Widget Function(
+      WidgetRef ref,
+      TextEditingController textController,
+      String name,
+      void Function(String newName) changeName,
+      bool showValidation,
+    );
 
 /// Widget form field for property [name]. To use this widget. You will need to add [FormWidgetExampleFormWidget] widget as ancestor
 /// otherwise assert error will be thrown
@@ -282,8 +291,9 @@ class FormWidgetExampleNameFieldWidget extends HookConsumerWidget {
     assert(_debugCheckHasFormWidgetExampleFormWidget(context));
 
     final notifier = ref.watch(formWidgetExampleProvider.notifier);
-    final state =
-        ref.watch(formWidgetExampleProvider.select((value) => value.name));
+    final state = ref.watch(
+      formWidgetExampleProvider.select((value) => value.name),
+    );
     final controller = this.controller ?? useTextEditingController(text: state);
 
     // Listen for provider changes
@@ -310,7 +320,8 @@ class FormWidgetExampleNameFieldWidget extends HookConsumerWidget {
     }, [controller]);
 
     final showValidation = ref.watch(
-        formWidgetExampleProvider.select((value) => value.status.isFailure));
+      formWidgetExampleProvider.select((value) => value.status.isFailure),
+    );
     return builder(
       ref,
       controller,
@@ -330,21 +341,21 @@ class FormWidgetExampleNameFieldWidget extends HookConsumerWidget {
 
 @ProviderFor(FormWidgetExample)
 @kimappForm
-const formWidgetExampleProvider = FormWidgetExampleProvider._();
+final formWidgetExampleProvider = FormWidgetExampleProvider._();
 
 @kimappForm
 final class FormWidgetExampleProvider
     extends $NotifierProvider<FormWidgetExample, FormWidgetExampleState> {
-  const FormWidgetExampleProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'formWidgetExampleProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+  FormWidgetExampleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'formWidgetExampleProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$formWidgetExampleHash();
@@ -369,15 +380,17 @@ abstract class _$FormWidgetExample extends $Notifier<FormWidgetExampleState> {
   FormWidgetExampleState build();
   @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build();
+  WhenComplete runBuild() {
     final ref =
         this.ref as $Ref<FormWidgetExampleState, FormWidgetExampleState>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<FormWidgetExampleState, FormWidgetExampleState>,
-        FormWidgetExampleState,
-        Object?,
-        Object?>;
-    element.handleValue(ref, created);
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<FormWidgetExampleState, FormWidgetExampleState>,
+              FormWidgetExampleState,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
   }
 }
