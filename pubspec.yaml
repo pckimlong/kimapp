@@ -12,12 +12,7 @@ workspace:
   - packages/kimapp_supabase_helper
   - packages/bootstraper
 
-  # Published packages
-  - pubs/autoverpod
-  - pubs/autoverpod_generator
-
   # Examples
-  - pubs/autoverpod_generator/example
   - packages/kimapp_generator/example
 
 
