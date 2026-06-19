@@ -9,11 +9,10 @@ environment:
 resolution: workspace
 
 dependencies:
-  source_gen: ^3.1.0
-  test: 
+  source_gen: ^4.2.3
   recase: ^4.1.0
   build: ^3.1.0
-  analyzer: 
+  analyzer: ">=7.3.0 <9.0.0"
   json_annotation: ^4.9.0
   autoverpod: ^0.0.5
   riverpod_annotation: ^3.0.0
@@ -26,6 +25,7 @@ dependencies:
 
 dev_dependencies:
   build_runner: null
+  test: ^1.24.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
